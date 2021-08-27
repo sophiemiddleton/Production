@@ -245,6 +245,7 @@ Reconstruction : {
 	    "keep mu2e::CaloHits_*_*_*",
 	    "keep mu2e::EventWindowMarker_*_*_*",
 	    "keep mu2e::ProtonBunchTime_*_*_*",
+	    "keep mu2e::ComboHits_*_*_*",
 	    "keep *_SelectRecoMC_*_*"
 	    ]
 # MC truth matched to reco

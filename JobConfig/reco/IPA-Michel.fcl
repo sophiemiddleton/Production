@@ -16,21 +16,38 @@ physics.producers.KSFDeM.ParameterErrors : [20.0, 0.1, 0.01, 20.0, 0.1]
 # find low-momentum helices 
 physics.producers.HelixFinderDe.targetconsistent_init : false
 physics.producers.HelixFinderDe.targetconsistent : false
-physics.producers.HelixFinderDe.HelixFitter.minCenterR : 300
+physics.producers.HelixFinderDe.HelixFitter.minCenterR : 10
 physics.producers.HelixFinderDe.HelixFitter.maxCenterR : 500
-physics.producers.HelixFinderDe.HelixFitter.minR : 100
-physics.producers.HelixFinderDe.HelixFitter.maxR : 200
+physics.producers.HelixFinderDe.HelixFitter.minR : 10
+physics.producers.HelixFinderDe.HelixFitter.maxR : 500
 physics.producers.HelixFinderDe.HelixFitter.minAbsLambda : 50
-physics.producers.HelixFinderDe.HelixFitter.maxAbsLambda : 150
+physics.producers.HelixFinderDe.HelixFitter.maxAbsLambda : 1e13
 physics.producers.HelixFinderDe.HelixFitter.minzsep : 40
 physics.producers.HelixFinderDe.HelixFitter.maxzsep : 200
-physics.producers.HelixFinderDe.HelixFitter.mindist : 50
+physics.producers.HelixFinderDe.HelixFitter.mindist : 5
+physics.producers.HelixFinderDe.HelixFitter.ntripleMin : 2
+physics.producers.HelixFinderDe.HelixFitter.minArea : 100
 physics.producers.HelixFinderDe.HelixFitter.maxdist : 250
 physics.producers.HelixFinderDe.HelixFitter.minArea : 800
 physics.producers.HelixFinderDe.HelixFitter.minNHit : 1
+physics.producers.HelixFinderDe.MinNStrawHits : 1
+physics.producers.HelixFinderDe.MaxIterations : 100
+physics.producers.HelixFinderDe.MaxChi2dXY : 500.0
+physics.producers.HelixFinderDe.MaxChi2dZPhi : 500.0
+physics.producers.HelixFinderDe.MaxChisquared : 250.
+physics.producers.HelixFinderDe.SaveHelixFlag : ["HelixOK","HitsOK","CircleOK"]
+physics.producers.HelixFinderDe.HelixFitter.minNStrawHits : 1
+physics.producers.HelixFinderDe.HelixFitter.nLoopsdfdz : 5
+physics.producers.HelixFinderDe.HelixFitter.targetintersect : false
+# time clusters
 physics.producers.TimeClusterFinderDe.UseCaloCluster : true
-physics.producers.TimeClusterFinderDe.CaloClusterMinE : 10
+physics.producers.TimeClusterFinderDe.CaloClusterMinE : 1
 physics.producers.TimeClusterFinderDe.AveragePitch : 0.5
+physics.producers.TimeClusterFinderDe.MinNHits  : 1
+physics.producers.TimeClusterFinderDe.DtMax : 1e7
+physics.producers.TimeClusterFinderDe.Tmin                   : -1e7
+physics.producers.TimeClusterFinderDe.Tmax                   : 1e7
+physics.producers.TimeClusterFinderDe.MaxdPhi                : 1e7
 # turn off the rest
 physics.producers.TimeClusterFinderDmu.Ymin : 1e7
 physics.producers.TimeClusterFinderUe.Ymin : 1e7
@@ -47,4 +64,4 @@ physics.filters.RecoFilter.TrkTags : [ "KFFDeM","KFFUeM" ]
 physics.filters.RecoFilter.MomentumCutoff : [1.0,1.0]
 
 services.scheduler.wantSummary: true
-
+services.TFileService.fileName: "nts.owner.test.version.sequencer.root"

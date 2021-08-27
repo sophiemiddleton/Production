@@ -1,0 +1,10 @@
+#include "Production/JobConfig/primary/IPAStopsDelta.fcl"
+source.firstRun: 501
+physics.filters.IPAStopResampler.fileNames : [
+  //"/pnfs/mu2e/scratch/datasets/phy-sim/sim/mu2e/IPAStopsCat/MDC2020i/art/6b/10/sim.mu2e.IPAStopsCat.MDC2020i.001202_00000000.art"
+  "root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/mu2e/scratch/datasets/phy-sim/sim/mu2e/IPAStopsCat/MDC2020i/art/6b/10/sim.mu2e.IPAStopsCat.MDC2020i.001202_00000000.art"
+]
+physics.producers.generate.endPointEnergy : 50
+physics.filters.IPAStopResampler.mu2e.MaxEventsToSkip: 0
+outputs.Output.fileName : "dts.tester.DeltaGun.Test.1.art"
+services.TFileService.fileName: "nts.owner.DeltaGun.version.sequencer.root"

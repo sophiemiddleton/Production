@@ -49,7 +49,7 @@ Digitize: {
     trackable : {
       module_type : StrawDigiMCFilter
       MinNDigis : 10
-      MinParticleMom : 80.0
+      MinParticleMom : 1.0
       MaxParticleMom : 130.0
       StrawDigiMCCollection : compressDigiMCs
       particleTypes : [ 11,-11, 13, -13] # e+-, mu+-

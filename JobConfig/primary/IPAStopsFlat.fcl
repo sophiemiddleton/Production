@@ -51,7 +51,9 @@ physics.producers.g4run.inputs: {
 # use reduced BField for these jobs
 services.GeometryService.inputFile      : "Offline/Mu2eG4/geom/geom_common_no_tsu_ps.txt"
 
-physics.filters.DetStepFilter.MinimumPartMom : 10.0 // MeV/c TODO - tweak this parameter to get more DetSteps
+physics.filters.DetStepFilter.MinimumPartMom : 1.0 // MeV/c TODO - tweak this parameter to get more DetSteps
+physics.filters.DetStepFilter.MinimumTrkSteps : 2 # primary must produce at least this many TrkSteps
+physics.filters.DetStepFilter.MinimumSumCaloStepE : 1.0 # or at least this much calo energy
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlateMinus"
 physics.filters.IPAStopResampler.mu2e.MaxEventsToSkip : @nil 
 
@@ -60,13 +62,11 @@ physics.producers.generate : {
   inputSimParticles: IPAStopResampler 
   stoppingTargetMaterial : "IPA"
   verbosity : 1
-  makeHistograms : true
-  processcode : "mu2eMuonDecayAtRest"
+  //makeHistograms : true
+  //processcode : "mu2eMuonDecayAtRest"
   pdgId : -11
 }
 
-
- 
 
 outputs.Output.fileName: "dts.owner.IPAMichel.version.sequencer.art"
 

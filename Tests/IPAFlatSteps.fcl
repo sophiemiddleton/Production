@@ -1,12 +1,11 @@
+////"root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/mu2e/scratch/datasets/phy-sim/sim/mu2e/IPAStopsCat/MDC2020i/art/6b/10/sim.mu2e.IPAStopsCat.MDC2020i.001202_00000000.art"
 #include "Production/JobConfig/primary/IPAStopsFlat.fcl"
-source.firstRun: 501 #TODO
+source.firstRun: 501 
 physics.filters.IPAStopResampler.fileNames : [
   "/pnfs/mu2e/scratch/datasets/phy-sim/sim/mu2e/IPAStopsCat/MDC2020i/art/6b/10/sim.mu2e.IPAStopsCat.MDC2020i.001202_00000000.art"
-  //"root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/mu2e/scratch/datasets/phy-sim/sim/mu2e/IPAStopsCat/MDC2020i/art/6b/10/sim.mu2e.IPAStopsCat.MDC2020i.001202_00000000.art"
 ]
-
-physics.producers.generate.startMom : 0
-physics.producers.generate.endMom : 100
+physics.producers.generate.startMom : 30
+physics.producers.generate.endMom : 50
 physics.filters.IPAStopResampler.mu2e.MaxEventsToSkip: 4143
 outputs.Output.fileName : "dts.tester.IPAFlat.Test.1.art"
 services.scheduler.wantSummary: true
