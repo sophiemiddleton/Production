@@ -10,6 +10,5 @@ physics.producers.generate : {
   stoppingTargetMaterial : "Al"
   verbosity : 0
 }
-physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip : 1863000  # based on MDC2020, file of 2e8 Beam Resamples
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eCeMinusEndpoint"
 outputs.Output.fileName: "dts.owner.CeEndpoint.version.sequencer.art"

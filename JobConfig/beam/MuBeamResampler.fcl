@@ -33,8 +33,8 @@ physics: {
     compressPVIPAStops : @local::Beam.producers.compressPVIPAStops
     TargetMuonFinder : @local::Beam.producers.TargetMuonFinder
     IPAMuonFinder : @local::Beam.producers.IPAMuonFinder
-    stoppedMuonDaughters : @local::Beam.producers.stoppedMuonDaughters 
-    protonTimeOffset : @local::CommonMC.producers.protonTimeOffset 
+    stoppedMuonDaughters : @local::Beam.producers.stoppedMuonDaughters
+    protonTimeOffset : @local::CommonMC.producers.protonTimeOffset
   }
   filters : {
     @table::Common.filters
@@ -52,14 +52,14 @@ physics: {
     IPAStopFilter       : @local::Beam.filters.IPAStopFilter
     FlashFilter         : @local::Beam.filters.FlashFilter
     DetStepFilter : {
-      @table::Primary.filters.DetStepFilter 
-      @table::Pileup.filters.DetStepFilter 
-      @table::Beam.filters.DetStepFilter 
+      @table::Primary.filters.DetStepFilter
+      @table::Pileup.filters.DetStepFilter
+      @table::Beam.filters.DetStepFilter
     }
 # instance to select flash without time cuts (prescaled)
     EarlyDetStepFilter : {
-      @table::Primary.filters.DetStepFilter 
-      @table::Pileup.filters.DetStepFilter 
+      @table::Primary.filters.DetStepFilter
+      @table::Pileup.filters.DetStepFilter
     }
   }
   analyzers : {
@@ -76,7 +76,6 @@ physics: {
   outPath : [ FlashOutput, EarlyFlashOutput, TargetStopOutput, IPAStopOutput ]
   end_paths: [outPath]
 }
-physics.filters.beamResampler.mu2e.MaxEventsToSkip: 8927 # based on pre-production test 
 
 outputs: {
   TargetStopOutput : {
@@ -146,6 +145,7 @@ physics.producers.g4run.Mu2eG4CommonCut:{
       {type: inVolume pars: [ TS2Vacuum, TS3Vacuum, TS4Vacuum, TS5Vacuum, DS2Vacuum, HallAir ]}
    ]
 }
+#include "Production/JobConfig/common/MT.fcl"
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/pileup/epilog.fcl"
 #include "Production/JobConfig/beam/epilog.fcl"

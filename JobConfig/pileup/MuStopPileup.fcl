@@ -9,18 +9,13 @@
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/primary/prolog.fcl"
 #include "Production/JobConfig/pileup/prolog.fcl"
-#include "fcl/standardServices.fcl"
-#include "EventGenerator/fcl/prolog.fcl"
-#include "JobConfig/common/prolog.fcl"
-#include "JobConfig/primary/prolog.fcl"
-#include "JobConfig/pileup/prolog.fcl"
 process_name: MuStopPileup
 source: { module_type : EmptyEvent }
 services : @local::Services.Sim
-physics : { 
-  producers : { 
-    @table::Common.producers 
-    @table::Primary.producers 
+physics : {
+  producers : {
+    @table::Common.producers
+    @table::Primary.producers
     compressDetStepMCs : {
       @table::Primary.producers.compressDetStepMCs
       @table::Pileup.producers.compressDetStepMCs
@@ -78,13 +73,13 @@ physics : {
       ]
     }
   }
-  filters : { 
-    @table::Common.filters 
-    @table::Primary.filters 
+  filters : {
+    @table::Common.filters
+    @table::Primary.filters
   # override step filter to select any detectable signal from any particle
     DetStepFilter : {
-      @table::Primary.filters.DetStepFilter 
-      @table::Pileup.filters.DetStepFilter 
+      @table::Primary.filters.DetStepFilter
+      @table::Pileup.filters.DetStepFilter
       # No need for a timing cut: the muon stop products are already late compared to that
     }
   }
@@ -105,10 +100,10 @@ outputs : { Output : {
  }
  # some consolidation is needed TODO
 }
+#include "Production/JobConfig/common/MT.fcl"
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/primary/epilog.fcl"
 #include "Production/JobConfig/pileup/epilog.fcl"
-#
 
 # resampling configuration; this should be somewhere common TODO
 physics.producers.g4run.inputs: {

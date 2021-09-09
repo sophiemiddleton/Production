@@ -9,9 +9,6 @@ physics.producers.generate : {
   inputSimParticles: TargetStopResampler
   stoppingTargetMaterial : "Al"
   verbosity : 0
-  makeHistograms : true
-  processcode : "mu2eMuonDecayAtRest"
-  pdgId : -11
 }
 
 physics.producers.generate.startMom : @nil

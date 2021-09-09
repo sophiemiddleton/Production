@@ -1,2 +1,0 @@
-#include "Production/JobConfig/mixing/NoPrimary.fcl"
-#include "Production/JobConfig/mixing/Run1.fcl"

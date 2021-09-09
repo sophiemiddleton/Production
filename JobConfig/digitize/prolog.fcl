@@ -41,15 +41,22 @@ Digitize: {
 	caloClusterMCTag : ""
 	crvCoincClusterMCTag : ""
     }
+    PBISim : {  
+      module_type: ProtonBunchIntensityFlat
+      mean : 1
+      halfWidth : 0
+    }
   }
 
   filters : {
-    # filter for hits that might be reconstructable as a track
-    # These are generic settings, some may be overridden based on the primary
-    trackable : {
+    # filter for Untriggered stream.  These should be events that might have
+    # triggered.  The default setting is a particle with enough tracker digis
+    # in the right momentum range to be reconstructable as a helix
+    # This filter should be overriden as needed for other kinds of primaries (straight cosmics, calo signals, ...)
+    Triggerable : {
       module_type : StrawDigiMCFilter
-      MinNDigis : 10
-      MinParticleMom : 1.0
+      MinNDigis : 15
+      MinParticleMom : 80.0
       MaxParticleMom : 130.0
       StrawDigiMCCollection : compressDigiMCs
       particleTypes : [ 11,-11, 13, -13] # e+-, mu+-
@@ -61,6 +68,7 @@ Digitize: {
   }
 
   DigitizeSequence : [
+    PBISim,
     @sequence::CommonMC.DigiSim,
     @sequence::TrackerMC.DigiSim,
     @sequence::CaloMC.DigiSim,
@@ -73,7 +81,8 @@ Digitize: {
     "keep mu2e::KalSeeds_TT*_*_*",
     "keep mu2e::HelixSeeds_TT*_*_*",
     "keep mu2e::TimeClusters_TT*_*_*",
-    "keep mu2e::CaloClusters_CaloClusterFast_*_*"
+    "keep mu2e::CaloClusters_CaloClusterFast_*_*",
+    "keep mu2e::ProtonBunchIntensity*_*_*_*"
   ]
 
   DigiProducts : [  
@@ -97,6 +106,7 @@ Digitize: {
   UntriggeredOutput : {
      module_type : RootOutput
      RejectEvents : [ "*_trigger" ] # reject events passing any trigger
+     SelectEvents : [ "Untriggered" ] # require events pass 'Triggerable' filter
      fileName    : @nil
   }
   EndSequence : [digiCompressionCheck]
@@ -104,8 +114,6 @@ Digitize: {
 Digitize.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, UntriggeredOutput ]
 # override the Trigger sequence to prepare digis
 Trigger.PrepareDigis: [ @sequence::CommonMC.DigiSim, @sequence::TrackerMC.DigiSim, @sequence::CaloMC.DigiSim ]
-Digitize.DigitizePath : [ @sequence::Digitize.DigitizeSequence ]
-
 Digitize.TriggeredOutput.outputCommands : [ "drop *_*_*_*",
 		       @sequence::Digitize.DigiProducts,
 		       @sequence::Digitize.TriggerProducts ]

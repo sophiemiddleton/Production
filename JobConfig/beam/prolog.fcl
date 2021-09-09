@@ -157,7 +157,7 @@ Beam: {
          mu2e: {
             writeEventIDs : true
             MaxEventsToSkip: @nil
-	    debugLevel : 2
+	    debugLevel : 0
             products: {
                genParticleMixer: { mixingMap: [ [ "generate", "" ] ] }
                simParticleMixer: { mixingMap: [ [ "BeamFilter", "" ] ] }
@@ -182,7 +182,7 @@ Beam: {
          mu2e: {
             writeEventIDs : true
             MaxEventsToSkip:  @nil
-	    debugLevel : 2
+	    debugLevel : 0
             products: {
                genParticleMixer: { mixingMap: [ [ "generate", "" ] ] }
                simParticleMixer: { mixingMap: [ [ "NeutralsFilter", "" ] ] }

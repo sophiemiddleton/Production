@@ -28,7 +28,7 @@ physics: {
       @table::Primary.producers.compressDetStepMCs
       @table::Pileup.producers.compressDetStepMCs
     }
-    protonTimeOffset : @local::CommonMC.producers.protonTimeOffset 
+    protonTimeOffset : @local::CommonMC.producers.protonTimeOffset
   }
   filters : {
     @table::Common.filters
@@ -38,14 +38,14 @@ physics: {
     }
     neutralsResampler    : @local::Beam.filters.neutralsResampler
     DetStepFilter : {
-      @table::Primary.filters.DetStepFilter 
-      @table::Pileup.filters.DetStepFilter 
-      @table::Beam.filters.DetStepFilter 
+      @table::Primary.filters.DetStepFilter
+      @table::Pileup.filters.DetStepFilter
+      @table::Beam.filters.DetStepFilter
     }
 # instance to select flash without time cuts (prescaled)
     EarlyDetStepFilter : {
-      @table::Primary.filters.DetStepFilter 
-      @table::Pileup.filters.DetStepFilter 
+      @table::Primary.filters.DetStepFilter
+      @table::Pileup.filters.DetStepFilter
     }
   }
   analyzers : {
@@ -59,7 +59,6 @@ physics: {
   outPath : [ FlashOutput, EarlyFlashOutput ]
   end_paths: [outPath]
 }
-physics.filters.neutralsResampler.mu2e.MaxEventsToSkip: 1330938 # based on pre-production test
 
 outputs: {
   FlashOutput : {
@@ -105,6 +104,7 @@ physics.producers.g4run.Mu2eG4CommonCut:{
       {type: inVolume pars: [ TS2Vacuum, TS3Vacuum, TS4Vacuum, TS5Vacuum, DS2Vacuum, HallAir ]}
    ]
 }
+#include "Production/JobConfig/common/MT.fcl"
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/pileup/epilog.fcl"
 #include "Production/JobConfig/beam/epilog.fcl"

@@ -46,7 +46,7 @@ physics: {
     @sequence::Common.generateSequence, 
     @sequence::Common.g4Sequence,
     @sequence::Primary.PrimarySequence,
-    @sequence::Digitize.DigitizePath,
+    @sequence::Digitize.DigitizeSequence,
     @sequence::Reconstruction.CaloReco,
     @sequence::Reconstruction.TrkReco,
     @sequence::Reconstruction.CrvReco,

@@ -6,18 +6,18 @@
 process_name: MuStopSelector
 source: { module_type: RootInput }
 services: { message: @local::default_message }
-physics: { 
+physics: {
   filters : {
     muminusSelector: {
       module_type: ParticleCodeFilter
       SimParticles : TargetStopFilter
-      ParticleCodes : [ [13, "unknown", "muMinusCaptureAtRest" ] ] # mu-, * , muMinusCaptureAtRest
+      ParticleCodes : [ [13, "uninitialized", "muMinusCaptureAtRest" ] ] # mu-, * , muMinusCaptureAtRest
       PrintLevel : 0
     }
     muplusSelector: {
       module_type: ParticleCodeFilter
       SimParticles : TargetStopFilter
-      ParticleCodes : [ [-13, "unknown" , "unknown" ] ] # mu+, *, *
+      ParticleCodes : [ [-13, "uninitialized" , "uninitialized" ] ] # mu+, *, *
       PrintLevel : 0
     }
   }
@@ -25,18 +25,18 @@ physics: {
   selectMuplus : [muplusSelector]
   trigger_paths : [ selectMuminus, selectMuplus ]
   outpath: [muminusout, muplusout ]
-  end_paths: [outpath] 
+  end_paths: [outpath]
 }
 outputs: {
   muminusout: {
     module_type: RootOutput
-    fileName : "sim.owner.MuminusStops.version.sequencer.art"
+    fileName : "sim.owner.MuminusStopsCat.version.sequencer.art"
     outputCommands:   [ "keep *_*_*_*" ]
     SelectEvents: [selectMuminus]
   }
   muplusout: {
     module_type: RootOutput
-    fileName : "sim.owner.MuplusStops.version.sequencer.art"
+    fileName : "sim.owner.MuplusStopsCat.version.sequencer.art"
     outputCommands:   [ "keep *_*_*_*" ]
     SelectEvents: [selectMuplus]
   }

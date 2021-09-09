@@ -277,13 +277,13 @@ digraph SimWorkflow {
     TargetMuonPileup [shape=oval, color=lightblue,
 		     label=<<table border="0" cellborder="0" cellspacing="1">
 		       <tr><td align="center"><b>Target Muon Pileup </b></td></tr>
-		       <tr><td align="left"><font color="red">dts.mu2e.mustop.art</font></td></tr>
+		       <tr><td align="left"><font color="red">dts.mu2e.MuStopPileup.art</font></td></tr>
 		       </table>>];
 
     PileupMuonTerm [shape=box,color=blue,
 		   label=<<table border="0" cellborder="0" cellspacing="1">
 		     <tr><td align="center"><b>&mu; to X = [P, D, N,&gamma;, e &nu;]  </b></td></tr>
-		     <tr><td align="left"><font color="darkgreen">pileup/mustop.fcl</font></td></tr>
+		     <tr><td align="left"><font color="darkgreen">pileup/MuStopPileup.fcl</font></td></tr>
 		     </table>>];
 
     PileupMuonTerm -> TargetMuonPileup [ label=<concatenate 10<sup>+4</sup>?> ];

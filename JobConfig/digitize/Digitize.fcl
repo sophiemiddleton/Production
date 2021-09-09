@@ -16,8 +16,8 @@ physics : {
     @table::Trigger.filters
   }
   analyzers: { @table::Digitize.analyzers }
-  DigitizePath : @local::Digitize.DigitizePath
-  Signallike : [ @sequence::Digitize.DigitizePath, trackable ]
+  Triggered : @local::Digitize.DigitizeSequence
+  Untriggered : [ @sequence::Digitize.DigitizeSequence, Triggerable ]
   EndPath : @local::Digitize.EndPath
 }
 #
@@ -31,8 +31,8 @@ outputs : {
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
 #
-physics.trigger_paths[0] : DigitizePath
-physics.trigger_paths[1] : Signallike
+physics.trigger_paths[0] : Triggered
+physics.trigger_paths[1] : Untriggered
 physics.end_paths : [ EndPath ]
 # generic output: this is overwritten by generate_fcl
 outputs.TriggeredOutput.fileName: "dig.owner.DigiTriggered.version.sequencer.art"

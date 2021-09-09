@@ -24,7 +24,7 @@ physics : {
     generate: @local::PrimaryProtonGun
     compressPVBeam : @local::Beam.producers.compressPVBeam
     compressPVNeutrals : @local::Beam.producers.compressPVNeutrals
-  } 
+  }
   filters: {
     @table::Common.filters
     BeamFilter : @local::Beam.filters.BeamFilter
@@ -73,6 +73,7 @@ physics.producers.g4run.Mu2eG4CommonCut: {
 # tweak Mu2eG4 settings
 physics.producers.g4run.SDConfig.enableSD: [ virtualdetector ] # only VDs are active
 physics.producers.g4run.physics.minRangeCut : 1. # mm  coarse range for this stage
+#include "Production/JobConfig/common/MT.fcl"
 #include "Production/JobConfig/beam/epilog.fcl"
 #include "Production/JobConfig/common/epilog.fcl"
 services.GeometryService.inputFile      : "Offline/Mu2eG4/geom/geom_common_no_ds.txt"

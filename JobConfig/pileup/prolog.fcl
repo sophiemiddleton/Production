@@ -8,7 +8,10 @@ Pileup: {
   # override compression to be more selective
     compressDetStepMCs: {
       stepPointMCTags : [ ] # turn off VD hits for pileup
-      compressionOptions : @local::DetStepCompression.extraCompression # remove some intermediate genealogy steps
+      compressionOptions : {
+	@table::DetStepCompression.extraCompression # remove some intermediate genealogy steps
+	keepNGenerations : 1 # only keep SimParticles producing DetectorSteps and their direct parents
+      }
       mcTrajectoryTag : "" # no MC Trajectories
     }
   }

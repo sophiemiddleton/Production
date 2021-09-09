@@ -50,7 +50,6 @@ physics.end_paths : [ EndPath ]
 # no histogram output
 services.TFileService.fileName : "/dev/null"
 services.SeedService.baseSeed         :  773651
-services.SeedService.maxUniqueEngines :  3
 
 // Need this to increase the world volume.
 services.GeometryService.inputFile: "Production/JobConfig/cosmic/geom_cosmic_current.txt"

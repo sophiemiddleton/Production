@@ -1,0 +1,80 @@
+#include "Offline/fcl/minimalMessageService.fcl"
+process_name: PBISequence
+
+services: {
+  message : @local::default_message
+}
+
+source: {
+  module_type :  PBISequence 
+  reconstitutedModuleLabel : PBISim
+  fileNames: [
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_a",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_b",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_c",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_d",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_e",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_f",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_g",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_h",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_i",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_j",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_k",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_l",
+ "/pnfs/mu2e/persistent/users/brownd/PBISequence/PBI_33344_m"
+ ]
+  
+  runNumber : 1210
+  integratedSummary : true
+  verbosity : 1
+}
+
+physics : {
+  producers : {}
+  filters : {
+    SubRun0 : { module_type : EventIDFilter idsToMatch: ["*:0:*"] }
+    SubRun1 : { module_type : EventIDFilter idsToMatch: ["*:1:*"] }
+    SubRun2 : { module_type : EventIDFilter idsToMatch: ["*:2:*"] }
+    SubRun3 : { module_type : EventIDFilter idsToMatch: ["*:3:*"] }
+    SubRun4 : { module_type : EventIDFilter idsToMatch: ["*:4:*"] }
+    SubRun5 : { module_type : EventIDFilter idsToMatch: ["*:5:*"] }
+    SubRun6 : { module_type : EventIDFilter idsToMatch: ["*:6:*"] }
+    SubRun7 : { module_type : EventIDFilter idsToMatch: ["*:7:*"] }
+    SubRun8 : { module_type : EventIDFilter idsToMatch: ["*:8:*"] }
+    SubRun9 : { module_type : EventIDFilter idsToMatch: ["*:9:*"] }
+    SubRun10 : { module_type : EventIDFilter idsToMatch: ["*:10:*"] }
+    SubRun11 : { module_type : EventIDFilter idsToMatch: ["*:11:*"] }
+    SubRun12 : { module_type : EventIDFilter idsToMatch: ["*:12:*"] }
+  }
+  analyzers : {}
+  TPa : [ SubRun0 ]
+  TPb : [ SubRun1 ]
+  TPc : [ SubRun2 ]
+  TPd : [ SubRun3 ]
+  TPe : [ SubRun4 ]
+  TPf : [ SubRun5 ]
+  TPg : [ SubRun6 ]
+  TPh : [ SubRun7 ]
+  TPi : [ SubRun8 ]
+  TPj : [ SubRun9 ]
+  TPk : [ SubRun10 ]
+  TPl : [ SubRun11 ]
+  TPm : [ SubRun12 ]
+  EndPath : [ Outputa , Outputb, Outputc, Outputd, Outpute, Outputf, Outputg, Outputh, Outputi, Outputj, Outputk, Outputl, Outputm ]
+}
+
+outputs : {
+  Outputa : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_00.art" SelectEvents : [ TPa ] }
+  Outputb : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_01.art" SelectEvents : [ TPb ] }
+  Outputc : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_02.art" SelectEvents : [ TPc ] }
+  Outputd : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_03.art" SelectEvents : [ TPd ] }
+  Outpute : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_04.art" SelectEvents : [ TPe ] }
+  Outputf : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_05.art" SelectEvents : [ TPf ] }
+  Outputg : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_06.art" SelectEvents : [ TPg ] }
+  Outputh : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_07.art" SelectEvents : [ TPh ] }
+  Outputi : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_08.art" SelectEvents : [ TPi ] }
+  Outputj : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_09.art" SelectEvents : [ TPj ] }
+  Outputk : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_10.art" SelectEvents : [ TPk ] }
+  Outputl : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_11.art" SelectEvents : [ TPl ] }
+  Outputm : { module_type : RootOutput outputCommands:   [ "drop *_*_*_*", "keep mu2e::ProtonBunchIntensity_*_*_*", "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ] fileName : "sim.mu2e.PBI_33344.MDC2020.1210_12.art" SelectEvents : [ TPm ] }
+}

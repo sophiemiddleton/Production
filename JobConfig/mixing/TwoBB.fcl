@@ -1,0 +1,8 @@
+#
+# Run1 two booster batch mixing configuration.  
+#
+# original author: Dave Brown, LBNL
+#
+physics.producers.PBISim.SDF: 0.6
+physics.producers.PBISim.extendedMean: 3.93e7 # mean of the uncut distribution
+physics.producers.PBISim.cutMax: 2.36e8  # truncate the tail at 6 times the mean

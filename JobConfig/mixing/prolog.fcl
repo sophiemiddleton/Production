@@ -21,9 +21,10 @@ Mixing : {
     wrapFiles           : true
     mu2e: {
       protonBunchIntensityTag: "PBISim"
-      meanEventsPerProton: @nil
+#      meanEventsPerProton: @nil
       simStageEfficiencyTags: @nil
-      writeEventIDs : true
+      meanEventsPerPOTFactors : []
+      writeEventIDs : false
       products: {
         genParticleMixer: { mixingMap: [ [ "compressDetStepMCs", "" ] ] }
         simParticleMixer: { mixingMap: [ [ "compressDetStepMCs", "" ] ] }
@@ -31,19 +32,17 @@ Mixing : {
         caloShowerStepMixer: { mixingMap: [ [ "compressDetStepMCs", "" ] ] }
         crvStepMixer: { mixingMap: [ [ "compressDetStepMCs", "" ] ] }
       }
-# skip a random number of mixin events between 0 and this factor times the number corresponding to the nominal pulse.
-      skipFactor : 1
+      MaxEventsToSkip: @nil
     }
   }
   MixingProducts : [
-    "keep mu2e::ProtonBunchIntensity*_*_*_*"
   ]
 }
 Mixing : {
   producers : {
     PBISim : {  
       module_type: ProtonBunchIntensityLogNormal
-      sigma: @nil
+      SDF: @nil
       extendedMean: @nil
       cutMax:@nil
     }
@@ -87,7 +86,8 @@ Mixing : {
 
   StepMixSequence : [ MuStopPileupMixer, EleBeamFlashMixer, MuBeamFlashMixer, NeutralsFlashMixer ]
 }
-Mixing.PileupMixSequence : [ PBISim, @sequence::Mixing.StepMixSequence ] 
+Mixing.PileupMixSequence : [ PBISim, @sequence::Mixing.StepMixSequence ]
+Mixing.MixSequence : [ SignalFilter, @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
 # override the Trigger 'PrepareDigis' sequence; the mixers must preceed the digi making.  Note CRV doesn't participate in trigger, so isn't included
 Trigger.PrepareDigis: [ @sequence::Mixing.PileupMixSequence, @sequence::CommonMC.DigiSim, @sequence::TrackerMC.DigiSim, @sequence::CaloMC.DigiSim ]
 

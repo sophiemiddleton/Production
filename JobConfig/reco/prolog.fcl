@@ -282,10 +282,10 @@ Reconstruction.TrackReco : [
 #
 # Full reconstruction Path
 Reconstruction.RecoPath : [
-  @sequence::Reconstruction.CaloReco, 
-  @sequence::Reconstruction.TrkReco, 
+  @sequence::Reconstruction.CaloReco,
+  @sequence::Reconstruction.TrkReco,
   @sequence::Reconstruction.CrvReco,
-  @sequence::Reconstruction.TrackReco 
+  @sequence::Reconstruction.TrackReco
 ]
 # Full reco path with MC
 Reconstruction.RecoMCPath : [
