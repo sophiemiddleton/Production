@@ -1,0 +1,10 @@
+#include "Production/JobConfig/mixing/Mix.fcl"
+#include "Production/JobConfig/mixing/OneBB.fcl"
+physics.filters.MuBeamFlashMixer.mu2e.MaxEventsToSkip: 1126981
+physics.filters.EleBeamFlashMixer.mu2e.MaxEventsToSkip: 26111
+physics.filters.NeutralsFlashMixer.mu2e.MaxEventsToSkip: 45233
+physics.filters.MuStopPileupMixer.mu2e.MaxEventsToSkip: 436911
+services.ProditionsService.simbookkeeper.useDb: true
+services.DbService.purpose: MDC2020i
+outputs.TriggeredOutput.fileName: "dig.owner.CeEndpointMixTriggered.version.sequencer.art"
+outputs.UntriggeredOutput.fileName: "dig.owner.CeEndpointMixUntriggered.version.sequencer.art"

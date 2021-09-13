@@ -1,0 +1,1 @@
+/pnfs/mu2e/tape/phy-sim/dts/mu2e/MuStopPileupCat/MDC2020i/art/bd/e8/dts.mu2e.MuStopPileupCat.MDC2020i.001205_00000000.art
