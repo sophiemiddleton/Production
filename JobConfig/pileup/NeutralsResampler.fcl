@@ -1,0 +1,77 @@
+#
+# Re-sample (mostly neutral) particles exiting the TS or PS headed towards the CRV, and write out the corresponding flash DetectorSteps
+# Note the main flash stream has a time cut to avoid energy far outside the digitization window.  A prescaled but otherwise uncut stream is used to
+# record the flash peak
+#
+# Updated for MDC2020 (DetectorSteps): D. Brown
+
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/CommonMC/fcl/prolog.fcl"
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/pileup/prolog.fcl"
+
+process_name: NeutralsResampler
+
+source : {
+  module_type : EmptyEvent
+  maxEvents : @nil
+}
+
+services : @local::Services.Sim
+physics: {
+  producers : {
+    @table::Common.producers
+    @table::Pileup.producers
+  }
+  filters : {
+    @table::Common.filters
+    @table::Pileup.filters
+  }
+  analyzers : {
+    @table::Common.analyzers
+  }
+  # setup paths
+  flashPath : [ @sequence::Pileup.neutralsResamplerSequence, @sequence::Common.g4Sequence, @sequence::Pileup.DetStepSequence ]
+  earlyFlashPath : [ @sequence::Pileup.neutralsResamplerSequence, @sequence::Common.g4Sequence, @sequence::Pileup.EarlyDetStepSequence ]
+  trigger_paths: [ flashPath , earlyFlashPath ]
+  outPath : [ FlashOutput, EarlyFlashOutput ]
+  end_paths: [outPath]
+}
+
+outputs: {
+  FlashOutput : {
+    module_type: RootOutput
+    outputCommands:   [ "drop *_*_*_*",
+      @sequence::Pileup.DtsKeptProducts
+    ]
+    SelectEvents: [flashPath]
+    fileName: "dts.owner.NeutralsFlash.version.sequencer.art"
+  }
+
+  EarlyFlashOutput : {
+    module_type: RootOutput
+    outputCommands:   [ "drop *_*_*_*",
+      @sequence::Pileup.DtsKeptProducts
+    ]
+    SelectEvents: [earlyFlashPath]
+    fileName : "dts.owner.EarlyNeutralsFlash.version.sequencer.art"
+  }
+}
+# set prescale factor
+physics.filters.EarlyPrescaleFilter.nPrescale         : 20
+
+# Point Mu2eG4 to the pre-simulated data
+physics.producers.g4run.inputs: {
+  primaryType: "StepPoints"
+  primaryTag: "neutralsResampler:Neutrals"
+  inputMCTrajectories: ""
+  simStageOverride: 1
+  inputPhysVolumeMultiInfo: "neutralsResampler"
+  updateEventLevelVolumeInfos: {
+    input: "neutralsResampler:eventlevel"
+    outInstance: "eventlevel"
+  }
+}
+#include "Production/JobConfig/common/MT.fcl"
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/pileup/epilog.fcl"

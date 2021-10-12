@@ -1,0 +1,15 @@
+#
+# generate and produce Detector Steps from mono-energetic e+ using mu- target stops
+#
+# original author: Sophie Middleton
+#
+#include "Production/JobConfig/primary/TargetStopParticle.fcl"
+physics.producers.generate : {
+  module_type : CeEndpoint
+  inputSimParticles: TargetStopResampler
+  stoppingTargetMaterial : "Al"
+  pdgId : -11
+  verbosity : 0
+}
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eCePlusEndpoint"
+outputs.Output.fileName: "dts.owner.CePlusEndpoint.version.sequencer.art"

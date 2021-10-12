@@ -1,11 +1,11 @@
-// Re-sample cosmic dsstops particles from stage-1
-// Yuri Oksuzian, 2020
+# Re-sample cosmic dsstops particles from stage-1
+# Yuri Oksuzian, 2020
 
 #include "Production/JobConfig/cosmic/S2Resampler.fcl"
 physics.filters.filterS1: {
-         module_type: FilterCosmicsStage1
-         inputs : [ "cosmicResample:CRV" ]
-         cutEDepMin: 16  // Filter events that deposit lower than 16 MeV in CRV
+  module_type: FilterCosmicsStage1
+  inputs : [ "cosmicResample:CRV" ]
+  cutEDepMin: 16  # Filter events that deposit lower than 16 MeV in CRV
 }
 physics.PrimaryPath: [genCounter, cosmicTimeOffset, cosmicResample, filterS1, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence]
 physics.filters.DetStepFilter.MaximumPartMom: 500

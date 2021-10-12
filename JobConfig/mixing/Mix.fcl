@@ -32,31 +32,10 @@ outputs : {
 #
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
-# add trigger paths
-#include "Offline/gen/fcl/Trigger/OnSpillTrigMenu/OnSpillTrigMenu.fcl"
-# set the event timing for Onspill
-physics.producers.EWMProducer.SpillType : 1
-# minimal BField map
-services.GeometryService.inputFile      : "Offline/Mu2eG4/geom/geom_common_reco.txt"
-# add primary and mixers to the list of step producers.  Note the StrawDigi maker uses a general selector if no module is specified
-physics.producers.makeSD.StrawGasStepModule : ""
+#include "Production/JobConfig/mixing/epilog.fcl"
+physics.producers.CrvPhotons.crvStepProcessNames : [ "","","","","" ]
 physics.producers.compressDigiMCs.simParticleTags : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
 physics.producers.compressDigiMCs.caloShowerStepTags : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
 physics.producers.CaloShowerROMaker.caloShowerStepCollection : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
 physics.producers.CrvPhotons.crvStepModuleLabels : [ compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
-physics.producers.CrvPhotons.crvStepProcessNames : [ "","","","","" ]
-# configure the mixin efficiences
-physics.filters.EleBeamFlashMixer.mu2e.simStageEfficiencyTags: ["EleBeamCat", "EleBeamFlashCat" ]
-physics.filters.MuBeamFlashMixer.mu2e.simStageEfficiencyTags: ["MuBeamCat", "MuBeamFlashCat" ]
-physics.filters.NeutralsFlashMixer.mu2e.simStageEfficiencyTags: ["NeutralsCat", "NeutralsFlashCat" ]
-physics.filters.MuStopPileupMixer.mu2e.simStageEfficiencyTags: ["MuBeamCat", "MuminusStopsCat", "MuStopPileupCat"]
-physics.filters.MuStopPileupMixer.mu2e.meanEventsPerPOTFactors : [ 1000 ]  # target stops are prescaled by 1000 (see Production/JobConfig/beam/MuBeamResampler.fcl)
-# define the paths
-physics.trigger_paths[0] : Triggered
-physics.trigger_paths[1] : Untriggered
-physics.end_paths : [ EndPath ]
-# generic output: this is overwritten by the gen_Mix.sh script
-outputs.TriggeredOutput.fileName: "dig.owner.MixTriggered.version.sequencer.art"
-outputs.UntriggeredOutput.fileName: "dig.owner.MixUntriggered.version.sequencer.art"
-# mixing requires the SimEfficiency tables
-services.ProditionsService.simbookkeeper.useDb: true
+

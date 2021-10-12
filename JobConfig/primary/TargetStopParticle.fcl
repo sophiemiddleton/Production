@@ -1,48 +1,14 @@
 #
-# Base configuration for Resampling target muon stops and generating primary particles from them
+# Base configuration for resampling target muon stops and generating primary particles from them
 #
 # original author: Dave Brown, LBNL
 #
-#include "Offline/fcl/standardServices.fcl"
-#include "Offline/EventGenerator/fcl/prolog.fcl"
-#include "Production/JobConfig/common/prolog.fcl"
-#include "Production/JobConfig/primary/prolog.fcl"
-# name all processes the same, to mask any provenance in ensemble creation
-process_name: Primary
-source: { module_type : EmptyEvent }
-services : @local::Services.Sim
-physics : { 
-  producers : { 
-    @table::Common.producers 
-    @table::Primary.producers 
-  }
-  filters : { 
-    @table::Common.filters 
-    @table::Primary.filters 
-  }
-  analyzers : { @table::Primary.analyzers }
-  PrimaryPath : [ TargetStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
-  EndPath : @local::Primary.EndPath
-  trigger_paths : [ PrimaryPath ]
-  end_paths : [ EndPath ]
+#include "Production/JobConfig/primary/StopParticle.fcl"
+
+physics.PrimaryPath : [ TargetStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
+
+physics.producers.g4run.inputs.inputPhysVolumeMultiInfo: "TargetStopResampler"
+physics.producers.g4run.inputs.updateEventLevelVolumeInfos: {
+  input: "TargetStopResampler:eventlevel"
+  outInstance: "eventlevel"
 }
-outputs : { Output :@local::Primary.Output }
-#
-# final configuration
-#
-#include "Production/JobConfig/common/epilog.fcl"
-#include "Production/JobConfig/primary/epilog.fcl"
-#
-physics.producers.g4run.inputs: {
-   primaryType: StageParticles
-   primaryTag: "generate"
-   inputMCTrajectories: ""
-   simStageOverride: 2
-   inputPhysVolumeMultiInfo: "TargetStopResampler"
-   updateEventLevelVolumeInfos: {
-      input: "TargetStopResampler:eventlevel"
-      outInstance: "eventlevel"
-   }
-}
-# use reduced BField for these jobs
-services.GeometryService.inputFile      : "Offline/Mu2eG4/geom/geom_common_no_tsu_ps.txt"

@@ -1,22 +1,22 @@
 #include "Production/JobConfig/cosmic/S1DSStops.fcl"
 
 targetParams: {
-    projectToTargetBox : true
-    targetBoxXmin: -10000
-    targetBoxXmax: 3000
-    targetBoxYmin: -5000
-    targetBoxYmax: 5000
-    targetBoxZmin: -5000
-    targetBoxZmax: 21000
+  projectToTargetBox : true
+  targetBoxXmin: -10000
+  targetBoxXmax: 3000
+  targetBoxYmin: -5000
+  targetBoxYmax: 5000
+  targetBoxZmin: -5000
+  targetBoxZmax: 21000
 }
 
 source: {
-    module_type: FromCorsikaBinary
-    fileNames: ["/pnfs/mu2e/persistent/users/srsoleti/corsika/sim.srsoleti.corsika.v1.30001.csk"]
-    runNumber          : 1205
-    showerAreaExtension  : 10000
-    @table::targetParams
-    fluxConstant: 1.8e4
+  module_type: FromCorsikaBinary
+  fileNames: ["/pnfs/mu2e/persistent/users/srsoleti/corsika/sim.srsoleti.corsika.v1.30001.csk"]
+  runNumber          : 1205
+  showerAreaExtension  : 10000
+  @table::targetParams
+  fluxConstant: 1.8e4
 }
 
 

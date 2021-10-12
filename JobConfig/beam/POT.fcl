@@ -11,8 +11,8 @@
 process_name :  POT
 
 source : {
-   module_type : EmptyEvent
-   maxEvents : @nil
+  module_type : EmptyEvent
+  maxEvents : @nil
 }
 
 services : @local::Services.Sim

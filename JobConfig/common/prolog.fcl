@@ -12,15 +12,15 @@ Common: {
 
   filters : {
     g4statusFilter: {
-       module_type: FilterStatusG4
-       input: "g4run"
-       maxAcceptedStatus: 1  #  status 2 and above means StepPointMCCollection may have non-dereferencable pointers
+      module_type: FilterStatusG4
+      input: "g4run"
+      maxAcceptedStatus: 1  #  status 2 and above means StepPointMCCollection may have non-dereferencable pointers
     }
 
     g4consistentFilter: {
-       module_type: FilterStatusG4
-       input: "g4run"
-       maxAcceptedStatus: 9  #  status 10 and above means StepPointMCCollection may have non-dereferencable pointers
+      module_type: FilterStatusG4
+      input: "g4run"
+      maxAcceptedStatus: 9  #  status 10 and above means StepPointMCCollection may have non-dereferencable pointers
     }
   }
   analyzers: {

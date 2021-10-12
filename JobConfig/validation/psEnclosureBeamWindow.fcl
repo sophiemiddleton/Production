@@ -1,5 +1,5 @@
 // Record hits in PSEnclosure end plate and the windows for the main beam.
-// 
+//
 // Andrei Gaponenko, 2015
 
 #include "Offline/fcl/minimalMessageService.fcl"
@@ -10,75 +10,75 @@
 process_name :  psEnclosureBeamWindow
 
 source : {
-   module_type : EmptyEvent
-   maxEvents : @nil
+  module_type : EmptyEvent
+  maxEvents : @nil
 }
 
 services : {
 
-   message               : @local::default_message
-   TFileService          : { fileName : "hist_beam_psebeamwin.root" }
-   RandomNumberGenerator : {defaultEngineKind: "MixMaxRng" }
+  message               : @local::default_message
+  TFileService          : { fileName : "hist_beam_psebeamwin.root" }
+  RandomNumberGenerator : {defaultEngineKind: "MixMaxRng" }
 
-   GeometryService        : { inputFile      : "Production/JobConfig/validation/geom_psEnclosure.txt" }
-   ConditionsService      : { conditionsfile : "Offline/ConditionsService/data/conditions_01.txt"      }
-   GlobalConstantsService : { inputFile      : "Offline/GlobalConstantsService/data/globalConstants_01.txt" }
-   Mu2eG4Helper           : { }
-   SeedService            : @local::automaticSeeds
+  GeometryService        : { inputFile      : "Production/JobConfig/validation/geom_psEnclosure.txt" }
+  ConditionsService      : { conditionsfile : "Offline/ConditionsService/data/conditions_01.txt"      }
+  GlobalConstantsService : { inputFile      : "Offline/GlobalConstantsService/data/globalConstants_01.txt" }
+  Mu2eG4Helper           : { }
+  SeedService            : @local::automaticSeeds
 }
 
 physics : {
-   analyzers: {
-      genCountLogger: {
-         module_type: GenEventCountReader
-      }
+  analyzers: {
+    genCountLogger: {
+      module_type: GenEventCountReader
+    }
 
-      endplate: {
-	 module_type: StepPointMCDumper TimeOffsets: {}
-	 hitsInputTag: "g4run:PSEnclosureEndPlate"
-      }
-      win0: {
-	 module_type: StepPointMCDumper TimeOffsets: {}
-	 hitsInputTag: "g4run:PSEnclosureWindow0"
-      }
-      win1: {
-	 module_type: StepPointMCDumper TimeOffsets: {}
-	 hitsInputTag: "g4run:PSEnclosureWindow1"
-      }
-   }
+    endplate: {
+      module_type: StepPointMCDumper TimeOffsets: {}
+      hitsInputTag: "g4run:PSEnclosureEndPlate"
+    }
+    win0: {
+      module_type: StepPointMCDumper TimeOffsets: {}
+      hitsInputTag: "g4run:PSEnclosureWindow0"
+    }
+    win1: {
+      module_type: StepPointMCDumper TimeOffsets: {}
+      hitsInputTag: "g4run:PSEnclosureWindow1"
+    }
+  }
 
-   producers: {
-      generate: @local::PrimaryProtonGun
+  producers: {
+    generate: @local::PrimaryProtonGun
 
-      genCounter: {
-         module_type: GenEventCounter
-      }
+    genCounter: {
+      module_type: GenEventCounter
+    }
 
-      g4run: @local::g4run
-   }
+    g4run: @local::g4run
+  }
 
-   trigmainbeam : [generate, genCounter, g4run]
-   trigger_paths  : [trigmainbeam]
+  trigmainbeam : [generate, genCounter, g4run]
+  trigger_paths  : [trigmainbeam]
 
-   an: [ genCountLogger, endplate, win0, win1 ]
-   end_paths: [an]
+  an: [ genCountLogger, endplate, win0, win1 ]
+  end_paths: [an]
 }
 
 //================================================================
 physics.producers.g4run.Mu2eG4CommonCut: {
-   type: union
-   pars: [
-      // speed things up
-      { type: inVolume pars: [TS1Vacuum,PSShieldShell1,ProtonBeamDumpCore,ProtonBeamDumpFront] },
-      // ignore the soft stuff
-      { type: kineticEnergy cut: 3000 }
-   ]
+  type: union
+  pars: [
+    // speed things up
+    { type: inVolume pars: [TS1Vacuum,PSShieldShell1,ProtonBeamDumpCore,ProtonBeamDumpFront] },
+    // ignore the soft stuff
+    { type: kineticEnergy cut: 3000 }
+  ]
 }
 
 physics.producers.g4run.SDConfig: {
-   enableSD: [ virtualdetector ] // activate just the explicitly listed SDs
-   sensitiveVolumes: [ PSEnclosureEndPlate, PSEnclosureWindow0, PSEnclosureWindow1 ]
-   TimeVD: { times: [] }
+  enableSD: [ virtualdetector ] // activate just the explicitly listed SDs
+  sensitiveVolumes: [ PSEnclosureEndPlate, PSEnclosureWindow0, PSEnclosureWindow1 ]
+  TimeVD: { times: [] }
 }
 
 

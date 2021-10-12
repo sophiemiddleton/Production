@@ -1,7 +1,7 @@
 // Record hits in PSEnclosure end plate and the ExtMon beam window.
 // The acceptance here is about 2.8e-6.  You need to simulate enough
 // events to see anything.
-// 
+//
 // Andrei Gaponenko, 2015
 
 #include "Offline/fcl/minimalMessageService.fcl"
@@ -12,86 +12,86 @@
 process_name :  psEnclosureExtMonWindow
 
 source : {
-   module_type : EmptyEvent
-   maxEvents : @nil
+  module_type : EmptyEvent
+  maxEvents : @nil
 }
 
 services : {
 
-   message               : @local::default_message
-   TFileService          : { fileName : "hist_beam_pseextmonwin.root" }
-   RandomNumberGenerator : {defaultEngineKind: "MixMaxRng" }
+  message               : @local::default_message
+  TFileService          : { fileName : "hist_beam_pseextmonwin.root" }
+  RandomNumberGenerator : {defaultEngineKind: "MixMaxRng" }
 
-   GeometryService        : { inputFile      : "Production/JobConfig/validation/geom_psEnclosure.txt" }
-   ConditionsService      : { conditionsfile : "Offline/ConditionsService/data/conditions_01.txt"      }
-   GlobalConstantsService : { inputFile      : "Offline/GlobalConstantsService/data/globalConstants_01.txt" }
-   Mu2eG4Helper           : { }
-   SeedService            : @local::automaticSeeds
+  GeometryService        : { inputFile      : "Production/JobConfig/validation/geom_psEnclosure.txt" }
+  ConditionsService      : { conditionsfile : "Offline/ConditionsService/data/conditions_01.txt"      }
+  GlobalConstantsService : { inputFile      : "Offline/GlobalConstantsService/data/globalConstants_01.txt" }
+  Mu2eG4Helper           : { }
+  SeedService            : @local::automaticSeeds
 }
 
 physics : {
-   analyzers: {
-      genCountLogger: {
-         module_type: GenEventCountReader
-      }
+  analyzers: {
+    genCountLogger: {
+      module_type: GenEventCountReader
+    }
 
-      endplate: {
-	 module_type: StepPointMCDumper TimeOffsets: {}
-	 hitsInputTag: "extmonBeamFilter:PSEnclosureEndPlate"
-      }
-      win0: {
-	 module_type: StepPointMCDumper TimeOffsets: {}
-	 hitsInputTag: "extmonBeamFilter:PSEnclosureWindow0"
-      }
-      win1: {
-	 module_type: StepPointMCDumper TimeOffsets: {}
-	 hitsInputTag: "extmonBeamFilter:PSEnclosureWindow1"
-      }
-   }
+    endplate: {
+      module_type: StepPointMCDumper TimeOffsets: {}
+      hitsInputTag: "extmonBeamFilter:PSEnclosureEndPlate"
+    }
+    win0: {
+      module_type: StepPointMCDumper TimeOffsets: {}
+      hitsInputTag: "extmonBeamFilter:PSEnclosureWindow0"
+    }
+    win1: {
+      module_type: StepPointMCDumper TimeOffsets: {}
+      hitsInputTag: "extmonBeamFilter:PSEnclosureWindow1"
+    }
+  }
 
-   producers: {
-      generate: @local::PrimaryProtonGun
+  producers: {
+    generate: @local::PrimaryProtonGun
 
-      genCounter: {
-         module_type: GenEventCounter
-      }
+    genCounter: {
+      module_type: GenEventCounter
+    }
 
-      g4run : @local::g4run
-   }
+    g4run : @local::g4run
+  }
 
-   filters: {
-      extmonBeamFilter: {
-         module_type: FilterG4Out
-         mainHitInputs : [ "g4run:extmonbeam" ]
-         extraHitInputs : [ "g4run:virtualdetector", "g4run:PSEnclosureEndPlate", "g4run:PSEnclosureWindow0", "g4run:PSEnclosureWindow1" ]
-         vetoDaughters: []
-      }
-   }
+  filters: {
+    extmonBeamFilter: {
+      module_type: FilterG4Out
+      mainHitInputs : [ "g4run:extmonbeam" ]
+      extraHitInputs : [ "g4run:virtualdetector", "g4run:PSEnclosureEndPlate", "g4run:PSEnclosureWindow0", "g4run:PSEnclosureWindow1" ]
+      vetoDaughters: []
+    }
+  }
 
-   trigmainextmon : [generate, genCounter, g4run, extmonBeamFilter]
-   trigger_paths  : [trigmainextmon]
+  trigmainextmon : [generate, genCounter, g4run, extmonBeamFilter]
+  trigger_paths  : [trigmainextmon]
 
-   an: [ genCountLogger, endplate, win0, win1 ]
-   end_paths: [an]
+  an: [ genCountLogger, endplate, win0, win1 ]
+  end_paths: [an]
 }
 
 //================================================================
 physics.producers.g4run.Mu2eG4CommonCut: {
-   type: union
-   pars: [
-      // speed things up
-      { type: inVolume pars: [TS1Vacuum,PSShieldShell1,ProtonBeamDumpCore,ProtonBeamDumpFront] },
-      // ignore the soft stuff
-      { type: kineticEnergy cut: 3000 },
-      // write particles reaching collimator2
-      { type: inVolume pars: [collimator2Channel] write: extmonbeam }
-   ]
+  type: union
+  pars: [
+    // speed things up
+    { type: inVolume pars: [TS1Vacuum,PSShieldShell1,ProtonBeamDumpCore,ProtonBeamDumpFront] },
+    // ignore the soft stuff
+    { type: kineticEnergy cut: 3000 },
+    // write particles reaching collimator2
+    { type: inVolume pars: [collimator2Channel] write: extmonbeam }
+  ]
 }
 
 physics.producers.g4run.SDConfig: {
-   enableSD: [ virtualdetector ] // activate just the explicitly listed SDs
-   sensitiveVolumes: [ PSEnclosureEndPlate, PSEnclosureWindow0, PSEnclosureWindow1 ]
-   TimeVD: { times: [] }
+  enableSD: [ virtualdetector ] // activate just the explicitly listed SDs
+  sensitiveVolumes: [ PSEnclosureEndPlate, PSEnclosureWindow0, PSEnclosureWindow1 ]
+  TimeVD: { times: [] }
 }
 
 // Larger range cut for the first stage

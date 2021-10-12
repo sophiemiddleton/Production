@@ -6,4 +6,7 @@
 #include "Offline/gen/fcl/Trigger/OffSpillTrigMenu/OffSpillTrigMenu.fcl"
 # setthe event timing for OffSpill
 physics.producers.EWMProducer.SpillType : 0
+# redefine 'triggerable' to include straight tracks and require more digis
+physics.filters.triggerable.maxparticlemom : 1e7
+physics.filters.triggerable.MinNDigis : 20
 

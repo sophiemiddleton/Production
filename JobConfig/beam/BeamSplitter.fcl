@@ -13,7 +13,7 @@ physics: {
       SimParticles : BeamFilter
       PrintLevel : 0
       ParticleCodes : [ [13, "uninitialized", "mu2eKillerVolume" ], # mu-, * , Manually stopped
-                        [-13, "uninitialized" , "mu2eKillerVolume" ] ] # mu+, *,  Manually stopped
+        [-13, "uninitialized" , "mu2eKillerVolume" ] ] # mu+, *,  Manually stopped
     }
   }
   selectMuons : [muonSelector ]

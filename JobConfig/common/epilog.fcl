@@ -2,3 +2,7 @@
 services.TFileService.fileName : "/dev/null"
 # provide time information
 services.TimeTracker.printSummary: true
+# limit printout
+services.message.destinations.log.categories.ArtReport.reportEvery : 1
+services.message.destinations.log.categories.ArtReport.limit : 1
+services.message.destinations.log.categories.ArtReport.timespan : 300

@@ -15,11 +15,7 @@ services : @local::Services.Sim
 physics : {
   producers : {
     @table::Common.producers
-    @table::Primary.producers
-    compressDetStepMCs : {
-      @table::Primary.producers.compressDetStepMCs
-      @table::Pileup.producers.compressDetStepMCs
-    }
+    @table::Pileup.producers
     # resampling generator
     generate : {
       module_type: Pileup
@@ -27,95 +23,88 @@ physics : {
       stoppingTargetMaterial : "Al"
       verbosity: 0
       captureProducts: [
-       {
+        {
           spectrum: {
-             nbins: 1000
-             spectrumShape: "ejectedProtons"
+            nbins: 1000
+            spectrumShape: "ejectedProtons"
           }
           spectrumVariable: "kineticEnergy"
           tool_type: "MuCapProtonGenerator"
-       },
-       {
+        },
+        {
           spectrum: {
-             nbins: 1000
-             spectrumShape: "ejectedProtons"
+            nbins: 1000
+            spectrumShape: "ejectedProtons"
           }
           spectrumVariable: "kineticEnergy"
           tool_type: "MuCapDeuteronGenerator"
-       },
-       {
+        },
+        {
           spectrum: {
-             spectrumFileName: "Offline/ConditionsService/data/neutronSpectrum.txt"
-             spectrumShape: "tabulated"
+            spectrumFileName: "Offline/ConditionsService/data/neutronSpectrum.txt"
+            spectrumShape: "tabulated"
           }
           spectrumVariable: "kineticEnergy"
           tool_type: "MuCapNeutronGenerator"
-       },
-       {
+        },
+        {
           spectrum: {
-             ehi: 7
-             elow: 0
-             spectrumShape: "flat"
+            ehi: 7
+            elow: 0
+            spectrumShape: "flat"
           }
           tool_type: "MuCapPhotonGenerator"
-       }
+        }
       ]
       decayProducts: [
-       {
+        {
           spectrum: {
-             elow: 1
-             pdgId: 11
-             spectrumResolution: 1e-1
-             spectrumShape: "Czarnecki"
+            elow: 1
+            pdgId: 11
+            spectrumResolution: 1e-1
+            spectrumShape: "Czarnecki"
           }
           tool_type: "DIOGenerator"
-       }
+        }
       ]
     }
   }
   filters : {
     @table::Common.filters
-    @table::Primary.filters
-  # override step filter to select any detectable signal from any particle
-    DetStepFilter : {
-      @table::Primary.filters.DetStepFilter
-      @table::Pileup.filters.DetStepFilter
-      # No need for a timing cut: the muon stop products are already late compared to that
-    }
+    @table::Pileup.filters
+    TargetStopResampler : @local::Primary.filters.TargetStopResampler
   }
-  analyzers : { @table::Primary.analyzers }
-  PileupPath : [ TargetStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, @sequence::Primary.DetStepSequence, @sequence::Primary.DetStepFilterSequence ]
-  EndPath : @local::Primary.EndPath
+  analyzers : { @table::Common.analyzers }
+  PileupPath : [ TargetStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, @sequence::Pileup.DetStepSequence ]
+  EndPath : [ Output ]
   trigger_paths : [ PileupPath ]
   end_paths : [ EndPath ]
 }
-outputs : { Output : {
-  @table::Pileup.Output
-  fileName: "dts.owner.MuStopPileup.version.sequencer.art"
-  outputCommands : [ "drop *_*_*_*",
-		 "keep art::EventIDs_*_*_*",
-		 "keep mu2e::GenEventCount_*_*_*",
-		 "keep mu2e::StatusG4_*_*_*",
-		 @sequence::Pileup.KeptProducts ]
- }
- # some consolidation is needed TODO
+outputs : {
+  Output : {
+    module_type: RootOutput
+    outputCommands : [ "drop *_*_*_*",
+      @sequence::Pileup.DtsKeptProducts ]
+    SelectEvents: [PileupPath]
+    fileName: "dts.owner.MuStopPileup.version.sequencer.art"
+  }
 }
 #include "Production/JobConfig/common/MT.fcl"
 #include "Production/JobConfig/common/epilog.fcl"
-#include "Production/JobConfig/primary/epilog.fcl"
 #include "Production/JobConfig/pileup/epilog.fcl"
+# No time cut; muons decay late anyways, this lets us use the output for both regulary and 'Early' mixing
+physics.filters.DetStepFilter.TimeCutConfig : @erase
 
-# resampling configuration; this should be somewhere common TODO
+# resampling configuration
 physics.producers.g4run.inputs: {
-   primaryType: StageParticles
-   primaryTag: "generate"
-   inputMCTrajectories: ""
-   simStageOverride: 2
-   inputPhysVolumeMultiInfo: "TargetStopResampler"
-   updateEventLevelVolumeInfos: {
-      input: "TargetStopResampler:eventlevel"
-      outInstance: "eventlevel"
-   }
+  primaryType: StageParticles
+  primaryTag: "generate"
+  inputMCTrajectories: ""
+  simStageOverride: 2
+  inputPhysVolumeMultiInfo: "TargetStopResampler"
+  updateEventLevelVolumeInfos: {
+    input: "TargetStopResampler:eventlevel"
+    outInstance: "eventlevel"
+  }
 }
-# use reduced BField for these jobs
-services.GeometryService.inputFile      : "Offline/Mu2eG4/geom/geom_common_no_tsu_ps.txt"
+

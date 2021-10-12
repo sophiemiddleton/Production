@@ -18,7 +18,7 @@ physics :
   RecoPath : [ @sequence::Reconstruction.RecoMCPath ]
   EndPath : @local::Reconstruction.EndPath
 }
-outputs : {   
+outputs : {
   Output : {
     @table::Reconstruction.Output
     SelectEvents : [ "RecoPath" ]

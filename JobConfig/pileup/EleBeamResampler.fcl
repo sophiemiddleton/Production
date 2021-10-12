@@ -1,0 +1,81 @@
+#
+# Re-sample 'electron' beam entering the DS, propagate them to the detectors or stopping target, and write out the corresponding flash DetectorSteps and target mustops.
+# Note the main flash stream has a time cut to avoid energy far outside the digitization window.  A prescaled but otherwise uncut stream is used to
+# record the flash peak
+#
+# original author: Yuri Oksuzian, 2019
+# Updated for MDC2020 (DetectorSteps): D. Brown
+
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/CommonMC/fcl/prolog.fcl"
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/pileup/prolog.fcl"
+
+process_name: EleBeamResampler
+
+source : {
+  module_type : EmptyEvent
+  maxEvents : @nil
+}
+
+services : @local::Services.Sim
+physics: {
+  producers : {
+    @table::Common.producers
+    @table::Pileup.producers
+  }
+  filters : {
+    @table::Common.filters
+    @table::Pileup.filters
+  }
+  analyzers : {
+    @table::Common.analyzers
+  }
+  # setup paths
+  flashPath : [ @sequence::Pileup.beamResamplerSequence, @sequence::Common.g4Sequence, @sequence::Pileup.DetStepSequence ]
+  earlyFlashPath : [ @sequence::Pileup.beamResamplerSequence, @sequence::Common.g4Sequence, @sequence::Pileup.EarlyDetStepSequence ]
+  trigger_paths: [ flashPath, earlyFlashPath ]
+  outPath : [ FlashOutput, EarlyFlashOutput ]
+  end_paths: [outPath]
+}
+
+outputs: {
+
+  FlashOutput : {
+    module_type: RootOutput
+    outputCommands:   [ "drop *_*_*_*",
+      @sequence::Pileup.DtsKeptProducts
+    ]
+    SelectEvents: [flashPath]
+    fileName : "dts.owner.EleBeamFlash.version.sequencer.art"
+  }
+
+  EarlyFlashOutput : {
+    module_type: RootOutput
+    outputCommands:   [ "drop *_*_*_*",
+      @sequence::Pileup.DtsKeptProducts
+    ]
+    SelectEvents: [earlyFlashPath]
+    fileName : "dts.owner.EarlyEleBeamFlash.version.sequencer.art"
+  }
+}
+# set prescale factor
+physics.filters.EarlyPrescaleFilter.nPrescale         : 1000
+
+# Point Mu2eG4 to the pre-simulated data
+physics.producers.g4run.inputs: {
+  primaryType: "StepPoints"
+  primaryTag: "beamResampler:Beam"
+  inputMCTrajectories: ""
+  simStageOverride: 1
+  inputPhysVolumeMultiInfo: "beamResampler"
+  updateEventLevelVolumeInfos: {
+    input: "beamResampler:eventlevel"
+    outInstance: "eventlevel"
+  }
+}
+# copy over VD hits
+physics.producers.g4run.SDConfig.preSimulatedHits:  ["beamResampler:virtualdetector"]
+#include "Production/JobConfig/common/MT.fcl"
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/pileup/epilog.fcl"

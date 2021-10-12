@@ -1,14 +1,14 @@
-// Re-sample cosmics from stage-1
-// Yuri Oksuzian, 2020
+# Re-sample cosmics from stage-1
+# Yuri Oksuzian, 2020
 #include "Offline/CommonMC/fcl/prolog.fcl"
 #include "Production/JobConfig/cosmic/prolog.fcl"
 #include "Production/JobConfig/primary/Primary.fcl"
 
-// Bring in info from the previous stage
+# Bring in info from the previous stage
 physics.filters.cosmicResample: @local::Cosmic.cosmicResample
 physics.filters.cosmicResample.mu2e.MaxEventsToSkip: 18415 # this number depends on the production details
 
-// Point Mu2eG4 to the pre-simulated data
+# Point Mu2eG4 to the pre-simulated data
 physics.producers.g4run.inputs: @local::Cosmic.MultiStageParametersCosmicS2
 
 physics.producers.cosmicTimeOffset: @local::CommonMC.producers.cosmicTimeOffset
@@ -20,7 +20,7 @@ physics.producers.g4run.inputs.inputPhysVolumeMultiInfo: "cosmicResample"
 physics.producers.g4run.inputs.updateEventLevelVolumeInfos.input: "cosmicResample:eventlevel"
 physics.producers.g4run.inputs.updateEventLevelVolumeInfos.outInstance: "eventlevel"
 
-// Kill cosmics outside of the CRV region
+# Kill cosmics outside of the CRV region
 physics.producers.g4run.Mu2eG4CommonCut: @local::Cosmic.Mu2eG4CommonCutCosmicS2
 physics.producers.g4run.SDConfig.preSimulatedHits:  ["cosmicResample:CRV"]
 physics.producers.FindMCPrimary.PrimaryGenIds: ["CosmicCRY", "CosmicCORSIKA"]

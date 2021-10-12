@@ -1,7 +1,7 @@
-// This configuration propogates cosmics from the surface towards DS.
-// Cosmics hitting crvStage1End volumes are stopped and saved for later resampling.
-//
-// Yuri Oksuzian, 2021
+# This configuration propogates cosmics from the surface towards DS.
+# Cosmics hitting crvStage1End volumes are stopped and saved for later resampling.
+#
+# Yuri Oksuzian, 2021
 #include "Offline/fcl/standardServices.fcl"
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/primary/prolog.fcl"
@@ -51,5 +51,5 @@ physics.end_paths : [ EndPath ]
 services.TFileService.fileName : "/dev/null"
 services.SeedService.baseSeed         :  773651
 
-// Need this to increase the world volume.
+# Need this to increase the world volume.
 services.GeometryService.inputFile: "Production/JobConfig/cosmic/geom_cosmic_current.txt"

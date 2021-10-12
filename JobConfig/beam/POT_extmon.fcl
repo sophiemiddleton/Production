@@ -11,8 +11,8 @@
 process_name :  POTextmon
 
 source : {
-   module_type : EmptyEvent
-   maxEvents : @nil
+  module_type : EmptyEvent
+  maxEvents : @nil
 }
 
 services : @local::Services.Sim
@@ -24,7 +24,7 @@ physics : {
     generate: @local::PrimaryProtonGun
     compressPVextmonBeam : @local::Beam.producers.compressPVextmonBeam
     compressPVextmonRegion : @local::Beam.producers.compressPVextmonRegion
-  } 
+  }
   filters: {
     @table::Common.filters
     extmonBeamFilter : @local::Beam.filters.extmonBeamFilter

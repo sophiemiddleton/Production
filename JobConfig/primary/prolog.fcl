@@ -37,7 +37,7 @@ Primary: {
 
   filters : {
 
-# default step filter for Sim Primary selection
+    # default step filter for Sim Primary selection
     DetStepFilter : {
       module_type : DetectorStepFilter
       StrawGasSteps : [ "StrawGasStepMaker" ]
@@ -59,9 +59,9 @@ Primary: {
       wrapFiles           : true
       fileNames: @nil
       mu2e: {
-	writeEventIDs : true
+        writeEventIDs : true
         MaxEventsToSkip: @nil
-	debugLevel : 1
+        debugLevel : 1
         products: {
           genParticleMixer: { mixingMap: [ [ "beamResampler", "" ] ] }
           simParticleMixer: { mixingMap: [ [ "TargetStopFilter", "" ] ] }
@@ -73,20 +73,20 @@ Primary: {
         }
       }
     }
-    
+
     IPAStopResampler : {
       module_type: ResamplingMixer
       readMode            : sequential
       wrapFiles           : true
-      fileNames: @nil 
+      fileNames: @nil
       mu2e: {
-	      writeEventIDs : true
+        writeEventIDs : true
         MaxEventsToSkip: @nil
-	      debugLevel : 1
+        debugLevel : 1
         products: {
           genParticleMixer: { mixingMap: [ [ "beamResampler", "" ] ] }
           simParticleMixer: { mixingMap: [ [ "IPAStopFilter", "" ] ] }
-          stepPointMCMixer: { mixingMap: [ [ "IPAStopFilter:virtualdetector", ":" ] ] } 
+          stepPointMCMixer: { mixingMap: [ [ "IPAStopFilter:virtualdetector", ":" ] ] }
           volumeInfoMixer: {
             srInput: "compressPVIPAStops"
             evtOutInstanceName: "eventlevel"
@@ -102,37 +102,38 @@ Primary: {
   DetStepFilterSequence : [ DetStepFilter, compressDetStepMCs ]
 
   KeptProducts : [
-		       "keep mu2e::StrawGasSteps_compressDetStepMCs_*_*",
-		       "keep mu2e::CaloShowerSteps_compressDetStepMCs_*_*",
-		       "keep mu2e::CrvSteps_compressDetStepMCs_*_*",
-		       "keep mu2e::StepPointMCs_compressDetStepMCs_virtualdetector_*",
-		       "keep mu2e::StepPointMCs_compressDetStepMCs_protonabsorber_*",
-		       "keep mu2e::StepPointMCs_compressDetStepMCs_stoppingtarget_*",
-		       "keep mu2e::SimParticlemv_compressDetStepMCs_*_*",
-		       "keep mu2e::SimParticleart::Ptrmu2e::MCTrajectorystd::map_compressDetStepMCs_*_*",
-		       "keep mu2e::GenParticles_compressDetStepMCs_*_*",
-		       "keep mu2e::PrimaryParticle_*_*_*",
-		       "keep art::EventIDs_*_*_*",
-		       "keep art::TriggerResults_*_*_*",
-		       "keep mu2e::StatusG4_*_*_*",
-		       "keep mu2e::GenEventCount_*_*_*" ]
+    "keep mu2e::StrawGasSteps_compressDetStepMCs_*_*",
+    "keep mu2e::CaloShowerSteps_compressDetStepMCs_*_*",
+    "keep mu2e::CrvSteps_compressDetStepMCs_*_*",
+    "keep mu2e::StepPointMCs_compressDetStepMCs_virtualdetector_*",
+    "keep mu2e::StepPointMCs_compressDetStepMCs_protonabsorber_*",
+    "keep mu2e::StepPointMCs_compressDetStepMCs_stoppingtarget_*",
+    "keep mu2e::SimParticlemv_compressDetStepMCs_*_*",
+    "keep mu2e::SimParticleart::Ptrmu2e::MCTrajectorystd::map_compressDetStepMCs_*_*",
+    "keep mu2e::GenParticles_compressDetStepMCs_*_*",
+    "keep mu2e::PrimaryParticle_*_*_*",
+    "keep mu2e::CosmicLivetime_*_*_*",
+    "keep art::EventIDs_*_*_*",
+    "keep art::TriggerResults_*_*_*",
+    "keep mu2e::StatusG4_*_*_*",
+    "keep mu2e::GenEventCount_*_*_*" ]
 
   analyzers: {
     genCountLogger: { module_type: GenEventCountReader makeHistograms: false }
   }
 
   Output : {
-     module_type : RootOutput
-     SelectEvents : [ PrimaryPath ]
-     fileName    : @nil
+    module_type : RootOutput
+    SelectEvents : [ PrimaryPath ]
+    fileName    : @nil
 
-     # drop StepPoints from calorimeter
+    # drop StepPoints from calorimeter
   }
   EndSequence : [ genCountLogger ]
-# define paths
+  # define paths
 }
 Primary.PrimarySequence : [ @sequence::Primary.DetStepSequence, @sequence::Primary.DetStepFilterSequence, FindMCPrimary ]
 Primary.EndPath : [ @sequence::Primary.EndSequence, Output ]
 Primary.Output.outputCommands : [ "drop *_*_*_*",
-		       @sequence::Primary.KeptProducts]
+  @sequence::Primary.KeptProducts]
 END_PROLOG

@@ -19,8 +19,8 @@ physics : {
   }
   analyzers: { @table::Digitize.analyzers }
   # same path for triggered, untriggered streams, but different selections
-  Triggered : [ PBISim, @sequence::Mixing.StepMixSequence, @sequence::Digitize.DigitizeSequence ]
-  Untriggered : [ PBISim, @sequence::Mixing.StepMixSequence, @sequence::Digitize.DigitizeSequence ]
+  Triggered : [ NullMCPrimary, PBISim, @sequence::Mixing.StepMixSequence, @sequence::Digitize.DigitizeSequence ]
+  Untriggered : [ NullMCPrimary, PBISim, @sequence::Mixing.StepMixSequence, @sequence::Digitize.DigitizeSequence ]
   EndPath : @local::Digitize.EndPath
 }
 #
@@ -33,38 +33,16 @@ outputs : {
 #
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
+#include "Production/JobConfig/mixing/epilog.fcl"
 #
 # patch for no primary
-physics.producers.compressDigiMCs.extraStepPointMCTags : []
-physics.producers.compressDigiMCs.mcTrajectoryTag : ""
-physics.producers.compressDigiMCs.primaryParticleTag : ""
-physics.producers.FindMCPrimary : @erase
-# add trigger paths
-#include "Offline/gen/fcl/Trigger/OnSpillTrigMenu/OnSpillTrigMenu.fcl"
-# set the event timing for Onspill
-physics.producers.EWMProducer.SpillType : 1
-# minimal BField map
-services.GeometryService.inputFile      : "Offline/Mu2eG4/geom/geom_common_reco.txt"
-# add mixers to the list of step producers.  Note the StrawDigi maker uses a general selector if no module is specified
-physics.producers.makeSD.StrawGasStepModule : ""
+physics.producers.compressDigiMCs.extraStepPointMCTags : ["NullMCPrimary:virtualdetector", "NullMCPrimary:stoppingtarget", "NullMCPrimary:protonabsorber"]
+physics.producers.compressDigiMCs.mcTrajectoryTag : "NullMCPrimary"
+physics.producers.compressDigiMCs.primaryParticleTag : "NullMCPrimary"
+
+physics.producers.CrvPhotons.crvStepProcessNames : [ "","","","" ]
 physics.producers.compressDigiMCs.simParticleTags : [@sequence::Mixing.StepMixSequence ]
 physics.producers.compressDigiMCs.caloShowerStepTags : [@sequence::Mixing.StepMixSequence ]
 physics.producers.CaloShowerROMaker.caloShowerStepCollection : [@sequence::Mixing.StepMixSequence ]
 physics.producers.CrvPhotons.crvStepModuleLabels : [ @sequence::Mixing.StepMixSequence ]
-physics.producers.CrvPhotons.crvStepProcessNames : [ "","","","" ]
-# configure the mixin efficiences
-physics.filters.EleBeamFlashMixer.mu2e.simStageEfficiencyTags: ["EleBeamCat", "EleBeamFlashCat" ]
-physics.filters.MuBeamFlashMixer.mu2e.simStageEfficiencyTags: ["MuBeamCat", "MuBeamFlashCat" ]
-physics.filters.NeutralsFlashMixer.mu2e.simStageEfficiencyTags: ["NeutralsCat", "NeutralsFlashCat" ]
-physics.filters.MuStopPileupMixer.mu2e.simStageEfficiencyTags: ["MuBeamCat", "MuminusStopsCat", "MuStopPileupCat"]
-physics.filters.MuStopPileupMixer.mu2e.meanEventsPerPOTFactors : [ 1000 ]  # target stops are presampled by 1000
-# define the paths
-physics.trigger_paths[0] : Triggered
-physics.trigger_paths[1] : Untriggered
-physics.end_paths : [ EndPath ]
-# no selection for untriggered output
-outputs.UntriggeredOutput.SelectEvents : []
-# generic output: this is overwritten by gen_Mix.sh
-outputs.TriggeredOutput.fileName: "dig.owner.NoPrimaryTriggered.version.sequencer.art"
-outputs.UntriggeredOutput.fileName: "dig.owner.NoPrimaryUntriggered.version.sequencer.art"
-services.ProditionsService.simbookkeeper.useDb: true
+

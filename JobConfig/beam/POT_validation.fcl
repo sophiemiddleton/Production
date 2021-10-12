@@ -14,8 +14,8 @@
 process_name :  POT
 
 source : {
-   module_type : EmptyEvent
-   maxEvents : @nil
+  module_type : EmptyEvent
+  maxEvents : @nil
 }
 
 services : @local::Services.Sim
@@ -30,7 +30,7 @@ physics : {
     compressPVextmonBeam : @local::Beam.producers.compressPVextmonBeam
     compressPVextmonRegion : @local::Beam.producers.compressPVextmonRegion
     compressPVFull : @local::Beam.producers.compressPVFull
-  } 
+  }
   filters: {
     @table::Common.filters
     BeamFilter : @local::Beam.filters.BeamFilter
@@ -96,12 +96,12 @@ outputs: {
     module_type : RootOutput
     SelectEvents: ["truncatedPath"]
     outputCommands:   [ "drop *_*_*_*",
-       "keep mu2e::GenParticles_*_*_*",
-       "keep mu2e::GenEventCount_*_*_*",
-       "keep mu2e::StatusG4_*_*_*",
-       "keep *_g4run_*_*",
-       "drop uintmu2e::PhysicalVolumeInfomvstd::pairs_g4run_*_*",
-       "keep *_compressPVFull_*_*"
+      "keep mu2e::GenParticles_*_*_*",
+      "keep mu2e::GenEventCount_*_*_*",
+      "keep mu2e::StatusG4_*_*_*",
+      "keep *_g4run_*_*",
+      "drop uintmu2e::PhysicalVolumeInfomvstd::pairs_g4run_*_*",
+      "keep *_compressPVFull_*_*"
     ]
     fileName : "sim.owner.Truncated.version.sequencer.art"
   }

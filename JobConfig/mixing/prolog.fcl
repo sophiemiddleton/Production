@@ -13,7 +13,7 @@ BEGIN_PROLOG
 
 # mixer configuration
 Mixing : {
-# DetectorStep mixer
+  # DetectorStep mixer
   DetStepMixer: {
     module_type         : MixBackgroundFrames
     fileNames           : @nil
@@ -21,7 +21,7 @@ Mixing : {
     wrapFiles           : true
     mu2e: {
       protonBunchIntensityTag: "PBISim"
-#      meanEventsPerProton: @nil
+      #      meanEventsPerProton: @nil
       simStageEfficiencyTags: @nil
       meanEventsPerPOTFactors : []
       writeEventIDs : false
@@ -40,20 +40,25 @@ Mixing : {
 }
 Mixing : {
   producers : {
-    PBISim : {  
+    PBISim : {
       module_type: ProtonBunchIntensityLogNormal
       SDF: @nil
       extendedMean: @nil
       cutMax:@nil
     }
+# null MCPrimary 'finder', used in NoPrimary
+    NullMCPrimary : {
+      module_type: NullMCPrimary
+      ExtraSteps : [ "virtualdetector", "stoppingtarget", "protonabsorber" ]
+    }
   }
   filters : {
-# mixers for muon stop pileup, beamflash pileup, and neutrals flash pileup
-    MuStopPileupMixer : @local::Mixing.DetStepMixer 
-    EleBeamFlashMixer : @local::Mixing.DetStepMixer 
-    MuBeamFlashMixer : @local::Mixing.DetStepMixer 
-    NeutralsFlashMixer : @local::Mixing.DetStepMixer 
-# filter for signal or calibration-like particles that can pass the trigger.  This is mainly for cosmics
+    # mixers for muon stop pileup, beamflash pileup, and neutrals flash pileup
+    MuStopPileupMixer : @local::Mixing.DetStepMixer
+    EleBeamFlashMixer : @local::Mixing.DetStepMixer
+    MuBeamFlashMixer : @local::Mixing.DetStepMixer
+    NeutralsFlashMixer : @local::Mixing.DetStepMixer
+    # filter for signal or calibration-like particles that can pass the trigger.  This is mainly for cosmics
     SignalFilter : {
       module_type : DetectorStepFilter
       MinimumTrkStepEnergy : 1.0e-6 # 1 ev
@@ -69,18 +74,18 @@ Mixing : {
   }
   TriggeredOutput : {
     @table::Digitize.TriggeredOutput
-      outputCommands : [ "drop *_*_*_*",
-		       @sequence::Mixing.MixingProducts,
-		       @sequence::Digitize.DigiProducts,
-		       @sequence::Digitize.TriggerProducts ]
+    outputCommands : [ "drop *_*_*_*",
+      @sequence::Mixing.MixingProducts,
+      @sequence::Digitize.DigiProducts,
+      @sequence::Digitize.TriggerProducts ]
 
   }
   UntriggeredOutput : {
     @table::Digitize.UntriggeredOutput
-      outputCommands : [ "drop *_*_*_*",
-		       @sequence::Mixing.MixingProducts,
-		       @sequence::Digitize.DigiProducts,
-		       @sequence::Digitize.TriggerProducts ]
+    outputCommands : [ "drop *_*_*_*",
+      @sequence::Mixing.MixingProducts,
+      @sequence::Digitize.DigiProducts,
+      @sequence::Digitize.TriggerProducts ]
     SelectEvents : [ Untriggered ]
   }
 

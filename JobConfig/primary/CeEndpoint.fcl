@@ -8,6 +8,7 @@ physics.producers.generate : {
   module_type : CeEndpoint
   inputSimParticles: TargetStopResampler
   stoppingTargetMaterial : "Al"
+  pdgId : 11
   verbosity : 0
 }
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eCeMinusEndpoint"

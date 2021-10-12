@@ -21,6 +21,7 @@ physics: {
       module_type : CeEndpoint
       inputSimParticles: TargetStopResampler
       stoppingTargetMaterial : "Al"
+      pdgId : 11
       verbosity : 0
     }
     @table::Common.producers

@@ -1,71 +1,22 @@
 #
-# Base configuration for Resampling IPA muon stops and generating primary particles from them
+# Configuration for resampling IPA muon stops and generating primary particles from them
+# with Michel spectrum
 #
 # original author: S Middleton
 #
-#include "Offline/fcl/standardServices.fcl"
-#include "Offline/EventGenerator/fcl/prolog.fcl"
-#include "Production/JobConfig/common/prolog.fcl"
-#include "Production/JobConfig/primary/prolog.fcl"
-#include "Production/JobConfig/pileup/prolog.fcl"
-# name all processes the same, to mask any provenance in ensemble creation
-
-// Below is the analogous file to TargetStops - it is combined with the IPA Michel primary generator since we have no other reason to look at IPA stops:
-process_name: Primary
-source: { module_type : EmptyEvent }
-services : @local::Services.Sim
-physics : { 
-  producers : { 
-    @table::Common.producers 
-    @table::Primary.producers 
-  }
-  filters : { 
-    @table::Common.filters 
-    @table::Primary.filters 
-  }
-  analyzers : { @table::Primary.analyzers }
-  PrimaryPath : [ IPAStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
-  EndPath : @local::Primary.EndPath
-  trigger_paths : [ PrimaryPath ]
-  end_paths : [ EndPath ]
-}
-outputs : { Output :@local::Primary.Output }
-#
-# final configuration
-#
-#include "Production/JobConfig/common/epilog.fcl"
-#include "Production/JobConfig/primary/epilog.fcl"
-#
-physics.producers.g4run.inputs: {
-   primaryType: StageParticles
-   primaryTag: "generate"
-   inputMCTrajectories: ""
-   simStageOverride: 2
-   inputPhysVolumeMultiInfo: "IPAStopResampler" 
-   updateEventLevelVolumeInfos: {
-      input: "IPAStopResampler:eventlevel" 
-      outInstance: "eventlevel"
-   }
-}
-
-# use reduced BField for these jobs
-services.GeometryService.inputFile      : "Offline/Mu2eG4/geom/geom_common_no_tsu_ps.txt"
+#include "Production/JobConfig/primary/IPAStopParticle.fcl"
 
 physics.filters.DetStepFilter.MinimumPartMom : 10.0 // MeV/c TODO - tweak this parameter to get more DetSteps
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eMuonDecayAtRest"
+physics.filters.IPAStopResampler.mu2e.MaxEventsToSkip : @nil
 
-// Below is the part which generates the IPA electrons
 physics.producers.generate : {
   module_type : Pileup
   verbosity : 10
-  inputSimParticles: IPAStopResampler 
+  inputSimParticles: IPAStopResampler
   captureProducts : []
   decayProducts : [ @local::Pileup.dioGenTool ]
   stoppingTargetMaterial : "IPA"
 }
 
-
-physics.filters.IPAStopResampler.mu2e.MaxEventsToSkip : @nil  
-physics.producers.FindMCPrimary.PrimaryProcess : "mu2eMuonDecayAtRest"
 outputs.Output.fileName: "dts.owner.IPAMichel.version.sequencer.art"
-
- 
