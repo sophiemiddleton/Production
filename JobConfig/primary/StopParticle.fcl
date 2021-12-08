@@ -22,11 +22,7 @@ physics : {
     @table::Primary.filters
   }
   analyzers : { @table::Primary.analyzers }
-  EndPath : @local::Primary.EndPath
-  trigger_paths : [ PrimaryPath ]
-  end_paths : [ EndPath ]
 }
-outputs : { Output :@local::Primary.Output }
 #
 # final configuration
 #

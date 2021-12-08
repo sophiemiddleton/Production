@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 #
+# create fcl to produced mixed digis
 # this script requires mu2etools, mu2efiletools and dhtools be setup
 # It also requires the SimEfficiencies for the beam campaign be entered in the database
 # $1 is the name of the primary (ie CeEndpoint, etc).
@@ -73,62 +74,62 @@ nfiles=`samCountFiles.sh "dts.mu2e.MuStopPileupCat.$mixinconf.art"`
 nevts=`samCountEvents.sh "dts.mu2e.MuStopPileupCat.$mixinconf.art"`
 let nskip_MuStopPileup=nevts/nfiles
 #
-# write the template fcl
+# write the mix.fcl
 #
-rm template.fcl
+rm mix.fcl
 #
 # create a template file.  Start with the primary
 #
 if [ $primary == "NoPrimary" ]; then
-  echo '#include "Production/JobConfig/mixing/NoPrimary.fcl"' >> template.fcl
+  echo '#include "Production/JobConfig/mixing/NoPrimary.fcl"' >> mix.fcl
   if [[ $njobs -lt 0 || $eventsperjob -lt 0 ]]; then
     echo njobs and eventsperjob must be specified for NoPrimary
     return 0;
   fi
 elif [[ $primary == PBI* ]]; then
   samweb list-file-locations --schema=root --defname="sim.mu2e.${primary}.${primaryconf}.art"  | cut -f1 > ${primary}.txt
-  echo '#include "Production/JobConfig/mixing/NoPrimaryPBISequence.fcl"' >> template.fcl
+  echo '#include "Production/JobConfig/mixing/NoPrimaryPBISequence.fcl"' >> mix.fcl
 else
   samweb list-file-locations --schema=root --defname="dts.mu2e.${primary}.${primaryconf}.art"  | cut -f1 > ${primary}.txt
-  echo '#include "Production/JobConfig/mixing/Mix.fcl"' >> template.fcl
+  echo '#include "Production/JobConfig/mixing/Mix.fcl"' >> mix.fcl
 fi
 # setup the number of booster batches
 if [ $nbb == "one" ]; then
-  echo '#include "Production/JobConfig/mixing/OneBB.fcl"' >> template.fcl
+  echo '#include "Production/JobConfig/mixing/OneBB.fcl"' >> mix.fcl
 elif [ $nbb == "two" ]; then
-  echo '#include "Production/JobConfig/mixing/TwoBB.fcl"' >> template.fcl
+  echo '#include "Production/JobConfig/mixing/TwoBB.fcl"' >> mix.fcl
 else
   echo "Must specify 'one' or 'two' booster batches"
 fi
 #
 # set the skips
 #
-echo physics.filters.MuBeamFlashMixer.mu2e.MaxEventsToSkip: ${nskip_MuBeamFlash} >> template.fcl
-echo physics.filters.EleBeamFlashMixer.mu2e.MaxEventsToSkip: ${nskip_EleBeamFlash} >> template.fcl
-echo physics.filters.NeutralsFlashMixer.mu2e.MaxEventsToSkip: ${nskip_NeutralsFlash} >> template.fcl
-echo physics.filters.MuStopPileupMixer.mu2e.MaxEventsToSkip: ${nskip_MuStopPileup} >> template.fcl
+echo physics.filters.MuBeamFlashMixer.mu2e.MaxEventsToSkip: ${nskip_MuBeamFlash} >> mix.fcl
+echo physics.filters.EleBeamFlashMixer.mu2e.MaxEventsToSkip: ${nskip_EleBeamFlash} >> mix.fcl
+echo physics.filters.NeutralsFlashMixer.mu2e.MaxEventsToSkip: ${nskip_NeutralsFlash} >> mix.fcl
+echo physics.filters.MuStopPileupMixer.mu2e.MaxEventsToSkip: ${nskip_MuStopPileup} >> mix.fcl
 #
 # setup database access for SimEfficiencies
 #
-echo services.DbService.purpose: $outconf >> template.fcl
-echo services.DbService.version: $dbver >> template.fcl
+echo services.DbService.purpose: $outconf >> mix.fcl
+echo services.DbService.version: $dbver >> mix.fcl
 #
 # overwrite the outputs
 #
-echo outputs.TriggeredOutput.fileName: \"dig.owner.${mixout}Triggered.version.sequencer.art\" >> template.fcl
-echo outputs.UntriggeredOutput.fileName: \"dig.owner.${mixout}Untriggered.version.sequencer.art\" >> template.fcl
+echo outputs.TriggeredOutput.fileName: \"dig.owner.${mixout}Triggered.version.sequencer.art\" >> mix.fcl
+echo outputs.UntriggeredOutput.fileName: \"dig.owner.${mixout}Untriggered.version.sequencer.art\" >> mix.fcl
 #
 # run generate_fcl
 #
 if [ $1 == "NoPrimary" ]; then
-  generate_fcl --dsconf="$outconf" --dsowner=mu2e --description="$mixout" --embed template.fcl \
+  generate_fcl --dsconf="$outconf" --dsowner=mu2e --description="$mixout" --embed mix.fcl \
   --run-number=1203 --events-per-job=$eventsperjob --njobs=$njobs \
   --auxinput=1:physics.filters.MuStopPileupMixer.fileNames:MuStopPileupCat$mixinconf.txt \
   --auxinput=25:physics.filters.EleBeamFlashMixer.fileNames:EleBeamFlashCat$mixinconf.txt \
   --auxinput=1:physics.filters.MuBeamFlashMixer.fileNames:MuBeamFlashCat$mixinconf.txt \
   --auxinput=25:physics.filters.NeutralsFlashMixer.fileNames:NeutralsFlashCat$mixinconf.txt
 else
-  generate_fcl --dsconf="$outconf" --dsowner=mu2e --description="$mixout" --embed template.fcl \
+  generate_fcl --dsconf="$outconf" --dsowner=mu2e --description="$mixout" --embed mix.fcl \
   --inputs="$primary.txt" --merge-factor=1 \
   --auxinput=1:physics.filters.MuStopPileupMixer.fileNames:MuStopPileupCat$mixinconf.txt \
   --auxinput=25:physics.filters.EleBeamFlashMixer.fileNames:EleBeamFlashCat$mixinconf.txt \

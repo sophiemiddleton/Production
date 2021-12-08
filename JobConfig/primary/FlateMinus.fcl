@@ -13,4 +13,4 @@ physics.producers.generate : {
 }
 
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlateMinus"
-outputs.Output.fileName: "dts.owner.FlateMinus.version.sequencer.art"
+outputs.PrimaryOutput.fileName: "dts.owner.FlateMinus.version.sequencer.art"

@@ -8,7 +8,6 @@
 
 physics.filters.DetStepFilter.MinimumPartMom : 10.0 // MeV/c TODO - tweak this parameter to get more DetSteps
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlateMinus"
-physics.filters.IPAStopResampler.mu2e.MaxEventsToSkip : @nil
 
 physics.producers.generate : {
   module_type: FlatMuonDaughterGenerator
@@ -18,4 +17,4 @@ physics.producers.generate : {
   pdgId : 11
 }
 
-outputs.Output.fileName: "dts.owner.IPAFlat.version.sequencer.art"
+outputs.PrimaryOutput.fileName: "dts.owner.IPAFlat.version.sequencer.art"

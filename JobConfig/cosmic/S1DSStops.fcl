@@ -4,10 +4,9 @@
 # Yuri Oksuzian, 2021
 #include "Offline/fcl/standardServices.fcl"
 #include "Production/JobConfig/common/prolog.fcl"
-#include "Production/JobConfig/primary/prolog.fcl"
 #include "Production/JobConfig/cosmic/prolog.fcl"
 
-process_name : Primary
+process_name : S1DSStops
 
 services: @local::Services.Sim
 
@@ -29,15 +28,27 @@ physics: {
 
   # Here we moved the genCounter at the end in order to get a correct scaling of the
   # cosmic livetime after resampling
-  PrimaryPath :  [generate, @sequence::Common.g4Sequence, stepPointMomentumFilter, cosmicFilter, compressPV, genCounter]
-  EndPath : @local::Primary.EndPath
-
+  S1Path :  [generate, @sequence::Common.g4Sequence, stepPointMomentumFilter, cosmicFilter, compressPV, genCounter]
+  EndPath : [ genCountLogger, S1Output ]
 }
 
-outputs : { Output : @local::Primary.Output }
+outputs : {
+  S1Output : {
+    module_type : RootOutput
+    SelectEvents : [ S1Path ]
+    fileName :  @nil
+    outputCommands : [
+      "drop *_*_*_*",
+      "keep art::TriggerResults_*_*_*",
+      "keep mu2e::StatusG4_*_*_*",
+      "keep mu2e::GenEventCount_*_*_*",
+      "keep mu2e::CosmicLivetime_*_*_*",
+      "keep *_compressPV_*_*",
+      "keep mu2e::GenParticles_*_*_*",
+      "keep *_cosmicFilter_*_*"]
+  }
+}
 
-outputs.Output.fileName : "sim.owner.CosmicDSStops.version.sequencer.art"
-outputs.Output.outputCommands : [@sequence::Primary.KeptProducts, "keep mu2e::CosmicLivetime_*_*_*", "keep *_compressPV_*_*", "keep mu2e::GenParticles_*_*_*", "keep *_cosmicFilter_*_*"]
 
 physics.producers.g4run.TrajectoryControl: @local::mu2eg4DefaultTrajectories
 physics.producers.g4run.SDConfig.enableSD: [ CRV ]
@@ -46,12 +57,10 @@ physics.producers.g4run.Mu2eG4CommonCut: @local::Cosmic.Mu2eG4CommonCutCosmicS1
 # final configuration
 #
 #include "Production/JobConfig/common/epilog.fcl"
-#include "Production/JobConfig/primary/epilog.fcl"
 
+physics.trigger_paths : [ S1Path ]
 physics.end_paths : [ EndPath ]
-# no histogram output
-services.TFileService.fileName : "/dev/null"
 services.SeedService.baseSeed         :  773651
 
 # Need this to increase the world volume.
-services.GeometryService.inputFile: "Production/JobConfig/cosmic/geom_cosmic_current.txt"
+services.GeometryService.inputFile : "Production/JobConfig/cosmic/geom_cosmic.txt"

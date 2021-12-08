@@ -1,16 +1,36 @@
 # Re-sample cosmics from stage-1
 # Yuri Oksuzian, 2020
 #include "Offline/CommonMC/fcl/prolog.fcl"
+#include "Offline/fcl/standardServices.fcl"
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/primary/prolog.fcl"
 #include "Production/JobConfig/cosmic/prolog.fcl"
-#include "Production/JobConfig/primary/Primary.fcl"
-
+process_name: CosmicS2
+# the following will change when we read art stops
+source: { module_type : EmptyEvent }
+services : @local::Services.Sim
+physics : {
+  producers : {
+    @table::Common.producers
+    @table::Primary.producers
+  }
+  filters : {
+    @table::Common.filters
+    @table::Primary.filters
+  }
+  analyzers : { @table::Primary.analyzers }
+  PrimaryPath : [ genCounter, cosmicTimeOffset, cosmicResample, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence]
+  EndPath : @local::Primary.EndPath
+  trigger_paths : [ PrimaryPath ]
+  end_paths : [ EndPath ]
+}
+outputs : { PrimaryOutput :@local::Primary.PrimaryOutput }
+#
 # Bring in info from the previous stage
 physics.filters.cosmicResample: @local::Cosmic.cosmicResample
-physics.filters.cosmicResample.mu2e.MaxEventsToSkip: 18415 # this number depends on the production details
+physics.filters.cosmicResample.mu2e.MaxEventsToSkip: 18415 # this number depends on the production details FIXME!
 physics.filters.cosmicResample.mu2e.products.cosmicLivetimeMixer.moduleLabel: "generate"
 physics.filters.cosmicResample.mu2e.products.cosmicLivetimeMixer.genCounterLabel: "genCounter::Primary"
-
-physics.filters.signalFilter: @local::Cosmic.signalFilter
 
 # Point Mu2eG4 to the pre-simulated data
 physics.producers.g4run.inputs: @local::Cosmic.MultiStageParametersCosmicS2
@@ -29,20 +49,11 @@ physics.producers.g4run.Mu2eG4CommonCut: @local::Cosmic.Mu2eG4CommonCutCosmicS2
 physics.producers.g4run.SDConfig.preSimulatedHits:  ["cosmicResample:CRV"]
 physics.producers.FindMCPrimary.PrimaryGenIds: ["CosmicCRY", "CosmicCORSIKA"]
 
-physics.PrimaryPath: [ genCounter, cosmicTimeOffset, cosmicResample, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
-physics.SelectSignal: [ genCounter, cosmicTimeOffset, cosmicResample, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence, signalFilter ]
-physics.trigger_paths : [ PrimaryPath, SelectSignal ]
-physics.EndPath : [ @sequence::Primary.EndSequence, Output, LooseOutput ]
-
-outputs : {
-  Output : @local::Cosmic.Output
-  LooseOutput : @local::Cosmic.LooseOutput
-}
-
-outputs.LooseOutput.fileName        : "dts.owner.CosmicLoose.version.sequencer.art"
-outputs.LooseOutput.outputCommands : [@sequence::Primary.KeptProducts,
+outputs.PrimaryOutput.fileName        : "dts.owner.Cosmic.version.sequencer.art"
+outputs.PrimaryOutput.outputCommands : [@sequence::Primary.KeptProducts,
    "keep mu2e::CosmicLivetime_*_mixed_*"]
-
-outputs.Output.fileName        : "dts.owner.Cosmic.version.sequencer.art"
-outputs.Output.outputCommands : [@sequence::Primary.KeptProducts,
-   "keep mu2e::CosmicLivetime_*_mixed_*"]
+#
+# final configuration
+#
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/primary/epilog.fcl"

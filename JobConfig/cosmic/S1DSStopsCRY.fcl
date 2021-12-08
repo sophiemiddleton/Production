@@ -2,4 +2,4 @@
 
 source.module_type: EmptyEvent
 physics.producers.generate : @local::Cosmic.generateCRY
-outputs.Output.fileName : "sim.owner.CosmicDSStopsCRY.version.sequencer.art"
+outputs.S1Output.fileName : "sim.owner.CosmicDSStopsCRY.version.sequencer.art"

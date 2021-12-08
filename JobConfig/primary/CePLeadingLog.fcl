@@ -1,5 +1,5 @@
 #
-# Radiative Ce+ spectrum, based on doc 7615 spectrum 
+# Radiative Ce+ spectrum, based on doc 7615 spectrum
 #
 # original author: S Middleton
 #
@@ -9,12 +9,12 @@
 physics.producers.generate : {
   module_type : LeadingLog
   inputSimParticles: TargetStopResampler
-  stoppingTargetMaterial : "Al" 
+  stoppingTargetMaterial : "Al"
   spectrum : {
     spectrumShape : ceLeadingLog
-    pdgId : -11 
+    pdgId : -11
     elow : 1. #MeV
-    ehi : 92.32 
+    ehi : 92.32
     spectrumResolution : 0.1 #MeV
   }
   pdgId : -11
@@ -22,6 +22,6 @@ physics.producers.generate : {
 }
 
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eCePlusLeadingLog"
-outputs.Output.fileName: "dts.owner.CePLeadingLog.version.sequencer.art"
+outputs.PrimaryOutput.fileName: "dts.owner.CePLeadingLog.version.sequencer.art"
 
 

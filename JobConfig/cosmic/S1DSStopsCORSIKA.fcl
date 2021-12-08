@@ -19,9 +19,5 @@ source: {
   fluxConstant: 1.8e4
 }
 
-
 physics.producers.generate : @local::Cosmic.generateCORSIKA
-
-services.GeometryService.inputFile : "Production/JobConfig/cosmic/geom_cosmic.txt"
-services.GeometryService.simulatedDetector : { tool_type: "Mu2e" }
-outputs.Output.fileName         : "sim.owner.CosmicDSStopsCORSIKA.version.sequencer.art"
+outputs.S1Output.fileName         : "sim.owner.CosmicDSStopsCORSIKA.version.sequencer.art"

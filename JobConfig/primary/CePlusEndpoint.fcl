@@ -12,4 +12,4 @@ physics.producers.generate : {
   verbosity : 0
 }
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eCePlusEndpoint"
-outputs.Output.fileName: "dts.owner.CePlusEndpoint.version.sequencer.art"
+outputs.PrimaryOutput.fileName: "dts.owner.CePlusEndpoint.version.sequencer.art"

@@ -10,10 +10,10 @@ physics.producers.FindMCPrimary.PrimaryGenIds: ["CosmicCRY", "CosmicCORSIKA"]
 physics.TriggerPath: [ @sequence::TrackerMC.StepSim, @sequence::CaloMC.StepSim, CrvSteps,
     TrkStepFilter, CaloStepFilter, compressDetStepMCs, FindMCPrimary ]
 
-physics.filters.TrkStepFilter : @local::Primary.filters.DetStepFilter
+physics.filters.TrkStepFilter : @local::Primary.filters.PrimaryFilter
 physics.filters.TrkStepFilter.MaximumPartMom: 500
 physics.filters.TrkStepFilter.CaloShowerSteps: [ ]
-physics.filters.CaloStepFilter : @local::Primary.filters.DetStepFilter
+physics.filters.CaloStepFilter : @local::Primary.filters.PrimaryFilter
 physics.filters.CalStepFilter.MaximumPartMom: 500
 physics.filters.CaloStepFilter.StrawGasSteps: [ ]
 
