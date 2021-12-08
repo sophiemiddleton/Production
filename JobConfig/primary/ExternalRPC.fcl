@@ -17,10 +17,11 @@ physics.producers.generate : {
     spectrumShape : Bistirlich
     elow : 1. #MeV
     ehi : 140.
+    spectrumResolution : 0.1 #MeV
   }
   doHistograms : true
 }
 
-physics.producers.FindMCPrimary.PrimaryProcess : "InternalRPC"
-outputs.Output.fileName: "dts.owner.InternalRPC.version.sequencer.art"
+physics.producers.FindMCPrimary.PrimaryProcess : "ExternalRPC"
+#outputs.Output.fileName: "dts.owner.ExternalRPC.version.sequencer.art"
 
