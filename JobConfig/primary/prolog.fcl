@@ -139,7 +139,8 @@ Primary: {
     "keep art::EventIDs_*_*_*",
     "keep art::TriggerResults_*_*_*",
     "keep mu2e::StatusG4_*_*_*",
-    "keep mu2e::GenEventCount_*_*_*" ]
+    "keep mu2e::GenEventCount_*_*_*",
+    "keep mu2e::EventWeight_*_*_*" ]
 
   analyzers: {
     genCountLogger: { module_type: GenEventCountReader makeHistograms: false }
