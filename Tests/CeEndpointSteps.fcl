@@ -1,7 +1,7 @@
 #include "Production/JobConfig/primary/CeEndpoint.fcl"
 source.firstRun: 501
-physics.filters.TargetStopResampler.fileNames : [
-"/pnfs/mu2e/tape/phy-sim/sim/mu2e/MuminusStopsCat/MDC2020k/art/39/6a/sim.mu2e.MuminusStopsCat.MDC2020k.001201_00000000.art"]
+physics.filters.TargetStopResampler.fileNames : ["root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/sim/mu2e/MuminusStopsCat/Mu2eIIa2/art/40/89/sim.mu2e.MuminusStopsCat.Mu2eIIa2.001201_00000000.art"]
+
 physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: 0
 outputs.Output.fileName : "dts.tester.CeEndpoint.Test.1.art"
 
