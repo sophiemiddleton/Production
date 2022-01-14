@@ -6,11 +6,16 @@
 # $2 is the PBI sequence type (either Normal or Pathological)
 # $3 is the maximum number of events/job
 # $4 is the run number
+# $5 is the user field for the filename
+# $6 is the description field for the filename
 #
+# Example:
+# ./CreatePBISequence.sh 33344 Normal 1000 1201 mu2e MDC2020
+
 infile=PBI_$2_$1.txt
 nlines=`wc -l < $infile`
 let nfiles=$nlines/$3
-outroot=PBI_$2_$1_
+outroot=sim.$5.PBI$2_$1.$6.
 
 echo "spliiting file $infile into $nfiles files"
 split --lines $3 --numeric-suffixes --additional-suffix .txt $infile $outroot

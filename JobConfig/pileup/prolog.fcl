@@ -23,7 +23,7 @@ Pileup: {
       strawGasStepTag : "StrawGasStepMaker"
       caloShowerStepTag : "CaloShowerStepMaker"
       crvStepTag : "CrvSteps"
-      simParticleTag : "g4run"
+      simParticleTags : [ "g4run" ]
       debugLevel : 0
       # save StepPoints in VDs, ProtonAbsorber and ST
       stepPointMCTags : [ ] # turn off VD hits for pileup
@@ -38,6 +38,16 @@ Pileup: {
       module_type: "StoppedParticlesFinder"
       particleInput: "g4run"
       particleTypes: [ 13, -13 ]
+      physVolInfoInput: "g4run:eventlevel"
+      useEventLevelVolumeInfo: true
+      stoppingMaterial: "StoppingTarget_Al"
+      verbosityLevel: 1
+    }
+    
+    TargetPionFinder: {
+      module_type: "StoppedParticlesFinder"
+      particleInput: "g4run"
+      particleTypes: [ 211, -211 ]
       physVolInfoInput: "g4run:eventlevel"
       useEventLevelVolumeInfo: true
       stoppingMaterial: "StoppingTarget_Al"
@@ -67,6 +77,13 @@ Pileup: {
       hitInputs : []
       particleInputs : [ "TargetStopFilter" ]
     }
+    compressPVTargetPiStops: {
+      module_type: CompressPhysicalVolumes
+      volumesInput : "g4run"
+      hitInputs : []
+      particleInputs : [ "TargetPiStopFilter" ]
+    }
+
 
     compressPVIPAStops: {
       module_type: CompressPhysicalVolumes
@@ -102,6 +119,14 @@ Pileup: {
       extraHitInputs: [ "g4run:virtualdetector" ]
       mainSPPtrInputs: [ "TargetMuonFinder" ]
     }
+
+    TargetPiStopFilter: {
+      module_type: FilterG4Out
+      mainHitInputs: []
+      extraHitInputs: [ "g4run:virtualdetector" ]
+      mainSPPtrInputs: [ "TargetPionFinder" ]
+    }
+
 
     IPAStopFilter: {
       module_type: FilterG4Out
@@ -260,7 +285,6 @@ Pileup: {
   beamResamplerSequence : [genCounter, protonTimeOffset, beamResampler]
   neutralsResamplerSequence : [genCounter, protonTimeOffset, neutralsResampler]
   flashSequence : [ TargetMuonFinder, stoppedMuonDaughters, FlashFilter ]
-
   DetStepSequence : [
     @sequence::TrackerMC.StepSim,
     @sequence::CaloMC.StepSim,
@@ -270,7 +294,13 @@ Pileup: {
     @sequence::TrackerMC.StepSim,
     @sequence::CaloMC.StepSim,
     CrvSteps , EarlyDetStepFilter, compressDetStepMCs ]
-
+  #
+  #  Define the prescale values used in the various resamplers
+  #
+  EarlyEleBeamFlashPrescale : 1000
+  EarlyMuBeamFlashPrescale : 30
+  EarlyNeutralsFlashPrescale : 20
+  MuminusTargetStopPrescale : 1000
 }
 # DetctorStepFilter instance to select DetSteps outside the flash
 Pileup.filters.DetStepFilter : {

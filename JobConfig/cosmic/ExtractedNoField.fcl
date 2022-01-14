@@ -1,0 +1,66 @@
+# This configuration simulate cosmics with no field and extracted position
+# This is analogous to S1DSStops, so it needs to be included by another FCL
+# file that specifies the generator (e.g. physics.producers.generate : @local::Cosmic.generateCRY)
+# Stefano Roberto Soleti, 2021
+
+#include "Offline/fcl/standardServices.fcl"
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/primary/prolog.fcl"
+#include "Production/JobConfig/cosmic/prolog.fcl"
+
+process_name : Primary
+
+services: @local::Services.Sim
+
+physics: {
+  producers : {
+    @table::Common.producers
+    @table::Primary.producers
+    cosmicTimeOffset: {
+      module_type: CosmicTimeOffset
+      intervalStart: 0
+      intervalEnd: 100005
+      cosmicModuleLabel : "generate"
+    }
+  }
+
+  filters : {
+    @table::Common.filters
+    @table::Primary.filters
+  }
+
+  analyzers: {
+    @table::Primary.analyzers
+  }
+
+  PrimaryPath :  [ @sequence::Common.generateSequence, cosmicTimeOffset, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
+  EndPath : @local::Primary.EndPath
+  trigger_paths : [ PrimaryPath ]
+  end_paths : [ EndPath ]
+}
+
+outputs : { PrimaryOutput : @local::Primary.PrimaryOutput }
+
+outputs.PrimaryOutput.fileName : "sim.owner.CosmicNoFieldExtracted.version.sequencer.art"
+outputs.PrimaryOutput.outputCommands : [@sequence::Primary.KeptProducts, "keep mu2e::CosmicLivetime_*_*_*", "keep mu2e::GenParticles_*_*_*"]
+
+physics.producers.g4run.TrajectoryControl: @local::mu2eg4DefaultTrajectories
+physics.producers.g4run.inputs.primaryTag : cosmicTimeOffset
+physics.producers.g4run.Mu2eG4CommonCut: @local::Cosmic.Mu2eG4CommonCutCosmicNoField
+physics.producers.FindMCPrimary.PrimaryGenIds: ["CosmicCRY", "CosmicCORSIKA"]
+
+#
+# final configuration
+#
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/primary/epilog.fcl"
+#
+# need to offset the GenParticles
+
+physics.end_paths : [ EndPath ]
+# no histogram output
+services.TFileService.fileName : "/dev/null"
+services.SeedService.baseSeed         :  773651
+
+# Need this to increase the world volume.
+services.GeometryService.inputFile: "Production/JobConfig/cosmic/geom_extracted_nofield.txt"

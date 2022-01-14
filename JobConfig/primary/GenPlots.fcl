@@ -1,0 +1,9 @@
+# Makes generator plots to monitor the generator SimParticle outputs
+# author : S Middleton, 2021
+
+physics.analyzers.GeneratorPlots : {
+  module_type : GeneratorPlots
+  SimParticleCollection : compressDetStepMCs
+}
+
+services.TFileService.fileName: "nts.owner.GenPlots.version.sequencer.root"

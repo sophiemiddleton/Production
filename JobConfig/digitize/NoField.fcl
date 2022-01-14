@@ -1,0 +1,28 @@
+#
+#  Digitization specialization for no-field simulation.  This is a form of OffSpill
+#
+#include "Production/JobConfig/digitize/Digitize.fcl"
+# add trigger paths; for now use the Extracted trigger menu, as these assume no field (should become renamed TODO
+#include "Offline/gen/fcl/Trigger/ExtrPosTrigMenu/ExtrPosTrigMenu.fcl"
+# set the event timing for OffSpill
+physics.producers.EWMProducer.SpillType : 0
+# no-field
+services.GeometryService.inputFile: "Production/JobConfig/common/geom_nofield.txt"
+# produce only calibration streams
+physics.EndPath : [ @sequence::Digitize.EndSequence, TrkOutput, CaloOutput, UntriggeredOutput ]
+physics.end_paths : [ EndPath ]
+outputs : {
+  TrkOutput : {
+    @table::Digitize.TrkOutput
+    fileName : "dig.owner.NoFieldTrk.version.sequencer.art"
+  }
+  CaloOutput : {
+    @table::Digitize.CaloOutput
+    fileName : "dig.owner.NoFieldCalo.version.sequencer.art"
+  }
+  UntriggeredOutput : {
+    @table::Digitize.UntriggeredOutput
+    fileName : "dig.owner.NoFieldUntriggered.version.sequencer.art"
+  }
+}
+

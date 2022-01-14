@@ -131,7 +131,7 @@ physics.producers.g4run.SDConfig.enableSD: [ virtualdetector ] # activate just t
 # Not too coarse - we care about stopped muon positions.
 physics.producers.g4run.physics.minRangeCut : 0.010 # mm
 
-services.GeometryService.inputFile : "Production/JobConfig/common/geom_baseline.txt"
+services.GeometryService.inputFile : "Offline/Mu2eG4/geom/geom_common_current.txt"
 services.TFileService.fileName : "nts.owner.stoppedMuonsSingleStage.version.sequencer.root"
 
 # Initialze seeding of random engines: do not put these lines in base .fcl files for grid jobs.

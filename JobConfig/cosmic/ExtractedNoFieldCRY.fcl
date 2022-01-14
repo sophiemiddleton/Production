@@ -1,0 +1,6 @@
+#include "Production/JobConfig/cosmic/ExtractedNoField.fcl"
+
+source.module_type: EmptyEvent
+physics.producers.generate : @local::Cosmic.generateCRY
+physics.producers.generate.inputFile    : "Offline/EventGenerator/defaultConfigs/extractedCRYconfig.txt"
+outputs.Output.fileName : "sim.owner.CosmicCRYNoFieldExtracted.version.sequencer.art"

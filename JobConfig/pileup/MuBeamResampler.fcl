@@ -82,8 +82,8 @@ outputs: {
   }
 }
 # set prescale factors
-physics.filters.TargetStopPrescaleFilter.nPrescale         : 1000
-physics.filters.EarlyPrescaleFilter.nPrescale         : 30
+physics.filters.TargetStopPrescaleFilter.nPrescale         : @local::Pileup.MuminusTargetStopPrescale
+physics.filters.EarlyPrescaleFilter.nPrescale         : @local::Pileup.EarlyMuBeamFlashPrescale
 
 # Point Mu2eG4 to the pre-simulated data
 physics.producers.g4run.inputs: {
@@ -107,4 +107,4 @@ physics.producers.StrawGasStepMaker.SkipTheseStepPoints : "g4run"
 physics.producers.StrawGasStepMaker.KeepDeltasModule : ""
 physics.producers.CaloShowerStepMaker.caloStepPointCollection : ["FlashFilter:calorimeter"]
 physics.producers.CrvSteps.stepPointsModuleLabels : [ "FlashFilter" ]
-physics.producers.compressDetStepMCs.simParticleTag : "FlashFilter"
+physics.producers.compressDetStepMCs.simParticleTags : ["FlashFilter"]

@@ -7,4 +7,8 @@ source.maxEvents: 20
 source.fileNames : [
 "/cvmfs/mu2e.opensciencegrid.org/DataFiles/Validation/dts.mu2e.Cosmic.CORSIKA-20210611v2.000001_00000000.art"
 ]
-outputs.Output.fileName : "dig.owner.cosmicOffSpill.seq.art"
+outputs.TriggeredOutput.fileName : "dig.owner.cosmicOffSpill.seq.art"
+outputs.UntriggeredOutput.fileName : "/dev/null"
+outputs.TrkOutput.fileName : "/dev/null"
+outputs.CaloOutput.fileName : "/dev/null"
+

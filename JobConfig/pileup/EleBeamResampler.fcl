@@ -60,7 +60,7 @@ outputs: {
   }
 }
 # set prescale factor
-physics.filters.EarlyPrescaleFilter.nPrescale         : 1000
+physics.filters.EarlyPrescaleFilter.nPrescale :  @local::Pileup.EarlyEleBeamFlashPrescale
 
 # Point Mu2eG4 to the pre-simulated data
 physics.producers.g4run.inputs: {

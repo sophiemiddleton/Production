@@ -1,8 +1,25 @@
 #
-#  Digitization specialization for on-spill simulations
+#  Digitization specialization for on-spill simulations (no pileup mixing)
+#  This should NOT be used for physics studies
 #
 #include "Production/JobConfig/digitize/Digitize.fcl"
 # add trigger paths
 #include "Offline/gen/fcl/Trigger/OnSpillTrigMenu/OnSpillTrigMenu.fcl"
-# set the event timing for Onspill
+# set the event timing for OnSpill
 physics.producers.EWMProducer.SpillType : 1
+# minimal BField map
+services.GeometryService.inputFile      : "Offline/Mu2eG4/geom/geom_common_reco.txt"
+# only produce physics streams for now
+physics.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, UntriggeredOutput ]
+physics.end_paths : [ EndPath ]
+outputs : {
+  UntriggeredOutput : {
+    @table::Digitize.UntriggeredOutput
+    fileName : "dig.owner.OnSpillUntriggered.version.sequencer.art"
+  }
+  TriggeredOutput : {
+    @table::Digitize.TriggeredOutput
+    fileName : "dig.owner.OnSpillTriggered.version.sequencer.art"
+  }
+}
+

@@ -1,31 +1,58 @@
 # Re-sample cosmics from stage-1
 # Yuri Oksuzian, 2020
 #include "Offline/CommonMC/fcl/prolog.fcl"
+#include "Offline/fcl/standardServices.fcl"
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/primary/prolog.fcl"
 #include "Production/JobConfig/cosmic/prolog.fcl"
-#include "Production/JobConfig/primary/Primary.fcl"
-
+process_name: CosmicS2
+# the following will change when we read art stops
+source: { module_type : EmptyEvent }
+services : @local::Services.Sim
+physics : {
+  producers : {
+    @table::Common.producers
+    @table::Primary.producers
+  }
+  filters : {
+    @table::Common.filters
+    @table::Primary.filters
+  }
+  analyzers : { @table::Primary.analyzers }
+  PrimaryPath : [ genCounter, cosmicTimeOffset, CosmicResampler, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence]
+  EndPath : @local::Primary.EndPath
+  trigger_paths : [ PrimaryPath ]
+  end_paths : [ EndPath ]
+}
+outputs : { PrimaryOutput :@local::Primary.PrimaryOutput }
+#
 # Bring in info from the previous stage
-physics.filters.cosmicResample: @local::Cosmic.cosmicResample
-physics.filters.cosmicResample.mu2e.MaxEventsToSkip: 18415 # this number depends on the production details
-
-# Point Mu2eG4 to the pre-simulated data
-physics.producers.g4run.inputs: @local::Cosmic.MultiStageParametersCosmicS2
-
+physics.filters.CosmicResampler: @local::Cosmic.CosmicResampler
+physics.filters.CosmicResampler.mu2e.MaxEventsToSkip: 0 # this number is overwritten by production, based on collection sizes
+physics.filters.CosmicResampler.mu2e.products.cosmicLivetimeMixer.moduleLabel: "generate"
+physics.filters.CosmicResampler.mu2e.products.cosmicLivetimeMixer.genCounterLabel: "genCounter::Primary"
+# configure the time offset: this works for OffSpill and OnSpill
 physics.producers.cosmicTimeOffset: @local::CommonMC.producers.cosmicTimeOffset
 physics.producers.cosmicTimeOffset.intervalStart: 0
 physics.producers.cosmicTimeOffset.intervalEnd: 100005
-
+# Point Mu2eG4 to the pre-simulated data
+physics.producers.g4run.inputs: @local::Cosmic.MultiStageParametersCosmicS2
 physics.producers.g4run.inputs.simStageOverride: 1
-physics.producers.g4run.inputs.inputPhysVolumeMultiInfo: "cosmicResample"
-physics.producers.g4run.inputs.updateEventLevelVolumeInfos.input: "cosmicResample:eventlevel"
+physics.producers.g4run.inputs.inputPhysVolumeMultiInfo: "CosmicResampler"
+physics.producers.g4run.inputs.updateEventLevelVolumeInfos.input: "CosmicResampler:eventlevel"
 physics.producers.g4run.inputs.updateEventLevelVolumeInfos.outInstance: "eventlevel"
-
 # Kill cosmics outside of the CRV region
 physics.producers.g4run.Mu2eG4CommonCut: @local::Cosmic.Mu2eG4CommonCutCosmicS2
-physics.producers.g4run.SDConfig.preSimulatedHits:  ["cosmicResample:CRV"]
+physics.producers.g4run.SDConfig.preSimulatedHits:  ["CosmicResampler:CRV"]
+# Allow MCTrajectories to save their own SimParticles, even if they aren't part of a DetectorStep
+physics.producers.compressDetStepMCs.compressionOptions.mcTrajectoryCompressionLevel: "noCompression"
+# setup primary finding for either generator (needs extension if new cosmic generators are added)
 physics.producers.FindMCPrimary.PrimaryGenIds: ["CosmicCRY", "CosmicCORSIKA"]
-
-physics.PrimaryPath: [genCounter, cosmicTimeOffset, cosmicResample, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence]
-outputs.Output.fileName        : "dts.owner.Cosmic.version.sequencer.art"
-outputs.Output.outputCommands : [@sequence::Primary.KeptProducts,
-  "keep mu2e::CosmicLivetime_*_*_*"]
+# add cosmic livetime output for bookkeeping
+outputs.PrimaryOutput.outputCommands : [@sequence::Primary.KeptProducts,
+   "keep mu2e::CosmicLivetime_*_mixed_*" ]
+#
+# final configuration
+#
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/primary/epilog.fcl"

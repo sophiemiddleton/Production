@@ -19,25 +19,25 @@ digraph SimWorkflow {
     label="Legend";
     fontsize="36";
     Job [shape=box,color=blue,
-	label=<<table border="0" cellborder="0" cellspacing="1">
-	  <tr><td align="center"><b>Job</b></td></tr>
-	  <tr><td align="center"><b><font color="gold">excutable(=mu2e)</font></b></td></tr>
-	  <tr><td align="left"><font color="darkgreen">fhicl file</font></td></tr>
-	  <tr><td align="left"><font color="lightgreen">alternate fhicl file</font></td></tr>
-	  </table>>];
+        label=<<table border="0" cellborder="0" cellspacing="1">
+          <tr><td align="center"><b>Job</b></td></tr>
+          <tr><td align="center"><b><font color="gold">excutable(=mu2e)</font></b></td></tr>
+          <tr><td align="left"><font color="darkgreen">fhicl file</font></td></tr>
+          <tr><td align="left"><font color="lightgreen">alternate fhicl file</font></td></tr>
+          </table>>];
 
     Input [shape=oval, color=lightblue,
-	  label=<<table border="0" cellborder="0" cellspacing="1">
-	    <tr><td align="center"><b>Input Dataset</b></td></tr>
-	    <tr><td align="left"><font color="red">SAM name</font></td></tr>
-	    </table>>];
+          label=<<table border="0" cellborder="0" cellspacing="1">
+            <tr><td align="center"><b>Input Dataset</b></td></tr>
+            <tr><td align="left"><font color="red">SAM name</font></td></tr>
+            </table>>];
     Output [shape=oval, color=lightblue,
-	   label=<<table border="0" cellborder="0" cellspacing="1">
-	     <tr><td align="center"><b>Output Dataset</b></td></tr>
-	     <tr><td align="left"><font color="red">Primary</font></td></tr>
-	     <tr><td align="left"><font color="fuchsia">Secondary</font></td></tr>
-	     <tr><td align="left"><font color="black">Comment</font></td></tr>
-	     </table>>];
+           label=<<table border="0" cellborder="0" cellspacing="1">
+             <tr><td align="center"><b>Output Dataset</b></td></tr>
+             <tr><td align="left"><font color="red">Primary</font></td></tr>
+             <tr><td align="left"><font color="fuchsia">Secondary</font></td></tr>
+             <tr><td align="left"><font color="black">Comment</font></td></tr>
+             </table>>];
 
     Input -> Job [style=dashed, label="Secondary"];
     Input -> Job [style=solid, label="Primary"];
@@ -49,245 +49,245 @@ digraph SimWorkflow {
     fontsize="24";
 
     CosmicStage0 [shape=box, peripheries=1, color=blue,
-		 label=<<table border="0" cellborder="0" cellspacing="1">
-		   <tr><td align="center"><b>CORSIKA Binary Generation</b></td></tr>
-		   <tr><td align="left"><font color="gold">corsika77400Linux_QGSJET_fluka</font></td></tr>
-		   <tr><td align="left"><font color="darkgreen">cosmic/CORSIKAInput.txt</font></td></tr>
-		   </table>>];
+                 label=<<table border="0" cellborder="0" cellspacing="1">
+                   <tr><td align="center"><b>CORSIKA Binary Generation</b></td></tr>
+                   <tr><td align="left"><font color="gold">corsika77400Linux_QGSJET_fluka</font></td></tr>
+                   <tr><td align="left"><font color="darkgreen">cosmic/CORSIKAInput.txt</font></td></tr>
+                   </table>>];
 
     CORSIKAOutput [shape=oval, peripheries=1, color=lightblue,
-		  label=<<table border="0" cellborder="0" cellspacing="1">
-		    <tr><td align="center"><b>CORSIKA Binaries</b></td></tr>
-		    <tr><td align="left"><font color="red">sim.mu2e.CORSIKA.csk</font></td></tr>
-		    </table>>];
+                  label=<<table border="0" cellborder="0" cellspacing="1">
+                    <tr><td align="center"><b>CORSIKA Binaries</b></td></tr>
+                    <tr><td align="left"><font color="red">sim.mu2e.CORSIKA.csk</font></td></tr>
+                    </table>>];
 
     CosmicStage0 -> CORSIKAOutput;
 
     CosmicGenerator [shape=box, peripheries=3, color=blue,
-		    label=<<table border="0" cellborder="0" cellspacing="1">
-		      <tr><td align="center"><b>Cosmic Generation</b></td></tr>
-		      <tr><td align="left"><font color="darkgreen">cosmic/S1DSStopsX.fcl, X = [CORSIKA, CRY, ...]</font></td></tr>
-		      </table>>];
+                    label=<<table border="0" cellborder="0" cellspacing="1">
+                      <tr><td align="center"><b>Cosmic Generation</b></td></tr>
+                      <tr><td align="left"><font color="darkgreen">cosmic/S1DSStopsCosmicX.fcl, X = [CORSIKA, CRY, ...]</font></td></tr>
+                      </table>>];
 
     CORSIKAOutput -> CosmicGenerator;
 
     CosmicStage1Output [shape=oval, peripheries=3, color=lightblue,
-		       label=<<table border="0" cellborder="0" cellspacing="1">
-			 <tr><td align="center"><b>Cosmic Stops</b></td></tr>
-			 <tr><td align="left"><font color="red">sim.mu2e.CosmicDSStopsX.art, X = [CORSIKA, CRY, ...]</font></td></tr>
-			 </table>>];
+                       label=<<table border="0" cellborder="0" cellspacing="1">
+                         <tr><td align="center"><b>Cosmic Stops</b></td></tr>
+                         <tr><td align="left"><font color="red">sim.mu2e.CosmicDSStopsX.art, X = [CORSIKA, CRY, ...]</font></td></tr>
+                         </table>>];
 
     CosmicGenerator -> CosmicStage1Output;
 
     CosmicStage2 [shape=box, peripheries=1, color=blue,
-		 label=<<table border="0" cellborder="0" cellspacing="1">
-		   <tr><td align="center"><b>Cosmic Resampling</b></td></tr>
-		   <tr><td align="left"><font color="darkgreen">cosmic/S2Resampler.fcl</font></td></tr>
-		   <tr><td align="left"><font color="lightgreen">cosmic/S2ResamplerLow.fcl</font></td></tr>
-		   </table>>];
+                 label=<<table border="0" cellborder="0" cellspacing="1">
+                   <tr><td align="center"><b>Cosmic Resampling</b></td></tr>
+                   <tr><td align="left"><font color="darkgreen">cosmic/S2Resampler.fcl</font></td></tr>
+                   <tr><td align="left"><font color="lightgreen">cosmic/S2ResamplerLow.fcl</font></td></tr>
+                   </table>>];
 
 
     CosmicPrimary [shape=oval, peripheries=3, color=lightblue,
-		  label=<<table border="0" cellborder="0" cellspacing="1">
-		    <tr><td align="center"><b>Cosmic Ray Primary</b></td></tr>
-		    <tr><td align="left"><font color="red">dts.mu2e.X.art, X = [CORSIKA, CRY, ...] </font></td></tr>
-		    </table>>];
+                  label=<<table border="0" cellborder="0" cellspacing="1">
+                    <tr><td align="center"><b>Cosmic Ray Primary</b></td></tr>
+                    <tr><td align="left"><font color="red">dts.mu2e.X.art, X = [CORSIKA, CRY, ...] </font></td></tr>
+                    </table>>];
 
     CosmicStage1Output -> CosmicStage2;
     CosmicStage2 -> CosmicPrimary;
   }
 
   subgraph clusterBeam {
-    label="Beam and Pileup";
+    label="Beam";
     fontsize="24";
 
     POT_ExtMon [shape=box,color=blue,
-	label=<<table border="0" cellborder="0" cellspacing="1">
-	  <tr><td align="center"><b>POT to Extinction Monitor</b></td></tr>
-	  <tr><td align="left"><font color="darkgreen">beam/POT_extmon.fcl</font></td></tr>
-	  </table>>];
+               label=<<table border="0" cellborder="0" cellspacing="1">
+                 <tr><td align="center"><b>POT to Extinction Monitor</b></td></tr>
+                 <tr><td align="left"><font color="darkgreen">beam/POT_extmon.fcl</font></td></tr>
+                 </table>>];
 
     POT_Validation [shape=box,color=blue,
-	label=<<table border="0" cellborder="0" cellspacing="1">
-	  <tr><td align="center"><b>POT for Validation</b></td></tr>
-	  <tr><td align="left"><font color="darkgreen">beam/POT_validation.fcl</font></td></tr>
-	  </table>>];
+                   label=<<table border="0" cellborder="0" cellspacing="1">
+                     <tr><td align="center"><b>POT for Validation</b></td></tr>
+                     <tr><td align="left"><font color="darkgreen">beam/POT_validation.fcl</font></td></tr>
+                     </table>>];
 
     POT [shape=box,color=blue,
-	label=<<table border="0" cellborder="0" cellspacing="1">
-	  <tr><td align="center"><b>Protons On Target (POT)</b></td></tr>
-	  <tr><td align="left"><font color="darkgreen">beam/POT.fcl</font></td></tr>
-	  <tr><td align="left"><font color="lightgreen">beam/POT_MT.fcl</font></td></tr>
-	  <tr><td align="left"><font color="lightgreen">beam/POT_MCTrajectory.fcl</font></td></tr>
-	  </table>>];
+        label=<<table border="0" cellborder="0" cellspacing="1">
+          <tr><td align="center"><b>Protons On Target (POT)</b></td></tr>
+          <tr><td align="left"><font color="darkgreen">beam/POT.fcl</font></td></tr>
+          <tr><td align="left"><font color="lightgreen">beam/POT_MCTrajectory.fcl</font></td></tr>
+          </table>>];
 
 
     {rank=same POT POT_Validation POT_ExtMon};
 
     Beam [shape=oval,color=lightblue,
-	 label=<<table border="0" cellborder="0" cellspacing="1">
-	   <tr><td align="center"><b>Beam</b></td></tr>
-	   <tr><td align="left"><font color="red">sim.mu2e.Beam.art</font></td></tr>
-	   <tr><td align="left"><font color="black">Charged at DS2</font></td></tr>
-	   </table>>];
+         label=<<table border="0" cellborder="0" cellspacing="1">
+           <tr><td align="center"><b>Beam</b></td></tr>
+           <tr><td align="left"><font color="red">sim.mu2e.Beam.art</font></td></tr>
+           <tr><td align="left"><font color="black">Charged at DS2</font></td></tr>
+           </table>>];
     MuBeam [shape=oval,color=lightblue,
-	 label=<<table border="0" cellborder="0" cellspacing="1">
-	   <tr><td align="center"><b>Muon Beam</b></td></tr>
-	   <tr><td align="left"><font color="red">sim.mu2e.MuBeamCat.art</font></td></tr>
-	   <tr><td align="left"><font color="black">Muons at DS2</font></td></tr>
-	   </table>>];
+           label=<<table border="0" cellborder="0" cellspacing="1">
+             <tr><td align="center"><b>Muon Beam</b></td></tr>
+             <tr><td align="left"><font color="red">sim.mu2e.MuBeamCat.art</font></td></tr>
+             <tr><td align="left"><font color="black">Muons at DS2</font></td></tr>
+             </table>>];
     EleBeam [shape=oval,color=lightblue,
-	 label=<<table border="0" cellborder="0" cellspacing="1">
-	   <tr><td align="center"><b>Electron Beam</b></td></tr>
-	   <tr><td align="left"><font color="red">sim.mu2e.EleBeamCat.art</font></td></tr>
-	   <tr><td align="left"><font color="black">Electrons at DS2</font></td></tr>
-	   </table>>];
+            label=<<table border="0" cellborder="0" cellspacing="1">
+              <tr><td align="center"><b>Electron Beam</b></td></tr>
+              <tr><td align="left"><font color="red">sim.mu2e.EleBeamCat.art</font></td></tr>
+              <tr><td align="left"><font color="black">Non-Muons at DS2</font></td></tr>
+              </table>>];
     Neutrals [shape=oval, color=lightblue,
-	     label=<<table border="0" cellborder="0" cellspacing="1">
-	       <tr><td align="center"><b>Neutrals</b></td></tr>
-	       <tr><td align="left"><font color="red">sim.mu2e.NeutralsCat.art</font></td></tr>
-	       <tr><td align="left"><font color="black">Exiting PS, TS</font></td></tr>
-	       </table>>];
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Neutrals</b></td></tr>
+               <tr><td align="left"><font color="red">sim.mu2e.NeutralsCat.art</font></td></tr>
+               <tr><td align="left"><font color="black">Everything leaving PS or TS not via DS2</font></td></tr>
+               </table>>];
     ExtMon [shape=oval,color=lightblue,
-	 label=<<table border="0" cellborder="0" cellspacing="1">
-	   <tr><td align="center"><b>ExtMon</b></td></tr>
-	   <tr><td align="left"><font color="red">sim.mu2e.ExtMon.art</font></td></tr>
-	   </table>>];
+           label=<<table border="0" cellborder="0" cellspacing="1">
+             <tr><td align="center"><b>ExtMon</b></td></tr>
+             <tr><td align="left"><font color="red">sim.mu2e.ExtMon.art</font></td></tr>
+             </table>>];
     ExtMonRegion [shape=oval,color=lightblue,
-	 label=<<table border="0" cellborder="0" cellspacing="1">
-	   <tr><td align="center"><b>ExtMonRegion</b></td></tr>
-	   <tr><td align="left"><font color="red">sim.mu2e.ExtMonRegion.art</font></td></tr>
-	   </table>>];
+                 label=<<table border="0" cellborder="0" cellspacing="1">
+                   <tr><td align="center"><b>ExtMonRegion</b></td></tr>
+                   <tr><td align="left"><font color="red">sim.mu2e.ExtMonRegion.art</font></td></tr>
+                   </table>>];
     Truncated [shape=oval, color=lightblue,
-	     label=<<table border="0" cellborder="0" cellspacing="1">
-	       <tr><td align="center"><b>Truncated</b></td></tr>
-	       <tr><td align="left"><font color="red">sim.mu2e.Truncated.art</font></td></tr>
-	       <tr><td align="left"><font color="black">Fail G4Consistent</font></td></tr>
-	       </table>>];
+              label=<<table border="0" cellborder="0" cellspacing="1">
+                <tr><td align="center"><b>Truncated</b></td></tr>
+                <tr><td align="left"><font color="red">sim.mu2e.Truncated.art</font></td></tr>
+                <tr><td align="left"><font color="black">Fail G4Consistent</font></td></tr>
+                </table>>];
 
-    POT -> Neutrals [ label="concatenate x1000 (x500 MT)"];
-    POT ->  Beam
+    POT -> Neutrals [ label="concatenate x1000/NThreads"];
+    POT ->  Beam;
+    POT_ExtMon ->  ExtMon;
+    POT_ExtMon ->  ExtMonRegion;
 
-    POT_ExtMon ->  ExtMon
-    POT_ExtMon ->  ExtMonRegion
-
-    POT_Validation -> Neutrals
-    POT_Validation -> Beam
-    POT_Validation -> ExtMon
-    POT_Validation -> ExtMonRegion
-    POT_Validation -> Truncated
+    POT_Validation -> Neutrals;
+    POT_Validation -> Beam;
+    POT_Validation -> ExtMon;
+    POT_Validation -> ExtMonRegion;
+    POT_Validation -> Truncated;
 
     BeamSplitting  [shape=box,color=blue,
-		       label=<<table border="0" cellborder="0" cellspacing="1">
-			 <tr><td align="center"><b>Beam Splitting</b></td></tr>
-			 <tr><td align="left"><font color="darkgreen">beam/BeamSplitter.fcl</font></td></tr>
-			 </table>>];
+                   label=<<table border="0" cellborder="0" cellspacing="1">
+                     <tr><td align="center"><b>Beam Splitting</b></td></tr>
+                     <tr><td align="left"><font color="darkgreen">beam/BeamSplitter.fcl</font></td></tr>
+                     </table>>];
 
-    Beam -> BeamSplitting
+    Beam -> BeamSplitting;
     BeamSplitting ->  MuBeam [ label="concatenate x50000"];
     BeamSplitting ->  EleBeam [ label="concatenate x1000"];
+    {rank=same MuBeam EleBeam Neutrals};
+  }
+  subgraph clusterPileup {
+    label="Pileup";
+    fontsize="24";
 
     NeutralsResampling [shape=box,color=blue,
-		       label=<<table border="0" cellborder="0" cellspacing="1">
-			 <tr><td align="center"><b>Neutrals Resampling</b></td></tr>
-			 <tr><td align="left"><font color="darkgreen">beam/NeutralsResampler.fcl</font></td></tr>
-			 <tr><td align="left"><font color="lightgreen">beam/NeutralsResampler_MT.fcl</font></td></tr>
-			 </table>>];
+                       label=<<table border="0" cellborder="0" cellspacing="1">
+                         <tr><td align="center"><b>Neutrals Resampling</b></td></tr>
+                         <tr><td align="left"><font color="darkgreen">pileup/NeutralsResampler.fcl</font></td></tr>
+                         </table>>];
 
     MuBeamResampling [shape=box,color=blue,
-		   label=<<table border="0" cellborder="0" cellspacing="1">
-		     <tr><td align="center"><b>Muon Beam Resampling</b></td></tr>
-		     <tr><td align="left"><font color="darkgreen">beam/MuBeamResampler.fcl</font></td></tr>
-			 <tr><td align="left"><font color="lightgreen">beam/MuBeamResampler_MT.fcl</font></td></tr>
-		     </table>>];
+                     label=<<table border="0" cellborder="0" cellspacing="1">
+                       <tr><td align="center"><b>Muon Beam Resampling</b></td></tr>
+                       <tr><td align="left"><font color="darkgreen">pileup/MuBeamResampler.fcl</font></td></tr>
+                       </table>>];
 
     EleBeamResampling [shape=box,color=blue,
-		   label=<<table border="0" cellborder="0" cellspacing="1">
-		     <tr><td align="center"><b>Electron Beam Resampling</b></td></tr>
-		     <tr><td align="left"><font color="darkgreen">beam/EleBeamResampler.fcl</font></td></tr>
-			 <tr><td align="left"><font color="lightgreen">beam/EleBeamResampler_MT.fcl</font></td></tr>
-		     </table>>];
+                      label=<<table border="0" cellborder="0" cellspacing="1">
+                        <tr><td align="center"><b>Electron Beam Resampling</b></td></tr>
+                        <tr><td align="left"><font color="darkgreen">pileup/EleBeamResampler.fcl</font></td></tr>
+                        </table>>];
 
     MuBeam -> MuBeamResampling [ label=<resample 10<sup>+3</sup>> ];
     EleBeam -> EleBeamResampling [ label=<resample 10<sup>+3</sup>> ];
     Neutrals -> NeutralsResampling [ label=<resample 10<sup>+3</sup>?> ];
 
     TargetStops [shape=oval, color=lightblue,
-		label=<<table border="0" cellborder="0" cellspacing="1">
-		  <tr><td align="center"><b>Target Stops</b></td></tr>
-		  <tr><td align="left"><font color="red">sim.mu2e.TargetStopsCat.art</font></td></tr>
-		  </table>>];
+                label=<<table border="0" cellborder="0" cellspacing="1">
+                  <tr><td align="center"><b>Target Stops</b></td></tr>
+                  <tr><td align="left"><font color="red">sim.mu2e.TargetStopsCat.art</font></td></tr>
+                  </table>>];
 
     IPAStops [shape=oval, color=lightblue,
-	     label=<<table border="0" cellborder="0" cellspacing="1">
-	       <tr><td align="center"><b>IPA Stops</b></td></tr>
-	       <tr><td align="left"><font color="red">sim.mu2e.IPAStopsCat.art</font></td></tr>
-	       </table>>];
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>IPA Stops</b></td></tr>
+               <tr><td align="left"><font color="red">sim.mu2e.IPAStopsCat.art</font></td></tr>
+               </table>>];
 
     MuBeamResampling -> TargetStops;
-    MuBeamResampling -> IPAStops [ label="concatenate x1000 (x500 MT)" ];
+    MuBeamResampling -> IPAStops [ label="concatenate x1000/NThreads" ];
 
     MuminusTargetStops [shape=oval, color=lightblue,
-		label=<<table border="0" cellborder="0" cellspacing="1">
-		  <tr><td align="center"><b>Mu- Target Stops</b></td></tr>
-		  <tr><td align="left"><font color="red">sim.mu2e.MuminusTargetStopsCat.art</font></td></tr>
-		  </table>>];
+                       label=<<table border="0" cellborder="0" cellspacing="1">
+                         <tr><td align="center"><b>Mu- Target Stops</b></td></tr>
+                         <tr><td align="left"><font color="red">sim.mu2e.MuminusTargetStopsCat.art</font><font color="black"> prescale 1000</font></td></tr>
+                         </table>>];
 
     MuplusTargetStops [shape=oval, color=lightblue,
-		label=<<table border="0" cellborder="0" cellspacing="1">
-		  <tr><td align="center"><b>Mu+ Target Stops</b></td></tr>
-		  <tr><td align="left"><font color="red">sim.mu2e.MuplusTargetStopsCat.art</font></td></tr>
-		  </table>>];
+                      label=<<table border="0" cellborder="0" cellspacing="1">
+                        <tr><td align="center"><b>Mu+ Target Stops</b></td></tr>
+                        <tr><td align="left"><font color="red">sim.mu2e.MuplusTargetStopsCat.art</font></td></tr>
+                        </table>>];
 
     TargetStopSplitter [shape=box,color=blue,
-		   label=<<table border="0" cellborder="0" cellspacing="1">
-		     <tr><td align="center"><b>Target Stop Muon Splitting</b></td></tr>
-		     <tr><td align="left"><font color="darkgreen">beam/MuonStopSelector.fcl</font></td></tr>
-		     </table>>];
+                       label=<<table border="0" cellborder="0" cellspacing="1">
+                         <tr><td align="center"><b>Target Stop Muon Splitting</b></td></tr>
+                         <tr><td align="left"><font color="darkgreen">pileup/MuonStopSelector.fcl</font></td></tr>
+                         </table>>];
 
-    TargetStops -> TargetStopSplitter
+    TargetStops -> TargetStopSplitter;
 
     TargetStopSplitter -> MuminusTargetStops [ label="concatenate x10"];
     TargetStopSplitter -> MuplusTargetStops [ label="concatenate x1000"];
 
     MuBeamFlashPileup [shape=oval, color=lightblue,
-		    label=<<table border="0" cellborder="0" cellspacing="1">
-		      <tr><td align="center"><b>Muon BeamFlash Pileup</b></td></tr>
-		      <tr><td align="left"><font color="red">dts.mu2e.MuBeamFlashCat.art</font> <font color="black">t &gt; 350 ns || t &lt; 10 ns</font></td></tr>
-		      <tr><td align="left"><font color="fuchsia">dts.mu2e.EarlyMuBeamFlashCat.art</font><font color="black"> prescale 30</font></td></tr>
-		      </table>>];
+                      label=<<table border="0" cellborder="0" cellspacing="1">
+                        <tr><td align="center"><b>Muon BeamFlash Pileup</b></td></tr>
+                        <tr><td align="left"><font color="red">dts.mu2e.MuBeamFlashCat.art</font> <font color="black">t &gt; 250 ns || t &lt; 10 ns</font></td></tr>
+                        <tr><td align="left"><font color="fuchsia">dts.mu2e.EarlyMuBeamFlashCat.art</font><font color="black"> prescale 30</font></td></tr>
+                        </table>>];
 
     EleBeamFlashPileup [shape=oval, color=lightblue,
-		    label=<<table border="0" cellborder="0" cellspacing="1">
-		      <tr><td align="center"><b>Electron BeamFlash Pileup</b></td></tr>
-		      <tr><td align="left"><font color="red">dts.mu2e.EleBeamFlashCat.art</font> <font color="black">t &gt; 350 ns || t &lt; 10 ns</font></td></tr>
-		      <tr><td align="left"><font color="fuchsia">dts.mu2e.EarlyEleBeamFlashCat.art</font><font color="black"> prescale 10<sup>-3</sup></font></td></tr>
-		      </table>>];
+                       label=<<table border="0" cellborder="0" cellspacing="1">
+                         <tr><td align="center"><b>Electron BeamFlash Pileup</b></td></tr>
+                         <tr><td align="left"><font color="red">dts.mu2e.EleBeamFlashCat.art</font> <font color="black">t &gt; 250 ns || t &lt; 10 ns</font></td></tr>
+                         <tr><td align="left"><font color="fuchsia">dts.mu2e.EarlyEleBeamFlashCat.art</font><font color="black"> prescale 1000</font></td></tr>
+                         </table>>];
 
     NeutralsFlashPileup [shape=oval, color=lightblue,
-			label=<<table border="0" cellborder="0" cellspacing="1">
-			  <tr><td align="center"><b>NeutralsFlash Pileup</b></td></tr>
-			  <tr><td align="left"><font color="red">dts.mu2e.NeutralsFlashCat.art</font> </td></tr>
-		      <tr><td align="left"><font color="fuchsia">dts.mu2e.EarlyNeutralsFlashCat.art</font><font color="black"> prescale 10<sup>-3</sup></font></td></tr>
-			  </table>>];
-    NeutralsResampling -> NeutralsFlashPileup [ label="concatenate x1000 (x500 MT)" ];
-    MuBeamResampling -> MuBeamFlashPileup [ label="concatenate x1000 (x500 MT)" ];
-    EleBeamResampling -> EleBeamFlashPileup [ label="concatenate x1000 (x500 MT)" ];
+                        label=<<table border="0" cellborder="0" cellspacing="1">
+                          <tr><td align="center"><b>NeutralsFlash Pileup</b></td></tr>
+                          <tr><td align="left"><font color="red">dts.mu2e.NeutralsFlashCat.art</font><font color="black">t &gt; 250 ns || t &lt; 10 ns</font></td></tr>
+                          <tr><td align="left"><font color="fuchsia">dts.mu2e.EarlyNeutralsFlashCat.art</font><font color="black"> prescale 20</font></td></tr>
+                          </table>>];
+    NeutralsResampling -> NeutralsFlashPileup [ label="concatenate x1000/NThreads" ];
+    MuBeamResampling -> MuBeamFlashPileup [ label="concatenate x1000/NThreads" ];
+    EleBeamResampling -> EleBeamFlashPileup [ label="concatenate x1000/NThreads" ];
 
     TargetMuonPileup [shape=oval, color=lightblue,
-		     label=<<table border="0" cellborder="0" cellspacing="1">
-		       <tr><td align="center"><b>Target Muon Pileup </b></td></tr>
-		       <tr><td align="left"><font color="red">dts.mu2e.MuStopPileup.art</font></td></tr>
-		       </table>>];
+                     label=<<table border="0" cellborder="0" cellspacing="1">
+                       <tr><td align="center"><b>Target Muon Pileup </b></td></tr>
+                       <tr><td align="left"><font color="red">dts.mu2e.MuStopPileup.art</font></td></tr>
+                       </table>>];
 
     PileupMuonTerm [shape=box,color=blue,
-		   label=<<table border="0" cellborder="0" cellspacing="1">
-		     <tr><td align="center"><b>&mu; to X = [P, D, N,&gamma;, e &nu;]  </b></td></tr>
-		     <tr><td align="left"><font color="darkgreen">pileup/MuStopPileup.fcl</font></td></tr>
-		     </table>>];
+                   label=<<table border="0" cellborder="0" cellspacing="1">
+                     <tr><td align="center"><b>&mu; to X = [P, D, N,&gamma;, e &nu;]  </b></td></tr>
+                     <tr><td align="left"><font color="darkgreen">pileup/MuStopPileup.fcl</font></td></tr>
+                     </table>>];
 
     PileupMuonTerm -> TargetMuonPileup [ label=<concatenate 10<sup>+4</sup>?> ];
-        {rank=same TargetMuonPileup MuBeamFlashPileup EleBeamFlashPileup NeutralsFlashPileup };
+    {rank=same TargetMuonPileup MuBeamFlashPileup EleBeamFlashPileup NeutralsFlashPileup };
     MuminusTargetStops -> PileupMuonTerm [ label=<resample 10<sup>+3</sup>?> ];
 
   }
@@ -297,16 +297,16 @@ digraph SimWorkflow {
     fontsize="24";
 
     PrimaryMuonTerm [shape=box, peripheries=3, color=blue,
-		    label=<<table border="0" cellborder="0" cellspacing="1">
-		      <tr><td align="center"><b>&mu; on Al to X = [Ce<sup>-</sup>, Ce<sup>+</sup>, DIO Tail, Internal RPC, ...] </b></td></tr>
-		      <tr><td align="left"><font color="darkgreen">primary/X.fcl, X = [CeMinus, CePlus, DIOTail, ...]</font></td></tr>
-		      </table>>];
+                    label=<<table border="0" cellborder="0" cellspacing="1">
+                      <tr><td align="center"><b>&mu; on Al to X = [Ce<sup>-</sup>, Ce<sup>+</sup>, DIO Tail, Internal RPC, ...] </b></td></tr>
+                      <tr><td align="left"><font color="darkgreen">primary/X.fcl, X = [CeMinus, CePlus, DIOTail, ...]</font></td></tr>
+                      </table>>];
 
     IPAMuonTerm [shape=box, peripheries=1, color=blue,
-		label=<<table border="0" cellborder="0" cellspacing="1">
-		  <tr><td align="center"><b>IPA &mu; decay </b></td></tr>
-		  <tr><td align="left"><font color="darkgreen">primary/IPADecay.fcl</font></td></tr>
-		  </table>>];
+                label=<<table border="0" cellborder="0" cellspacing="1">
+                  <tr><td align="center"><b>IPA &mu; decay </b></td></tr>
+                  <tr><td align="left"><font color="darkgreen">primary/IPADecay.fcl</font></td></tr>
+                  </table>>];
 
 
     MuminusTargetStops -> PrimaryMuonTerm [ label=<resample 10<sup>+3</sup>?> ];
@@ -314,15 +314,15 @@ digraph SimWorkflow {
     IPAStops -> IPAMuonTerm [ label=<resample 10<sup>+5</sup>?> ];
 
     TargetMuonPrimary [shape=oval, peripheries=3, color=lightblue,
-		      label=<<table border="0" cellborder="0" cellspacing="1">
-			<tr><td align="center"><b>Target Muon Primary</b></td></tr>
-			<tr><td align="left"><font color="red">dts.mu2e.X.art, X =[CeMinus, CePlus, ...] </font></td></tr>
-			</table>>];
+                      label=<<table border="0" cellborder="0" cellspacing="1">
+                        <tr><td align="center"><b>Target Muon Primary</b></td></tr>
+                        <tr><td align="left"><font color="red">dts.mu2e.X.art, X =[CeMinus, CePlus, ...] </font></td></tr>
+                        </table>>];
     IPAMuonMichel [shape=oval, peripheries=1, color=lightblue,
-		  label=<<table border="0" cellborder="0" cellspacing="1">
-		    <tr><td align="center"><b>IPA Muon Michel electron</b></td></tr>
-		    <tr><td align="left"><font color="red">dts.mu2e.IPAMichele.art </font></td></tr>
-		    </table>>];
+                  label=<<table border="0" cellborder="0" cellspacing="1">
+                    <tr><td align="center"><b>IPA Muon Michel electron</b></td></tr>
+                    <tr><td align="left"><font color="red">dts.mu2e.IPAMichele.art </font></td></tr>
+                    </table>>];
 
     PrimaryMuonTerm -> TargetMuonPrimary;
     IPAMuonTerm -> IPAMuonMichel;
@@ -338,17 +338,22 @@ digraph SimWorkflow {
 
 
     MixDigitization [shape=box, peripheries=1, color=blue,
-		    label=<<table border="0" cellborder="0" cellspacing="1">
-		      <tr><td align="center"><b> Primary + Pileup Digitization </b></td></tr>
-		      <tr><td align="left"><font color="darkgreen">mixing/Mix.fcl</font></td></tr>
-		      </table>>];
+                    label=<<table border="0" cellborder="0" cellspacing="1">
+                      <tr><td align="center"><b> Primary + Pileup Digitization </b></td></tr>
+                      <tr><td align="left"><font color="darkgreen">mixing/Mix.fcl</font></td></tr>
+                      </table>>];
 
-    NomixDigitization [shape=box, peripheries=1, color=blue,
-		      label=<<table border="0" cellborder="0" cellspacing="1">
-			<tr><td align="center"><b> Primary Only Digitization </b></td></tr>
-			<tr><td align="left"><font color="darkgreen">digitize/OffSpill.fcl</font></td></tr>
-			<tr><td align="left"><font color="lightgreen">digitize/OnSpill.fcl</font></td></tr>
-			</table>>];
+    OnSpillDigitization [shape=box, peripheries=1, color=blue,
+                      label=<<table border="0" cellborder="0" cellspacing="1">
+                        <tr><td align="center"><b> primary only OnSpill digitization </b></td></tr>
+                        <tr><td align="left"><font color="darkgreen">digitize/onspill.fcl</font></td></tr>
+                        </table>>];
+
+   OffSpillDigitization [shape=box, peripheries=1, color=blue,
+                      label=<<table border="0" cellborder="0" cellspacing="1">
+                        <tr><td align="center"><b> cosmic primary only OffSpill digitization </b></td></tr>
+                        <tr><td align="left"><font color="darkgreen">digitize/offspill.fcl</font></td></tr>
+                        </table>>];
 
     TargetMuonPrimary -> MixDigitization;
     IPAMuonMichel -> MixDigitization;
@@ -358,26 +363,38 @@ digraph SimWorkflow {
     EleBeamFlashPileup -> MixDigitization [style=dashed, label=<resample 10<sup>+4</sup>?>];
     NeutralsFlashPileup -> MixDigitization [style=dashed, label=<resample 10<sup>+4</sup>?>];
 
-    TargetMuonPrimary -> NomixDigitization;
-    IPAMuonMichel -> NomixDigitization;
-    CosmicPrimary -> NomixDigitization;
+    TargetMuonPrimary -> OnSpillDigitization;
+    IPAMuonMichel -> OnSpillDigitization;
+    CosmicPrimary -> OnSpillDigitization;
 
-    UnmixedDigis [shape=oval, peripheries=3, color=lightblue,
-		 label=<<table border="0" cellborder="0" cellspacing="1">
-		   <tr><td align="center"><b>Unmixed Digis</b></td></tr>
-		   <tr><td align="left"><font color="red">dig.mu2e.X.art, X = [CeMinus, CORSIKA, ...]</font></td></tr>
-		   </table>>];
+    CosmicPrimary -> OffSpillDigitization;
+
+    OnSpillDigis [shape=oval, peripheries=3, color=lightblue,
+                 label=<<table border="0" cellborder="0" cellspacing="1">
+                   <tr><td align="center"><b>OnSpill Digis</b></td></tr>
+                   <tr><td align="left"><font color="red">dig.mu2e.XDigiTriggered.art, X = [CeMinus, CosmicCORSIKA, ...]</font></td></tr>
+                   <tr><td align="left"><font color="fuchsia">dig.mu2e.XDigiUntriggered.art, X = [CeMinus, CosmicCORSIKA, ...]</font></td></tr>
+                   </table>>];
+
+    OffSpillDigis [shape=oval, peripheries=3, color=lightblue,
+                 label=<<table border="0" cellborder="0" cellspacing="1">
+                   <tr><td align="center"><b>OffSpill Digis</b></td></tr>
+                   <tr><td align="left"><font color="red">dig.mu2e.CosmicXOffSpillTriggered.art, X = [CORSIKA, Cry, ...]</font></td></tr>
+                   <tr><td align="left"><font color="fuchsia">dig.mu2e.CosmicXOffSpillUntriggered.art, X = [CORSIKA, Cry, ...]</font></td></tr>
+                   </table>>];
 
     MixedDigis [shape=oval, peripheries=3, color=lightblue,
-	       label=<<table border="0" cellborder="0" cellspacing="1">
-		 <tr><td align="center"><b>Mixed Digis</b></td></tr>
-		 <tr><td align="left"><font color="red">dig.mu2e.XMix.art, X = [CeMinus, CORSIKA, ...]</font></td></tr>
-		 </table>>];
+               label=<<table border="0" cellborder="0" cellspacing="1">
+                 <tr><td align="center"><b>Mixed Digis</b></td></tr>
+                 <tr><td align="left"><font color="red">dig.mu2e.XMixTriggered.art, X = [CeMinus, CosmicCORSIKA, ...]</font></td></tr>
+                 <tr><td align="left"><font color="fuchsia">dig.mu2e.XMixUntriggered.art, X = [CeMinus, CORSIKA, ...]</font></td></tr>
+                 </table>>];
 
-    NomixDigitization -> UnmixedDigis;
+    OnSpillDigitization -> OnSpillDigis;
+    OffSpillDigitization -> OffSpillDigis;
     MixDigitization -> MixedDigis;
 
-    {rank=same NomixDigitization MixDigitization};
+    {rank=same OnSpillDigitization MixDigitization};
 
   }
   subgraph clusterReco {
@@ -386,20 +403,20 @@ digraph SimWorkflow {
 
 
     Reconstruction [shape=box, peripheries=1, color=blue,
-		   label=<<table border="0" cellborder="0" cellspacing="1">
-		     <tr><td align="center"><b> Reconstruction </b></td></tr>
-		     <tr><td align="left"><font color="darkgreen">reco/Reco.fcl </font></td></tr>
-		     </table>>];
+                   label=<<table border="0" cellborder="0" cellspacing="1">
+                     <tr><td align="center"><b> OnSpill Reconstruction </b></td></tr>
+                     <tr><td align="left"><font color="darkgreen">reco/Reco.fcl </font></td></tr>
+                     </table>>];
 
     Reco [shape=oval, color=lightblue, peripheries=3
       label=<<table border="0" cellborder="0" cellspacing="1">
       <tr><td align="center"><b>Reconstructed Events (Tracks, CaloClusters, CRVClusters, ...)</b></td></tr>
-      <tr><td align="left"><font color="red">mcs.mu2e.X.art, X = [CeMinus, CORSIKA, ...]</font></td></tr>
+      <tr><td align="left"><font color="red">mcs.mu2e.X.art, X = [CeMinusMixTriggered, CosmicCORSIKA, ...]</font></td></tr>
       </table>>];
 
-    MixedDigis -> Reconstruction
-      UnmixedDigis -> Reconstruction
-      Reconstruction -> Reco
+    MixedDigis -> Reconstruction;
+    OnSpillDigis -> Reconstruction;
+    Reconstruction -> Reco;
 
   }
 }

@@ -1,0 +1,27 @@
+#
+# Radiative Ce- spectrum, based on doc 7615 spectrum
+#
+# original author: S Middleton
+#
+
+#include "Production/JobConfig/primary/TargetStopParticle.fcl"
+
+physics.producers.generate : {
+  module_type : LeadingLog
+  inputSimParticles: TargetStopResampler
+  stoppingTargetMaterial : "Al"
+  spectrum : {
+    spectrumShape : ceLeadingLog
+    pdgId : 11
+    elow : 1. #MeV
+    ehi : 104.97
+    spectrumResolution : 0.1 #MeV
+  }
+  pdgId : 11
+  verbosity : 0
+}
+
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eCeMinusLeadingLog"
+outputs.PrimaryOutput.fileName: "dts.owner.CeMLeadingLog.version.sequencer.art"
+
+

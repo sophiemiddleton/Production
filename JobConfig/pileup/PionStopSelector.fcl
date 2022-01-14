@@ -1,0 +1,44 @@
+#
+# filter Piminus and Piplus stops from combined stops and write them to a file
+# Sophie Middleton , 2021
+#include "Offline/fcl/minimalMessageService.fcl"
+
+process_name: PionStopSelector
+source: { module_type: RootInput }
+services: { message: @local::default_message }
+physics: {
+  filters : {
+    piplusSelector: {
+      module_type: ParticleCodeFilter
+      SimParticles : TargetPiStopFilter
+      ParticleCodes : [ [211, "uninitialized","mu2eKillerVolume" ] ] # Pi+, * ,mu2eKillerVolume
+      PrintLevel : 2
+    }
+    piminusSelector: {
+      module_type: ParticleCodeFilter
+      SimParticles : TargetPiStopFilter
+      ParticleCodes : [ [-211, "uninitialized" ,  "mu2eKillerVolume" ] ] # Pi-, *,mu2eKillerVolume
+      PrintLevel : 2
+    }
+  }
+  selectPiminus : [piminusSelector]
+  selectPiplus : [piplusSelector]
+  trigger_paths : [ selectPiminus, selectPiplus ]
+  outpath: [piminusout, piplusout ]
+  end_paths: [outpath]
+}
+outputs: {
+  piminusout: {
+    module_type: RootOutput
+    fileName : "sim.owner.PiminusStopsCat.version.sequencer.art"
+    outputCommands:   [ "keep *_*_*_*" ]
+    SelectEvents: [selectPiminus]
+  }
+  piplusout: {
+    module_type: RootOutput
+    fileName : "sim.owner.PiplusStopsCat.version.sequencer.art"
+    outputCommands:   [ "keep *_*_*_*" ]
+    SelectEvents: [selectPiplus]
+  }
+}
+

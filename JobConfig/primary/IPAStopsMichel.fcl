@@ -8,7 +8,6 @@
 
 physics.filters.DetStepFilter.MinimumPartMom : 10.0 // MeV/c TODO - tweak this parameter to get more DetSteps
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eMuonDecayAtRest"
-physics.filters.IPAStopResampler.mu2e.MaxEventsToSkip : @nil
 
 physics.producers.generate : {
   module_type : Pileup
@@ -19,4 +18,4 @@ physics.producers.generate : {
   stoppingTargetMaterial : "IPA"
 }
 
-outputs.Output.fileName: "dts.owner.IPAMichel.version.sequencer.art"
+outputs.PrimaryOutput.fileName: "dts.owner.IPAMichel.version.sequencer.art"

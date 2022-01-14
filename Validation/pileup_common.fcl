@@ -1,0 +1,40 @@
+#
+# commands in common with the 4 different kinds of pile-up jobs
+#
+services.scheduler.num_schedules: 1
+services.scheduler.num_threads: 1
+
+outputs: {
+  valCombo: {
+    SelectEvents: [ "earlyFlashPath" ]
+    fileName: "pileup.art"
+    module_type: "RootOutput"
+    outputCommands: [
+      "drop *_*_*_*",
+      "keep art::EventIDs_*_*_*",
+      "keep mu2e::GenEventCount_*_*_*",
+      "keep mu2e::StatusG4_*_*_*",
+      "keep mu2e::SimParticleart::Ptrdoublestd::map_*_*_*",
+      "keep mu2e::StrawGasSteps_compressDetStepMCs_*_*",
+      "keep mu2e::CaloShowerSteps_compressDetStepMCs_*_*",
+      "keep mu2e::CrvSteps_compressDetStepMCs_*_*",
+      "keep mu2e::SimParticlemv_compressDetStepMCs_*_*",
+      "keep mu2e::GenParticles_compressDetStepMCs_*_*",
+      "keep mu2e::SimParticlemv_TargetStopFilter_*_*",
+      "keep mu2e::GenParticles_TargetStopFilter_*_*"
+    ]
+  }
+}
+
+
+physics.allPath : [ "valCombo" ]
+physics.end_paths : [ "allPath" ]
+
+process_name: pileup
+physics.filters.EarlyPrescaleFilter.nPrescale : 1
+physics.filters.TargetStopPrescaleFilter.nPrescale : 1
+physics.producers.compressDetStepMCs.compressionOptions.keepNGenerations : 0
+
+services.scheduler.wantSummary: true
+
+source.maxEvents: 150000

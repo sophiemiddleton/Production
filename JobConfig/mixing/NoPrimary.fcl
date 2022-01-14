@@ -3,6 +3,7 @@
 #
 #include "Production/JobConfig/digitize/prolog.fcl"
 #include "Production/JobConfig/mixing/prolog.fcl"
+#include "Production/JobConfig/pileup/prolog.fcl"
 process_name: NoPrimary
 source: { module_type : EmptyEvent }
 services : @local::Services.SimAndReco # reco is needed for the trigger
@@ -19,14 +20,8 @@ physics : {
   }
   analyzers: { @table::Digitize.analyzers }
   # same path for triggered, untriggered streams, but different selections
-  Triggered : [ NullMCPrimary, PBISim, @sequence::Mixing.StepMixSequence, @sequence::Digitize.DigitizeSequence ]
+  MixPath : [ NullMCPrimary, PBISim, @sequence::Mixing.StepMixSequence, @sequence::Digitize.DigitizeSequence ]
   Untriggered : [ NullMCPrimary, PBISim, @sequence::Mixing.StepMixSequence, @sequence::Digitize.DigitizeSequence ]
-  EndPath : @local::Digitize.EndPath
-}
-#
-outputs : {
-  TriggeredOutput : @local::Mixing.TriggeredOutput
-  UntriggeredOutput : @local::Mixing.UntriggeredOutput
 }
 #
 # Final configuration

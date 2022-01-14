@@ -1,0 +1,8 @@
+#
+# Low intensity beam configuration
+#
+# original author: Dave Brown, LBNL
+#
+physics.producers.PBISim.SDF: 0.6
+physics.producers.PBISim.extendedMean: 1.58e5 #  1% of a single pulse of a single booster batch
+physics.producers.PBISim.cutMax: 9.48e5  # truncate the tail at 6 times the mean

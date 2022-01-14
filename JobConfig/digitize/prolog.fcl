@@ -57,7 +57,7 @@ Digitize: {
       module_type : StrawDigiMCFilter
       MinNDigis : 15
       MinParticleMom : 80.0
-      MaxParticleMom : 130.0
+      MaxParticleMom : 200.0
       StrawDigiMCCollection : compressDigiMCs
       particleTypes : [ 11,-11, 13, -13] # e+-, mu+-
     }
@@ -84,7 +84,7 @@ Digitize: {
     "keep mu2e::CaloClusters_CaloClusterFast_*_*",
     "keep mu2e::ProtonBunchIntensity*_*_*_*"
   ]
-
+  #
   DigiProducts : [
     "keep mu2e::StrawDigis_*_*_*",
     "keep mu2e::StrawDigiADCWaveforms_*_*_*",
@@ -96,32 +96,66 @@ Digitize: {
     "keep mu2e::ProtonBunchTimeMC_*_*_*",
     "keep mu2e::ProtonBunchTime_*_*_*",
     "keep mu2e::EventWeight_*_*_*",
-    "keep *_compressDigiMCs_*_*" ]
+    "keep *_compressDigiMCs_*_*",
+    "keep mu2e::TriggerInfo_*_*_*",
+    "keep art::TriggerResults_*_*_*",
+    "keep mu2e::KalSeeds_TT*_*_*",
+    "keep mu2e::HelixSeeds_TT*_*_*",
+    "keep mu2e::TimeClusters_TT*_*_*",
+    "keep mu2e::CaloClusters_CaloClusterFast_*_*",
+    "keep mu2e::ProtonBunchIntensity*_*_*_*"
+  ]
 
+  #
+  # different streams for different purposes:  Triggered is for physics studies.  Untriggered is for algorithm improvement.
+  # *Calib are for calibration and alignment
+  #
   TriggeredOutput : {
     module_type : RootOutput
-    SelectEvents : [ "*_trigger" ] # this selects events passing any trigger
+    SelectEvents : [ "*_trigger" ] # this selects events passing any trigger.  We should eventually exclude 'Service' triggers FIXME
     fileName    : @nil
   }
+
   UntriggeredOutput : {
     module_type : RootOutput
     RejectEvents : [ "*_trigger" ] # reject events passing any trigger
     SelectEvents : [ "Untriggered" ] # require events pass 'Triggerable' filter
     fileName    : @nil
   }
+
+  TrkOutput : {
+    module_type : RootOutput
+    SelectEvents : [ "cst*_trigger" ] # selects events passing tracker calibration trigger.  This should include a 'Calib' flag FIXME!
+    fileName    : @nil
+  }
+
+  CaloOutput : {
+    module_type : RootOutput
+    SelectEvents : [ "caloCalib*_trigger" ] # selects events passing calorimeter calibration trigger
+    fileName    : @nil
+  }
+
   EndSequence : [digiCompressionCheck]
 }
-Digitize.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, UntriggeredOutput ]
 # override the Trigger sequence to prepare digis
 Trigger.PrepareDigis: [ @sequence::CommonMC.DigiSim, @sequence::TrackerMC.DigiSim, @sequence::CaloMC.DigiSim ]
 Digitize.TriggeredOutput.outputCommands : [ "drop *_*_*_*",
-  @sequence::Digitize.DigiProducts,
-  @sequence::Digitize.TriggerProducts ]
+  @sequence::Digitize.DigiProducts]
 
 Digitize.UntriggeredOutput.outputCommands : [ "drop *_*_*_*",
-  @sequence::Digitize.DigiProducts,
-  @sequence::Digitize.TriggerProducts ]
+  @sequence::Digitize.DigiProducts]
 
-#outputs.Output.SelectEvents : # add output stream of 'good' events that fail the trigger; this requiers a new verison of art FIXME!
+Digitize.TrkOutput.outputCommands : [ "drop *_*_*_*",
+  @sequence::Digitize.DigiProducts]
+
+Digitize.CaloOutput.outputCommands : [ "drop *_*_*_*",
+  @sequence::Digitize.DigiProducts]
+
+Digitize.Outputs : {
+  TriggeredOutput : @local::Digitize.TriggeredOutput
+  UntriggeredOutput : @local::Digitize.UntriggeredOutput
+  TrkOutput : @local::Digitize.TrkOutput
+  CaloOutput : @local::Digitize.CaloOutput
+}
 
 END_PROLOG

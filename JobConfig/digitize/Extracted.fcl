@@ -1,0 +1,49 @@
+#
+#  Digitize signals from extracted position cosmics, and trigger based on the extracted position trigger menu
+#
+#include "Production/JobConfig/digitize/Digitize.fcl"
+# add trigger paths
+#include "Offline/gen/fcl/Trigger/ExtrPosTrigMenu/ExtrPosTrigMenu.fcl"
+# set the event timing for OffSpill
+physics.producers.EWMProducer.SpillType : 0
+# override the Untriggered filter to just prescale
+physics.filters.Triggerable : {
+  module_type : RandomPrescaleFilter
+  nPrescale         : 1000
+}
+# extracted geometry
+services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_common_extracted.txt"
+# produce only calibration streams
+physics.EndPath : [ @sequence::Digitize.EndSequence, TrkOutput, CaloOutput, UntriggeredOutput ]
+physics.end_paths : [ EndPath ]
+outputs : {
+  TrkOutput : {
+    @table::Digitize.TrkOutput
+    fileName : "dig.owner.ExtractedTrk.version.sequencer.art"
+  }
+  CaloOutput : {
+    @table::Digitize.CaloOutput
+    fileName : "dig.owner.ExtractedCalo.version.sequencer.art"
+  }
+  UntriggeredOutput : {
+    @table::Digitize.UntriggeredOutput
+    fileName : "dig.owner.ExtractedUntriggered.version.sequencer.art"
+  }
+}
+# setup CRV lookup tables to follow
+services.GeometryService.inputFile      : "Production/JobConfig/cosmic/geom_extracted_nofield.txt"
+physics.producers.CrvPhotons.CRVSectors : ["EX","T1","T2"] #/gused only to match the vector entries below
+physics.producers.CrvPhotons.reflectors : [  0 ,  1 ,  0 ]
+physics.producers.CrvPhotons.lookupTableFileNames : ["CRVConditions/v6_0/LookupTable_6000_0",  #/gEX
+  "CRVConditions/v6_0/LookupTable_2370_1",  #/gT1
+  "CRVConditions/v6_0/LookupTable_3200_0"]  #/gT2
+#/gnumber of photons per MeV visible energy deposited
+#/gfor 68 PE/SiPM @ 1 m away from SiPM (Test beam June 2017)
+#/gusing the pulse height calibration, this value gives 45 PE/SiPM @ 1 m away from SiPM
+physics.producers.CrvPhotons.scintillationYields  : [39400,39400,39400]
+physics.producers.CrvCoincidence.CRVSectors   : ["EX","T1","T2"]
+physics.producers.CrvCoincidence.PEthresholds : [  8 ,  8 ,  8 ]
+physics.producers.CrvCoincidence.adjacentPulseTimeDifferences  : [ 10 , 10 , 10 ]
+physics.producers.CrvCoincidence.maxTimeDifferences            : [ 10 , 10 , 10 ]
+physics.producers.CrvCoincidence.coincidenceLayers             : [  3 ,  3 ,  3 ]
+

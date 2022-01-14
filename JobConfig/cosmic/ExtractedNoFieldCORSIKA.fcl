@@ -1,0 +1,20 @@
+#include "Production/JobConfig/cosmic/ExtractedNoField.fcl"
+
+source: {
+  module_type: FromCorsikaBinary
+  fileNames: ["/pnfs/mu2e/persistent/users/srsoleti/corsika/sim.srsoleti.corsika.v1.30001.csk"]
+  runNumber          : 1205
+  showerAreaExtension  : 10000
+  projectToTargetBox : true
+  targetBoxXmin: -10000
+  targetBoxXmax: 3000
+  targetBoxYmin: -5000
+  targetBoxYmax: 9880 # defined by CRV
+  targetBoxZmin: 17105 # defined by CRV
+  targetBoxZmax: 32220 # defined by Calo Z1
+  fluxConstant: 1.8e4
+}
+
+physics.producers.generate : @local::Cosmic.generateCORSIKA
+
+outputs.Output.fileName         : "sim.owner.CosmicCORSIKANoFieldExtracted.version.sequencer.art"

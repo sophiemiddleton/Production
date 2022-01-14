@@ -10,16 +10,16 @@ physics.producers.FindMCPrimary.PrimaryGenIds: ["CosmicCRY", "CosmicCORSIKA"]
 physics.TriggerPath: [ @sequence::TrackerMC.StepSim, @sequence::CaloMC.StepSim, CrvSteps,
     TrkStepFilter, CaloStepFilter, compressDetStepMCs, FindMCPrimary ]
 
-physics.filters.TrkStepFilter : @local::Primary.filters.DetStepFilter
+physics.filters.TrkStepFilter : @local::Primary.filters.PrimaryFilter
 physics.filters.TrkStepFilter.MaximumPartMom: 500
 physics.filters.TrkStepFilter.CaloShowerSteps: [ ]
-physics.filters.CaloStepFilter : @local::Primary.filters.DetStepFilter
+physics.filters.CaloStepFilter : @local::Primary.filters.PrimaryFilter
 physics.filters.CalStepFilter.MaximumPartMom: 500
 physics.filters.CaloStepFilter.StrawGasSteps: [ ]
 
 physics.producers.CaloShowerStepMaker.caloStepPointCollection: ["detectorFilter:calorimeter"]
 physics.producers.CrvSteps.stepPointsModuleLabels : ["detectorFilter"]
-physics.producers.compressDetStepMCs.simParticleTag: "detectorFilter"
+physics.producers.compressDetStepMCs.simParticleTags: ["detectorFilter"]
 physics.producers.compressDetStepMCs.stepPointMCTags : [ "detectorFilter:virtualdetector", "detectorFilter:protonabsorber" ]
 physics.producers.compressDetStepMCs.mcTrajectoryTag: "detectorFilter"
 outputs.Output.fileName        : "sim.owner.CosmicConverted.version.sequencer.art"

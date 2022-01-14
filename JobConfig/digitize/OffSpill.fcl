@@ -4,9 +4,29 @@
 #include "Production/JobConfig/digitize/Digitize.fcl"
 # add trigger paths
 #include "Offline/gen/fcl/Trigger/OffSpillTrigMenu/OffSpillTrigMenu.fcl"
-# setthe event timing for OffSpill
+# set the event timing for OffSpill
 physics.producers.EWMProducer.SpillType : 0
-# redefine 'triggerable' to include straight tracks and require more digis
-physics.filters.triggerable.maxparticlemom : 1e7
-physics.filters.triggerable.MinNDigis : 20
+# minimal BField map
+services.GeometryService.inputFile      : "Offline/Mu2eG4/geom/geom_common_reco.txt"
+# produce physics and calibration streams
+physics.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, UntriggeredOutput, TrkOutput, CaloOutput ]
+physics.end_paths : [ EndPath ]
+outputs : {
+  TrkOutput : {
+    @table::Digitize.TrkOutput
+    fileName : "dig.owner.OffSpillTrk.version.sequencer.art"
+  }
+  CaloOutput : {
+    @table::Digitize.CaloOutput
+    fileName : "dig.owner.OffSpillCalo.version.sequencer.art"
+  }
+  UntriggeredOutput : {
+    @table::Digitize.UntriggeredOutput
+    fileName : "dig.owner.OffSpillUntriggered.version.sequencer.art"
+  }
+  TriggeredOutput : {
+    @table::Digitize.TriggeredOutput
+    fileName : "dig.owner.OffSpillTriggered.version.sequencer.art"
+  }
+}
 

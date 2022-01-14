@@ -110,7 +110,7 @@ Cosmic: {
     mcTrajectoryInputs : [ "g4run" ]
     vetoDaughters: []
   }
-  cosmicResample: {
+  CosmicResampler: {
     module_type: ResamplingMixer
     fileNames: @nil
     readMode: "sequential"
@@ -122,7 +122,6 @@ Cosmic: {
         genParticleMixer: { mixingMap: [ [ "generate", "" ] ] }
         simParticleMixer: { mixingMap: [ [ "cosmicFilter", ""] ] }
         mcTrajectoryMixer:{ mixingMap: [ [ "cosmicFilter", ""] ] }
-        cosmicLivetimeMixer:{ mixingMap: [ [ "FromCorsikaBinary", ""] ] }
         stepPointMCMixer: { mixingMap: [ [ "cosmicFilter:crvStage1", ":" ], [ "cosmicFilter:CRV", ":" ] ] }
         volumeInfoMixer: {
           evtOutInstanceName: "eventlevel"
@@ -134,7 +133,7 @@ Cosmic: {
   }
   generateCRY: {
     module_type: CRYEventGenerator
-    inputFile    : "EventGenerator/defaultConfigs/defaultCRYconfig.txt"
+    inputFile    : "Offline/EventGenerator/defaultConfigs/defaultCRYconfig.txt"
   }
   generateCORSIKA: {
     module_type  : CORSIKAEventGenerator
@@ -157,8 +156,8 @@ Cosmic: {
   }
   MultiStageParametersCosmicS2: {
     primaryType: StepPoints
-    primaryTag: "cosmicResample:crvStage1"
-    inputMCTrajectories: "cosmicResample"
+    primaryTag: "CosmicResampler:crvStage1"
+    inputMCTrajectories: "CosmicResampler"
     inputPhysVolumeMultiInfo: ""
   }
   Mu2eG4CommonCutCosmicS1: {
@@ -167,6 +166,17 @@ Cosmic: {
     [
       @local::cosmicKineticEnergyCutS1,
       @local::crvStage1End,
+      {
+        type: inVolume
+        pars: [ worldDirtBottom ]
+      }
+    ]
+  }
+  Mu2eG4CommonCutCosmicNoField: {
+    type: union
+    pars:
+    [
+      @local::cosmicKineticEnergyCutS1,
       {
         type: inVolume
         pars: [ worldDirtBottom ]

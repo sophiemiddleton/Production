@@ -8,9 +8,9 @@ physics.producers.generate : {
   module_type : FlatMuonDaughterGenerator
   inputSimParticles: TargetStopResampler
   stoppingTargetMaterial : "Al"
-  pdgId : 13
+  pdgId : 11
   verbosity : 0
 }
 
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlateMinus"
-outputs.Output.fileName: "dts.owner.FlateMinus.version.sequencer.art"
+outputs.PrimaryOutput.fileName: "dts.owner.FlateMinus.version.sequencer.art"

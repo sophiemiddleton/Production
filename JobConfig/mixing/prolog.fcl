@@ -8,6 +8,8 @@
 #include "Offline/CommonMC/fcl/prolog.fcl"
 #include "Offline/TrackerMC/fcl/prolog.fcl"
 #include "Offline/CaloMC/fcl/prolog.fcl"
+# the following defines the prescale factors
+#include "Production/JobConfig/pileup/prolog.fcl"
 
 BEGIN_PROLOG
 
@@ -21,7 +23,6 @@ Mixing : {
     wrapFiles           : true
     mu2e: {
       protonBunchIntensityTag: "PBISim"
-      #      meanEventsPerProton: @nil
       simStageEfficiencyTags: @nil
       meanEventsPerPOTFactors : []
       writeEventIDs : false
@@ -35,8 +36,6 @@ Mixing : {
       MaxEventsToSkip: @nil
     }
   }
-  MixingProducts : [
-  ]
 }
 Mixing : {
   producers : {
@@ -58,41 +57,12 @@ Mixing : {
     EleBeamFlashMixer : @local::Mixing.DetStepMixer
     MuBeamFlashMixer : @local::Mixing.DetStepMixer
     NeutralsFlashMixer : @local::Mixing.DetStepMixer
-    # filter for signal or calibration-like particles that can pass the trigger.  This is mainly for cosmics
-    SignalFilter : {
-      module_type : DetectorStepFilter
-      MinimumTrkStepEnergy : 1.0e-6 # 1 ev
-      KeepPDG : [ ] # Loop at steps from all particle types
-      CaloShowerSteps: []
-      CrvSteps: []
-      StrawGasSteps: [ compressDetStepMCs ]
-      MinimumPartMom : 50.0 # MeV/c
-      MaximumPartMom : 250.0 # MeV/c
-      MinimumTrkSteps : 10 # primary must produce at least this many StrawGasSteps
-      # add a calo selection for primaries that produce only neutrals (for calibration)
-    }
-  }
-  TriggeredOutput : {
-    @table::Digitize.TriggeredOutput
-    outputCommands : [ "drop *_*_*_*",
-      @sequence::Mixing.MixingProducts,
-      @sequence::Digitize.DigiProducts,
-      @sequence::Digitize.TriggerProducts ]
-
-  }
-  UntriggeredOutput : {
-    @table::Digitize.UntriggeredOutput
-    outputCommands : [ "drop *_*_*_*",
-      @sequence::Mixing.MixingProducts,
-      @sequence::Digitize.DigiProducts,
-      @sequence::Digitize.TriggerProducts ]
-    SelectEvents : [ Untriggered ]
   }
 
   StepMixSequence : [ MuStopPileupMixer, EleBeamFlashMixer, MuBeamFlashMixer, NeutralsFlashMixer ]
 }
 Mixing.PileupMixSequence : [ PBISim, @sequence::Mixing.StepMixSequence ]
-Mixing.MixSequence : [ SignalFilter, @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
+Mixing.MixSequence : [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
 # override the Trigger 'PrepareDigis' sequence; the mixers must preceed the digi making.  Note CRV doesn't participate in trigger, so isn't included
 Trigger.PrepareDigis: [ @sequence::Mixing.PileupMixSequence, @sequence::CommonMC.DigiSim, @sequence::TrackerMC.DigiSim, @sequence::CaloMC.DigiSim ]
 

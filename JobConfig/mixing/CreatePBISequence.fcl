@@ -12,6 +12,7 @@ services: {
 
 source: {
   module_type :  PBISequence
+  reconstitutedModuleLabel : PBISim
   fileNames: @nil
   runNumber : @nil
   integratedSummary : true

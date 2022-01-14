@@ -23,8 +23,6 @@ if [[ ${2} == "" ]]; then
   echo 'source.maxEvents: 1000' >> mubeamresample.fcl
   echo 'services.SeedService.baseSeed: 502016040' >> mubeamresample.fcl
   echo 'physics.filters.beamResampler.mu2e.MaxEventsToSkip: 0' >> mubeamresample.fcl
-  echo 'physics.filters.TargetStopPrescaleFilter.nPrescale : 1' >> mubeamresample.fcl
-  echo 'physics.filters.EarlyPrescaleFilter.nPrescale : 100' >> mubeamresample.fcl
   echo 'physics.filters.beamResampler.fileNames : [' >> mubeamresample.fcl
   echo "\"`cat MuBeam.txt`\"" >> mubeamresample.fcl
   echo ']' >> mubeamresample.fcl
@@ -35,7 +33,6 @@ if [[ ${2} == "" ]]; then
   echo 'source.maxEvents: 10000' >> elebeamresample.fcl
   echo 'services.SeedService.baseSeed: 502016040' >> elebeamresample.fcl
   echo 'physics.filters.beamResampler.mu2e.MaxEventsToSkip: 0' >> elebeamresample.fcl
-  echo 'physics.filters.EarlyPrescaleFilter.nPrescale : 100' >> elebeamresample.fcl
   echo 'physics.filters.beamResampler.fileNames : [' >> elebeamresample.fcl
   echo "\"`cat EleBeam.txt`\"" >> elebeamresample.fcl
   echo ']' >> elebeamresample.fcl
@@ -46,8 +43,6 @@ if [[ ${2} == "" ]]; then
   echo 'source.maxEvents: 10000' >> neutresample.fcl
   echo 'services.SeedService.baseSeed: 502016040' >> neutresample.fcl
   echo 'physics.filters.neutralsResampler.mu2e.MaxEventsToSkip: 0' >> neutresample.fcl
-  echo 'physics.filters.TargetStopPrescaleFilter.nPrescale : 1' >> neutresample.fcl
-  echo 'physics.filters.EarlyPrescaleFilter.nPrescale : 1' >> neutresample.fcl
   echo 'physics.filters.neutralsResampler.fileNames : [' >> neutresample.fcl
   echo "\"`cat Neutrals.txt`\"" >> neutresample.fcl
   echo ']' >> neutresample.fcl

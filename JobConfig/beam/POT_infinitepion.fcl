@@ -1,0 +1,12 @@
+# Sophie Middleton 2021
+# Script to shoot beam protons onto the production target.  Daughter particles are filtered and collected. Only charged pions at the entrance to the DS at the beamline are stored since this is an unphysical stream with pions having an infinite lifetime. Due to this being unphyiscal we do not bother getting the Neutral or other beam element streams. These can be obtained using the general (muon/electron) path, and combined later for mixed analyzes.
+
+#include "Production/JobConfig/beam/POT.fcl"
+process_name :  POTinfinitepion
+
+physics.trigger_paths  : [BeamPath]
+physics.OutputPath : [BeamOutput]
+physics.end_paths: [OutputPath, LogPath ]
+
+outputs.BeamOutput.fileName : "sim.owner.PiBeam.version.sequencer.art"
+physics.producers.g4run.physics.noDecay     : [ 211, -211 ] # Added for Pion Infinite Lifetime for both charges

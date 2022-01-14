@@ -1,0 +1,18 @@
+#
+# Base configuration for resampling target muon stops and generating primary particles from them
+#
+# original author: Dave Brown, LBNL
+# edited for pions by : Sophie Middleton
+#include "Production/JobConfig/primary/StopParticle.fcl"
+
+physics.PrimaryPath : [ TargetPiStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
+physics.trigger_paths : [ PrimaryPath ]
+outputs : { PrimaryOutput : @local::Primary.PrimaryOutput }
+physics.EndPath : [ @sequence::Primary.EndSequence, PrimaryOutput ]
+physics.end_paths : [ EndPath ]
+
+physics.producers.g4run.inputs.inputPhysVolumeMultiInfo: "TargetPiStopResampler"
+physics.producers.g4run.inputs.updateEventLevelVolumeInfos: {
+  input: "TargetPiStopResampler:eventlevel"
+  outInstance: "eventlevel"
+}

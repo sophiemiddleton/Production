@@ -10,6 +10,9 @@ services.GeometryService.inputFile : "Offline/Mu2eG4/geom/geom_common_current.tx
 # file produced by ceSteps.fcl
 source.fileNames : [ "dts.owner.ceSteps.dsconf.seq.art" ]
 
-outputs.Output.fileName : "dts.owner.ceDigi.dsconf.seq.art"
+outputs.TriggeredOutput.fileName : "dts.owner.ceDigi.dsconf.seq.art"
+outputs.UntriggeredOutput.fileName : "/dev/null"
+outputs.TrkOutput.fileName : "/dev/null"
+outputs.CaloOutput.fileName : "/dev/null"
 
 

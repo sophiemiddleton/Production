@@ -18,24 +18,15 @@ physics : {
     @table::Mixing.filters
   }
   analyzers: { @table::Digitize.analyzers }
-  Triggered : [ @sequence::Mixing.MixSequence ]
+  MixPath : [ @sequence::Mixing.MixSequence ]
   Untriggered : [ @sequence::Mixing.MixSequence, Triggerable ]
-  EndPath : @local::Digitize.EndPath
+  EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, UntriggeredOutput ]
 }
-#
-outputs : {
-  TriggeredOutput : @local::Mixing.TriggeredOutput
-  UntriggeredOutput : @local::Mixing.UntriggeredOutput
-}
-#
+
 # Final configuration
 #
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
 #include "Production/JobConfig/mixing/epilog.fcl"
-physics.producers.CrvPhotons.crvStepProcessNames : [ "","","","","" ]
-physics.producers.compressDigiMCs.simParticleTags : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
-physics.producers.compressDigiMCs.caloShowerStepTags : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
-physics.producers.CaloShowerROMaker.caloShowerStepCollection : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
-physics.producers.CrvPhotons.crvStepModuleLabels : [ compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
+#include "Offline/gen/fcl/Trigger/OnSpillTrigMenu/OnSpillTrigMenu.fcl"
 

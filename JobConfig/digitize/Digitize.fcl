@@ -6,35 +6,28 @@
 process_name: Digitize
 source : { module_type : RootInput }
 services : @local::Services.SimAndReco # reco is needed for the trigger
-physics : { 
+physics : {
   producers : {
     @table::Digitize.producers
-    @table::Trigger.producers 
+    @table::Trigger.producers
   }
-  filters: { 
-    @table::Digitize.filters 
+  filters: {
+    @table::Digitize.filters
     @table::Trigger.filters
   }
   analyzers: { @table::Digitize.analyzers }
-  Triggered : @local::Digitize.DigitizeSequence
+  DigitizePath : @local::Digitize.DigitizeSequence
   Untriggered : [ @sequence::Digitize.DigitizeSequence, Triggerable ]
-  EndPath : @local::Digitize.EndPath
 }
 #
-outputs : { 
-  TriggeredOutput : @local::Digitize.TriggeredOutput
-  UntriggeredOutput : @local::Digitize.UntriggeredOutput
-}
 #
 # Final configuration
 #
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
 #
-physics.trigger_paths[0] : Triggered
+# define the digitization paths.  Trigger paths must be added separately
+#
+physics.trigger_paths[0] : DigitizePath
 physics.trigger_paths[1] : Untriggered
-physics.end_paths : [ EndPath ]
-# generic output: this is overwritten by generate_fcl
-outputs.TriggeredOutput.fileName: "dig.owner.DigiTriggered.version.sequencer.art"
-outputs.UntriggeredOutput.fileName: "dig.owner.DigiUntriggered.version.sequencer.art"
-services.SeedService.baseSeed         :  8
+services.SeedService.baseSeed          : 8
