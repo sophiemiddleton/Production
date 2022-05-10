@@ -69,7 +69,7 @@ physics : {
       particleInput : "g4run"
       # multiple matches, we'll get the one from the current process, which is what we want
       physVolInfoInput : "g4run"
-      stoppingMaterial : "StoppingTarget_Al"
+      stoppingMaterial : "StoppingTarget_V"
       particleTypes : [ 13 ] # mu-
       verbosityLevel: 1
     }

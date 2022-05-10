@@ -26,6 +26,22 @@ physics: {
   filters : {
     @table::Common.filters
     @table::Pileup.filters
+    # filter to select any detectable signal, without time cuts
+    MuonMomCut : { 
+        module_type : BeamSelector
+        requireVD        : 1
+        savePDG          : [13,-13]  // muons
+        tvdDropPDG       : []
+        saveVD           : [8]
+        navigateToParent : false
+        // Source of data
+        generatorModuleLabel : generate
+        g4ModuleLabel        : "BeamFilter"
+        simParticleColl      : "BeamFilter"
+        vdStepPoints         : "BeamFilter:virtualdetector"
+        tvdStepPoints        : "BeamFilter:timeVD"
+        physicsVolumeColl    : "compressPVmuonBeam"
+      }
   }
   analyzers : {
     @table::Common.analyzers
@@ -108,3 +124,4 @@ physics.producers.StrawGasStepMaker.KeepDeltasModule : ""
 physics.producers.CaloShowerStepMaker.caloStepPointCollection : ["FlashFilter:calorimeter"]
 physics.producers.CrvSteps.stepPointsModuleLabels : [ "FlashFilter" ]
 physics.producers.compressDetStepMCs.simParticleTags : ["FlashFilter"]
+services.TFileService.fileName: "nts.owner.GenPlots.version.sequencer.root"
