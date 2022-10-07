@@ -24,8 +24,6 @@ def dayabay_normalization(livetime):
   db_expected_per_year = ub_per_year * db_expected_per_ub
   return db_expected_per_year * livetime
 
-
-
 def ce_normalization(livetime, rue):
   captures_per_stopped_muon = 0.609
   return POT_per_year * stopped_mu_per_POT * captures_per_stopped_muon * livetime * rue
@@ -53,7 +51,7 @@ def dio_normalization(livetime, emin):
 
 def rpc_normalization(livetime, emin, tmin, internal):
   # calculate fraction of spectrum being generated
-  spec = open("JobConfig/ensemble/RPCspectrum.dat") # Bistirlich spectrum from 0.05 to 139.95 in steps of 0.1
+  spec = open("Production/JobConfig/ensemble/RPCspectrum.dat") # Bistirlich spectrum from 0.05 to 139.95 in steps of 0.1
   energy = []
   val = []
   for line in spec:
@@ -74,7 +72,7 @@ def rpc_normalization(livetime, emin, tmin, internal):
 
 
   # calculate survival probability for tmin including smearing of POT
-  pot = open("JobConfig/ensemble/POTspectrum.dat"); # ConditionsService/data/potTimingDistribution_20160511.txt, sampled by GenerateProtonTimes_module.cc 
+  pot = open("Production/JobConfig/ensemble/POTspectrum.dat"); # ConditionsService/data/potTimingDistribution_20160511.txt, sampled by GenerateProtonTimes_module.cc 
   time = []
   cdf = []
   for line in pot:
