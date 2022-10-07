@@ -30,7 +30,7 @@ def ce_normalization(livetime, rue):
 
 def dio_normalization(livetime, emin):
   # calculate fraction of spectrum being generated
-  spec = open(os.path.join(os.environ["MU2E_BASE_RELEASE"],"Offline/ConditionsService/data/czarnecki_szafron_Al_2016.tbl"))
+  spec = open("/mu2e/app/users/sophie/Offline_October/Offline/ConditionsService/data/czarnecki_szafron_Al_2016.tbl")
   energy = []
   val = []
   for line in spec:
