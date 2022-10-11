@@ -9,7 +9,7 @@ random.seed()
 
 # check length of input list
 if len(sys.argv) < 6:
-  print("python Production/JobConfig/ensemble/genEnsemble.py <dirname> <max livetime> <livetime for DIO/RPC gen> <kmax number> <run number>")
+  print("python Production/JobConfig/ensemble/genEnsemble.py <dirname> <max livetime> <livetime for DIO/RPC gen> <kmax number> <run number> <version>")
   sys.exit()
 
 dirname = sys.argv[1]
@@ -17,6 +17,7 @@ max_livetime_rmc = float(sys.argv[2]) # in years
 max_livetime_others = float(sys.argv[3]) # in years
 kmax_number = int(sys.argv[4])
 run_number = int(sys.argv[5])
+version = sys.argv[6] #campaign version
 
 if os.path.exists(os.path.join(os.getcwd(), dirname)):
   print("Error: this directory exists!")
@@ -125,7 +126,7 @@ for tname in ["CeMLeadingLog-mix","CePLeadingLog-mix"]:
 
   njobs = int(norms[tname]*max_livetime_others/per_run[tname])+1
   
-  d = {"includeOrEmbed": "--include Production/JobConfig/mixing/" + temp_tname + ".fcl", "dirname": dirname, "name": tname, "njobs": njobs, "perjob": per_run[tname]}
+  d = {"includeOrEmbed": "--include Production/JobConfig/mixing/" + temp_tname + ".fcl", "dirname": dirname, "name": tname, "njobs": njobs, "perjob": per_run[tname], "version" : version}
   fout = open(dirname + "/generate_" + tname + ".sh","w")
   fout.write(t.substitute(d))
   fout.close()
@@ -136,7 +137,7 @@ for tname in ["DIOLeadingLog-cut-mix","RPCexternal-cut-mix","RPCinternal-cut-mix
 
   njobs = int(norms[tname]*max_livetime_others/per_run[tname])+1
   
-  d = {"includeOrEmbed": "--embed Production/JobConfig/ensemble/" + tname + ".fcl", "dirname": dirname, "name": tname, "njobs": njobs, "perjob": per_run[tname]}
+  d = {"includeOrEmbed": "--embed Production/JobConfig/ensemble/" + tname + ".fcl", "dirname": dirname, "name": tname, "njobs": njobs, "perjob": per_run[tname], "version" : version}
   fout = open(dirname + "/generate_" + tname + ".sh","w")
   fout.write(t.substitute(d))
   fout.close()
@@ -156,7 +157,7 @@ for tname in ["RMCexternal-cut-mix","RMCinternal-cut-mix"]:
   njobs = int(norms[tname]*max_livetime_rmc/per_run[tname])+1
     
   
-  d = {"includeOrEmbed": "--embed " + dirname + "/" + tname + ".fcl", "dirname": dirname, "name": temp_tname, "njobs": njobs, "perjob": per_run[tname], "inputs": temp_tname+".txt"}
+  d = {"includeOrEmbed": "--embed " + dirname + "/" + tname + ".fcl", "dirname": dirname, "name": temp_tname, "njobs": njobs, "perjob": per_run[tname], "inputs": temp_tname+".txt", "version" : version}
   fout = open(dirname + "/generate_" + tname + ".sh","w")
   fout.write(t.substitute(d))
   fout.close()
@@ -174,7 +175,7 @@ for tname in ["reco-RMCexternal-cut-mix","reco-RMCinternal-cut-mix"]:
   temp_tname = "reco-" + tname.split("-")[1] + "-kMax%d-cut-mix" % (kmax_number)
   fin = open("Production/JobConfig/ensemble/generate_template_reco.sh")
   t = Template(fin.read())
-  d = {"includeOrEmbed": "--embed " + "Production/JobConfig/ensemble/" + temp_tname + ".fcl", "dirname": dirname, "name": temp_tname, "mergeFactor": per_run[tname], "inputs": temp_tname+".txt"}
+  d = {"includeOrEmbed": "--embed " + "Production/JobConfig/ensemble/" + temp_tname + ".fcl", "dirname": dirname, "name": temp_tname, "mergeFactor": per_run[tname], "inputs": temp_tname+".txt", "version" : version}
   fout = open(dirname + "/generate_" + tname + ".sh","w")
   fout.write(t.substitute(d))
   fout.close()
