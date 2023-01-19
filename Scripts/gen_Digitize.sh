@@ -19,7 +19,7 @@ digitype=$6
 digout=${primary}${digitype}
 dbpurpose=$2_$7
 dbver=$8
-bfield="Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt"
+bfield="Mu2eG4/geom/bfgeom_reco_altDS11_helical_v01.txt"
 if [[ $# -eq 9 ]]; then
   bfield="Offline/Mu2eG4/geom/$9"
 fi
