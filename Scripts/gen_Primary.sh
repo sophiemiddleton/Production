@@ -13,10 +13,9 @@
 # $8 is the pdgId of the particle to generate
 # $9 is the startMom
 # $10 is the endMom
-# $11 is the name of the BField file
-# $12 is the (optional) BField file.  Ddfault is Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt
-
-if [[ $# -lt 7 ]]; then
+# $11 (optional) is the name of the BField file
+echo "in mu2epro version"
+if [[ $# -lt 10 ]]; then
   echo "Missing arguments, provided $# but there should be 7"
   return 1
 fi
@@ -26,13 +25,10 @@ primaryconf=$2$4
 stype=$5
 njobs=$6
 eventsperjob=$7
-pdg=$9
-startMom=${10}
-endMom=${11}
+pdg=$8
+startMom=$9
+endMom=${10}
 bfield="Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt"
-if [[ $# -eq 8 ]]; then
-  bfield="Offline/Mu2eG4/geom/$8"
-fi
 
 dataset=sim.mu2e.${stype}StopsCat.${stopsconf}.art
 
@@ -41,7 +37,7 @@ if [[ "${stype}" == "Muminus" ]] ||  [[ "${stype}" == "Muplus" ]]; then
 elif [[ "${stype}" == "Piminus" ]] ||  [[ "${stype}" == "Piplus" ]]; then
   resampler=TargetPiStopResampler
 elif [[ "${stype}" == "Cosmic" ]]; then
-  dataset=sim.mu2e.${stype}DSStops${primary}.${stopsconf}.art   # should have Cat FIXME!
+  dataset=sim.mu2e.${stype}DSStops${primary}.${stopsconf}.art
   resampler=${stype}Resampler
 else
   resampler=${stype}StopResampler
@@ -60,12 +56,13 @@ else
   echo "#include \"Production/JobConfig/primary/${primary}.fcl\"" >> primary.fcl
 fi
 echo physics.filters.${resampler}.mu2e.MaxEventsToSkip: ${nskip} >> primary.fcl
-echo "services.GeometryService.bFieldFile : \"$bfield\"" >> primary.fcl
+echo "services.GeometryService.bFieldFile : \"${bfield}\"" >> primary.fcl
 
 if [[ "${stype}" == "FlatMuDaughter" ]]; then
   echo physics.producers.generate.pdgId: ${pdg}            >> primary.fcl
   echo physics.producers.generate.startMom: ${startMom}    >> primary.fcl
   echo physics.producers.generate.endMom: ${endMom}        >> primary.fcl
+fi
 #
 # now generate the fcl
 #
@@ -79,4 +76,3 @@ for dirname in 000 001 002 003 004 005 006 007 008 009; do
   echo "moving $dirname to ${primary}_${dirname}"
  fi
 done
-
