@@ -14,11 +14,8 @@
 # $9 is the startMom
 # $10 is the endMom
 # $11 (optional) is the name of the BField file
+# e.g. source gen_Primary.sh CeEndpoint MDC2020 p v Muminus 1000 4000 -11 0 110 Offline/Mu2eG4/geom/bfgeom_reco_altDS11_helical_v01.txt
 echo "in mu2epro version"
-if [[ $# -lt 10 ]]; then
-  echo "Missing arguments, provided $# but there should be 7"
-  return 1
-fi
 primary=$1
 stopsconf=$2$3
 primaryconf=$2$4
@@ -28,7 +25,7 @@ eventsperjob=$7
 pdg=$8
 startMom=$9
 endMom=${10}
-bfield="Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt"
+bfield=${11} #FIXME, should always have to input this!
 
 dataset=sim.mu2e.${stype}StopsCat.${stopsconf}.art
 
@@ -42,8 +39,8 @@ elif [[ "${stype}" == "Cosmic" ]]; then
 else
   resampler=${stype}StopResampler
 fi
-
-samweb list-file-locations --schema=root --defname="$dataset"  | cut -f1 > Stops.txt
+echo ${bfield} "is the field being used"
+samweb list-file-locations --filter=dcache  --schema=root --defname="$dataset"  | cut -f1 > Stops.txt
 # calucate the max skip from the dataset
 nfiles=`samCountFiles.sh $dataset`
 nevts=`samCountEvents.sh $dataset`
@@ -63,6 +60,10 @@ if [[ "${stype}" == "FlatMuDaughter" ]]; then
   echo physics.producers.generate.startMom: ${startMom}    >> primary.fcl
   echo physics.producers.generate.endMom: ${endMom}        >> primary.fcl
 fi
+#if [[ "${stype}" == "FlatGamma" ]]; then
+#  echo "#include \"Production/JobConfig/primary/FlatGamma.fcl\"" >> primary.fcl
+#fi
+
 #
 # now generate the fcl
 #
