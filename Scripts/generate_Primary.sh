@@ -85,7 +85,7 @@ while getopts ":-:" options; do
 done
 
 # Test: run a test to check the SimJob for this campaign verion exists TODO 
-DIR=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/${PRMARY_CAMPAIGN}
+DIR=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/${PRIMARY_CAMPAIGN}
 if [ -d "$DIR" ];
   then
     echo "$DIR directory exists."
