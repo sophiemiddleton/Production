@@ -14,8 +14,9 @@
 # $9 is the startMom
 # $10 is the endMom
 # $11 (optional) is the name of the BField file
+
 # e.g. source gen_Primary.sh CeEndpoint MDC2020 p v Muminus 1000 4000 -11 0 110 Offline/Mu2eG4/geom/bfgeom_reco_altDS11_helical_v01.txt
-echo "in mu2epro version"
+
 primary=$1
 stopsconf=$2$3
 primaryconf=$2$4
@@ -26,6 +27,7 @@ pdg=$8
 startMom=$9
 endMom=${10}
 bfield=${11} #FIXME, should always have to input this!
+
 
 dataset=sim.mu2e.${stype}StopsCat.${stopsconf}.art
 
@@ -60,9 +62,6 @@ if [[ "${stype}" == "FlatMuDaughter" ]]; then
   echo physics.producers.generate.startMom: ${startMom}    >> primary.fcl
   echo physics.producers.generate.endMom: ${endMom}        >> primary.fcl
 fi
-#if [[ "${stype}" == "FlatGamma" ]]; then
-#  echo "#include \"Production/JobConfig/primary/FlatGamma.fcl\"" >> primary.fcl
-#fi
 
 #
 # now generate the fcl
