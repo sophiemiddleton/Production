@@ -6,18 +6,17 @@
 # generate_Digitization.sh --primary CeEndpoint --pcamp MDC2020t --dcamp MDC2020t --events 100 --njobs 1000 --merge 10 --digitype OnSpill --db_purpose perfect --db_version v1_0
 
 PRIMARY="" # is the PRIMARY
+RELEASE="" # e.g. MDC2020
 PRIMARY_CAMPAIGN="" # production version followed by PRIMARY production version
 DIGI_CAMPAIGN="" # is the production (ie MDC2020) followed by the digi production version 
 TYPE="" # the kind of input stops (Muminus, Muplus, IPAMuminus, IPAMuplus, Piminus, Piplus, or Cosmic)
-JOBS="" # is the number of jobs
-EVENTS="" # is the number of events/job
 MERGE="" #is the number of input collections to merge (merge factor)
 DIGITYPE="" #is the digitization type (OnSpill, OffSpill, NoField, Extracted)
 DB_PURPOSE="" # is the database purpose
 DB_VERSION="" # is the database version
 # The following can be overridden if needed
-FIELD="Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt" #optional (for changing field map)
 OWNER=mu2e
+FIELD="Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt" #optional (for changing field map)
 RUN=1202
 
 # Function: Exit with error.
@@ -37,17 +36,14 @@ while getopts ":-:" options; do
         primary)                                  
           PRIMARY=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))      
           ;;
+        release)                                  
+          RELEASE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))      
+          ;;
         pcamp)                                   
           PRIMARY_CAMPAIGN=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))                
           ;;
         dcamp)                                    
           DIGI_CAMPAIGN=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))                  
-          ;;
-        njobs)                                    
-          JOBS=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))                 
-          ;;
-        events)                                    
-          EVENTS=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))                      
           ;;
         merge)                                   
           MERGE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))                   
@@ -66,6 +62,9 @@ while getopts ":-:" options; do
           ;;
         field)                                   
           FIELD=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))                    
+          ;;
+        run)                                   
+          RUN=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))                    
           ;;
         desc)                                   
           DESC=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))                 
@@ -107,10 +106,10 @@ else
     return 1
   fi
 fi
-echo "Generating digitization scripts for $PRIMARY conf ${DIGI_CAMPAIGN} ${DB_PURPOSE} ${DB_VERSION} output ${PRIMARY} ${DIGITYPE} database purpose, version $DIGI_CAMPAIGN _ $DB_PURPOSE _ ${DB_VERSION}, $DB_VERSION"
+echo "Generating digitization scripts for $PRIMARY conf ${DIGI_CAMPAIGN} ${DB_PURPOSE} ${DB_VERSION} output ${PRIMARY} ${DIGITYPE} database purpose, version ${DIGI_CAMPAIGN} _ ${DB_PURPOSE} _ ${DB_VERSION}, ${DB_VERSION}"
 
 rm -f digitize.fcl
-samweb list-file-locations --schema=root --defname="dts.mu2e.${DESC}.art"  | cut -f1 > $DESC.txt
+samweb list-file-locations --schema=root --defname="dts.mu2e.${DESC}.art"  | cut -f1 > ${DESC}.txt
 echo \#include \"Production/JobConfig/digitize/Digitize.fcl\" >> digitize.fcl
 echo \#include \"Production/JobConfig/digitize/${DIGITYPE}.fcl\" >> digitize.fcl
 # turn off streams according to the digitization type.
@@ -127,7 +126,7 @@ else
   echo outputs.UntriggeredOutput.fileName: \"dig.owner.${PRIMARY}${DIGITYPE}Untriggered.version.sequencer.art\" >> digitize.fcl
 fi
 # setup database access for digi parameters
-echo services.DbService.purpose: ${DIGI_CAMPAIGN}"_"${DB_PURPOSE}"_"${DB_VERSION} >> digitize.fcl
+echo services.DbService.purpose: ${RELEASE}"_"${DB_PURPOSE} >> digitize.fcl
 echo services.DbService.version: ${DB_VERSION} >> digitize.fcl
 echo services.DbService.verbose : 2 >> digitize.fcl
 echo "services.GeometryService.bFieldFile : \"${FIELD}\"" >> digitize.fcl

@@ -7,10 +7,11 @@ exit_abnormal() {
 }
 
 usage() { echo "Usage:
-  e.g.  bash generate_Reco.sh --primary CeEndpoint --dcamp MDC2020t --rcamp MDC2020t  --dbpurpose perfect --dbversion v1_0 --merge 10"
+  e.g.  bash generate_Reco.sh --primary CeEndpoint --release MDC2020 --dcamp MDC2020t --rcamp MDC2020t  --dbpurpose perfect --dbversion v1_0 --merge 10"
 }
 
 PRIMARY="" # name of primary
+RELEASE="" # e.g. MDC2020
 DIGI_CAMPAIGN="" # digi (input) campaign name
 RECO_CAMPAIGN="" # reco (output) campaign name
 DB_PURPOSE="" # db purpose  
@@ -26,6 +27,9 @@ while getopts ":-:" options; do
       case "${OPTARG}" in               
         primary)                                  
           PRIMARY=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))      
+          ;;
+        release)                                  
+          RELEASE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))      
           ;;
         dcamp)                                   
           DIGI_CAMPAIGN=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))                
@@ -61,7 +65,7 @@ echo "Generating reco scripts for ${PRIMARY} conf ${DIGI_CAMPAIGN}_${DB_PURPOSE}
 samweb list-file-locations --schema=root --defname="dig.${OWNER}.${PRIMARY}.${DIGI_CAMPAIGN}_${DB_PURPOSE}_${DB_VERSION}.art"  | cut -f1 > Digis.txt
 
 echo '#include "Production/JobConfig/reco/Reco.fcl"' > template.fcl
-echo 'services.DbService.purpose:' ${RECO_CAMPAIGN}'_'${DB_PURPOSE} >> template.fcl
+echo 'services.DbService.purpose:' ${RELEASE}'_'${DB_PURPOSE} >> template.fcl
 echo 'services.DbService.version:' ${DB_VERSION} >> template.fcl
 echo 'services.DbService.verbose : 2' >> template.fcl
 
