@@ -1,5 +1,5 @@
 # Note: the jobs created by this script need at least 8GBytes of memory
-generate_fcl --description ${name} --dsconf MDC2018h --dsowner mu2e ${includeOrEmbed} \
+generate_fcl --description ${name} --dsconf ${version} --dsowner mu2e ${includeOrEmbed} \
 --run-number 1002 --events-per-job ${perjob} --njobs ${njobs} --max-engines 50 --first-subrun=1 \
 --auxinput=3:physics.filters.ootMixerCRV.fileNames:oot-CRV-recat.txt \
 --auxinput=1:physics.filters.neutronMixerCRV.fileNames:neutron-CRV-cat.txt \
