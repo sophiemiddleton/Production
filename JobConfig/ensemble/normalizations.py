@@ -2,7 +2,7 @@ import ROOT
 import math
 import os
 
-mean_PBI = 3.9e7 # in JobConfig/mixing/prolog.fcl  protonBunchIntensity.extendedMean
+mean_PBI = 3.9e7 # in Production/JobConfig/mixing/prolog.fcl  protonBunchIntensity.extendedMean
 dutyfactor = 0.25 # 43.1ms+5ms on spill x8, then 1020ms off spill
 ub_per_year = 365*24*60*60./1695e-9*dutyfactor
 POT_per_year = ub_per_year*mean_PBI
@@ -32,7 +32,7 @@ def ce_normalization(livetime, rue):
 
 def dio_normalization(livetime, emin):
   # calculate fraction of spectrum being generated
-  spec = open(os.path.join(os.environ["MU2E_BASE_RELEASE"],"Offline/ConditionsService/data/czarnecki_szafron_Al_2016.tbl"))
+  spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"heeck_finer_binning_2016_szafron.tbl"))
   energy = []
   val = []
   for line in spec:
@@ -53,7 +53,7 @@ def dio_normalization(livetime, emin):
 
 def rpc_normalization(livetime, emin, tmin, internal):
   # calculate fraction of spectrum being generated
-  spec = open("JobConfig/ensemble/RPCspectrum.dat") # Bistirlich spectrum from 0.05 to 139.95 in steps of 0.1
+  spec = open("Production/JobConfig/ensemble/RPCspectrum.dat") # Bistirlich spectrum from 0.05 to 139.95 in steps of 0.1
   energy = []
   val = []
   for line in spec:
@@ -74,7 +74,7 @@ def rpc_normalization(livetime, emin, tmin, internal):
 
 
   # calculate survival probability for tmin including smearing of POT
-  pot = open("JobConfig/ensemble/POTspectrum.dat"); # ConditionsService/data/potTimingDistribution_20160511.txt, sampled by GenerateProtonTimes_module.cc 
+  pot = open("Production/JobConfig/ensemble/POTspectrum.dat"); # ConditionsService/data/potTimingDistribution_20160511.txt, sampled by GenerateProtonTimes_module.cc 
   time = []
   cdf = []
   for line in pot:

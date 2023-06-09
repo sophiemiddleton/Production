@@ -18,17 +18,17 @@ def generate(verbose=True,dem_emin=93,dep_emin=83,rpc_tmin=400):
 
     # lists of files to send to scons for dependencies
     sourceFiles = [
-	"JobConfig/ensemble/epilog.fcl","JobConfig/ensemble/prolog.fcl",
-	"JobConfig/ensemble/epilog_reco.fcl","JobConfig/ensemble/prolog_reco.fcl","JobConfig/ensemble/reco-mcdigis-trig.fcl"]
+	"Production/JobConfig/ensemble/epilog.fcl","Production/JobConfig/ensemble/prolog.fcl",
+	"Production/JobConfig/ensemble/epilog_reco.fcl","Production/JobConfig/ensemble/prolog_reco.fcl","Production/JobConfig/ensemble/reco-mcdigis-trig.fcl"]
 
     targetFiles = []
 
-    projectDir = "gen/fcl/JobConfig/ensemble"
+    projectDir = "build/gen/fcl/JobConfig/ensemble"
     if not os.path.exists(projectDir) :
       os.makedirs(projectDir)
     
     for tname in ["DIOLeadingLog-cut-mix"]:
-      templateFileName = "JobConfig/ensemble/" + tname + ".fcl"
+      templateFileName = "Production/JobConfig/ensemble/" + tname + ".fcl"
       sourceFiles.append(templateFileName)
       fin = open(templateFileName) 
       t = Template(fin.read())
@@ -41,7 +41,7 @@ def generate(verbose=True,dem_emin=93,dep_emin=83,rpc_tmin=400):
       fout.write(t.substitute(d))
       fout.close()
 
-      templateFileName = "JobConfig/ensemble/reco-mcdigis-trig.fcl"
+      templateFileName = "Production/JobConfig/ensemble/reco-mcdigis-trig.fcl"
       fin = open(templateFileName)
       t = Template(fin.read())
       d = {"name": tname}
@@ -54,7 +54,7 @@ def generate(verbose=True,dem_emin=93,dep_emin=83,rpc_tmin=400):
       fout.close()
     
     for tname in ["RPCexternal-cut-mix","RPCinternal-cut-mix"]:
-      templateFileName = "JobConfig/ensemble/" + tname + ".fcl"
+      templateFileName = "Production/JobConfig/ensemble/" + tname + ".fcl"
       sourceFiles.append(templateFileName)
       fin = open(templateFileName) 
       t = Template(fin.read())
@@ -66,8 +66,7 @@ def generate(verbose=True,dem_emin=93,dep_emin=83,rpc_tmin=400):
       fout = open(fclFileName,"w")
       fout.write(t.substitute(d))
       fout.close()
-
-      templateFileName = "JobConfig/ensemble/reco-mcdigis-trig.fcl"
+      templateFileName = "Production/JobConfig/ensemble/reco-mcdigis-trig.fcl"
       fin = open(templateFileName)
       t = Template(fin.read())
       d = {"name": tname}
@@ -79,10 +78,10 @@ def generate(verbose=True,dem_emin=93,dep_emin=83,rpc_tmin=400):
       fout.write(t.substitute(d))
       fout.close()
  
-    
+    """
     for tname in ["RMCexternal-cut-mix","RMCinternal-cut-mix"]:
       for ikmax in range(8):
-        templateFileName = "JobConfig/ensemble/" + tname + ".fcl"
+        templateFileName = "Production/JobConfig/ensemble/" + tname + ".fcl"
         if ikmax == 0:
           sourceFiles.append(templateFileName)
         fin = open(templateFileName) 
@@ -101,7 +100,7 @@ def generate(verbose=True,dem_emin=93,dep_emin=83,rpc_tmin=400):
     for tname in ["RMCexternal-cut-mix","RMCinternal-cut-mix"]:
       for ikmax in range(8):
         temp_tname = tname.split("-")[0] + "-kMax%d-" % (ikmax) + tname[len(tname.split("-")[0])+1:] 
-        templateFileName = "JobConfig/ensemble/reco-mcdigis-trig.fcl"
+        templateFileName = "Production/JobConfig/ensemble/reco-mcdigis-trig.fcl"
         fin = open(templateFileName)
         t = Template(fin.read())
         d = {"name": temp_tname}
@@ -112,9 +111,9 @@ def generate(verbose=True,dem_emin=93,dep_emin=83,rpc_tmin=400):
         fout = open(fclFileName,"w")
         fout.write(t.substitute(d))
         fout.close()
-
+    """
     for tname in ["CeMLeadingLog-mix", "CePLeadingLog-mix"]:
-      templateFileName = "JobConfig/ensemble/reco-mcdigis-trig.fcl"
+      templateFileName = "Production/JobConfig/ensemble/reco-mcdigis-trig.fcl"
       fin = open(templateFileName)
       t = Template(fin.read())
       d = {"name": tname}

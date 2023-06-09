@@ -8,7 +8,7 @@ from normalizations import *
 random.seed()
 
 if len(sys.argv) < 6:
-  print("python JobConfig/ensemble/genEnsemble.py <dirname> <max livetime> <livetime for DIO/RPC gen> <kmax number> <run number>")
+  print("python Production/JobConfig/ensemble/genEnsemble.py <dirname> <max livetime> <livetime for DIO/RPC gen> <kmax number> <run number>")
   sys.exit()
 
 dirname = sys.argv[1]
@@ -83,8 +83,8 @@ norms = {
   "DIOLeadingLog-cut-mix": dio_normalization(1,dem_emin),
   "CeMLeadingLog-mix": ce_normalization(1,10**rue_exp_max),
   "CePLeadingLog-mix": ce_normalization(1,10**rup_exp_max),
-  "RMCexternal-cut-mix": rmc_normalization(1, dep_emin, kmax_max, False),
-  "RMCinternal-cut-mix": rmc_normalization(1, dep_emin, kmax_max, True),
+  #"RMCexternal-cut-mix": rmc_normalization(1, dep_emin, kmax_max, False),
+  #"RMCinternal-cut-mix": rmc_normalization(1, dep_emin, kmax_max, True),
   "RPCexternal-cut-mix": 1.59222825e+08, #FIXME python takes too long
   "RPCinternal-cut-mix": 1.098685e+06,
   }
@@ -94,53 +94,58 @@ per_run = {
   "DIOLeadingLog-cut-mix": 250,
   "CeMLeadingLog-mix": 250,
   "CePLeadingLog-mix": 250, 
-  "RMCexternal-cut-mix": 300000,
-  "RMCinternal-cut-mix": 20000, # for kMax = 91
+  #"RMCexternal-cut-mix": 300000,
+  #"RMCinternal-cut-mix": 20000, # for kMax = 91
   "RPCexternal-cut-mix": 300000, 
   "RPCinternal-cut-mix": 2000,
 
   "reco-DIOLeadingLog-cut-mix": 25,
   "reco-CeMLeadingLog-mix": 25,
   "reco-CePLeadingLog-mix": 25,
-  "reco-RMCexternal-cut-mix": 150,
-  "reco-RMCinternal-cut-mix": 25,
+  #"reco-RMCexternal-cut-mix": 150,
+  #"reco-RMCinternal-cut-mix": 25,
   "reco-RPCexternal-cut-mix": 10,
   "reco-RPCinternal-cut-mix": 10,
   }
 
 for tname in ["CeMLeadingLog-mix","CePLeadingLog-mix"]:
-  fin = open("JobConfig/ensemble/generate_template.sh")
+  fin = open("Production/JobConfig/ensemble/generate_template.sh")
   temp_tname = tname[:-4] + "Mix"
   t = Template(fin.read())
-
   njobs = int(norms[tname]*max_livetime_others/per_run[tname])+1
-  
-  d = {"includeOrEmbed": "--include JobConfig/mixing/" + temp_tname + ".fcl", "dirname": dirname, "name": tname, "njobs": njobs, "perjob": per_run[tname]}
+  d = {"includeOrEmbed": "--include Production/JobConfig/mixing/" + temp_tname + ".fcl", "dirname": dirname, "name": tname, "njobs": njobs, "perjob": per_run[tname]}
   fout = open(dirname + "/generate_" + tname + ".sh","w")
   fout.write(t.substitute(d))
   fout.close()
 
 for tname in ["DIOLeadingLog-cut-mix","RPCexternal-cut-mix","RPCinternal-cut-mix"]:
-  fin = open("JobConfig/ensemble/generate_template.sh")
+  fin = open("Production/JobConfig/ensemble/generate_template.sh")
   t = Template(fin.read())
-
   njobs = int(norms[tname]*max_livetime_others/per_run[tname])+1
-  
-  d = {"includeOrEmbed": "--embed gen/fcl/JobConfig/ensemble/" + tname + ".fcl", "dirname": dirname, "name": tname, "njobs": njobs, "perjob": per_run[tname]}
+  d = {"includeOrEmbed": "--embed MUSE_BUILD_DIR/gen/fcl/JobConfig/ensemble/" + tname + ".fcl", "dirname": dirname, "name": tname, "njobs": njobs, "perjob": per_run[tname]}
   fout = open(dirname + "/generate_" + tname + ".sh","w")
   fout.write(t.substitute(d))
   fout.close()
 
+for tname in ["reco-DIOLeadingLog-cut-mix","reco-CeMLeadingLog-mix","reco-CePLeadingLog-mix","reco-RPCexternal-cut-mix","reco-RPCinternal-cut-mix"]:
+  fin = open("Production/JobConfig/ensemble/generate_template_reco.sh")
+  t = Template(fin.read())
+  d = {"includeOrEmbed": "--embed " + "MUSE_BUILD_DIR/gen/fcl/JobConfig/ensemble/" + tname + ".fcl", "dirname": dirname, "name": tname, "mergeFactor": per_run[tname], "inputs": tname+".txt"}
+  fout = open(dirname + "/generate_" + tname + ".sh","w")
+  fout.write(t.substitute(d))
+  fout.close()
+
+"""
 for tname in ["RMCexternal-cut-mix","RMCinternal-cut-mix"]:
   temp_tname = tname.split("-")[0] + "-kMax%d-" % (kmax_number) + tname[len(tname.split("-")[0])+1:] 
-  fin = open("gen/fcl/JobConfig/ensemble/" + temp_tname + ".fcl")
+  fin = open("MUSE_BUILD_DIR/gen/fcl/JobConfig/ensemble/" + temp_tname + ".fcl") #TODO MUSE_BUILD_DIR/gen/fcl/JobConfig/ensemble
   fout = open(dirname + "/" + tname + ".fcl","w")
   for line in fin:
     fout.write(line)
   fout.write("physics.producers.generate.physics.kMaxUser : %f\n" % kmax)
   fout.close()
   fin.close()
-  fin = open("JobConfig/ensemble/generate_template.sh")
+  fin = open("Production/JobConfig/ensemble/generate_template.sh")
   t = Template(fin.read())
 
   njobs = int(norms[tname]*max_livetime_rmc/per_run[tname])+1
@@ -152,21 +157,12 @@ for tname in ["RMCexternal-cut-mix","RMCinternal-cut-mix"]:
   fout.close()
 
 
-for tname in ["reco-DIOLeadingLog-cut-mix","reco-CeMLeadingLog-mix","reco-CePLeadingLog-mix","reco-RPCexternal-cut-mix","reco-RPCinternal-cut-mix"]:
-  fin = open("JobConfig/ensemble/generate_template_reco.sh")
-  t = Template(fin.read())
-  d = {"includeOrEmbed": "--embed " + "gen/fcl/JobConfig/ensemble/" + tname + ".fcl", "dirname": dirname, "name": tname, "mergeFactor": per_run[tname], "inputs": tname+".txt"}
-  fout = open(dirname + "/generate_" + tname + ".sh","w")
-  fout.write(t.substitute(d))
-  fout.close()
-
 for tname in ["reco-RMCexternal-cut-mix","reco-RMCinternal-cut-mix"]:
-  temp_tname = "reco-" + tname.split("-")[1] + "-kMax%d-cut-mix" % (kmax_number)
-  fin = open("JobConfig/ensemble/generate_template_reco.sh")
+  temp_tname =  "reco-" + tname.split("-")[1] + "-kMax%d-cut-mix" % (kmax_number)
+  fin = open("Production/JobConfig/ensemble/generate_template_reco.sh")
   t = Template(fin.read())
-  d = {"includeOrEmbed": "--embed " + "gen/fcl/JobConfig/ensemble/" + temp_tname + ".fcl", "dirname": dirname, "name": temp_tname, "mergeFactor": per_run[tname], "inputs": temp_tname+".txt"}
+  d = {"includeOrEmbed": "--embed " + "MUSE_BUILD_DIR/gen/fcl/JobConfig/ensemble/" + temp_tname + ".fcl", "dirname": dirname, "name": temp_tname, "mergeFactor": per_run[tname], "inputs": temp_tname+".txt"}
   fout = open(dirname + "/generate_" + tname + ".sh","w")
   fout.write(t.substitute(d))
   fout.close()
-
-
+"""
