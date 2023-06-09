@@ -20,10 +20,10 @@ outputs: { Output : @local::Mixing.Output }
 #include "Production/JobConfig/mixing/epilog.fcl"
 physics.producers.generate.physics.genId : dioTail
 
-physics.producers.generate.physics.elow : 93
+physics.producers.generate.physics.elow : ${minE}
 
-physics.filters.DigiFilter.particleTypes : [11, 13]
-physics.filters.DigiFilter.MinParticleMom : 93
+physics.filters.DigiFilter.particleTypes : ${particleTypes}
+physics.filters.DigiFilter.MinParticleMom : ${minMom}
 physics.producers.generate.doHistograms : false
 
 # customize the output
