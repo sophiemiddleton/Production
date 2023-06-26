@@ -1,0 +1,27 @@
+# common parts used in all mixing jobs
+
+#include "Production/JobConfig/reco/prolog.fcl"
+
+BEGIN_PROLOG
+
+Ensemble : {
+  filters : {
+    @table::CalPatRec.filters
+    RecoFilter : {
+      module_type   : RecoMomFilter
+      KalFinalTagRoot : ""
+      TrkTags : [ "KKDeM", "KKDeP",
+                  "KKUeM", "KKUeP",
+                  "KKDmuM", "KKDmuP",
+                  "KKUmuM", "KKUmuP"
+                ]
+                # // set low cutoffs
+      MomentumCutoff : [ 95.0, 85.0,
+                         95.0, 85.0,
+                         95.0, 85.0,
+                         95.0, 85.0 ]
+    }
+  }
+}
+
+END_PROLOG
