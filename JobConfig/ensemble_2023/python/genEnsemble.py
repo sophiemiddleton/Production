@@ -11,7 +11,6 @@ def generate(dirname,max_livetime,run):
   random.seed()
   
   max_livetime_others = float(max_livetime)
-  max_livetime_rmc = 1.0 # TODO remove this
   
   run_number = int(run)
   if os.path.exists(os.path.join(os.getcwd(), dirname)):
@@ -51,8 +50,6 @@ def generate(dirname,max_livetime,run):
   dem_emin = 93 # generated momentum minimum
   dep_emin = 83
 
-  tmin = 400 # pion min time for generator
-
   fout = open(dirname + "/livetime","w")
   fout.write("%f\n" % (livetime*365*24*60*60))
   fout.close()
@@ -63,7 +60,7 @@ def generate(dirname,max_livetime,run):
   fout.write("%e\n" % rup)
   fout.close()
   fout = open(dirname + "/settings","w")
-  fout.write("%f\n%f\n%f\n%f\n%d\n%d\n" % (dem_emin,dep_emin,tmin,max_livetime_rmc*0.95*365*24*60*60,run_number,random.randint(0,10000)))
+  fout.write("%f\n%f\n%f\n%f\n%d\n%d\n" % (dem_emin,dep_emin,max_livetime_others,run_number,random.randint(0,10000)))
   fout.close()
 
   # maximum expected events per year
@@ -73,7 +70,8 @@ def generate(dirname,max_livetime,run):
     "CePLeadingLog-mix": ce_normalization(1,10**rup_exp_max),
     }
 
-  # these have been optimized for 93 MeV and 83 MeV for dem and dep respectively #TODO - need to understand this optimization
+  # these have been optimized for 93 MeV and 83 MeV for dem and dep respectively 
+  #TODO - need to understand this optimization
   per_run = {
     "DIOLeadingLog-cut-mix": 250,
     "CeMLeadingLog-mix": 250,
@@ -84,15 +82,10 @@ def generate(dirname,max_livetime,run):
     "reco-CePLeadingLog-mix": 25,
     }
 
-  for tname in ["CeMLeadingLog-mix","CePLeadingLog-mix"]:
-    fin = open("Production/JobConfig/ensemble/generate_template.sh")
-    temp_tname = tname[:-4] + "Mix"
-    t = Template(fin.read())
+  for tname in ["CeMLeadingLog","CePLeadingLog","DIOtail"]: #TODO add in DIO?
     njobs = int(norms[tname]*max_livetime_others/per_run[tname])+1
-    d = {"includeOrEmbed": "--include Production/JobConfig/mixing/" + temp_tname + ".fcl", "dirname": dirname, "name": tname, "njobs": njobs, "perjob": per_run[tname]}
-    fout = open(dirname + "/generate_" + tname + ".sh","w")
-    fout.write(t.substitute(d))
-    fout.close()
+    gen_Mix.sh --primary tname --campaign MDC2020 --pver t --mver p --over v --pbeam 1BB --dbpurpose perfect --dbversion v1_0
+    ##TODO figure out how to use njobs in a mixed MDC2020 setting
 
 if __name__ == "__main__":
     # new way of parsing arguments:

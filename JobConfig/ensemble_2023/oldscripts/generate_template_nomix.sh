@@ -1,5 +1,5 @@
 # Note: the jobs created by this script need at least 8GBytes of memory
-generate_fcl --description ${name} --dsconf MDC2018h --dsowner mu2e ${includeOrEmbed} \
+generate_fcl --description ${name} --dsconf RefAna_a --dsowner mu2e ${includeOrEmbed} \
 --run-number 1002 --events-per-job ${perjob} --njobs ${njobs} --max-engines 50 --first-subrun=1 
 rm -rf ${dirname}/${name}
 rm -rf ${dirname}/${name}-001

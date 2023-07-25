@@ -53,7 +53,7 @@ def dio_normalization(livetime, emin):
 
 def rpc_normalization(livetime, emin, tmin, internal):
   # calculate fraction of spectrum being generated
-  spec = open("JobConfig/ensemble/RPCspectrum.dat") # Bistirlich spectrum from 0.05 to 139.95 in steps of 0.1
+  spec = open("Production/JobConfig/ensemble/RPCspectrum.dat") # Bistirlich spectrum from 0.05 to 139.95 in steps of 0.1
   energy = []
   val = []
   for line in spec:
@@ -74,7 +74,7 @@ def rpc_normalization(livetime, emin, tmin, internal):
 
 
   # calculate survival probability for tmin including smearing of POT
-  pot = open("JobConfig/ensemble/POTspectrum.dat"); # ConditionsService/data/potTimingDistribution_20160511.txt, sampled by GenerateProtonTimes_module.cc 
+  pot = open("Production/JobConfig/ensemble/POTspectrum.dat"); # ConditionsService/data/potTimingDistribution_20160511.txt, sampled by GenerateProtonTimes_module.cc 
   time = []
   cdf = []
   for line in pot:
