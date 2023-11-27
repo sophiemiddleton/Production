@@ -48,7 +48,9 @@ norms = {
   "RPCexternal": 1.59222825e+08*livetime, #FIXME python takes too long
   "RPCinternal": 1.098685e+06*livetime,
   "DYBCosmic": dayabay_normalization(max_livetime),
-  "CRYCosmic": cry_normalization(max_livetime)
+  "CRYCosmic": cry_normalization(max_livetime),
+  "CORSIKACosmic": corsika_normalization(max_livetime),
+  "IPAMichel": ipaMichel_normalization(max_livetime)
   }
 
 
@@ -106,7 +108,7 @@ for line in ffns:
   bl = t.GetListOfBranches()
   bn = ""
   for i in range(bl.GetEntries()):
-    if bl[i].GetName().split("__")[0] == "mu2e::GenEventCount_genCounter":
+    if bl[i].GetName().split("__")[0] == "mu2e::GenEventCount_genCounter": # TODO
       bn = bl[i].GetName()
   gen_events = 0
   for i in range(t.GetEntries()):

@@ -82,7 +82,7 @@ def generate(dirname,max_livetime,run):
     "reco-CePLeadingLog-mix": 25,
     }
 
-  for tname in ["CeMLeadingLog","CePLeadingLog","DIOtail"]: #TODO add in DIO?
+  for tname in ["CeMLeadingLog","CePLeadingLog","DIOtail"]: #TODO add in others
     njobs = int(norms[tname]*max_livetime_others/per_run[tname])+1
     gen_Mix.sh --primary tname --campaign MDC2020 --pver t --mver p --over v --pbeam 1BB --dbpurpose perfect --dbversion v1_0
     ##TODO figure out how to use njobs in a mixed MDC2020 setting

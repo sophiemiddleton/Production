@@ -5,7 +5,7 @@ import os
 # TODO - which of these numbers are needed?
 mean_PBI_low = 1.6e7
 mean_PBI_high = 3.9e7
-pulses_per_second = 1/(1695e-9)
+#pulses_per_second = 1/(1695e-9)
 mean_PBI = mean_PBI_low*0.75 + mean_PBI_high*0.25
 dutyfactor = 0.323 # from SU2020
 ub_per_year = 365*24*60*60./1695e-9*dutyfactor
