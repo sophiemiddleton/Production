@@ -7,9 +7,10 @@ import os
 mean_PBI_low = 1.6e7
 mean_PBI_high = 3.9e7
 mean_PBI = mean_PBI_low*0.75 + mean_PBI_high*0.25
-dutyfactor = 0.323 
-ub_per_year = (365*24*60*60./1695e-9)*dutyfactor
-POT_per_year = ub_per_year*mean_PBI
+onspill_dutyfactor = 0.323
+offspill_dutyfactor = 0.323
+ub_per_second = 1/1695e-9*onspill_dutyfactor
+POT_per_second = ub_per_second*mean_PBI
 
 
 # get stopped rates from DB
@@ -45,43 +46,62 @@ for line in lines:
 print(f"Final ipa stops rate {ipa_stopped_mu_per_POT}")
 
 # get CE normalization:
-def ce_normalization(livetime, rue): # livetime in fractions of year?
-  captures_per_stopped_muon = 0.609 # for Al
-  print("Expected CE's", POT_per_year * target_stopped_mu_per_POT * captures_per_stopped_muon * livetime * rue)
-  return POT_per_year * target_stopped_mu_per_POT * captures_per_stopped_muon * livetime * rue
+def ce_normalization(livetime, rue):
+    POT = livetime_to_pot(livetime)
+    captures_per_stopped_muon = 0.609 # for Al
+    print("Expected CE's", POT * target_stopped_mu_per_POT * captures_per_stopped_muon * rue)
+    return POT * target_stopped_mu_per_POT * captures_per_stopped_muon * rue
 
 # get IPA Michel normalization:
 def ipaMichel_normalization(livetime):
-  IPA_decays_per_stopped_muon = 0.92 # carbon
-  print("Expected IPA Michel e- ", POT_per_year * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon * livetime)
-  return POT_per_year * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon * livetime
+    POT = livetime_to_pot(livetime)
+    IPA_decays_per_stopped_muon = 0.92 # carbon
+    print("Expected IPA Michel e- ", POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon)
+    return POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon
 
 # get DIO normalization:
 def dio_normalization(livetime, emin):
-  # calculate fraction of spectrum generated
-  #spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble_2023/heeck_finer_binning_2016_szafron.tbl")) TODO - needs to be put back once in HEAD
-  spec = open(os.path.join("heeck_finer_binning_2016_szafron.tbl"))
-  energy = []
-  val = []
-  for line in spec:
-    energy.append(float(line.split()[0]))
-    val.append(float(line.split()[1]))
+    POT = livetime_to_pot(livetime)
+    # calculate fraction of spectrum generated
+    spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble_2023/heeck_finer_binning_2016_szafron.tbl")) #TODO - needs to be put back once in HEAD
+    #spec = open(os.path.join("heeck_finer_binning_2016_szafron.tbl"))
+    energy = []
+    val = []
+    for line in spec:
+        energy.append(float(line.split()[0]))
+        val.append(float(line.split()[1]))
 
-  total_norm = 0
-  cut_norm = 0
-  for i in range(len(val)):
-    total_norm += val[i]
-    if energy[i] >= emin:
-      cut_norm += val[i]
+    total_norm = 0
+    cut_norm = 0
+    for i in range(len(val)):
+        total_norm += val[i]
+        if energy[i] >= emin:
+            cut_norm += val[i]
 
-  DIO_per_stopped_muon = 0.391 # 1 - captures_per_stopped_muon
+    DIO_per_stopped_muon = 0.391 # 1 - captures_per_stopped_muon
 
-  physics_events = POT_per_year * target_stopped_mu_per_POT * DIO_per_stopped_muon * livetime
-  print("Expected DIO ",physics_events* cut_norm/total_norm)
-  return physics_events * cut_norm/total_norm
-  
+    physics_events = POT * target_stopped_mu_per_POT * DIO_per_stopped_muon
+    print("Expected DIO ",physics_events* cut_norm/total_norm,POT,target_stopped_mu_per_POT,DIO_per_stopped_muon,cut_norm/total_norm,physics_events)
+    return physics_events * cut_norm/total_norm
+
+# note this returns CosmicLivetime not # of generated events
+def cry_onspill_normalization(livetime):
+    return livetime*onspill_dutyfactor
+
+# note this returns CosmicLivetime not # of generated events
+def cry_offspill_normalization(livetime):
+    return livetime*offspill_dutyfactor
+
+def livetime_to_pot(livetime): #livetime in seconds
+    return livetime * POT_per_second
+
+def pot_to_livetime(pot):
+    return pot / POT_per_second
+
 # for testing only
 if __name__ == '__main__':
-  ce_normalization(3.5e6/1.1e7, 1e-14)
-  ipaMichel_normalization(3.5e6/1.1e7)
-  dio_normalization(3.5e6/1.1e7,75)
+    livetime = pot_to_livetime(3.5e6)
+    ce_normalization(livetime, 1e-14)
+    ipaMichel_normalization(livetime/1.1e7)
+    dio_normalization(livetime,75)
+    cry_onspill_normalization(livetime)
