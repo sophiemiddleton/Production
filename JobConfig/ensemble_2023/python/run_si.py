@@ -61,6 +61,7 @@ mean_reco_events = {}
 filenames = {}
 
 ffns = open(os.path.join(dirname,"filenames"))
+# TODO: how do we turn this into multiple file run
 for line in ffns: 
   signal = line.split()[0]
   print(signal)

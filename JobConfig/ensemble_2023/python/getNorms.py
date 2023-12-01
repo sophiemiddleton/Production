@@ -20,11 +20,12 @@ dbtool.setArgs(args)
 dbtool.run()
 rr = dbtool.getResult()
 #print(rr)
-lines= rr.split("\n")
+
 
 # get number of target muon stops:
 target_stopped_mu_per_POT = 1.0
 rate = 1.0
+lines= rr.split("\n")
 for line in lines:
     words = line.split(",")
     if words[0] == "MuminusStopsCat" or words[0] == "MuBeamCat" :
@@ -36,6 +37,7 @@ print(f"Final stops rate {target_stopped_mu_per_POT}")
 # get number of ipa muon stops:
 ipa_stopped_mu_per_POT = 1.0
 rate = 1.0
+lines= rr.split("\n")
 for line in lines:
     words = line.split(",")
     if words[0] == "IPAStopsCat" or words[0] == "MuBeamCat" :
@@ -79,9 +81,20 @@ def dio_normalization(livetime, emin):
   physics_events = POT_per_year * target_stopped_mu_per_POT * DIO_per_stopped_muon * livetime
   print("Expected DIO ",physics_events* cut_norm/total_norm)
   return physics_events * cut_norm/total_norm
+
+# get comsics, assumed same for any generator:
+def cosmic_normalization(livetime):
+  expected_rate = 253440 #Hz # TODO extraxt from DB
+  tmin = 450e-9
+  tmax = 1705e-9
+  expected_per_ub = expected_rate*(tmax-tmin)
+  expected_per_year = ub_per_year * expected_per_ub
+  return expected_per_year * livetime
   
+    
 # for testing only
 if __name__ == '__main__':
   ce_normalization(3.5e6/1.1e7, 1e-14)
   ipaMichel_normalization(3.5e6/1.1e7)
   dio_normalization(3.5e6/1.1e7,75)
+  cosmic_normalization(3.5e6/1.1e7)
