@@ -1,0 +1,20 @@
+#include "Production/JobConfig/digitize/prolog.fcl"
+#include "Offline/Trigger/fcl/OnSpillTrigger.fcl"
+#include "Production/JobConfig/reco/drop_trigger.fcl"
+services.DbService.purpose: MDC2020_best
+services.DbService.version: v1_1
+services.DbService.verbose : 2
+outputs : {
+  Output : {
+    module_type : RootOutput
+    SelectEvents : [ "*_highP_*_trigger" ]
+    outputCommands : [ "drop *_*_*_*",
+      @sequence::Digitize.TriggerProducts
+    ]
+    fileName: "dig.owner.val-trigger.dsconf.seq.art"
+  }
+}
+physics.Outpath : [ Output ]
+physics.end_paths : [ Outpath ]
+
+outputs.Output.fileName : "dig.owner.val-trigger.dsconf.seq.art"
