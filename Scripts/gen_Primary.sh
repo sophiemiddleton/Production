@@ -170,6 +170,8 @@ echo "services.GeometryService.bFieldFile : \"${FIELD}\"" >> primary.fcl
 if [[ "${PRIMARY}" == "DIOtail" ]]; then
   echo physics.producers.generate.decayProducts.spectrum.ehi: ${ENDMOM}        >> primary.fcl
   echo physics.producers.generate.decayProducts.spectrum.elow: ${STARTMOM}    >> primary.fcl
+  echo physics.filters.GenFilter.maxr_min : 320 >> primary.fcl
+  echo physics.filters.GenFilter.maxr_max: 500 >> primary.fcl
 fi
 
 if [[ "${FLAT}" == "FlatMuDaughter" ]]; then

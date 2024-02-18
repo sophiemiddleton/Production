@@ -20,6 +20,7 @@ physics : {
   filters : {
     @table::Common.filters
     @table::Primary.filters
+    @table::genFilters.filters
   }
   analyzers : { @table::Primary.analyzers }
 }

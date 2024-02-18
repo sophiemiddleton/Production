@@ -5,7 +5,7 @@
 #
 #include "Production/JobConfig/primary/StopParticle.fcl"
 
-physics.PrimaryPath : [ TargetStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
+physics.PrimaryPath : [ TargetStopResampler, @sequence::Common.generateSequence, GenFilter, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
 physics.trigger_paths : [ PrimaryPath ]
 outputs : { PrimaryOutput : @local::Primary.PrimaryOutput }
 physics.EndPath : [ @sequence::Primary.EndSequence, PrimaryOutput ]
