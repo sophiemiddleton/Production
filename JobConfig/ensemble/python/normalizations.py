@@ -11,6 +11,7 @@ onspill_dutyfactor = 0.323
 offspill_dutyfactor = 0.323
 ub_per_second = 1/1695e-9*onspill_dutyfactor
 POT_per_second = ub_per_second*mean_PBI
+POT_per_year = ub_per_second*mean_PBI*3.15e7
 
 
 # get stopped rates from DB

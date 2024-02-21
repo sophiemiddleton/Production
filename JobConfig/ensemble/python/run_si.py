@@ -7,20 +7,28 @@ import ROOT
 from normalizations import *
 import subprocess
 
+verbose = 1
+
 max_events_per_subrun = 1000000
 
 dirname = sys.argv[1]
 outpath = sys.argv[2]
 
+if verbose == 1:
+  print("opening config ", dirname, " outpath is ",outpath)
+
 # live time in seconds
 livetime = float(open(os.path.join(dirname,"livetime")).readline())
 
+if verbose == 1:
+  print("producing sample for livetime",livetime, "seconds")
 # r mue and rmup rates
 rue = float(open(os.path.join(dirname,"rue")).readline())
 rup = float(open(os.path.join(dirname,"rup")).readline())
-
+if verbose == 1:
+  print( "Rmue chosen ", rue)
 # for RMC backgrounds
-kmax = float(open(os.path.join(dirname,"kmax")).readline())
+kmax = 1.0 #float(open(os.path.join(dirname,"kmax")).readline())
 
 fin = open(os.path.join(dirname,"settings"))
 lines = fin.readlines()
