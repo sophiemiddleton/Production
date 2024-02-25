@@ -17,18 +17,8 @@ ${datasets}
 
 physics :
 { 
-  filters : {
-    TRF : {
-      module_type : TriggerResultsFilter
-      PrintFirst : false
-      ProcessName : "recomcdigistrig"
-      TriggerNames : ["tprSeedDeM_trigger", "tprSeedDeP_trigger", "cprSeedDeM_trigger", "cprSeedDeP_trigger" ]
-    }
-  }
-
-  FilterPath : [TRF]
-  EndPath : [ OutputMC, OutputData ]
-  end_paths : [ EndPath ] # needed for generate_fcl
+  EndPath : [ OutputMC ]
+  end_paths : [ EndPath ]
 }
 
 outputs : {
@@ -38,11 +28,5 @@ outputs : {
     fileName : "${outnameMC}"
   }
 
-  OutputData : {
-    module_type : RootOutput
-    SelectEvents: [FilterPath]
-    outputCommands : @local::Ensemble.OutputCommandsData
-    fileName : "${outnameData}"
-  }
 }
 

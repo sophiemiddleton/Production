@@ -4,31 +4,23 @@ import random
 import os
 import glob
 import ROOT
-from normalizations import *
+from getNorms import *
 import subprocess
-
-verbose = 1
 
 max_events_per_subrun = 1000000
 
 dirname = sys.argv[1]
 outpath = sys.argv[2]
 
-if verbose == 1:
-  print("opening config ", dirname, " outpath is ",outpath)
-
 # live time in seconds
 livetime = float(open(os.path.join(dirname,"livetime")).readline())
 
-if verbose == 1:
-  print("producing sample for livetime",livetime, "seconds")
 # r mue and rmup rates
 rue = float(open(os.path.join(dirname,"rue")).readline())
 rup = float(open(os.path.join(dirname,"rup")).readline())
-if verbose == 1:
-  print( "Rmue chosen ", rue)
+
 # for RMC backgrounds
-kmax = 1.0 #float(open(os.path.join(dirname,"kmax")).readline())
+kmax = float(open(os.path.join(dirname,"kmax")).readline())
 
 fin = open(os.path.join(dirname,"settings"))
 lines = fin.readlines()
@@ -104,20 +96,19 @@ for signal in norms:
 
 
     mean_gen_events = norms[signal]
-    print("mean_reco_events",mean_gen_events,reco_events,float(gen_events))
     mean_reco_events[signal] = mean_gen_events*reco_events/float(gen_events)
     # DEBUG ONLY
     print(signal,"GEN_EVENTS:",gen_events,"RECO_EVENTS:",reco_events,"EXPECTED EVENTS:",mean_reco_events[signal])
-print("sum of means ",sum(mean_reco_events.values()))
-total_sample_events = 1000# ROOT.gRandom.Poisson(sum(mean_reco_events.values()))
+
+total_sample_events = ROOT.gRandom.Poisson(sum(mean_reco_events.values()))
 # DEBUG ONLY
 print("TOTAL EXPECTED EVENTS:",sum(mean_reco_events.values()),"GENERATING:",total_sample_events)
 
 # calculate the normalized weights for each signal
 weights = {signal: mean_reco_events[signal]/float(total_sample_events) for signal in mean_reco_events}
-print("weights " , weights)
+
 # generate subrun by subrun
-fin = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/fcl/SamplingInput.fcl"))
+fin = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble_2023/fcls/SamplingInput.fcl"))
 t = Template(fin.read())
 
 subrun = 0
@@ -161,15 +152,12 @@ while True:
         flog.write(line)
     #    DEBUG only
 #        print(line)
-        print(line)
         if "Dataset" in line.split() and "Counts" in line.split() and "fraction" in line.split() and "Next" in line.split():
             ready = True
-            print("READY",ready)
         if ready:
             if len(line.split()) > 1:
                 signal = line.split()[0].strip()
                 if signal in starting_event_num:
-
                     if "no more available" in line:
                         starting_event_num[signal] = [0,0,0]
                         current_file[signal] += 1
@@ -182,7 +170,6 @@ while True:
                         new_event = int(line.strip().split()[-1])
                         starting_event_num[signal] = [new_run,new_subrun,new_event]
     p.wait()
-
     num_events_already_sampled += events_this_run
     print("Job done, return code: %d processed %d events out of %d" % (p.returncode,num_events_already_sampled,total_sample_events))
     if problem:

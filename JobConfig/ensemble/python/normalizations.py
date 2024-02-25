@@ -83,17 +83,19 @@ def dio_normalization(livetime, emin):
 
     DIO_per_stopped_muon = 0.391 # 1 - captures_per_stopped_muon
 
-    physics_events = POT_per_year * target_stopped_mu_per_POT * DIO_per_stopped_muon * livetime
+    physics_events = POT * target_stopped_mu_per_POT * DIO_per_stopped_muon * livetime
     print("Expected DIO ",physics_events* cut_norm/total_norm)
     return physics_events * cut_norm/total_norm
 
 
 # note this returns CosmicLivetime not # of generated events
 def cry_onspill_normalization(livetime):
+    print("cosmics live time", livetime*onspill_dutyfactor)
     return livetime*onspill_dutyfactor
 
 # note this returns CosmicLivetime not # of generated events
 def cry_offspill_normalization(livetime):
+    print("cosmics live time", livetime*offspill_dutyfactor)
     return livetime*offspill_dutyfactor
 
 def livetime_to_pot(livetime): #livetime in seconds

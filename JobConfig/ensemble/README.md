@@ -8,9 +8,15 @@ Since MDC2018 we have made huge progress in consolodating our scripts and as par
 
 ## python scripts
 
+In the current generation of these scripts we require just two python scripts to mix our input DTS level primary files. The resulting "mixed" DTS sample should have a correctly normalized set of DTS events which can then be passed through the subsequent steps of the Production chain which result in a normalized reconstructed data sample of the given livetime input into the run_si.py script.
+
+The most important thing to remember is to ensure that the livetime/POT are not going to result in more expected events from any process than is available in the input DTS files for that primary. This will result in a failure mode.
+
+Also note that no trigger is applied to the DTS events, this will be applied in the digitization stage which follows ensembling.
+
 ### normalizations.py
 
-This script is important. It calculates the normalization factors for each process.
+This script is important. It calculates the normalization factors for each process. You can test it interactively by running it on command line. Livetime should be in hours.
 
 ### run_si.py
 
@@ -34,11 +40,3 @@ run_si.py is then ran on the command line in the following way:
 ```
 run_si.py <path to config directory> <path to output directory>
 ```
-
-## gen_Primary.sh
-
-The first stage in the process is to run gen_Primary for a sufficient number of events. We will start with CE, DIO and cosmics.
-
-Cosmics follow a separate stream and to some extent limit the amount of "data" we can make.
-
-The number of events for each background must be greater than what we need for all our samples. So minimum number of events comes from our normalization. We will run samples for a selection of live-times but again we will need to understand how cosmic simulations limit this.
