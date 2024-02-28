@@ -1,0 +1,74 @@
+#
+# Re-sample muons and associated particles entering the DS, propagate them to the detectors or stopping target, and write out the corresponding flash DetectorSteps and target mustops.
+# Note the main flash stream has a time cut to avoid energy far outside the digitization window.  A prescaled but otherwise uncut stream is used to
+# record the flash peak
+#
+# original author: Yuri Oksuzian, 2019
+# Updated for MDC2020 (DetectorSteps): D. Brown
+
+#include "Offline/fcl/standardServices.fcl"
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/pileup/prolog.fcl"
+
+process_name: DIFResampler
+
+source : {
+  module_type : EmptyEvent
+  maxEvents : @nil
+}
+
+services : @local::Services.Sim
+physics: {
+  producers : {
+    @table::Common.producers
+    @table::Pileup.producers
+  }
+  filters : {
+    @table::Common.filters
+    @table::Pileup.filters
+  }
+  analyzers : {
+    @table::Common.analyzers
+  }
+  # setup paths
+  
+  
+  DIFPath : [@sequence::Pileup.beamResamplerSequence, DIFFilter , @sequence::Common.g4Sequence, @sequence::Pileup.DetStepSequence ] # TODOadd DIFFILTER ELECTRONS (REASONABLE ENERGY)
+  
+  trigger_paths: [ DIFPath ]
+  outPath : [ DIFOutput]
+  end_paths: [outPath]
+}
+
+outputs: {
+  
+  DIFOutput : {
+    module_type: RootOutput
+    outputCommands:   [ "drop *_*_*_*" ,
+      @sequence::Pileup.DtsKeptProducts
+    ]
+    SelectEvents: [DIFPath]
+    fileName : "dts.owner.DIF.version.sequencer.art"
+  }
+}
+
+# Point Mu2eG4 to the pre-simulated data
+physics.producers.g4run.inputs: {
+  primaryType: "StepPoints"
+  primaryTag: "beamResampler:Beam"
+  inputMCTrajectories: ""
+  simStageOverride: 1
+  inputPhysVolumeMultiInfo: "beamResampler"
+  updateEventLevelVolumeInfos: {
+    input: "beamResampler:eventlevel"
+    outInstance: "eventlevel"
+  }
+}
+# copy over VD hits
+physics.producers.g4run.SDConfig.preSimulatedHits:  ["beamResampler:virtualdetector"]
+#include "Production/JobConfig/common/MT.fcl"
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/pileup/epilog.fcl"
+# reconfigure StepPoint producers to avoid double-counting particles from the mustop filter deep copy
+#physics.producers.StrawGasStepMaker.SkipTheseStepPoints : "g4run"
+physics.producers.StrawGasStepMaker.KeepDeltasModule : ""

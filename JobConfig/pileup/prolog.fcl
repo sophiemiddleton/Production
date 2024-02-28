@@ -43,6 +43,9 @@ Pileup: {
       stoppingMaterial: "StoppingTarget_Al"
       verbosityLevel: 1
     }
+    
+
+
     WireGammaFinder: {
       module_type: "StoppedParticlesFinder"
       particleInput: "g4run"
@@ -77,7 +80,7 @@ Pileup: {
       module_type: SimParticleDaughterSelector
       particleInput: "TargetMuonFinder"
       # EMCascade should not be vetoed because we do not re-simulate it
-      processes: [ "DIO", "NuclearCapture" ] //TODO
+      processes: [ "DIO", "NuclearCapture" ]
     }
 
     compressPVTargetStops: {
@@ -127,7 +130,16 @@ Pileup: {
       MinimumSumCaloStepE : 1.0e-2 # or at least this much calo energy
       KeepPDG : [ ] # Loop at steps from all particle types
     }
+    
+        
+    DIFFilter : {
+      module_type : "DIFFilter"
+      SimParticleCollection : "beamResampler:MuBeamResampler"
+      makeplots : true
+      isNull : false
+    }
 
+    
     TargetStopFilter: {
       module_type: FilterG4Out
       mainHitInputs: []
