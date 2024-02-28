@@ -149,7 +149,6 @@ else
   resampler=${TYPE}StopResampler
 fi
 
-
 samweb list-file-locations --schema=root --defname="$dataset"  | cut -f1 > Stops.txt
 # calucate the max skip from the dataset
 nfiles=`samCountFiles.sh $dataset`
@@ -177,18 +176,6 @@ if [[ "${FLAT}" == "FlatMuDaughter" ]]; then
   echo physics.producers.generate.startMom: ${STARTMOM}    >> primary.fcl
   echo physics.producers.generate.endMom: ${ENDMOM}        >> primary.fcl
 fi
+sed -e 's|^.*/||' Stops.txt > base.txt
+mu2ejobdef --embed primary.fcl --setup /cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/${PRIMARY_CAMPAIGN}/setup.sh --run-number=${RUN} --events-per-job=${EVENTS} --jobdesc ${PRIMARY} --dsconf ${PRIMARY_CAMPAIGN} --auxinput=1:physics.filters.${resampler}.fileNames:base.txt
 
-#
-# now generate the fcl
-#
-
-generate_fcl --dsconf=${PRIMARY_CAMPAIGN} --dsowner=${OWNER} --run-number=${RUN} --description=${PRIMARY} --events-per-job=${EVENTS} --njobs=${JOBS} \
-  --embed primary.fcl --auxinput=1:physics.filters.${resampler}.fileNames:Stops.txt
-for dirname in 000 001 002 003 004 005 006 007 008 009; do
-  if test -d $dirname; then
-    echo "found dir $dirname"
-    rm -rf ${PRIMARY}\_$dirname
-    mv $dirname ${PRIMARY}\_$dirname
-    echo "moving $dirname to ${PRIMARY}_${dirname}"
-  fi
-done
