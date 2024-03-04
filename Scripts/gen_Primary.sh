@@ -16,6 +16,7 @@ TYPE="" # the kind of input stops (Muminus, Muplus, IPAMuminus, IPAMuplus, Pimin
 JOBS="" # is the number of jobs
 EVENTS="" # is the number of events/job
 
+
 # The following can be overridden if needed
 FLAT=""
 PDG=11 #is the pdgId of the particle to generate (for flat only)
@@ -25,7 +26,8 @@ ENDMOM=110 # optional (for flat only)
 OWNER=mu2e
 RUN=1202
 CAT="Cat"
-
+DBV=""
+DBP=""
 # Function: Print a help message.
 usage() {
   echo "Usage: $0
@@ -106,6 +108,12 @@ while getopts ":-:" options; do
         cat)
           CAT=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
+        dbv)
+          DBV=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        dbp)
+           DBP=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
       esac;;
     :)                                    # If expected argument omitted:
       echo "Error: -${OPTARG} requires an argument."
@@ -170,10 +178,11 @@ echo "services.GeometryService.bFieldFile : \"${FIELD}\"" >> primary.fcl
 if [[ "${PRIMARY}" == "DIOtail" ]]; then
   echo physics.producers.generate.decayProducts.spectrum.ehi: ${ENDMOM}        >> primary.fcl
   echo physics.producers.generate.decayProducts.spectrum.elow: ${STARTMOM}    >> primary.fcl
-  echo physics.filters.GenFilter.maxr_min : 320 >> primary.fcl
-  echo physics.filters.GenFilter.maxr_max: 500 >> primary.fcl
+  echo physics.filters.GenFilter.maxr_min : 480 >> primary.fcl
+  echo physics.filters.GenFilter.maxr_max: 700 >> primary.fcl
 fi
-
+echo services.DbService.purpose: ${CAMPAIGN}_${DBP} >> primary.fcl
+echo services.DbService.version: ${DBV} >> primary.fcl
 if [[ "${FLAT}" == "FlatMuDaughter" ]]; then
   echo physics.producers.generate.pdgId: ${PDG}            >> primary.fcl
   echo physics.producers.generate.startMom: ${STARTMOM}    >> primary.fcl

@@ -38,5 +38,5 @@ The script will then call normalizations.py to calculate expected number of even
 run_si.py is then ran on the command line in the following way: 
 
 ```
-run_si.py <path to config directory> <path to output directory>
+run_si.py <full path to config directory> <full path to output directory>
 ```

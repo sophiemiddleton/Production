@@ -39,7 +39,7 @@ dep_emin = float(lines[1])
 tmin = float(lines[2])
 # maximum live time
 max_livetime = float(lines[3])
-run = int(lines[4])
+run = 1201 #int(lines[4])
 samplingseed = int(lines[5])
 
 
@@ -109,7 +109,7 @@ for signal in norms:
     # DEBUG ONLY
     print(signal,"GEN_EVENTS:",gen_events,"RECO_EVENTS:",reco_events,"EXPECTED EVENTS:",mean_reco_events[signal])
 print("sum of means ",sum(mean_reco_events.values()))
-total_sample_events = 1000# ROOT.gRandom.Poisson(sum(mean_reco_events.values()))
+total_sample_events = 10000# ROOT.gRandom.Poisson(sum(mean_reco_events.values()))
 # DEBUG ONLY
 print("TOTAL EXPECTED EVENTS:",sum(mean_reco_events.values()),"GENERATING:",total_sample_events)
 
