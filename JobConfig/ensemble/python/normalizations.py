@@ -52,22 +52,21 @@ print(f"Final ipa stops rate {ipa_stopped_mu_per_POT}")
 def ce_normalization(livetime, rue):
     POT = livetime_to_pot(livetime)
     captures_per_stopped_muon = 0.609 # for Al
-    print("Expected CE's", POT * target_stopped_mu_per_POT * captures_per_stopped_muon * rue)
+    print(f"Expected CE's {POT * target_stopped_mu_per_POT * captures_per_stopped_muon * rue}")
     return POT * target_stopped_mu_per_POT * captures_per_stopped_muon * rue
 
 # get IPA Michel normalization:
 def ipaMichel_normalization(livetime):
     POT = livetime_to_pot(livetime)
     IPA_decays_per_stopped_muon = 0.92 # carbon
-    print("Expected IPA Michel e- ", POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon)
+    print(f"Expected IPA Michel e- {POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon}")
     return POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon
 
 # get DIO normalization:
 def dio_normalization(livetime, emin):
     POT = livetime_to_pot(livetime)
     # calculate fraction of spectrum generated
-    spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/heeck_finer_binning_2016_szafron.tbl")) #TODO - needs to be put back once in HEAD
-    #spec = open(os.path.join("heeck_finer_binning_2016_szafron.tbl"))
+    spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/heeck_finer_binning_2016_szafron.tbl")) 
     energy = []
     val = []
     for line in spec:
@@ -84,18 +83,18 @@ def dio_normalization(livetime, emin):
     DIO_per_stopped_muon = 0.391 # 1 - captures_per_stopped_muon
 
     physics_events = POT * target_stopped_mu_per_POT * DIO_per_stopped_muon * livetime
-    print("Expected DIO ",physics_events* cut_norm/total_norm)
+    print(f"Expected DIO {physics_events* cut_norm/total_norm}")
     return physics_events * cut_norm/total_norm
 
 
 # note this returns CosmicLivetime not # of generated events
 def cry_onspill_normalization(livetime):
-    print("cosmics live time", livetime*onspill_dutyfactor)
+    print(f"cosmics live time {livetime*onspill_dutyfactor}")
     return livetime*onspill_dutyfactor
 
 # note this returns CosmicLivetime not # of generated events
 def cry_offspill_normalization(livetime):
-    print("cosmics live time", livetime*offspill_dutyfactor)
+    print(f"cosmics live time {livetime*offspill_dutyfactor}")
     return livetime*offspill_dutyfactor
 
 def livetime_to_pot(livetime): #livetime in seconds

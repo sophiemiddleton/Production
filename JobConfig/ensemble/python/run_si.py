@@ -109,7 +109,7 @@ for signal in norms:
     # DEBUG ONLY
     print(signal,"GEN_EVENTS:",gen_events,"RECO_EVENTS:",reco_events,"EXPECTED EVENTS:",mean_reco_events[signal])
 print("sum of means ",sum(mean_reco_events.values()))
-total_sample_events = 10000# ROOT.gRandom.Poisson(sum(mean_reco_events.values()))
+total_sample_events = ROOT.gRandom.Poisson(sum(mean_reco_events.values()))
 # DEBUG ONLY
 print("TOTAL EXPECTED EVENTS:",sum(mean_reco_events.values()),"GENERATING:",total_sample_events)
 
