@@ -125,11 +125,13 @@ if [[ "${DIGITYPE}" == "Extracted" || "${DIGITYPE}" == "NoField"  ]]; then
     exit_abnormal
   fi
   # check BFIELD here too: it must be 'null' TODO
+  DIGOUT=${PRIMARY} # dont double-up the name
 else
   if [[ "${PRIMARY}" == *"Extracted"* || "${PRIMARY}" == *"NoField"* ]]; then
     echo "PRIMARY ${PRIMARY} incompatible with digitization type ${DIGITYPE}; aborting"
     exit_abnormal
   fi
+  DIGOUT=${PRIMARY}${DIGITYPE}
 fi
 echo "Generating digitization scripts for campaign ${CAMPAIGN} primary $PRIMARY version ${PRIMARY_VERSION} musing version ${OUTPUT_VERSION} digitzation type ${DIGITYPE} database purpose, version  ${DBPURPOSE} ${DBVERSION}"
 
@@ -143,28 +145,13 @@ else
   samListLocations ${SAMOPT} --defname="dts.mu2e.${PRIMARY}${CAT}.${CAMPAIGN}${PRIMARY_VERSION}.art" > ${PRIMARY}.txt
 fi
 
-echo \#include \"Production/JobConfig/digitize/Digitize.fcl\" >> digitize.fcl
 echo \#include \"Production/JobConfig/digitize/${DIGITYPE}.fcl\" >> digitize.fcl
-if [[ "${PRIMARY}" == *"Cosmic"* ]]; then
+if [[ "${PRIMARY}" == *"Cosmic"* && "${DIGITYPE}" != "Extracted" ]]; then
     echo \#include \"Production/JobConfig/digitize/cosmic_epilog.fcl\" >> digitize.fcl
 fi
 
-# turn off streams according to the digitization type.
-DIGOUT=""
-if [[ "${DIGITYPE}" == "Extracted" || "${DIGITYPE}" == "NoField" ]]; then
-  DIGOUT=${PRIMARY} # TODO need to understand why this is the same name as the primary, throws error as name is same as previous stage
-  echo outputs.TrkOutput.fileName: \"dig.owner.${DIGOUT}Trk.version.sequencer.art\" >> digitize.fcl
-  echo outputs.CaloOutput.fileName: \"dig.owner.${DIGOUT}Calo.version.sequencer.art\" >> digitize.fcl
-  echo outputs.UntriggeredOutput.fileName: \"dig.owner.${DIGOUT}Untriggered.version.sequencer.art\" >> digitize.fcl
-else
-  # keep all streams
-  DIGOUT=${PRIMARY}${DIGITYPE}
-  echo outputs.SignalOutput.fileName: \"dig.owner.${DIGOUT}Signal.version.sequencer.art\" >> digitize.fcl
-  echo outputs.DiagOutput.fileName: \"dig.owner.${DIGOUT}Diag.version.sequencer.art\" >> digitize.fcl
-  echo outputs.TrkOutput.fileName: \"dig.owner.${DIGOUT}Trk.version.sequencer.art\" >> digitize.fcl
-  echo outputs.CaloOutput.fileName: \"dig.owner.${DIGOUT}Calo.version.sequencer.art\" >> digitize.fcl
-  echo outputs.UntriggeredOutput.fileName: \"dig.owner.${DIGOUT}Untriggered.version.sequencer.art\" >> digitize.fcl
-fi
+echo outputs.TriggeredOutput.fileName: \"dig.owner.${DIGOUT}Triggered.version.sequencer.art\" >> digitize.fcl
+echo outputs.TriggerableOutput.fileName: \"dig.owner.${DIGOUT}Triggerable.version.sequencer.art\" >> digitize.fcl
 # setup database access for digi parameters
 echo services.DbService.purpose: ${CAMPAIGN}_${DBPURPOSE} >> digitize.fcl
 echo services.DbService.version: ${DBVERSION} >> digitize.fcl

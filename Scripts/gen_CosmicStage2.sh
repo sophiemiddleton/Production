@@ -12,6 +12,7 @@ NJOBS=0
 NEVTS=0
 RUNNUM=1202
 LOW=""
+DSSTOPS=""
 
 # Function: Exit with error.
 exit_abnormal() {
@@ -111,17 +112,19 @@ if [[ -n $DSSTOPS ]]; then
   echo "Using user-provided input list of DS Stops $DSSTOPS"
 else
   DSSTOPS="CosmicDSStops.txt"
-  samListLocations ${SAMOPT} --defname="sim.mu2e.CosmicDSStops${S1NAME}$LOW.${S1CONF}.art"  > ${DSSTOPS}
+  samListLocations ${SAMOPT} --defname="sim.mu2e.CosmicDSStops${S1NAME}${LOW}.${S1CONF}.art"  > ${DSSTOPS}
 fi
 
 if [ ! -f $DSSTOPS ]; then
-  echo "Cant find DSStops"
+  echo "Can't find DSStops"
   exit_abnormal
 fi
 
-generate_fcl --dsconf="${OUTCONF}" --dsowner=${OWNER} --run-number=${RUNNUM} --description="${S2OUT}" --embed ResampleS1.fcl  \
---events-per-job=${NEVTS} --njobs=${NJOBS} \
---auxinput=1:physics.filters.CosmicResampler.fileNames:${DSSTOPS}
+cmd="generate_fcl --dsconf ${OUTCONF} --dsowner ${OWNER} --run-number ${RUNNUM} --description ${S2OUT} --embed ResampleS1.fcl
+--events-per-job ${NEVTS} --njobs ${NJOBS} --auxinput=1:physics.filters.CosmicResampler.fileNames:${DSSTOPS}"
+echo "Running: $cmd"
+$cmd
+
 for dirname in 000 001 002 003 004 005 006 007 008 009; do
   if test -d $dirname; then
     echo "Moving Output to ${S2OUT}S2_$dirname"
@@ -129,4 +132,3 @@ for dirname in 000 001 002 003 004 005 006 007 008 009; do
     mv $dirname "${S2OUT}S2_$dirname"
   fi
 done
-

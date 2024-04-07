@@ -1,15 +1,22 @@
-#
-#  Digitization specialization for no-field simulation.  This is a form of OffSpill
-#
+# configure NoField digitization
 # add trigger paths; for now use the Extracted trigger menu, as these assume no field (should become renamed TODO
-#include "Offline/gen/fcl/Trigger/ExtrPosTrigMenu/ExtrPosTrigMenu.fcl"
-# set the event timing for OffSpill
-physics.producers.EWMProducer.SpillType : 0
+#include "mu2e_trig_config/gen/trig_extrPosPSConfig_OffSpill.fcl"
+#include "mu2e_trig_config/gen/trig_extrPos_OffSpill.fcl"
+# then generic digitization
+#include "Production/JobConfig/digitize/Digitize.fcl"
+# set OffSpill timing
+#include "Production/JobConfig/digitize/OffSpill_epilog.fcl"
+# add trigger filters
+physics.filters : { @table::physics.filters @table::Trig_physMenuPSConfig }
+# add the trigger paths
+physics.trigger_paths : [ @sequence::Digitize.trigger_paths, @sequence::Trig_physMenu.trigger_paths]
+# configure 'Triggered' output to be calibration triggers
+outputs.TriggeredOutput.SelectEvents : [
+  @sequence::Digitize.TrkTriggers,
+  @sequence::Digitize.CaloTriggers ]
 # no-field
 services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
-# produce only calibration streams
-physics.EndPath : [ @sequence::Digitize.EndSequence, TrkOutput, CaloOutput, UntriggeredOutput ]
-physics.end_paths : [ EndPath ]
-# override the untriggered filter
-physics.filters.UntriggeredPrescale.prescaleFactor : 100 # only record 1% of the untriggered
+physics.filters.TriggerablePrescale.prescaleFactor : 100 # only record 1% of the untriggered
 physics.filters.Triggerable.MaxParticleMom : 1e10
+physics.trigger_paths : [@sequence::Trig_extrPos.trigger_paths]
+#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"

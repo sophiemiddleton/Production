@@ -7,6 +7,7 @@
 #include "Production/JobConfig/cosmic/prolog.fcl"
 process_name: CosmicS2
 source: { module_type : EmptyEvent }
+
 services : @local::Services.Sim
 physics : {
   producers : {
@@ -32,7 +33,7 @@ physics.producers.g4run.inputs: @local::Cosmic.S2Inputs
 physics.producers.g4run.Mu2eG4CommonCut: @local::Cosmic.Mu2eG4CommonCutCosmicS2
 # define sensitive volumes
 physics.producers.g4run.SDConfig.preSimulatedHits:  ["CosmicResampler:CRV"]
- setup primary finding for either generator (needs extension if new cosmic generators are added)
+# setup primary finding for either generator (needs extension if new cosmic generators are added)
 physics.producers.FindMCPrimary.PrimaryGenIds: ["CosmicCRY", "CosmicCORSIKA"]
 # add cosmic outputs
 outputs.PrimaryOutput.outputCommands : [

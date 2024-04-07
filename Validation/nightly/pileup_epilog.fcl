@@ -34,3 +34,5 @@ process_name: pileup
 services.scheduler.wantSummary: true
 
 source.maxEvents: 150000
+
+#include "Production/Validation/database.fcl"

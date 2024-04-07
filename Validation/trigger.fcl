@@ -1,13 +1,31 @@
 #include "Production/JobConfig/digitize/prolog.fcl"
-#include "Offline/Trigger/fcl/OnSpillTrigger.fcl"
-#include "Production/JobConfig/reco/drop_trigger.fcl"
+#include "Offline/fcl/standardServices.fcl"
+#include "mu2e_trig_config/core/trigProducers.fcl"
+#include "mu2e_trig_config/core/trigFilters.fcl"
+#include "mu2e_trig_config/core/trigRecoSequences.fcl"
+#include "mu2e_trig_config/core/trigSequences.fcl"
+#include "mu2e_trig_config/gen/trig_valMenuPSConfig_OnSpill.fcl"
+#include "mu2e_trig_config/gen/trig_valMenu_OnSpill.fcl"
+process_name : OnSpillTrigger
+services : @local::Services.Reco
 services.DbService.purpose: MDC2020_best
 services.DbService.version: v1_1
 services.DbService.verbose : 2
+
+source : { module_type : RootInput }
+physics : {
+   @table::TrigSequences
+   producers : { @table::TrigProducers.producers }
+   filters :  {
+      @table::TrigFilters.filters
+      @table::Trig_valMenuPSConfig
+   }
+}
+
 outputs : {
   Output : {
     module_type : RootOutput
-    SelectEvents : [ "*_highP_*_trigger" ]
+    SelectEvents : [ "*_highP_*" ]
     outputCommands : [ "drop *_*_*_*",
       @sequence::Digitize.TriggerProducts
     ]
@@ -18,3 +36,11 @@ physics.Outpath : [ Output ]
 physics.end_paths : [ Outpath ]
 
 outputs.Output.fileName : "dig.owner.val-trigger.dsconf.seq.art"
+
+
+physics.trigger_paths : [@sequence::Trig_valMenu.trigger_paths]
+#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"
+
+physics.producers.EWMProducer.SpillType : 1
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/reco/drop_trigger.fcl"

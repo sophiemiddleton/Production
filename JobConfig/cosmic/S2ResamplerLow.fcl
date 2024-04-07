@@ -2,3 +2,4 @@
 # epilog for resampling 'Low' S1 output
 #
 physics.filters.CosmicResampler.mu2e.products.cosmicLivetimeMixer.genCounterLabel: "genCounterLow::Primary"
+physics.filters.PrimaryFilter.MaximumPartMom: 500

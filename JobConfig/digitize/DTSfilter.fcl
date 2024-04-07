@@ -3,6 +3,9 @@
 #
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/digitize/prolog.fcl"
+#include "mu2e_trig_config/gen/trig_physMenuPSConfig_OnSpill.fcl"
+#include "mu2e_trig_config/gen/trig_physMenu_OnSpill.fcl"
+
 # name all processes the same, to mask any provenance in ensemble creation
 process_name: DTSFilter
 source : { module_type : RootInput }
@@ -10,24 +13,26 @@ services : @local::Services.SimAndReco
 physics : {
   producers : {
     @table::Digitize.producers
-    @table::Trigger.producers
+    @table::TrigProducers.producers
   }
   filters: {
     @table::Digitize.filters
-    @table::Trigger.filters
+    @table::TrigFilters.filters   
+    @table::Trig_physMenuPSConfig
   }
   analyzers: { @table::Digitize.analyzers }
   # define the digitization paths.  Trigger paths are added specific to digitization type
   DigitizePath : @local::Digitize.DigitizeSequence
 }
 #physics.filters.Triggerable.MinNDigis : 13
+physics.trigger_paths : [@sequence::Trig_physMenu.trigger_paths]
+
 physics.trigger_paths[0] : DigitizePath
 # define all outputs: not all digitization types will use all of
 outputs : {
   DTSOutput : @local::Digitize.DTSOutput
 }
 
-#include "Offline/gen/fcl/Trigger/OnSpillTrigMenu/OnSpillTrigMenu.fcl"
 physics.producers.EWMProducer.SpillType : 1
 physics.EndPath : [ @sequence::Digitize.EndSequence, DTSOutput]
 physics.end_paths : [ EndPath ]
@@ -37,3 +42,4 @@ physics.end_paths : [ EndPath ]
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
 
+#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"

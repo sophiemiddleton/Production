@@ -1,0 +1,32 @@
+#include "Production/JobConfig/ensemble/fcl/prolog.fcl"
+
+${comments}
+
+process_name : SI
+
+source : { module_type : SamplingInput
+  inputCommands : @local::Ensemble.InputCommands
+  dropDescendantsOfDroppedBranches: false
+  run : ${run}
+  subRun : ${subRun}
+  samplingSeed : ${samplingSeed}
+  dataSets : { 
+${datasets} 
+  }
+}
+
+physics :
+{ 
+  EndPath : [ OutputMC ]
+  end_paths : [ EndPath ]
+}
+
+outputs : {
+  OutputMC : {
+    module_type : RootOutput
+    outputCommands : @local::Ensemble.OutputCommandsMC
+    fileName : "${outnameMC}"
+  }
+
+}
+

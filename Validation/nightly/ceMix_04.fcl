@@ -1,4 +1,4 @@
-#include "Production/JobConfig/mixing/Mix.fcl"
+#include "Production/JobConfig/mixing/MixTrigVal.fcl"
 #include "Production/JobConfig/mixing/TwoBB.fcl"
 physics.filters.MuBeamFlashMixer.mu2e.MaxEventsToSkip: 1113148
 physics.filters.EleBeamFlashMixer.mu2e.MaxEventsToSkip: 25650
@@ -8,11 +8,8 @@ services.DbService.purpose: MDC2020_best
 services.DbService.version: v1_0
 services.DbService.verbose : 2
 services.GeometryService.bFieldFile : "Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt"
-outputs.SignalOutput.fileName: "dig.owner.CeEndpointMix2BBSignal.version.sequencer.art"
-outputs.DiagOutput.fileName: "dig.owner.CeEndpointMix2BBDiag.version.sequencer.art"
-outputs.TrkOutput.fileName: "dig.owner.CeEndpointMix2BBTrk.version.sequencer.art"
-outputs.CaloOutput.fileName: "dig.owner.CeEndpointMix2BBCalo.version.sequencer.art"
-outputs.UntriggeredOutput.fileName: "dig.owner.CeEndpointMix2BBUntriggered.version.sequencer.art"
+outputs.TriggeredOutput.fileName: "dig.owner.CeEndpointMix1BBTriggered.version.sequencer.art"
+
 
 #----------------------------------------------------------------
 # Code added by generate_fcl:
@@ -117,14 +114,14 @@ physics.filters.NeutralsFlashMixer.fileNames : [
 ]
 outputs.CaloOutput.fileName : "dig.MU2EGRIDDSOWNER.CeEndpointMix2BBCalo.MU2EGRIDDSCONF.001210_00000026.art"
 outputs.DiagOutput.fileName : "dig.MU2EGRIDDSOWNER.CeEndpointMix2BBDiag.MU2EGRIDDSCONF.001210_00000026.art"
-outputs.SignalOutput.fileName : "dig.MU2EGRIDDSOWNER.CeEndpointMix2BBSignal.MU2EGRIDDSCONF.001210_00000026.art"
+outputs.TriggeredOutput.fileName : "dig.MU2EGRIDDSOWNER.CeEndpointMix2BBSignal.MU2EGRIDDSCONF.001210_00000026.art"
 outputs.TrkOutput.fileName : "dig.MU2EGRIDDSOWNER.CeEndpointMix2BBTrk.MU2EGRIDDSCONF.001210_00000026.art"
 outputs.UntriggeredOutput.fileName : "dig.MU2EGRIDDSOWNER.CeEndpointMix2BBUntriggered.MU2EGRIDDSCONF.001210_00000026.art"
 mu2emetadata.fcl.prologkeys: [  ]
 mu2emetadata.fcl.inkeys: [ "source.fileNames", "physics.filters.MuStopPileupMixer.fileNames", "physics.filters.EleBeamFlashMixer.fileNames", "physics.filters.MuBeamFlashMixer.fileNames", "physics.filters.NeutralsFlashMixer.fileNames" ]
-mu2emetadata.fcl.outkeys: [ "outputs.CaloOutput.fileName", "outputs.DiagOutput.fileName", "outputs.SignalOutput.fileName", "outputs.TrkOutput.fileName", "outputs.UntriggeredOutput.fileName" ]
+mu2emetadata.fcl.outkeys: [ "outputs.CaloOutput.fileName", "outputs.DiagOutput.fileName", "outputs.TriggeredOutput.fileName", "outputs.TrkOutput.fileName", "outputs.UntriggeredOutput.fileName" ]
 # End code added by generate_fcl:
 #----------------------------------------------------------------
 #include "Production/Validation/nightly/ceMix_epilog.fcl"
-outputs.SignalOutput.fileName : "ceMix_04.art"
+outputs.TriggeredOutput.fileName : "ceMix_04.art"
 source.maxEvents: 220

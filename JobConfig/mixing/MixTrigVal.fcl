@@ -1,0 +1,39 @@
+# configure digitization with pileup for validation
+# this is a form of OnSpill digitization
+# first, trigger filters and paths
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/digitize/prolog.fcl"
+#include "Production/JobConfig/mixing/prolog.fcl"
+# the following MUST come after mixing, as that overrides artFragmentsGen sequence
+#include "mu2e_trig_config/core/trigSequences.fcl"
+#include "mu2e_trig_config/gen/trig_valMenuPSConfig_OnSpill.fcl"
+#include "mu2e_trig_config/gen/trig_valMenu_OnSpill.fcl"
+process_name: MixTrigVal
+source : { module_type : RootInput }
+services : @local::Services.SimAndReco # reco is needed for the trigger
+physics : {
+  producers : { @table::Digitize.producers @table::Mixing.producers }
+  filters: { @table::Digitize.filters @table::Mixing.filters @table::Trig_valMenuPSConfig }
+  analyzers: { @table::Digitize.analyzers }
+  # define the digitization paths.  Trigger paths are added specific to digitization type
+  MixPath : [ @sequence::Mixing.MixSequence ]
+  # define the trigger sequences and paths
+  @table::TrigRecoSequences
+  @table::TrigSequences
+}
+# define output streams
+outputs : { TriggeredOutput : @local::Digitize.TriggeredOutput }
+physics.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput ]
+physics.end_paths : [ EndPath ]
+# final overrides
+# set the event timing for OnSpill
+physics.producers.EWMProducer.SpillType : 1
+# add the trigger paths
+physics.trigger_paths : [ "0:MixPath", @sequence::Trig_valMenu.trigger_paths]
+# configure 'Triggered' output to be signal
+outputs.TriggeredOutput.SelectEvents : @local::Digitize.SignalTriggers
+# Final configuration
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/digitize/epilog.fcl"
+#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"
+#include "Production/JobConfig/mixing/epilog.fcl"

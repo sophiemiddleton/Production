@@ -1,32 +1,25 @@
-#
-#  Digitize signals from extracted position cosmics, and trigger based on the extracted position trigger menu
-#
-# add trigger paths
-#include "Offline/gen/fcl/Trigger/ExtrPosTrigMenu/ExtrPosTrigMenu.fcl"
-# set the event timing for OffSpill
-physics.producers.EWMProducer.SpillType : 0
-# override the Untriggered filter
-physics.filters.UntriggeredPrescale.prescaleFactor : 100 # only record 1% of the untriggered
-physics.filters.Triggerable.MaxParticleMom : 1e10
+# configure Extracted digitization
+# first, trigger filtesr and paths
+#include "mu2e_trig_config/gen/trig_extrPosMenuPSConfig_OffSpill.fcl"
+#include "mu2e_trig_config/gen/trig_extrPosMenu_OffSpill.fcl"
+# then generic digitization
+#include "Production/JobConfig/digitize/Digitize.fcl"
+# set OffSpill timing
+#include "Production/JobConfig/digitize/OffSpill_epilog.fcl"
+# add trigger filters
+physics.filters : { @table::physics.filters @table::Trig_extrPosMenuPSConfig }
+# add the trigger paths
+physics.trigger_paths : [ @sequence::Digitize.trigger_paths, @sequence::Trig_extrPosMenu.trigger_paths]
+# configure 'Triggered' output to be calibration triggers
+outputs.TriggeredOutput.SelectEvents : [
+  @sequence::Digitize.TrkTriggers,
+  @sequence::Digitize.CaloTriggers ]
+# override some prescales
+physics.filters.TriggerablePrescale.prescaleFactor : 100 # only record 1% of the untriggered
+physics.filters.Triggerable.MaxParticleMom : 1e10 # allow 'infintie' momentum cosmics
+# extracted-specific overrides
 # extracted geometry
 services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_common_extracted.txt"
 services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
-# produce only calibration streams
-physics.EndPath : [ @sequence::Digitize.EndSequence, TrkOutput, CaloOutput, UntriggeredOutput ]
-physics.end_paths : [ EndPath ]
-# setup CRV lookup tables to follow
-physics.producers.CrvPhotons.CRVSectors : ["EX","T1","T2"] # used only to match the vector entries below
-physics.producers.CrvPhotons.reflectors : [  0 ,  1 ,  0 ]
-physics.producers.CrvPhotons.lookupTableFileNames : ["CRVConditions/v6_0/LookupTable_6000_0",  # EX
-  "CRVConditions/v6_0/LookupTable_2370_1",  # T1
-  "CRVConditions/v6_0/LookupTable_3200_0"]  # T2
-# number of photons per MeV visible energy deposited
-# for 68 PE/SiPM @ 1 m away from SiPM (Test beam June 2017)
-# using the pulse height calibration, this value gives 45 PE/SiPM @ 1 m away from SiPM
-physics.producers.CrvPhotons.scintillationYields  : [39400,39400,39400]
-physics.producers.CrvCoincidence.CRVSectors   : ["EX","T1","T2"]
-physics.producers.CrvCoincidence.PEthresholds : [  8 ,  8 ,  8 ]
-physics.producers.CrvCoincidence.adjacentPulseTimeDifferences  : [ 10 , 10 , 10 ]
-physics.producers.CrvCoincidence.maxTimeDifferences            : [ 10 , 10 , 10 ]
-physics.producers.CrvCoincidence.coincidenceLayers             : [  3 ,  3 ,  3 ]
-#include "Production/JobConfig/digitize/offspill_epilog.fcl"
+# override CRV lookup tables, photon yields, etc. for the extracted position
+#include "Offline/CRVResponse/fcl/epilog_extracted.fcl"
