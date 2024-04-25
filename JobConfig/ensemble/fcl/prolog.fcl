@@ -23,7 +23,7 @@ Ensemble : {
           "keep mu2e::RecoCount_*_*_*",
           "keep mu2e::IndexMap_*_*_*",
           "keep mu2e::CaloHitart::Ptrmu2e::CaloHitart::Ptrstd::map_*_*_*",
-          "keep mu2e::CrvDigis_*_*_*"] ///TODO DTS DATA PRODUCTS
+          "keep mu2e::CrvDigis_*_*_*"]
 }
 
 END_PROLOG

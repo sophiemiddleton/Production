@@ -30,3 +30,5 @@ outputs : {
 
 }
 
+
+services.TimeTracker.printSummary: true

@@ -13,14 +13,3 @@ physics.producers.compressDigiMCs.caloShowerStepTags : [compressDetStepMCs, @seq
 physics.producers.CaloShowerROMaker.caloShowerStepCollection : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
 physics.producers.CrvPhotons.crvStepModuleLabels : [ compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
 physics.producers.CrvPhotons.crvStepProcessNames : [ "","","","","" ]
-#
-#  Physics signal and calibration streams, filtered on different triggers
-#
-physics.trigger_paths[0] : MixPath
-physics.trigger_paths[1] : UntriggeredPath
-physics.end_paths : [ EndPath ]
-outputs : @local::Digitize.Outputs
-# set the event timing for OnSpill
-physics.producers.EWMProducer.SpillType : 1
-# minimal BField map
-services.GeometryService.bFieldFile     : "Offline/Mu2eG4/geom/bfgeom_reco_v01.txt"

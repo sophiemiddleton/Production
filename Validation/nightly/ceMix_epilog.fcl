@@ -1,7 +1,3 @@
-outputs.UntriggeredOutput.fileName: "/dev/null"
-outputs.CaloOutput.fileName: "/dev/null"
-outputs.DiagOutput.fileName: "/dev/null"
-outputs.TrkOutput.fileName: "/dev/null"
 
 services.TFileService.fileName: "/dev/null"
 

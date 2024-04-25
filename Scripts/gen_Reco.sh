@@ -35,7 +35,7 @@ RECODB_VERSION="" # db version
 DIGITYPE="" # digitype
 MERGE=10 # merge factor
 OWNER=mu2e
-STREAM=Signal
+STREAM=Triggered
 SAMOPT="-f --schema=root"
 DIGIS=""
 CAT=""

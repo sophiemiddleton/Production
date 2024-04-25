@@ -16,7 +16,6 @@ TYPE="" # the kind of input stops (Muminus, Muplus, IPAMuminus, IPAMuplus, Pimin
 JOBS="" # is the number of jobs
 EVENTS="" # is the number of events/job
 
-
 # The following can be overridden if needed
 FLAT=""
 PDG=11 #is the pdgId of the particle to generate (for flat only)
@@ -26,6 +25,7 @@ ENDMOM=110 # optional (for flat only)
 OWNER=mu2e
 RUN=1202
 CAT="Cat"
+
 # Function: Print a help message.
 usage() {
   echo "Usage: $0
@@ -149,7 +149,6 @@ else
   resampler=${TYPE}StopResampler
 fi
 
-
 samweb list-file-locations --schema=root --defname="$dataset"  | cut -f1 > Stops.txt
 # calucate the max skip from the dataset
 nfiles=`samCountFiles.sh $dataset`
@@ -170,27 +169,13 @@ echo "services.GeometryService.bFieldFile : \"${FIELD}\"" >> primary.fcl
 if [[ "${PRIMARY}" == "DIOtail" ]]; then
   echo physics.producers.generate.decayProducts.spectrum.ehi: ${ENDMOM}        >> primary.fcl
   echo physics.producers.generate.decayProducts.spectrum.elow: ${STARTMOM}    >> primary.fcl
-  echo physics.filters.GenFilter.maxr_min : 480 >> primary.fcl
-  echo physics.filters.GenFilter.maxr_max: 700 >> primary.fcl
-  echo physics.filters.GenFilter.isNull : false >> primary.fcl
 fi
+
 if [[ "${FLAT}" == "FlatMuDaughter" ]]; then
   echo physics.producers.generate.pdgId: ${PDG}            >> primary.fcl
   echo physics.producers.generate.startMom: ${STARTMOM}    >> primary.fcl
   echo physics.producers.generate.endMom: ${ENDMOM}        >> primary.fcl
 fi
+sed -e 's|^.*/||' Stops.txt > base.txt
+mu2ejobdef --embed primary.fcl --setup /cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/${PRIMARY_CAMPAIGN}/setup.sh --run-number=${RUN} --events-per-job=${EVENTS} --jobdesc ${PRIMARY} --dsconf ${PRIMARY_CAMPAIGN} --auxinput=1:physics.filters.${resampler}.fileNames:base.txt
 
-#
-# now generate the fcl
-#
-
-generate_fcl --dsconf=${PRIMARY_CAMPAIGN} --dsowner=${OWNER} --run-number=${RUN} --description=${PRIMARY} --events-per-job=${EVENTS} --njobs=${JOBS} \
-  --embed primary.fcl --auxinput=1:physics.filters.${resampler}.fileNames:Stops.txt
-for dirname in 000 001 002 003 004 005 006 007 008 009; do
-  if test -d $dirname; then
-    echo "found dir $dirname"
-    rm -rf ${PRIMARY}\_$dirname
-    mv $dirname ${PRIMARY}\_$dirname
-    echo "moving $dirname to ${PRIMARY}_${dirname}"
-  fi
-done

@@ -1,5 +1,6 @@
 #
-#  Digitization simulations
+#  core digitization configuration.  This gets specialized by combining it with digitization-type specific
+#  configuration (OnSpill, OffSpill, Extracted, ...)
 #
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/digitize/prolog.fcl"
@@ -8,32 +9,24 @@ process_name: Digitize
 source : { module_type : RootInput }
 services : @local::Services.SimAndReco # reco is needed for the trigger
 physics : {
-  producers : {
-    @table::Digitize.producers
-    @table::Trigger.producers
-  }
-  filters: {
-    @table::Digitize.filters
-    @table::Trigger.filters
-  }
+  producers : { @table::Digitize.producers }
+  filters: { @table::Digitize.filters }
   analyzers: { @table::Digitize.analyzers }
   # define the digitization paths.  Trigger paths are added specific to digitization type
   DigitizePath : @local::Digitize.DigitizeSequence
-  UntriggeredPath : [ @sequence::Digitize.DigitizeSequence, @sequence::Digitize.UntriggeredSequence ]
+  TriggerablePath : [ @sequence::Digitize.DigitizeSequence, @sequence::Digitize.TriggerableSequence ]
+  # define the trigger sequences and paths
+  @table::TrigRecoSequences
+  @table::TrigSequences
 }
-physics.trigger_paths[0] : DigitizePath
-physics.trigger_paths[1] : UntriggeredPath
-# define all outputs: not all digitization types will use all of
-outputs : {
-  DTSOutput : @local::Digitize.DTSOutput
-  SignalOutput : @local::Digitize.SignalOutput
-  DiagOutput :  @local::Digitize.DiagOutput
-  TrkOutput :  @local::Digitize.TrkOutput
-  CaloOutput : @local::Digitize.CaloOutput
-  UntriggeredOutput : @local::Digitize.UntriggeredOutput
-}
+# define output streams
+outputs : @local::Digitize.Outputs
+physics.EndPath : @local::Digitize.EndPath
+physics.end_paths : [ EndPath ]
 #
 # Final configuration
 #
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
+#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"
+
