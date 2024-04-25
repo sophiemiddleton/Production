@@ -10,28 +10,20 @@ import subprocess
 
 """
 How to use:
-python ../Production/Jobfilelists/ensemble/python/run_si_v2.py --outpath=/exp/mu2e/app/users/sophie/ProductionEnsembles/new-workflow/output/ --filelists=/exp/mu2e/app/users/sophie/ProductionEnsembles/new-workflow/filelists/ --BB=1BB --verbose=1 --rue=1e-13 --livetime=60 --run=1201 --dem_emin=75 --tmin=450 --samplingseed=1  --prc "CE" "DIO"
-
-
+python ../Production/JobConfig/ensemble/python/run_si_v2.py --stdpath=/pnfs/mu2e/scratch/users/sophie/filelists/ --BB=1BB --verbose=1 --rue=1e-13 --livetime=60 --run=1201 --dem_emin=75 --tmin=450 --samplingseed=1  --prc "CE" "DIO"
 """
 
 def main(args):
   
   if int(args.verbose) == 1:
     print(" Running SI with options : verbose ",args.verbose," BB mode ", args.BB, " livetime [s] ", args.livetime, " Rmue ", args.rue)
-    print(" filelists located in ", args.filelists)
-    print(" Output passed to ", args.outpath)
+    print(" filelists located in ", args.stdpath)
+    print(" Output passed to ", args.stdpath)
     print(" Signals ", args.prc)
   
-  if int(args.verbose) == 1:
-    print("opening filelists ", args.filelists, " args.outpath is ",args.outpath)
-
   # live time in seconds
-  livetime = float(args.livetime) #float(open(os.path.join(args.filelists,"livetime")).readline()) #in seconds
+  livetime = float(args.livetime)
 
-  if int(args.verbose) == 1:
-    print("producing sample for livetime",livetime, "seconds")
-    
   # r mue and rmup rates
   rue = float(args.rue)
 
@@ -50,10 +42,10 @@ def main(args):
 
   # extract normalization of each background/signal process:
   norms = {
-          "DIOTail": dio_normalization(livetime,dem_emin, args.BB),
-          "CeEndpoint": ce_normalization(livetime,rue, args.BB),
-          #"CRYCosmic": cry_onspill_normalization(livetime),
-          #"CORSIKACosmic": corsika_onspill_normalization(livetime),
+          "DIO": dio_normalization(livetime,dem_emin, args.BB),
+          "CE": ce_normalization(livetime,rue, args.BB),
+          "CRYCosmic": cry_onspill_normalization(livetime),
+          "CORSIKACosmic": corsika_onspill_normalization(livetime),
           }
 
   starting_event_num = {}
@@ -63,12 +55,12 @@ def main(args):
   current_file = {}
 
   # loop over each "signal"
-  for signal in norms:
+  for signal in args.prc:
       print(signal)
       #FIXME starting and ending event
       
       # open file list from the filelists directory
-      ffns = open(os.path.join(args.filelists,"filenames_%s" % signal))
+      ffns = open(os.path.join(args.stdpath,"filenames_%s" % signal))
       
       # add empty file list
       filenames[signal] = []
@@ -180,8 +172,8 @@ def main(args):
 
       d = {}
       d["datasets"] = datasets
-      d["outnameMC"] = os.path.join(args.outpath,"dts.mu2e.ensemble-"+str(processes)+"-"+str(int(livetime))+"s-p"+str(int(dem_emin))+"MeVc"+".MDC2020.%06d_%08d.art" % (run,subrun))
-      d["outnameData"] = os.path.join(args.outpath,"dts.mu2e.ensemble-Data.MDC2020.%06d_%08d.art" % (run,subrun))
+      d["outnameMC"] = os.path.join(args.stdpath,"dts.mu2e.ensemble-"+str(args.BB)+"-"+str(processes)+"-"+str(int(livetime))+"s-p"+str(int(dem_emin))+"MeVc"+".MDC2020.%06d_%08d.art" % (run,subrun))
+      d["outnameData"] = os.path.join(args.stdpath,"dts.mu2e.ensemble-Data.MDC2020.%06d_%08d.art" % (run,subrun))
       d["run"] = run
       d["subRun"] = subrun
       d["samplingSeed"] = samplingseed + subrun
@@ -189,15 +181,15 @@ def main(args):
       d["comments"] = "#livetime: %f\n#rue: %f\n#dem_emin: %f\n#tmin: %f\n#run: %d\n" % (livetime,rue,dem_emin,tmin,run)
 
       # make the .fcl file for this subrun (subrun # d)
-      fout = open(os.path.join(args.filelists,"SamplingInput_sr%d.fcl" % (subrun)),"w")
+      fout = open(os.path.join(args.stdpath,"SamplingInput_sr%d.fcl" % (subrun)),"w")
       fout.write(t.substitute(d))
       fout.close()
 
       # make a log file
-      flog = open(os.path.join(args.filelists,"SamplingInput_sr%d.log" % (subrun)),"w")
+      flog = open(os.path.join(args.stdpath,"SamplingInput_sr%d.log" % (subrun)),"w")
 
       # run the fcl file using mu2e -c
-      cmd = ["mu2e","-c",os.path.join(args.filelists,"SamplingInput_sr%d.fcl" % (subrun)),"--nevts","%d" % (events_this_run)]
+      cmd = ["mu2e","-c",os.path.join(args.stdpath,"SamplingInput_sr%d.fcl" % (subrun)),"--nevts","%d" % (events_this_run)]
       p = subprocess.Popen(cmd,stdout=subprocess.PIPE,universal_newlines=True)
       ready = False
       # loop over output of the process:
@@ -239,8 +231,8 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--verbose", help="verbose")
-    parser.add_argument("--filelists", help="name of filelists directory with full path")
-    parser.add_argument("--outpath", help="name of output directory with full path")
+    #parser.add_argument("--filelists", help="name of filelists directory with full path")
+    parser.add_argument("--stdpath", help="name of directory with full path")
     parser.add_argument("--BB", help="BB mode e.g. 1BB")
     parser.add_argument("--livetime", help="simulated livetime")
     parser.add_argument("--rue", help="signal branching rate")
