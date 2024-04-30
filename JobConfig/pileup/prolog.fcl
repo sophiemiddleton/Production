@@ -132,9 +132,16 @@ Pileup: {
     }
     
         
-    DIFFilter : {
-      module_type : "DIFFilter"
+    DIFMuonFilter : {
+      module_type : "DIFMuonFilter"
       SimParticleCollection : "beamResampler:MuBeamResampler"
+      makeplots : true
+      isNull : false
+    }
+    
+    DIFElecFilter : {
+      module_type : "DIFElecFilter"
+      SimParticleCollection : "g4run"
       makeplots : true
       isNull : false
     }

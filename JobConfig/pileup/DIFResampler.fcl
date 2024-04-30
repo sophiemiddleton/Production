@@ -33,7 +33,7 @@ physics: {
   # setup paths
   
   
-  DIFPath : [@sequence::Pileup.beamResamplerSequence, DIFFilter , @sequence::Common.g4Sequence, @sequence::Pileup.DetStepSequence ] # TODOadd DIFFILTER ELECTRONS (REASONABLE ENERGY)
+  DIFPath : [@sequence::Pileup.beamResamplerSequence, DIFMuonFilter , @sequence::Common.g4Sequence, DIFElecFilter, @sequence::Pileup.DetStepSequence ] 
   
   trigger_paths: [ DIFPath ]
   outPath : [ DIFOutput]

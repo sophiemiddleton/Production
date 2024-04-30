@@ -1,5 +1,6 @@
 # configure OnSpill digitization
 # first, trigger filtesr and paths
+
 #include "mu2e_trig_config/gen/trig_physMenuPSConfig_OnSpill.fcl"
 #include "mu2e_trig_config/gen/trig_physMenu_OnSpill.fcl"
 # then generic digitization
