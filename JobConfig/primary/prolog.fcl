@@ -178,6 +178,11 @@ Primary: {
     SelectEvents : [ PrimaryPath ]
     fileName    : @nil
   }
+  SimOutput : {
+    module_type : RootOutput
+    SelectEvents : [ SimPath ]
+    fileName    : @nil
+  }
   EndSequence : [ genCountLogger ]
 }
 # define the main sequence

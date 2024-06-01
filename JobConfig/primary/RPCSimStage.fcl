@@ -1,0 +1,24 @@
+#
+# RPC photon spectrum, based on on Bistrilich spectrum
+# Option of Internal or External to be set in driving FCL instance
+# original author: S Middleton
+#
+
+#include "Production/JobConfig/primary/TargetPiStopParticleSimStage.fcl"
+
+physics.producers.generate : {
+  module_type : RPCGun
+  inputSimParticles: TargetPiStopResampler
+  verbosity : 0
+  RPCType : @nil
+  spectrum : {
+    spectrumShape : Bistirlich
+    elow : 1. #MeV
+    ehi : 140.
+    spectrumResolution : 0.1 #MeV
+  }
+  pionDecayOff : true
+  doHistograms : true
+}
+
+physics.producers.FindMCPrimary.PrimaryProcess : @nil
