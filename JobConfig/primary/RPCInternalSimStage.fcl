@@ -5,5 +5,4 @@
 #include "Production/JobConfig/primary/RPCSimStage.fcl"
 
 physics.producers.generate.RPCType : "mu2eInternalRPC"
-physics.producers.FindMCPrimary.PrimaryProcess : "mu2eInternalRPC"
-outputs.PrimaryOutput.fileName: "dts.owner.RPCInternal.version.sequencer.art"
+

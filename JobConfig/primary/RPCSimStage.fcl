@@ -21,4 +21,3 @@ physics.producers.generate : {
   doHistograms : true
 }
 
-physics.producers.FindMCPrimary.PrimaryProcess : @nil

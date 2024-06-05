@@ -7,8 +7,7 @@
 
 physics.SimPath : [ TargetPiStopResampler, PionFilter,  @sequence::Common.generateSequence,@sequence::Common.g4Sequence]
 
-#physics.trigger_paths : [ PrimaryPath ]
-outputs : {  SimOutput : @local::Primary.SimOutput }
+outputs : {  SimOutput : @local::SimPrimary.SimOutput }
 physics.EndPath : [ SimOutput ]
 physics.end_paths : [ EndPath ]
 

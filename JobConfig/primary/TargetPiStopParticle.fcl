@@ -5,7 +5,7 @@
 # edited for pions by : Sophie Middleton
 #include "Production/JobConfig/primary/StopParticle.fcl"
 
-physics.PrimaryPath : [ TargetPiStopResampler, PionFilter,  @sequence::Common.generateSequence,  @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ] # add in filter after TargetPiStopResampler
+physics.PrimaryPath : [  TargetPiStopResampler, PionFilter,  @sequence::Common.generateSequence,  @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ] # add in filter after TargetPiStopResampler
 physics.trigger_paths : [ PrimaryPath ]
 outputs : { PrimaryOutput : @local::Primary.PrimaryOutput }
 physics.EndPath : [ @sequence::Primary.EndSequence, PrimaryOutput ]

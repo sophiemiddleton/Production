@@ -22,7 +22,10 @@ physics : {
     @table::Primary.filters
     @table::genFilters.filters
   }
-  analyzers : { @table::Primary.analyzers }
+  analyzers : { 
+    @table::Primary.analyzers
+    @table::SimPrimary.analyzers
+  }
 }
 #
 # final configuration

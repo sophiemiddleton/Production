@@ -1,7 +1,7 @@
 #include "Production/JobConfig/primary/RPCSimStage.fcl"
 
 source.firstRun: 1201
-physics.filters.TargetPiStopResampler.fileNames : ["/pnfs/mu2e/tape/phy-sim/sim/mu2e/PiminusStopsCat/MDC2020t/art/6f/86/sim.mu2e.PiminusStopsCat.MDC2020t.001201_00000354.art","/pnfs/mu2e/tape/phy-sim/sim/mu2e/PiminusStopsCat/MDC2020t/art/49/1f/sim.mu2e.PiminusStopsCat.MDC2020t.001201_00000154.art","/pnfs/mu2e/tape/phy-sim/sim/mu2e/PiminusStopsCat/MDC2020t/art/71/6f/sim.mu2e.PiminusStopsCat.MDC2020t.001201_00000244.art"]
+physics.filters.TargetPiStopResampler.fileNames : ["/pnfs/mu2e/tape/phy-sim/sim/mu2e/PiminusStopsCat/MDC2020t/art/71/6f/sim.mu2e.PiminusStopsCat.MDC2020t.001201_00000244.art"]
 
 # change for Int/Ext:
 physics.producers.generate.RPCType : "mu2eInternalRPC"  
