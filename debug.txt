@@ -1,0 +1,7 @@
+   ************************** Mu2e Offline **************************
+     art v3_14_03    root v6_28_10a    KinKal v03_00_01
+     build  /exp/mu2e/app/users/sophie/Offline_October
+     build  sl7-prof-e28-p056    06/13/24 10:40:33
+   ******************************************************************
+Exception from command line processing in mu2e: the required argument for option '--debug-config' is missing
+Art has completed and will exit with status 88.

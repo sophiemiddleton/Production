@@ -1,0 +1,25 @@
+# original author: S Middleton
+#
+#include "Offline/fcl/minimalMessageService.fcl"
+#include "Offline/fcl/standardProducers.fcl"
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/EventGenerator/fcl/prolog.fcl"
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/primary/prolog.fcl"
+#include "Production/JobConfig/pileup/prolog.fcl"
+# name all processes the same, to mask any provenance in ensemble creation
+process_name: StopFilter
+source: { module_type : RootInput }
+services : @local::Services.Sim
+physics : {
+
+  filters : {
+    @table::genFilters.filters
+  }
+  
+  analyzers : { 
+    @table::Primary.analyzers
+  }
+  
+}
+services.SeedService.baseSeed : @local::Common.BaseSeed

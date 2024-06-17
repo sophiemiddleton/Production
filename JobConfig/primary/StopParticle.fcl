@@ -24,7 +24,6 @@ physics : {
   }
   analyzers : { 
     @table::Primary.analyzers
-    @table::SimPrimary.analyzers
   }
 }
 #

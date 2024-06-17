@@ -1,0 +1,6 @@
+
+//mu2e -c Production/Tests/RunStopPiFilter.fcl -S pions.txt
+#include "Production/JobConfig/primary/TargetPiStopPreFilter.fcl"
+
+outputs.StopFilterOutput.fileName  : "sim.tester.RPC.Test.1.art"
+services.TFileService.fileName: "nts.owner.GenPlots.version.sequencer.root"

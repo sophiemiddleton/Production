@@ -1,7 +1,7 @@
 #include "Production/JobConfig/primary/CeMLeadingLog.fcl"
 source.firstRun: 501 #TODO
 physics.filters.TargetStopResampler.fileNames : [
-"/pnfs/mu2e/tape/phy-sim/sim/mu2e/MuminusStopsCat/MDC2020k/art/39/6a/sim.mu2e.MuminusStopsCat.MDC2020k.001201_00000000.art"]
+"/pnfs/mu2e/tape/phy-sim/sim/mu2e/MuminusStopsCat/MDC2020p/art/6d/cf/sim.mu2e.MuminusStopsCat.MDC2020p.001201_00000000.art"]
 # NOTE: to use on the grid do samweb list-file-locations --schema=root --defname="sim.mu2e.MuminusStopsCat.MDC2020k.art" | cut -f1 and place that file name here
 
 physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: 0
