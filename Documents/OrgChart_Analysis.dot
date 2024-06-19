@@ -1,0 +1,225 @@
+/*  Mu2e org chart, analysis branch only
+ * To compile:
+ *
+ *     dot -T(suf) Production/Documents/OrgChart_Analysis.dot -o OrgChart_Analysis.(suf), suf=tiff, jpg, pdf, ...
+ *    See https://graphviz.gitlab.io/documentation/ for more details
+ *
+ */
+
+digraph OrgChart {
+  /* size="14,11"; */
+  label = "Mu2e Collaboration Organization
+    ";
+  fontname="Helvetica";
+  fontsize="36";
+  labelloc = t;
+
+
+  /* L1 and L2 */
+
+  Spokespersons [shape=box, peripheries=1, color=black, fontsize="24",
+                label=<<table border="0" cellborder="0" cellspacing="1">
+                  <tr><td align="center"><b>Spokespersons</b></td></tr>
+                  <tr><td align="center"></td></tr>
+                  <tr><td align="left"><font color="blue" >Robert Bernstein</font></td></tr>
+                  <tr><td align="left"><font color="darkgreen">Stefano Miscetti</font></td></tr>
+                  </table>>];
+  dummy [style="invisible" width=1];
+
+  Legend [shape=box, peripheries=1, color=black, fontsize="18",
+         label=<<table border="0" cellborder="0" cellspacing="1">
+           <tr><td align="center"><b>Legend</b></td></tr>
+           <tr><td align="center"></td></tr>
+           <tr><td align="left"><font color="blue">FNAL Personnel </font></td></tr>
+           <tr><td align="left"><font color="darkgreen">non-FNAL personnel</font></td></tr>
+           </table>>];
+  {rank=same Spokespersons dummy Legend };
+
+  Analysis_Coordinators [shape=box, peripheries=1, color=black, fontsize="18",
+                        label=<<table border="0" cellborder="0" cellspacing="1">
+                          <tr><td align="center"><b>Analysis Coordinators</b></td></tr>
+                          <tr><td align="center"></td></tr>
+                          <tr><td align="left"><font color="darkgreen">David Brown</font></td></tr>
+                          <tr><td align="left"><font color="darkgreen">Bertrand Echenard</font></td></tr>
+                          </table>>];
+
+  Operations_Coordinators [shape=box, peripheries=1, color=black, fontsize="18",
+                          label=<<table border="0" cellborder="0" cellspacing="1">
+                            <tr><td align="center"><b>Operations Coordinators</b></td></tr>
+                            <tr><td align="center"></td></tr>
+                            <tr><td align="left"><font color="blue">Greg Rackness</font></td></tr>
+                            <tr><td align="left"><font color="darkgreen">Yongyi Wu</font></td></tr>
+                            </table>>];
+
+  Spokespersons -> Analysis_Coordinators;
+  Spokespersons -> Operations_Coordinators;
+
+  {rank=same Analysis_Coordinators Operations_Coordinators };
+
+  /* Analysis L3 */
+
+  Infrastructure [shape=box, peripheries=1, color=black, fontsize="14",
+                 label=<<table border="0" cellborder="0" cellspacing="1">
+                   <tr><td align="center"><b>Infrastructure</b></td></tr>
+                   <tr><td align="center"></td></tr>
+                   <tr><td align="left"><font color="blue">Raymond Culbertson</font></td></tr>
+                   </table>>];
+  Simulation [shape=box, peripheries=1, color=black, fontsize="14",
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Simulation</b></td></tr>
+               <tr><td align="center"></td></tr>
+               <tr><td align="left"><font color="darkgreen">Stefano DiFalco</font></td></tr>
+               </table>>];
+  Reconstruction [shape=box, peripheries=1, color=black, fontsize="14",
+                 label=<<table border="0" cellborder="0" cellspacing="1">
+                   <tr><td align="center"><b>Reconstruction</b></td></tr>
+                   <tr><td align="center"></td></tr>
+                   <tr><td align="left"><font color="blue">Robert Kutschke</font></td></tr>
+                   </table>>];
+  CalAlign [shape=box, peripheries=1, color=black, fontsize="14",
+           label=<<table border="0" cellborder="0" cellspacing="1">
+             <tr><td align="center"><b>Calibration and Alignment</b></td></tr>
+             <tr><td align="center"></td></tr>
+             <tr><td align="left"><font color="darkgreen">Richard Bonventre</font></td></tr>
+             </table>>];
+
+  Tools [shape=box, peripheries=1, color=black, fontsize="14",
+        label=<<table border="0" cellborder="0" cellspacing="1">
+          <tr><td align="center"><b>Tools</b></td></tr>
+          <tr><td align="center"></td></tr>
+          <tr><td align="left"><font color="darkgreen">Andrew Edmonds</font></td></tr>
+          <tr><td align="left"><font color="darkgreen">Sophie Middleton</font></td></tr>
+          </table>>];
+
+  /* Common  L3 */
+
+  Trigger [shape=box, peripheries=1, color=black, fontsize="14",
+          label=<<table border="0" cellborder="0" cellspacing="1">
+            <tr><td align="center"><b>Trigger</b></td></tr>
+            <tr><td align="center"></td></tr>
+            <tr><td align="left"><font color="darkgreen">Sarah Demers</font></td></tr>
+            <tr><td align="left"><font color="darkgreen">Giani Pezzullo</font></td></tr>
+            </table>>];
+
+  /* Ops L3 */
+
+  Detector_Operations [shape=box, peripheries=1, color=black, fontsize="14",
+                      label=<<table border="0" cellborder="0" cellspacing="1">
+                        <tr><td align="center"><b>Detector Operations</b></td></tr>
+                        <tr><td align="center">...</td></tr>
+                        </table>>];
+
+  Analysis_Coordinators -> Infrastructure,Simulation,Reconstruction,CalAlign,Tools,Trigger;
+  Operations_Coordinators -> Trigger,Detector_Operations;
+  {rank=same Infrastructure Simulation Reconstruction CalAlign Tools Trigger Detector_Operations};
+
+  /* Infrastructure L4 */
+
+  Production [shape=box, peripheries=1, color=black, fontsize="12",
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Production</b></td></tr>
+               <tr><td align="center"></td></tr>
+               <tr><td align="left"><font color="darkgreen">Yuri Oksuzian</font></td></tr>
+               </table>>];
+
+  Code [shape=box, peripheries=1, color=black, fontsize="12",
+       label=<<table border="0" cellborder="0" cellspacing="1">
+         <tr><td align="center"><b>Code Management</b></td></tr>
+         <tr><td align="center"></td></tr>
+         <tr><td align="left"><font color="blue">Robert Kutschke</font></td></tr>
+         </table>>];
+
+  Infrastructure->Production,Code;
+  Production->Code [style="invisible" dir="none"];
+  /* Calibration L4 */
+
+  Calibration [shape=box, peripheries=1, color=black, fontsize="12",
+              label=<<table border="0" cellborder="0" cellspacing="1">
+                <tr><td align="center"><b>Calibration</b></td></tr>
+                <tr><td align="center"></td></tr>
+                <tr><td align="left"><font color="darkgreen">Craig Group</font></td></tr>
+                </table>>];
+
+  Alignment [shape=box, peripheries=1, color=black, fontsize="12",
+            label=<<table border="0" cellborder="0" cellspacing="1">
+              <tr><td align="center"><b>Alignment</b></td></tr>
+              <tr><td align="center"></td></tr>
+              <tr><td align="left"><font color="blue">Dylan Palo</font></td></tr>
+              </table>>];
+
+  Field_Map [shape=box, peripheries=1, color=black, fontsize="12",
+            label=<<table border="0" cellborder="0" cellspacing="1">
+              <tr><td align="center"><b>Field Map</b></td></tr>
+              <tr><td align="center"></td></tr>
+              <tr><td align="left"><font color="blue">Cole Kampa</font></td></tr>
+              </table>>];
+
+  CalAlign->Calibration,Alignment,Field_Map;
+  Calibration->Alignment->Field_Map [style="invisible" dir="none"];
+
+  /* Simulation L4 */
+  Generators [shape=box, peripheries=1, color=black, fontsize="12",
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Generators</b></td></tr>
+               <tr><td align="center"></td></tr>
+               <tr><td align="left"><font color="darkgreen">Leo Borrel</font></td></tr>
+               </table>>];
+  Geometry [shape=box, peripheries=1, color=black, fontsize="12",
+           label=<<table border="0" cellborder="0" cellspacing="1">
+             <tr><td align="center"><b>Geometry and Geant4 </b></td></tr>
+             <tr><td align="center"></td></tr>
+             <tr><td align="left"><font color="darkgreen">Sridahara Tripathy</font></td></tr>
+             </table>>];
+  Other [shape=box, peripheries=1, color=black, fontsize="12",
+        label=<<table border="0" cellborder="0" cellspacing="1">
+          <tr><td align="center"><b>Non-G4 Simulations</b></td></tr>
+          <tr><td align="center"></td></tr>
+          <tr><td align="left"><font color="darkgreen">R. Rachamin</font></td></tr>
+          </table>>];
+
+  Simulation->Generators,Geometry,Other;
+  Generators->Geometry->Other [style="invisible" dir="none"];
+
+  /* Reconstruction L4 */
+
+  Algorithms [shape=box, peripheries=1, color=black, fontsize="12",
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Algorithms</b></td></tr>
+               <tr><td align="center"></td></tr>
+               <tr><td align="left"><font color="black">vacant</font></td></tr>
+               </table>>];
+  Validation [shape=box, peripheries=1, color=black, fontsize="12",
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Validation</b></td></tr>
+               <tr><td align="center"></td></tr>
+               <tr><td align="left"><font color="black">vacant</font></td></tr>
+               </table>>];
+  Reconstruction->Algorithms,Validation;
+  Algorithms->Validation [style="invisible" dir="none"];
+
+  /* Tools L4 */
+
+  Tuple [shape=box, peripheries=1, color=black, fontsize="12",
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Analysis Tuple</b></td></tr>
+               <tr><td align="center"></td></tr>
+               <tr><td align="left"><font color="darkgreen">Andrew Edmonds</font></td></tr>
+               </table>>];
+  Display [shape=box, peripheries=1, color=black, fontsize="12",
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Event Display</b></td></tr>
+               <tr><td align="center"></td></tr>
+               <tr><td align="left"><font color="darkgreen">Namitha Chithirasreemadam</font></td></tr>
+               </table>>];
+
+  Reference [shape=box, peripheries=1, color=black, fontsize="12",
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Reference Analyses</b></td></tr>
+               <tr><td align="center"></td></tr>
+               <tr><td align="left"><font color="darkgreen">Sophie Middleton</font></td></tr>
+               </table>>];
+
+  Tools->Tuple,Display,Reference;
+  Tuple->Display->Reference [style="invisible" dir="none"];
+
+}

@@ -1,0 +1,162 @@
+/*  Mu2e org chart, analysis branch only
+ * To compile:
+ *
+ *     dot -T(suf) Production/Documents/OrgChart_L3.dot -o OrgChart_L3.(suf), suf=tiff, jpg, pdf, ...
+ *    See https://graphviz.gitlab.io/documentation/ for more details
+ *
+ */
+
+digraph OrgChart {
+  /* size="14,11"; */
+  label = "Mu2e Collaboration Organization
+    ";
+  fontname="Helvetica";
+  fontsize="72";
+  labelloc = t;
+
+
+  /* L1 and L2 */
+
+  Spokespersons [shape=box, peripheries=1, color=black, fontsize="24",
+                label=<<table border="0" cellborder="0" cellspacing="1">
+                  <tr><td align="center"><b>Spokespersons</b></td></tr>
+                  <tr><td align="center"></td></tr>
+                  <tr><td align="left"><font color="blue" >Robert Bernstein</font></td></tr>
+                  <tr><td align="left"><font color="darkgreen">Stefano Miscetti</font></td></tr>
+                  </table>>];
+  dummy [style="invisible" width=10];
+
+  Legend [shape=box, peripheries=1, color=black, fontsize="18",
+         label=<<table border="0" cellborder="0" cellspacing="1">
+           <tr><td align="center"><b>Legend</b></td></tr>
+           <tr><td align="center"></td></tr>
+           <tr><td align="left"><font color="blue">FNAL Personnel </font></td></tr>
+           <tr><td align="left"><font color="darkgreen">non-FNAL personnel</font></td></tr>
+           </table>>];
+  {rank=same Spokespersons dummy Legend };
+
+  Analysis_Coordinators [shape=box, peripheries=1, color=black, fontsize="18",
+                        label=<<table border="0" cellborder="0" cellspacing="1">
+                          <tr><td align="center"><b>Analysis Coordinators</b></td></tr>
+                          <tr><td align="center"></td></tr>
+                          <tr><td align="left"><font color="darkgreen">David Brown</font></td></tr>
+                          <tr><td align="left"><font color="darkgreen">Bertrand Echenard</font></td></tr>
+                          </table>>];
+
+  Operations_Coordinators [shape=box, peripheries=1, color=black, fontsize="18",
+                          label=<<table border="0" cellborder="0" cellspacing="1">
+                            <tr><td align="center"><b>Operations Coordinators</b></td></tr>
+                            <tr><td align="center"></td></tr>
+                            <tr><td align="left"><font color="blue">Greg Rackness</font></td></tr>
+                            <tr><td align="left"><font color="darkgreen">Yongyi Wu</font></td></tr>
+                            </table>>];
+
+  Spokespersons -> Analysis_Coordinators;
+  Spokespersons -> Operations_Coordinators;
+
+  {rank=same Analysis_Coordinators Operations_Coordinators };
+
+  /* Analysis L3 */
+
+  Infrastructure [shape=box, peripheries=1, color=black, fontsize="14",
+                 label=<<table border="0" cellborder="0" cellspacing="1">
+                   <tr><td align="center"><b>Infrastructure</b></td></tr>
+                   <tr><td align="center"></td></tr>
+                   <tr><td align="left"><font color="blue">Ray Culbertson</font></td></tr>
+                   </table>>];
+  Simulation [shape=box, peripheries=1, color=black, fontsize="14",
+             label=<<table border="0" cellborder="0" cellspacing="1">
+               <tr><td align="center"><b>Simulation</b></td></tr>
+               <tr><td align="center"></td></tr>
+               <tr><td align="left"><font color="darkgreen">Stefano DiFalco</font></td></tr>
+               </table>>];
+  Reconstruction [shape=box, peripheries=1, color=black, fontsize="14",
+                 label=<<table border="0" cellborder="0" cellspacing="1">
+                   <tr><td align="center"><b>Reconstruction</b></td></tr>
+                   <tr><td align="center"></td></tr>
+                   <tr><td align="left"><font color="blue">Rob Kutschke</font></td></tr>
+                   </table>>];
+  Calibration [shape=box, peripheries=1, color=black, fontsize="14",
+              label=<<table border="0" cellborder="0" cellspacing="1">
+                <tr><td align="center"><b>Calibration</b></td></tr>
+                <tr><td align="center"></td></tr>
+                <tr><td align="left"><font color="darkgreen">Richard Bonventre</font></td></tr>
+                </table>>];
+
+  Tools [shape=box, peripheries=1, color=black, fontsize="14",
+        label=<<table border="0" cellborder="0" cellspacing="1">
+          <tr><td align="center"><b>Tools</b></td></tr>
+          <tr><td align="center"></td></tr>
+          <tr><td align="left"><font color="darkgreen">Andrew Edmonds</font></td></tr>
+          <tr><td align="left"><font color="darkgreen">Sophie Middleton</font></td></tr>
+          </table>>];
+
+  /* Common  L3 */
+
+  Trigger [shape=box, peripheries=1, color=black, fontsize="14",
+          label=<<table border="0" cellborder="0" cellspacing="1">
+            <tr><td align="center"><b>Trigger</b></td></tr>
+            <tr><td align="center"></td></tr>
+            <tr><td align="left"><font color="darkgreen">Sarah Demers</font></td></tr>
+            <tr><td align="left"><font color="darkgreen">Giani Pezzullo</font></td></tr>
+            </table>>];
+
+  /*  Operations L3 */
+
+  Data_Aquisition [shape=box, peripheries=1, color=black, fontsize="14",
+                  label=<<table border="0" cellborder="0" cellspacing="1">
+                    <tr><td align="center"><b>Data Aquisition</b></td></tr>
+                    <tr><td align="center"></td></tr>
+                    <tr><td align="left"><font color="blue">Andrew Norman</font></td></tr>
+                    <tr><td align="left"><font color="darkgreen">Giani Pezzullo</font></td></tr>
+                    </table>>];
+  Tracker [shape=box, peripheries=1, color=black, fontsize="14",
+          label=<<table border="0" cellborder="0" cellspacing="1">
+            <tr><td align="center"><b>Tracker</b></td></tr>
+            <tr><td align="center"></td></tr>
+            <tr><td align="left"><font color="blue">Vincent Fischer</font></td></tr>
+            <tr><td align="left"><font color="darkgreen">Edward Callaghan</font></td></tr>
+            </table>>];
+  Calorimeter [shape=box, peripheries=1, color=black, fontsize="14",
+              label=<<table border="0" cellborder="0" cellspacing="1">
+                <tr><td align="center"><b>Calorimeter</b></td></tr>
+                <tr><td align="center"></td></tr>
+                <tr><td align="left"><font color="darkgreen">Simon Giovannella</font></td></tr>
+                <tr><td align="left"><font color="darkgreen">Luca Morescalchi</font></td></tr>
+                </table>>];
+  Cosmic_Ray_Veto [shape=box, peripheries=1, color=black, fontsize="14",
+                  label=<<table border="0" cellborder="0" cellspacing="1">
+                    <tr><td align="center"><b>Cosmic Ray Veto</b></td></tr>
+                    <tr><td align="center"></td></tr>
+                    <tr><td align="left"><font color="darkgreen">Ralf Ehrlich</font></td></tr>
+                    <tr><td align="left"><font color="darkgreen">Lei Xia</font></td></tr>
+                    </table>>];
+  Extinction_Monitor [shape=box, peripheries=1, color=black, fontsize="14",
+                     label=<<table border="0" cellborder="0" cellspacing="1">
+                       <tr><td align="center"><b>Extinction Monitor</b></td></tr>
+                       <tr><td align="center"></td></tr>
+                       <tr><td align="left"><font color="blue">Andrei Gaponenko</font></td></tr>
+                       </table>>];
+  Stopping_Target_Monitor [shape=box, peripheries=1, color=black, fontsize="14",
+                          label=<<table border="0" cellborder="0" cellspacing="1">
+                            <tr><td align="center"><b>Stopping Target Monitor</b></td></tr>
+                            <tr><td align="center"></td></tr>
+                            <tr><td align="left"><font color="darkgreen">Alexander Keshavarzi</font></td></tr>
+                            <tr><td align="left"><font color="darkgreen">Nam Tran</font></td></tr>
+                            </table>>];
+  Solenoids [shape=box, peripheries=1, color=black, fontsize="14",
+            label=<<table border="0" cellborder="0" cellspacing="1">
+              <tr><td align="center"><b>Solenoids</b></td></tr>
+              <tr><td align="center"></td></tr>
+              <tr><td align="left"><font color="blue">Badgley</font></td></tr>
+              <tr><td align="left"><font color="blue">Andrew Hocker</font></td></tr>
+              </table>>];
+
+
+
+  Analysis_Coordinators -> Infrastructure,Simulation,Reconstruction,Calibration,Tools,Trigger;
+  Operations_Coordinators -> Trigger,Data_Aquisition,Tracker,Calorimeter,Cosmic_Ray_Veto,Extinction_Monitor,Stopping_Target_Monitor,Solenoids;
+  {rank=same Infrastructure Simulation Reconstruction Calibration Tools Trigger Data_Aquisition Tracker Calorimeter Cosmic_Ray_Veto};
+  {rank=same  Extinction_Monitor Stopping_Target_Monitor Solenoids};
+
+}
