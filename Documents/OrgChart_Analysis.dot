@@ -129,8 +129,8 @@ digraph OrgChart {
          <tr><td align="left"><font color="blue">Robert Kutschke</font></td></tr>
          </table>>];
 
-  Infrastructure->Production,Code;
-  Production->Code [style="invisible" dir="none"];
+  Infrastructure->Production,Code [weight=1];
+  Production->Code [style="invisible" dir="none" weight=3];
   /* Calibration L4 */
 
   Calibration [shape=box, peripheries=1, color=black, fontsize="12",
@@ -154,8 +154,8 @@ digraph OrgChart {
               <tr><td align="left"><font color="blue">Cole Kampa</font></td></tr>
               </table>>];
 
-  CalAlign->Calibration,Alignment,Field_Map;
-  Calibration->Alignment->Field_Map [style="invisible" dir="none"];
+  CalAlign->Calibration,Alignment,Field_Map [weight=1];
+  Calibration->Alignment->Field_Map [style="invisible" dir="none" weight=3];
 
   /* Simulation L4 */
   Generators [shape=box, peripheries=1, color=black, fontsize="12",
@@ -177,8 +177,8 @@ digraph OrgChart {
           <tr><td align="left"><font color="darkgreen">R. Rachamin</font></td></tr>
           </table>>];
 
-  Simulation->Generators,Geometry,Other;
-  Generators->Geometry->Other [style="invisible" dir="none"];
+  Simulation->Generators,Geometry,Other [weight=1];
+  Generators->Geometry->Other [style="invisible" dir="none" weight=3];
 
   /* Reconstruction L4 */
 
@@ -194,8 +194,8 @@ digraph OrgChart {
                <tr><td align="center"></td></tr>
                <tr><td align="left"><font color="black">vacant</font></td></tr>
                </table>>];
-  Reconstruction->Algorithms,Validation;
-  Algorithms->Validation [style="invisible" dir="none"];
+  Reconstruction->Algorithms,Validation [weight=1];
+  Algorithms->Validation [style="invisible" dir="none" weight=3];
 
   /* Tools L4 */
 
@@ -219,7 +219,7 @@ digraph OrgChart {
                <tr><td align="left"><font color="darkgreen">Sophie Middleton</font></td></tr>
                </table>>];
 
-  Tools->Tuple,Display,Reference;
-  Tuple->Display->Reference [style="invisible" dir="none"];
+  Tools->Tuple,Display,Reference [weight=1];
+  Tuple->Display->Reference [style="invisible" dir="none" weight=3];
 
 }
