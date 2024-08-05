@@ -1,7 +1,10 @@
+//
+// this file is for interactive tests to make RPCs from the filtered stops (fileNames)
+//
 #include "Production/JobConfig/primary/RPC.fcl"
 
 source.firstRun: 1201
-physics.filters.TargetPiStopResampler.fileNames : ["sim.mu2e.filteredpions.0.art"] //"sim.tester.RPC.Test.1.art"]
+physics.filters.TargetPiStopResampler.fileNames : ["sim.mu2e.filteredpions.0.art"]
 
 # change for Int/Ext:
 physics.producers.generate.RPCType : "mu2eInternalRPC"  
