@@ -35,19 +35,7 @@ for line in lines:
         target_stopped_mu_per_POT = rate * 1000 
 #print(f"Final stops rate muon {target_stopped_mu_per_POT}")
 
-# get number of target pions stops:
-"""
-target_stopped_pi_per_POT = 1.0
-rate = 1.0
-lines= rr.split("\n")
-for line in lines:
-    words = line.split(",")
-    if words[0] == "PiminusStopsCat" or words[0] == "PiBeamCat" :
-        print(f"Including {words[0]} with rate {words[3]}")
-        rate = rate * float(words[3])
-        target_stopped_pi_per_POT = rate * 1000 
-print(f"Final stops rate pion {target_stopped_pi_per_POT}")
-"""
+
 
 # get number of POTs in given livetime
 def livetime_to_pot(livetime, run_mode = '1BB'): #livetime in seconds
@@ -57,10 +45,10 @@ def livetime_to_pot(livetime, run_mode = '1BB'): #livetime in seconds
     if(run_mode == '1BB'):
       # 1BB
       mean_PBI_low = 1.6e7
-      Tcycle = 1.33 # sec
+      Tcycle = 1.33 #s
       onspill_dutyfactor = 0.323
       POT_per_cycle = 4e12
-      onspill_time = onspill_dutyfactor*livetime
+      onspill_time = livetime
       Ncycles = onspill_time/Tcycle
       NPOT = Ncycles * POT_per_cycle
     if(run_mode == '2BB'):
@@ -69,7 +57,7 @@ def livetime_to_pot(livetime, run_mode = '1BB'): #livetime in seconds
       Tcycle = 1.4 #s
       onspill_dutyfactor = 0.246
       POT_per_cycle = 8e12
-      onspill_time = onspill_dutyfactor*livetime
+      onspill_time = livetime
       Ncycles = onspill_time/Tcycle
       NPOT = Ncycles * POT_per_cycle
     return NPOT
@@ -172,7 +160,23 @@ def corsika_offspill_normalization(livetime, run_mode = '1BB'):
       offspill_dutyfactor = 0.246
     #print(f"cosmics live time {livetime*offspill_dutyfactor}")
     return livetime*offspill_dutyfactor
-
+    
+    
+# get number of target pions stops:
+"""
+target_stopped_pi_per_POT = 1.0
+rate = 1.0
+lines= rr.split("\n")
+for line in lines:
+    words = line.split(",")
+    if words[0] == "PiminusStopsCat" or words[0] == "PiBeamCat" :
+        print(f"Including {words[0]} with rate {words[3]}")
+        rate = rate * float(words[3])
+        target_stopped_pi_per_POT = rate * 1000 
+print(f"Final stops rate pion {target_stopped_pi_per_POT}")
+"""
+    
+"""
 def rpc_normalization(livetime, emin, tmin, internal):
   # calculate fraction of spectrum being generated
   
@@ -233,7 +237,12 @@ def rpc_normalization(livetime, emin, tmin, internal):
     gen_events *= internalRPC_per_RPC;
 
   return gen_events
+"""
 
 def pot_to_livetime(pot):
     return pot / POT_per_second
 
+if __name__ == '__main__':
+  tst_1BB = livetime_to_pot(9.52e6)
+  tst_2BB = livetime_to_pot(1.58e6)
+  print("SU2020", tst_1BB, tst_2BB)
