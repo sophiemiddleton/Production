@@ -1,0 +1,22 @@
+#
+# Strip MC content from a simulation production digi file and r-write the output.
+# the input and output files must be provided outside this script, and should be related
+#
+#include "Offline/fcl/minimalMessageService.fcl"
+#include "Production/JobConfig/digitize/prolog.fcl"
+process_name: stripMC
+source: { module_type: RootInput }
+services: { message: @local::default_message }
+physics: { e1: [strip]  end_paths: [e1] }
+outputs: {
+  strip: {
+    module_type: RootOutput
+    fileName: @nil
+    outputCommands : [ "drop *_*_*_*",
+      @sequence::Digitize.GeneralProducts,
+      @sequence::Digitize.DigiProducts,
+      @sequence::Digitize.TriggerProducts
+    ]
+  }
+}
+

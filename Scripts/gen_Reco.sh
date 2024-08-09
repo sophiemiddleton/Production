@@ -11,6 +11,7 @@ usage() { echo "Usage: $0
   [ --stream Triggered, Triggerable ]
   [ --merge merge factor (opt) default 10]
   [ --recodbversion (opt) db version to use for reco]
+  [ --makeSS (opt) default \"true\". override with null to not create Surface Steps
   [ --owner (opt) default mu2e ]
   [ --samopt (opt) Options to samListLocation default "-f --schema=root" ]
   [ --cat (opt) If non-null, optionally add 'Cat' to the input digi collection name
@@ -39,6 +40,7 @@ STREAM=Triggered
 SAMOPT="-f --schema=root"
 DIGIS=""
 CAT=""
+MAKESS="true"
 
 # Loop: Get the next option;
 while getopts ":-:" options; do
@@ -86,6 +88,9 @@ while getopts ":-:" options; do
           ;;
         samopt)
           SAMOPT=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        makeSS)
+          MAKESS=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         *)
           echo "Unnown option " ${OPTARG}
@@ -148,8 +153,12 @@ fi
 echo 'services.DbService.purpose:' ${CAMPAIGN}'_'${DB_PURPOSE} >> reco.fcl
 echo 'services.DbService.version:' ${RECODB_VERSION} >> reco.fcl
 echo 'services.DbService.verbose : 2' >> reco.fcl
+if [[ -n $MAKESS ]];
+then
+  echo "#include \"Production/JobConfig/reco/MakeSurfaceSteps.fcl\"">> reco.fcl
+fi
+
 DSCONF=${CAMPAIGN}${RECO_VERSION}_${DB_PURPOSE}_${RECODB_VERSION}
-echo ${DSCONF}
 
 cmd="mu2ejobdef --embed reco.fcl --override-output-description --auto-description --setup ${SETUP} --auto-description --dsconf ${DSCONF} --inputs Digis.txt --merge-factor=${MERGE}"
 echo "Running: $cmd"

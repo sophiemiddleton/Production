@@ -196,8 +196,6 @@ Reconstruction : {
       noCompression : false
       crvStepsToKeep : [ ]
     }
-
-
   }
 
   filters : {
@@ -269,33 +267,50 @@ Reconstruction : {
   # CRV reco
   CrvReco : [ @sequence::CrvRecoPackage.CrvRecoSequence ]
   # full MC sequence; form the Calo and CRV matching, and compress based on reco content
+  # temporary build surface steps from StepPointMCs; this is a patch
   MCReco :  [@sequence::CaloMC.TruthMatch,  CrvCoincidenceClusterMatchMC, SelectRecoMC, compressRecoMCs, CrvCoincidenceClusterMCAssns ]
 
   # define products to keep
   # First, high-level reco products, and associated sub-products
   HighRecoProducts : [
     "keep mu2e::KalSeeds_K*_*_*",
-    "keep mu2e::HelixSeeds_MH*_*_*",
-    "keep mu2e::TimeClusters_MH*_*_*",
     "keep mu2e::CaloClusters_*_*_*",
-    "keep mu2e::CaloHits_*_*_*",
-    "keep mu2e::EventWindowMarker_*_*_*",
-    "keep mu2e::ProtonBunchTime_*_*_*",
-    "keep *_SelectRecoMC_*_*"
+    "keep mu2e::CaloHits_*_*_*", # these are needed as CaloClusters reference CaloHits and are not compressed
+    "keep mu2e::IndexMap_SelectRecoMC_*_*", # the SelectRecoMC products need to be explicit as that has MC products as well
+    "keep mu2e::RecoCount_SelectRecoMC_*_*", # that module needs to be refactored to fix this TODO
+    "keep mu2e::StrawDigis_SelectRecoMC_*_*",
+    "keep mu2e::StrawDigiADCWaveforms_SelectRecoMC_*_*",
+    "keep mu2e::CaloDigis_SelectRecoMC_*_*",
+    "keep mu2e::CrvDigis_SelectRecoMC_*_*",
+    "keep mu2e::CrvCoincidenceClusters_SelectRecoMC_*_*",
+    "keep mu2e::CrvRecoPulses_SelectRecoMC_*_*"
+  ]
+  # Middle reco products, pat rec intermediate results
+  MidRecoProducts : [
+    "keep mu2e::HelixSeeds_MH*_*_*",
+    "keep mu2e::TimeClusters_MH*_*_*"
+  ]
+  # Low reco products, useful for debugging and event display
+  LowRecoProducts : [
+    "keep mu2e::ComboHits_*_*_*"
   ]
   # MC truth matched to reco
-  MCRecoProducts : [
-    "keep *_genCounter_*_*",
-    "keep mu2e::PrimaryParticle_*_*_*",
-    "keep mu2e::StatusG4_*_*_*",
-    "keep mu2e::ProtonBunchIntensity_*_*_*",
-    "keep mu2e::ProtonBunchTimeMC_*_*_*",
-    "keep mu2e::EventWeight_*_*_*",
+  HighRecoMCProducts : [
     "keep *_compressRecoMCs_*_*",
-    "keep mu2e::CosmicLivetime_*_*_*",
     "keep *_CrvCoincidenceClusterMCAssns_*_*",
-    "keep mu2e::StepPointMCs_CosmicResampler_crvStage1_*"
+    "keep *_SelectRecoMC_*_*"
   ]
+
+  GeneralProducts : [
+    @sequence::Digitize.GeneralProducts,
+    @sequence::Digitize.TriggerProducts # not sure we want to keep these
+  ]
+  # TODO: add products from reconstruction-level estimates of PBI from tracker and calorimeter
+
+  GeneralMCProducts : [
+    @sequence::Digitize.GeneralMCProducts
+  ]
+
   EndSequence : [ recoCompressionCheck ]
 }
 Reconstruction.EndPath : [ @sequence::Reconstruction.EndSequence, Output  ]
@@ -352,7 +367,6 @@ Reconstruction.OffSpillRecoMCPath : [
   RecoFilter
 ]
 
-
 # default output
 Reconstruction.Output : {
   module_type : RootOutput
@@ -360,9 +374,11 @@ Reconstruction.Output : {
   fileName    : @nil
   #  outputCommands : [ "keep *_*_*_*" ]
   outputCommands : [ "drop *_*_*_*",
-    @sequence::Digitize.TriggerProducts,
+    @sequence::Reconstruction.GeneralProducts,
+    @sequence::Reconstruction.GeneralMCProducts,
     @sequence::Reconstruction.HighRecoProducts,
-    @sequence::Reconstruction.MCRecoProducts]
+    @sequence::Reconstruction.HighRecoMCProducts
+  ]
 }
 
 END_PROLOG

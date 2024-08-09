@@ -48,7 +48,7 @@ usage() {
   [ --run (opt) default 1202 ]
   [ --cat(opt) default Cat ]
 
-  bash gen_Primary.sh --primary DIOtail --type MuMinus --campaign MDC2024  --scampaign MDC2020 -pver z_sm3 --sver p --njobs 100 --events 100 --start 75 --end 95
+  bash gen_Primary.sh --primary DIOtail --type Muminus --campaign MDC2024  --scampaign MDC2020 --pver z_sm3 --sver p --njobs 100 --events 100 --start 75 --end 95
   " 1>&2
 }
 
@@ -121,6 +121,7 @@ while getopts ":-:" options; do
       exit_abnormal                       # Exit abnormally.
       ;;
     *)                                    # If unknown (any other) option:
+      echo "Error: -${OPTARG} unknown option."
       exit_abnormal                       # Exit abnormally.
       ;;
   esac
@@ -158,8 +159,9 @@ else
   resampler=${TYPE}StopResampler
 fi
 
-
-samweb list-file-locations --schema=root --defname="$dataset"  | cut -f1 > Stops.txt
+rm -f Stops.txt
+#samweb list-file-locations --schema=root --defname="$dataset"  | cut -f1 > Stops.txt
+samListLocations --defname $dataset > Stops.txt
 # calucate the max skip from the dataset
 nfiles=`samCountFiles.sh $dataset`
 nevts=`samCountEvents.sh $dataset`
@@ -179,6 +181,7 @@ echo physics.filters.${resampler}.mu2e.MaxEventsToSkip: ${nskip} >> primary.fcl
 echo "services.GeometryService.bFieldFile : \"${FIELD}\"" >> primary.fcl
 
 if [[ "${TAG}" == "DIOtail" ]]; then
+  echo "DIOTail"
   echo physics.producers.generate.decayProducts.spectrum.ehi: ${ENDMOM}        >> primary.fcl
   echo physics.producers.generate.decayProducts.spectrum.elow: ${STARTMOM}    >> primary.fcl
   echo outputs.PrimaryOutput.fileName: \"dts.owner.${PRIMARY}.version.sequencer.art\"  >> primary.fcl

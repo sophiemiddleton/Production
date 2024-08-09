@@ -75,11 +75,17 @@ outputs : {
     fileName    : @nil
     outputCommands : [
       "drop *_*_*_*",
+      @sequence::Reconstruction.GeneralProducts,
+      @sequence::Reconstruction.GeneralMCProducts,
       @sequence::Reconstruction.HighRecoProducts,
-      @sequence::Reconstruction.MCRecoProducts,
+      @sequence::Reconstruction.HighRecoMCProducts,
+      @sequence::Reconstruction.MidRecoProducts,
+      @sequence::Digitize.GeneralProducts,
+      @sequence::Digitize.GeneralMCProducts,
       @sequence::Digitize.DigiProducts,
-      @sequence::Primary.KeptProducts,
-      # drop reco products which are empty
+      @sequence::Digitize.TriggerProducts,
+      @sequence::Digitize.MCDigiProducts,
+      @sequence::Primary.StepProducts,
       "drop mu2e::Crv*_*_*_*",
       "drop *_*_cosmicTimeMap_*",
       "drop *_g4run_*_*",

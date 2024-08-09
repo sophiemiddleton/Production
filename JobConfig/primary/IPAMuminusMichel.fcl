@@ -5,17 +5,55 @@
 # original author: S Middleton
 #
 #include "Production/JobConfig/primary/IPAStopParticle.fcl"
-
-physics.filters.PrimaryFilter.MinimumPartMom : 30.0 // MeV/c TODO - tweak this parameter to get more DetSteps
+physics.filters.PrimaryFilter.MinimumPartMom : 1.0
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eMuonDecayAtRest"
 
-physics.producers.generate : {
-  module_type : Pileup
-  verbosity : 0
-  inputSimParticles: IPAMuminusStopResampler
-  captureProducts : []
-  decayProducts : [ @local::Pileup.dioGenTool ]
-  stoppingTargetMaterial : "IPA"
+physics.producers.generate: {
+  module_type: CompositeMaterialGenerator
+  SimParticleCollection: IPAMuminusStopResampler
+  processCode: "mu2eMuonDecayAtRest"
+  weighting: {
+    tool_type: BoundMuonDecayFractionSamplerTool
+    material: "IPAPolyethylene"
+  }
+  elements: [
+    {
+      name: "C"
+      position_tool: {
+        tool_type: MuStopDecayPositionSamplerTool
+        atom: "C"
+      }
+      generator_tool: {
+        tool_type: DIOGenerator
+        spectrum: {
+          pdgId: 11
+          spectrumShape: "tabulated"
+          spectrumVariable: "totalEnergy"
+          spectrumFileName: "Offline/ConditionsService/data/heeck_finer_binning_2016_szafron-scaled-to-6C.tbl"
+          elow: 1.0
+          ehi: 110.0
+        }
+      }
+    },
+    {
+      name: "H"
+      position_tool: {
+        tool_type: MuStopDecayPositionSamplerTool
+        atom: "H"
+      }
+      generator_tool: {
+        tool_type: DIOGenerator
+        spectrum: {
+          pdgId: 11
+          spectrumShape: "tabulated"
+          spectrumVariable: "totalEnergy"
+          spectrumFileName: "Offline/ConditionsService/data/heeck_finer_binning_2016_szafron-scaled-to-1H.tbl"
+          elow: 1.0
+          ehi: 110.0
+        }
+      }
+    }
+  ]
 }
 
 outputs.PrimaryOutput.fileName: "dts.owner.IPAMuminusMichel.version.sequencer.art"

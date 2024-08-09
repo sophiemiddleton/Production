@@ -5,7 +5,13 @@
 #
 #include "Production/JobConfig/primary/StopParticle.fcl"
 
-physics.PrimaryPath : [ IPAMuminusStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
+physics.filters.TrackerRadialGenFilter: {
+  @table::GenFilter
+  isNull: false
+  maxr_min: 350.0 # tracker acceptance begins at ~400 mm
+}
+
+physics.PrimaryPath : [ IPAMuminusStopResampler, @sequence::Common.generateSequence, TrackerRadialGenFilter, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
 physics.trigger_paths : [ PrimaryPath ]
 outputs : { PrimaryOutput :@local::Primary.PrimaryOutput }
 physics.EndPath : [ @sequence::Primary.EndSequence, PrimaryOutput ]
