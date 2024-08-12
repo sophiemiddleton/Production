@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 usage() { echo "Usage: $0
-  e.g.  bash ../Production/Scripts/calculateInputs.sh --cosmics filenames_CORSIKACosmic --dem_emin 95 --rmue 1e-13 --BB 1BB
+  e.g.  bash Stage1_makeinputs.sh --cosmics filenames_CORSIKACosmic --dem_emin 95 --rmue 1e-13 --BB 1BB
 
 "
 }
@@ -66,18 +66,20 @@ mu2eDatasetFileList "dts.mu2e.CeMLeadingLog.${RELEASE}${VERSION}.art" | head -${
 echo -n "njobs= " >> output_${DEM_EMIN}.txt
 wc -l ${COSMICS} | awk '{print $1}' >> output_${DEM_EMIN}.txt
 
-echo "BB=" ${BB} >> output_${DEM_EMIN}.txt
+
 echo "rmue=" ${RMUE} >> output_${DEM_EMIN}.txt
 echo "dem_emin=" ${DEM_EMIN} >> output_${DEM_EMIN}.txt
 #echo "input file="${COSMICS} >> output_${DEM_EMIN}.txt
 
-mu2e -c /exp/mu2e/app/users/sophie/newOffline/Offline/Print/fcl/printCosmicLivetime.fcl -S ${COSMICS} | grep 'Livetime:' | awk -F: '{print $NF}' > ${COSMICS}.livetime
+mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S ${COSMICS} | grep 'Livetime:' | awk -F: '{print $NF}' > ${COSMICS}.livetime
 LIVETIME=$(awk '{sum += $1} END {print sum}' ${COSMICS}.livetime)
 
 echo "livetime=" ${LIVETIME} >> output_${DEM_EMIN}.txt
+echo "BB=" ${BB} >> output_${DEM_EMIN}.txt
+python Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME} --BB ${BB} --printpot "print" >> output_${DEM_EMIN}.txt
 
-python /exp/mu2e/app/users/sophie/newOffline/Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME} --rue ${RMUE} --prc "CEMLL" --BB ${BB} >> output_${DEM_EMIN}.txt
+python Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME} --rue ${RMUE} --prc "CEMLL" --BB ${BB} --printpot "no">> output_${DEM_EMIN}.txt
 
-python /exp/mu2e/app/users/sophie/newOffline/Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME}  --dem_emin ${DEM_EMIN} --prc "DIO" --BB ${BB} >> output_${DEM_EMIN}.txt
+python Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME}  --dem_emin ${DEM_EMIN} --prc "DIO" --BB ${BB} --printpot "no" >> output_${DEM_EMIN}.txt
 
-python /exp/mu2e/app/users/sophie/newOffline/Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME} --prc "CORSIKA" --BB ${BB} >> output_${DEM_EMIN}.txt
+python Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME} --prc "CORSIKA" --BB ${BB} --printpot "no" >> output_${DEM_EMIN}.txt

@@ -38,7 +38,7 @@ for line in lines:
 
 
 # get number of POTs in given livetime
-def livetime_to_pot(livetime, run_mode = '1BB'): #livetime in seconds
+def livetime_to_pot(livetime, run_mode = '1BB',printout=False): #livetime in seconds
     # numbers from SU2020 
     # see https://github.com/Mu2e/su2020/blob/master/analysis/pot_normalization.org
     NPOT = 0.
@@ -51,6 +51,10 @@ def livetime_to_pot(livetime, run_mode = '1BB'): #livetime in seconds
       onspill_time = livetime
       Ncycles = onspill_time/Tcycle
       NPOT = Ncycles * POT_per_cycle
+      if( printout):
+        print("Tcycle=",Tcycle)
+        print("POT_per_cycle=",POT_per_cycle)
+        print ("NPOT=",NPOT)
     if(run_mode == '2BB'):
       # 2BB
       mean_PBI_high = 3.9e7
@@ -60,6 +64,10 @@ def livetime_to_pot(livetime, run_mode = '1BB'): #livetime in seconds
       onspill_time = livetime
       Ncycles = onspill_time/Tcycle
       NPOT = Ncycles * POT_per_cycle
+      if( printout):
+        print("Tcycle=",Tcycle)
+        print("POT_per_cycle=",POT_per_cycle)
+        print ("NPOT=",NPOT)
     return NPOT
 
 # get number of ipa muon stops:

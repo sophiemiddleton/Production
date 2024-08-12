@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 usage() { echo "Usage: $0
-  e.g.  bash FileInMakeAndSubmitEnsemble.sh --config poutput.txt --tagg MDS1a
+  e.g.  bash Stage2_submitensemble.sh --config poutput.txt --tagg MDS1a
 "
 }
 
