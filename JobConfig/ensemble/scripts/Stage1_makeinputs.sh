@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 usage() { echo "Usage: $0
-  e.g.  bash Stage1_makeinputs.sh --cosmics filenames_CORSIKACosmic --dem_emin 95 --rmue 1e-13 --BB 1BB
+  e.g.  Stage1_makeinputs.sh --cosmics filenames_CORSIKACosmic --dem_emin 95 --rmue 1e-13 --BB 1BB --tag MDS1a
 
 "
 }
@@ -18,6 +18,8 @@ BB=1BB
 RMUE=1e-13
 RELEASE="MDC2024"
 VERSION="a_sm4"
+tag="MDS1a_test"
+stops="MDC2020p"
 # Loop: Get the next option;
 while getopts ":-:" options; do
   case "${options}" in
@@ -38,6 +40,12 @@ while getopts ":-:" options; do
         rmue)
           RMUE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
+        tag)
+          TAG=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        stops)
+          STOPS=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
         *)
           echo "Unknown option " ${OPTARG}
           exit_abnormal
@@ -53,7 +61,7 @@ while getopts ":-:" options; do
     esac
 done
 
-rm output_${DEM_EMIN}.txt
+rm ${tag}.txt
 rm filenames_CORSIKACosmic
 rm filenames_DIO
 rm filenames_CeMLL
@@ -63,23 +71,23 @@ mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.MDC2020ae.art" | head -${NJ
 mu2eDatasetFileList "dts.mu2e.DIOtailp${DEM_EMIN}MeVc.${RELEASE}${VERSION}.art"| head -${NJOBS} > filenames_DIO
 mu2eDatasetFileList "dts.mu2e.CeMLeadingLog.${RELEASE}${VERSION}.art" | head -${NJOBS} > filenames_CeMLL
 
-echo -n "njobs= " >> output_${DEM_EMIN}.txt
-wc -l ${COSMICS} | awk '{print $1}' >> output_${DEM_EMIN}.txt
+echo -n "njobs= " >> ${tag}.txt
+wc -l ${COSMICS} | awk '{print $1}' >> ${tag}.txt
 
 
-echo "rmue=" ${RMUE} >> output_${DEM_EMIN}.txt
-echo "dem_emin=" ${DEM_EMIN} >> output_${DEM_EMIN}.txt
-#echo "input file="${COSMICS} >> output_${DEM_EMIN}.txt
+echo "rmue=" ${RMUE} >> ${tag}.txt
+echo "dem_emin=" ${DEM_EMIN} >> ${tag}.txt
+echo "stops=MDC2020p" >> ${tag}.txt
 
 mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S ${COSMICS} | grep 'Livetime:' | awk -F: '{print $NF}' > ${COSMICS}.livetime
 LIVETIME=$(awk '{sum += $1} END {print sum}' ${COSMICS}.livetime)
 
-echo "livetime=" ${LIVETIME} >> output_${DEM_EMIN}.txt
-echo "BB=" ${BB} >> output_${DEM_EMIN}.txt
-python Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME} --BB ${BB} --printpot "print" >> output_${DEM_EMIN}.txt
+echo "livetime=" ${LIVETIME} >> ${tag}.txt
+echo "BB=" ${BB} >> ${tag}.txt
+calculateEvents.py --livetime ${LIVETIME} --BB ${BB} --printpot "print" >> ${tag}.txt
 
-python Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME} --rue ${RMUE} --prc "CEMLL" --BB ${BB} --printpot "no">> output_${DEM_EMIN}.txt
+calculateEvents.py --livetime ${LIVETIME} --rue ${RMUE} --prc "CEMLL" --BB ${BB} --printpot "no">> ${tag}.txt
 
-python Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME}  --dem_emin ${DEM_EMIN} --prc "DIO" --BB ${BB} --printpot "no" >> output_${DEM_EMIN}.txt
+calculateEvents.py --livetime ${LIVETIME}  --dem_emin ${DEM_EMIN} --prc "DIO" --BB ${BB} --printpot "no" >> ${tag}.txt
 
-python Production/JobConfig/ensemble/python/calculateEvents.py --livetime ${LIVETIME} --prc "CORSIKA" --BB ${BB} --printpot "no" >> output_${DEM_EMIN}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "CORSIKA" --BB ${BB} --printpot "no" >> ${tag}.txt

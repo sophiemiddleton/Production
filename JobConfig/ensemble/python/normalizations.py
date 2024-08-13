@@ -1,18 +1,10 @@
+#! /usr/bin/env
 import DbService
 import argparse
 import ROOT
 import math
 import os
 
-# general
-"""
-mean_PBI =  mean_PBI_low*0.75 + mean_PBI_high*0.25 # 2.175e7 protons per pulse
-npulses_per_s = 189898.75
-onspill_dutyfactor = 0.323 # for 1BB
-offspill_dutyfactor = 0.323
-ub_per_second = (1/1695e-9)*onspill_dutyfactor # 1.905e5
-POT_per_second = ub_per_second*mean_PBI #  TODO 4.1447e12 POT/s
-"""
 
 # get stopped rates from DB
 dbtool = DbService.DbTool()

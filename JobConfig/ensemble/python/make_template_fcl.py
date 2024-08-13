@@ -1,3 +1,4 @@
+#! /usr/bin/env
 from string import Template
 import argparse
 import sys

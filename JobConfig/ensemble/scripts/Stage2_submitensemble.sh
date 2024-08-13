@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 usage() { echo "Usage: $0
-  e.g.  bash Stage2_submitensemble.sh --config poutput.txt --tagg MDS1a
+  e.g. Stage2_submitensemble.sh --config poutput.txt --tagg MDS1a
 "
 }
 
@@ -93,7 +93,7 @@ mu2eDatasetFileList "dts.mu2e.CeMLeadingLog.${RELEASE}${VERSION}.art" | head -${
 STDPATH=$pwd # this should be the path where you are currently running
 
 echo "making template fcl"
-python /exp/mu2e/app/users/sophie/newOffline/Production/JobConfig/ensemble/python/make_template_fcl.py --stdpath=${STDPATH} --BB=${BB}  --tag=${TAGG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "CeMLL" "DIO" "CORSIKACosmic"
+make_template_fcl.py --stdpath=${STDPATH} --BB=${BB}  --tag=${TAGG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "CeMLL" "DIO" "CORSIKACosmic"
 
 ##### Below is genEnsemble and Grid:
 echo "remove old files"
