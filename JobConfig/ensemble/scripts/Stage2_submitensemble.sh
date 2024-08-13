@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 usage() { echo "Usage: $0
-  e.g. Stage2_submitensemble.sh --config poutput.txt --tagg MDS1a
+  e.g. Stage2_submitensemble.sh --tag MDS1a
 "
 }
 
@@ -9,11 +9,11 @@ exit_abnormal() {
   usage
   exit 1
 }
-CONFIG=""
+
 RELEASE=MDC2024
 VERSION=a_sm4
 PRC=""
-TAGG="" # MDS1a
+TAG="" # MDS1a
 VERBOSE=1
 SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020af/setup.sh
 
@@ -26,11 +26,8 @@ while getopts ":-:" options; do
         prc)
           PRC=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
-        config)
-          CONFIG=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
-          ;;
-        tagg)
-          TAGG=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+        tag)
+          TAG=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         verbose)
           VERBOSE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
@@ -58,6 +55,7 @@ TMIN=450
 SAMPLINGSEED=1
 BB=""
 RMUE=""
+CONFIG=${TAG}.txt
 
 while IFS='= ' read -r col1 col2
 do 
@@ -93,7 +91,7 @@ mu2eDatasetFileList "dts.mu2e.CeMLeadingLog.${RELEASE}${VERSION}.art" | head -${
 STDPATH=$pwd # this should be the path where you are currently running
 
 echo "making template fcl"
-make_template_fcl.py --stdpath=${STDPATH} --BB=${BB}  --tag=${TAGG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "CeMLL" "DIO" "CORSIKACosmic"
+make_template_fcl.py --stdpath=${STDPATH} --BB=${BB}  --tag=${TAG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "CeMLL" "DIO" "CORSIKACosmic"
 
 ##### Below is genEnsemble and Grid:
 echo "remove old files"

@@ -110,6 +110,7 @@ def dio_normalization(livetime, emin, run_mode = '1BB'):
 
     physics_events = POT * target_stopped_mu_per_POT * DIO_per_stopped_muon
     #print(f"Expected DIO {physics_events* cut_norm/total_norm}")
+    print("DIOfrac",cut_norm/total_norm)
     return physics_events * cut_norm/total_norm
 
 
