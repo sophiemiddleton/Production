@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 usage() { echo "Usage: $0
-  e.g.  Stage1_makeinputs.sh --cosmics MDC2020ae --dem_emin 95 --rmue 1e-13 --BB 1BB --tag MDS1a
+  e.g.  Stage1_makeinputs.sh --livetime 60000 --dem_emin 95 --rmue 1e-13 --BB 1BB --tag MDS1a
 
 "
 }
@@ -10,22 +10,20 @@ exit_abnormal() {
   usage
   exit 1
 }
-COSMICS=""
-NJOBS=5
-LIVETIME="" #seconds
-DEM_EMIN=95
-BB=1BB
-RMUE=1e-13
-TAG="MDS1a_test"
+COSMICS="MDC2020ae"
 STOPS="MDC2020p"
+NJOBS=""
+LIVETIME="" #seconds
+DEM_EMIN=""
+BB=""
+RMUE=""
+TAG=""
+
 # Loop: Get the next option;
 while getopts ":-:" options; do
   case "${options}" in
     -)
       case "${OPTARG}" in
-        njobs)
-          NJOBS=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
-          ;;
         cosmics)
           COSMICS=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
@@ -66,22 +64,24 @@ rm ${TAG}.txt
 rm ${COSMICS}
 
 echo "accessing files, making file lists"
-mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.${COSMICS}.art" | head -${NJOBS} > ${COSMICS}
+mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.${COSMICS}.art"  > ${COSMICS}
 
+mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S ${COSMICS} | grep 'Livetime:' | awk -F: '{print $NF}' > ${COSMICS}.livetime
+TOTALLIVETIME=$(awk '{sum += $1} END {print sum}' ${COSMICS}.livetime)
 
-echo -n "njobs= " >> ${TAG}.txt
-wc -l ${COSMICS} | awk '{print $1}' >> ${TAG}.txt
-
+var=${TOTALLIVETIME}/${LIVETIME}
+echo -n "njobs= "  >> ${TAG}.txt
+echo $(awk  'BEGIN { rounded = sprintf("%.0f", '${var}'); print rounded }')>> ${TAG}.txt
 
 echo "rmue=" ${RMUE} >> ${TAG}.txt
 echo "dem_emin=" ${DEM_EMIN} >> ${TAG}.txt
-echo "stops= " ${STOPS} >> ${TAG}.txt
-
-mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S ${COSMICS} | grep 'Livetime:' | awk -F: '{print $NF}' > ${COSMICS}.livetime
-LIVETIME=$(awk '{sum += $1} END {print sum}' ${COSMICS}.livetime)
-
+echo "stops=" ${STOPS} >> ${TAG}.txt
+echo "cosmics=" ${COSMICS} >> ${TAG}.txt
 echo "livetime=" ${LIVETIME} >> ${TAG}.txt
+echo "totalLtime=" ${TOTALLIVETIME} >> ${TAG}.txt
 echo "BB=" ${BB} >> ${TAG}.txt
+
+# get yields:
 calculateEvents.py --livetime ${LIVETIME} --BB ${BB} --printpot "print" >> ${TAG}.txt
 
 calculateEvents.py --livetime ${LIVETIME} --rue ${RMUE} --prc "CEMLL" --BB ${BB} --printpot "no">> ${TAG}.txt

@@ -40,12 +40,13 @@ def livetime_to_pot(livetime, run_mode = '1BB',printout=False): #livetime in sec
       Tcycle = 1.33 #s
       onspill_dutyfactor = 0.323
       POT_per_cycle = 4e12
-      onspill_time = livetime
-      Ncycles = onspill_time/Tcycle
+      #onspill_time = livetime*onspill_dutyfactor
+      Ncycles = livetime/Tcycle
       NPOT = Ncycles * POT_per_cycle
       if( printout):
         print("Tcycle=",Tcycle)
         print("POT_per_cycle=",POT_per_cycle)
+        print("onspilltime=",livetime*onspill_dutyfactor)
         print ("NPOT=",NPOT)
     if(run_mode == '2BB'):
       # 2BB
@@ -53,12 +54,13 @@ def livetime_to_pot(livetime, run_mode = '1BB',printout=False): #livetime in sec
       Tcycle = 1.4 #s
       onspill_dutyfactor = 0.246
       POT_per_cycle = 8e12
-      onspill_time = livetime
-      Ncycles = onspill_time/Tcycle
+      #onspill_time = livetime*onspill_dutyfactor
+      Ncycles = livetime/Tcycle
       NPOT = Ncycles * POT_per_cycle
       if( printout):
         print("Tcycle=",Tcycle)
         print("POT_per_cycle=",POT_per_cycle)
+        print("onspilltime=",livetime*onspill_dutyfactor)
         print ("NPOT=",NPOT)
     return NPOT
 
