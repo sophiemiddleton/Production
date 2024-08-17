@@ -10,7 +10,9 @@ source: {
   integratedSummary : true
   verbosity : 1
 }
-outputs.PrimaryOutput.outputCommands : [ "drop *_*_*_*", @sequence::Primary.KeptProducts,
+outputs.PrimaryOutput.outputCommands : [ "drop *_*_*_*",
+  @sequence::Primary.GeneralProducts,
+  @sequence::Primary.StepProducts,
   "keep mu2e::ProtonBunchIntensity_*_*_*",
   "keep mu2e::ProtonBunchIntensitySummary_*_*_*" ]
 

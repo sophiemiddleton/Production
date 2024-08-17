@@ -81,11 +81,16 @@ idx=$(mu2ejobquery --njobs cnf.*.tar)
 idx_format=$(printf "%07d" $idx)
 echo $idx
 
-echo "Creating index definiton with size: $idx"
-samweb create-definition mu2epro_index_${DESC}_${DS_CONF} "dh.dataset etc.mu2e.index.000.txt and dh.sequencer < ${idx_format}"
+parfile=$(ls cnf.*.tar)
+# Remove cnf.
+index_dataset=${parfile:4}
+# Remove .0.tar
+index_dataset=${index_dataset::-6}
 
-echo "Created definiton: mu2epro_index_${DESC}_${DS_CONF}"
-samweb describe-definition mu2epro_index_${DESC}_${DS_CONF}
+echo "Creating index definiton with size: $idx"
+samweb create-definition idx_${index_dataset} "dh.dataset etc.mu2e.index.000.txt and dh.sequencer < ${idx_format}"
+echo "Created definiton: idx_${index_dataset}"
+samweb describe-definition idx_${index_dataset}
 
 ls -ltr
 echo "Embed file content:"
