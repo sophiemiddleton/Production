@@ -16,19 +16,11 @@ python ../Production/JobConfig/ensemble/python/make_template_fcl.py --BB=1BB --v
 
 def main(args):
   
-  if int(args.verbose) == 1:
-    print(" Running SI with options : verbose ",args.verbose," BB mode ", args.BB, " livetime [s] ", args.livetime, " Rmue ", args.rue)
-    print(" Signals ", args.prc)
-    print(" tag ", args.tag)
-  
   # live time in seconds
   livetime = float(args.livetime)
 
   # r mue and rmup rates
   rue = float(args.rue)
-
-  if int(args.verbose) == 1:
-    print( "Rmue chosen ", rue)
 
   dem_emin = float(args.dem_emin)
   tmin = float(args.tmin)
@@ -78,11 +70,9 @@ def main(args):
       
       # loop over files in list
       for line in ffns:
-          print("at line ", line, "of ", signal)
           
           # find a given filename
           fn = line.strip()
-          print("striped filename ",fn)
           
           # add this filename to the list of filenames
           filenames[signal].append(fn)
@@ -93,7 +83,7 @@ def main(args):
 
           # determine total number of events surviving all cuts
           reco_events += te.GetEntries()
-          #print(" reco events ", te.GetEntries())
+          print(" reco events ", te.GetEntries())
           
           # determine total number of events generated
           t = fin.Get("SubRuns")
@@ -120,7 +110,7 @@ def main(args):
               for i in range(t.GetEntries()):
                   t.GetEntry(i)
                   gen_events += getattr(t,bn).product().count()
-          #print("total gen events ",gen_events)
+          print("total gen events ",gen_events)
 
       # mean is the normalized number of that event type as expected
       mean_gen_events = norms[signal]

@@ -11,7 +11,7 @@ exit_abnormal() {
   exit 1
 }
 COSMICS=""
-NJOBS=5
+NJOBS=1
 LIVETIME="" #seconds
 DEM_EMIN=95
 BB=1BB

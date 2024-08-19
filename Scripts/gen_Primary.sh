@@ -196,16 +196,26 @@ if [[ "${FLAT}" == "FlatMuDaughter" ]]; then
 fi
 
 #
-# now generate the fcl
+# now generate the par tar
 #
 
-generate_fcl --dsconf=${PRIMARY_CAMPAIGN} --dsowner=${OWNER} --run-number=${RUN} --description=${PRIMARY} --events-per-job=${EVENTS} --njobs=${JOBS} \
-  --embed primary.fcl --auxinput=1:physics.filters.${resampler}.fileNames:Stops.txt
-for dirname in 000 001 002 003 004 005 006 007 008 009; do
-  if test -d $dirname; then
-    echo "found dir $dirname"
-    rm -rf ${PRIMARY}\_$dirname
-    mv $dirname ${PRIMARY}\_$dirname
-    echo "moving $dirname to ${PRIMARY}_${dirname}"
-  fi
-done
+sed -e 's|^.*/||' Stops.txt > base.txt
+cmd="mu2ejobdef --embed primary.fcl --setup /cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/${PRIMARY_CAMPAIGN}/setup.sh --run-number=${RUN} --events-per-job=${EVENTS} --jobdesc ${PRIMARY} --dsconf ${PRIMARY_CAMPAIGN} --auxinput=1:physics.filters.${resampler}.fileNames:base.txt"
+
+echo "Running: $cmd"
+$cmd
+
+parfile=$(ls cnf.*.tar)
+# Remove cnf.
+index_dataset=${parfile:4}
+# Remove .0.tar
+index_dataset=${index_dataset::-6}
+
+idx_format=$(printf "%07d" ${NJOBS})
+echo $idx
+echo "Creating index definiton with size: $idx"
+samweb create-definition idx_${index_dataset} "dh.dataset etc.mu2e.index.000.txt and dh.sequencer < ${idx_format}"
+echo "Created definiton: idx_${index_dataset}"
+samweb describe-definition idx_${index_dataset}
+
+

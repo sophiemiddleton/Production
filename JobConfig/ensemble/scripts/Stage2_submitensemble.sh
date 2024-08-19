@@ -104,7 +104,7 @@ samweb list-files "dh.dataset=dts.mu2e.CosmicCORSIKASignalAll.MDC2020ae.art" | h
 samweb list-files "dh.dataset=dts.mu2e.DIOtailp${DEM_EMIN}MeVc.${INRELEASE}${INVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.CeMLeadingLog.${INRELEASE}${INVERSION}.art"  | head -${NJOBS}  >  filenames_CeMLL_${NJOBS}.txt
 
-DSCONF=${INRELEASE}${INVERSION}
+DSCONF=${OUTRELEASE}${OUTVERSION}
 
 echo "run mu2e jobdef"
 cmd="mu2ejobdef --desc=${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:CeMLL:filenames_CeMLL_${NJOBS}.txt --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CORSIKACosmic:filenames_CORSIKACosmic_${NJOBS}.txt --embed SamplingInput_sr0.fcl --verb "

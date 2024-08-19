@@ -1,7 +1,7 @@
 #include "Production/JobConfig/primary/RPC.fcl"
 
-source.firstRun: 501 #TODO
-physics.filters.TargetPiStopResampler.fileNames : ["/mu2e/app/users/sophie/Offline_October/Jobs/sim.owner.PiminusStopsCat.version.sequencer.art"]
+source.firstRun: 1201
+physics.filters.TargetPiStopResampler.fileNames : ["/pnfs/mu2e/tape/phy-sim/sim/mu2e/PiminusStopsCat/MDC2020t/art/bb/f9/sim.mu2e.PiminusStopsCat.MDC2020t.001201_00000290.art"]
 
 # change for Int/Ext:
 physics.producers.generate.RPCType : "mu2eInternalRPC"  
