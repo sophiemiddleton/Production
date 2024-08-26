@@ -179,7 +179,7 @@ for line in lines:
 print(f"Final stops rate pion {target_stopped_pi_per_POT}")
 """
     
-"""
+
 def rpc_normalization(livetime, emin, tmin, internal):
   # calculate fraction of spectrum being generated
   
@@ -199,7 +199,7 @@ def rpc_normalization(livetime, emin, tmin, internal):
     if (energy[i]-bin_width/2. >= emin):
       cut_norm += val[i]
 
-  geometric_stopped_pion_per_POT = 0.002484 # stops assuming infinite pion lifetime (for cd3 sim sample. in docdb-7468)
+  geometric_stopped_pion_per_POT = 0.00211 # SU2020 - assumes infinite pion lifetime TODO - replace with SimEff
   RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
   internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
 
@@ -240,7 +240,7 @@ def rpc_normalization(livetime, emin, tmin, internal):
     gen_events *= internalRPC_per_RPC;
 
   return gen_events
-"""
+
 
 def pot_to_livetime(pot):
     return pot / POT_per_second

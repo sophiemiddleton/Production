@@ -16,6 +16,7 @@ physics : {
   producers : {
     @table::Common.producers
     @table::Primary.producers
+    @table::genFilters.producers
   }
   filters : {
     @table::Common.filters

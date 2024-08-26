@@ -1,0 +1,13 @@
+//
+// Base configuration for prefiltering pions based on time
+// original author: Sophie Middleton, 2024
+//
+#include "Production/JobConfig/primary/StopParticleFilter.fcl"
+
+physics.StopFilterPath : [PionFilter]
+physics.trigger_paths : [ StopFilterPath ]
+outputs : { 
+  StopFilterOutput : @local::StopFilter.StopFilterOutput 
+}
+physics.EndPath : [ @sequence::StopFilter.EndSequence, StopFilterOutput ]
+physics.end_paths : [ EndPath ]

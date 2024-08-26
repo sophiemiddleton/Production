@@ -187,6 +187,30 @@ Primary: {
   }
   EndSequence : [ genCountLogger ]
 }
+
+StopFilter : {
+
+  filters : {
+    @table::genFilters.filters
+  }
+  KeptProducts : ["keep mu2e::*_*_*_*"]
+
+  analyzers: {
+    genCountLogger: { module_type: GenEventCountReader makeHistograms: false }
+  }
+  StopFilterOutput : {
+    module_type : RootOutput
+    SelectEvents : [ StopFilterPath ]
+    fileName    : @nil
+  }
+
+  EndSequence : [ genCountLogger ]
+}
+# define the main sequence
+StopFilter.StopFilterOutput.outputCommands : [ "drop *_*_*_*", @sequence::StopFilter.KeptProducts]
+StopFilter.EndPath : [ StopFilterOutput ]
+
+
 # define the main sequence
 Primary.PrimarySequence : [ @sequence::Primary.DetStepSequence, PrimaryFilter, @sequence::Primary.FinalizeSequence ]
 Primary.PrimaryOutput.outputCommands : [ "drop *_*_*_*",

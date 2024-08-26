@@ -1,13 +1,17 @@
+//
+// this file is for interactive tests to make RPCs from the filtered stops (fileNames)
+//
 #include "Production/JobConfig/primary/RPC.fcl"
 
 source.firstRun: 1201
-physics.filters.TargetPiStopResampler.fileNames : ["/pnfs/mu2e/tape/phy-sim/sim/mu2e/PiminusStopsCat/MDC2020t/art/bb/f9/sim.mu2e.PiminusStopsCat.MDC2020t.001201_00000290.art"]
+physics.filters.TargetPiStopResampler.fileNames : ["/pnfs/mu2e/tape/phy-sim/sim/mu2e/PiminusStopsCat/MDC2020t/art/bb/f9/sim.mu2e.PiminusStopsCat.MDC2020t.001201_00000290.art"]//"sim.tester.RPC.Test.1.art"]
 
 # change for Int/Ext:
 physics.producers.generate.RPCType : "mu2eInternalRPC"  
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eInternalRPC"
 
 physics.filters.TargetPiStopResampler.mu2e.MaxEventsToSkip: 0
+physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: 0
 outputs.PrimaryOutput.fileName : "dts.tester.RPC.Test.1.art"
 services.TFileService.fileName: "nts.owner.GenPlots.version.sequencer.root"
 
