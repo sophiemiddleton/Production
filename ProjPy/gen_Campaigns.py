@@ -2,6 +2,7 @@
 
 #Script to create and/or submit multiple campaign using Project-py
 #Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.ini --cfg_file CampaignConfig/mdc2020_digireco.cfg --comb_json data/mix.json --simjob MDC2020ae
+#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_primary.ini --cfg_file CampaignConfig/mdc2020_primary.cfg --comb_json data/primary_test.json --simjob MDC2020ae --comb_type list --cutoff_key primary_name
 #Create, upload and submit all campaign: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.ini --cfg_file CampaignConfig/mdc2020_digireco.cfg --comb_json data/mix.json --simjob MDC2020ae --create_campaign --submit
 
 import os
@@ -16,6 +17,8 @@ requiredNamed.add_argument("--ini_file", type=str, help="INI file", required=Tru
 requiredNamed.add_argument("--cfg_file", type=str, help="CFG file", required=True)
 requiredNamed.add_argument("--simjob", type=str, help="SimJob version, i.e. MDC2020ae", required=True)
 requiredNamed.add_argument("--comb_json", type=str, help="JSON file that contains combinations to run over", required=True)
+requiredNamed.add_argument("--comb_type", type=str, help="JSON file type: list or product", required=True)
+requiredNamed.add_argument("--cutoff_key", type=str, help="Ignore keys in the campaign name after the cutoff_key", default=None)
 
 parser.add_argument("--create_campaign", action="store_true", help="Create campaigns")
 parser.add_argument("--submit", action="store_true", help="Submit campaigns")
@@ -27,6 +30,8 @@ ini_file = args.ini_file
 cfg_file = args.cfg_file
 simjob = args.simjob
 comb_json = args.comb_json
+comb_type = args.comb_type
+cutoff_key = args.cutoff_key
 ini_version = args.ini_version
 
 create_campaign = args.create_campaign
@@ -44,14 +49,29 @@ if test_run:
     for key, values in combo_dict.items():
         combo_dict[key] = [values[0]]  # Consider only one combination
 
-list_values = list(product(*combo_dict.values()))
-list_keys = list(combo_dict.keys())
+
+if comb_type == "product":
+    list_values = list(product(*combo_dict.values()))
+    list_keys = list(combo_dict.keys())
+elif comb_type == "list":
+    list_values = combo_dict
+    list_keys = None        
+else:
+    print("Unknown comb_type")
+    sys.exit(1)
 
 for value in list_values:
-    print(value)
+    if comb_type == "list":
+        list_keys = list(value.keys())
+        value = list(value.values())
 
-    campaign_name = f"{simjob}_{'_'.join(map(str, value))}{ini_version}"
-
+    # We use only keys that appear prior to cutoff_key (i.e "primary_name"), and ignore the rest
+    if cutoff_key is not None:
+        cutoff_key_index = list_keys.index(cutoff_key) + 1 
+        campaign_name = f"{simjob}_{'_'.join(map(str, value[:cutoff_key_index]))}{ini_version}"
+    else:
+        campaign_name = f"{simjob}_{'_'.join(map(str, value))}{ini_version}"
+        
     out_ini_file = f"{campaign_name}.ini"
     os.system(f"cp {ini_file} {out_ini_file}")
 
@@ -60,6 +80,7 @@ for value in list_values:
 
         file_data = file_data.replace("name = override_me", f"name = {campaign_name}")
         for i in range(len(list_keys)):
+            print(list_keys[i])
             file_data = file_data.replace(f'"{list_keys[i]}": "override_me"', f'"{list_keys[i]}": "{value[i]}"')
 
     with open(out_ini_file, 'w') as file:
