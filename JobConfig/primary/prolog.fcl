@@ -190,6 +190,10 @@ Primary: {
 
 StopFilter : {
 
+  producers : {
+    @table::genFilters.producers
+  }
+  
   filters : {
     @table::genFilters.filters
   }
@@ -204,7 +208,7 @@ StopFilter : {
     fileName    : @nil
   }
 
-  EndSequence : [ genCountLogger ]
+  EndSequence : [genCountLogger ]
 }
 # define the main sequence
 StopFilter.StopFilterOutput.outputCommands : [ "drop *_*_*_*", @sequence::StopFilter.KeptProducts]

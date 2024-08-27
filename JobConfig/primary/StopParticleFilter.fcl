@@ -12,10 +12,6 @@ process_name: StopFilter
 source: { module_type : RootInput }
 services : @local::Services.Sim
 physics : {
-
-  producers : {
-    @table::genFilters.producers
-  }
   
   filters : {
     @table::genFilters.filters
