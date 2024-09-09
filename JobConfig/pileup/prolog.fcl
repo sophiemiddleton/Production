@@ -224,7 +224,7 @@ Pileup: {
     stmResampler: {
       module_type: ResamplingMixer
       fileNames: @nil
-      readMode: "sequential"
+      readMode: "randomNoReplace" # "sequential" # randomNoReplace if randomly sampling, sequential if resampling
       wrapFiles: true
       mu2e: {
         writeEventIDs : true

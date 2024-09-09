@@ -10,6 +10,7 @@
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/pileup/prolog.fcl"
 #include "Offline/Analyses/fcl/prolog.fcl"
+#include "Offline/STMMC/fcl/prolog.fcl"
 
 process_name: BeamToVD101
 
@@ -27,8 +28,9 @@ physics: {
     extractVD101 : {
       # Creates "mu2e::StepPointMCs_extractVD101__BeamToVD101" objects that only store StepPointMCs in VD101. Will create empty collections if no hits are found -> filter required.
       module_type : STMResamplingProducer
-      VD101StepPointMCsTag : "g4run:virtualdetector"
-      verbose : false
+      StepPointMCsTag : @local::ResamplingProducer.StepPointMCsTag
+      VirtualDetectorID : @local::ResamplingProducer.VirtualDetectorID
+      verbose : @local::ResamplingProducer.verbose
     } 
     compressDetStepMCsSTM : {
       # Creates "mu2e::SimParticlemv_compressDetStepMCsSTM__BeamToVD101" and "mu2e::StepPointMCs_compressDetStepMCsSTM__BeamToVD101" objects
@@ -37,14 +39,22 @@ physics: {
       module_type : CompressDetStepMCs
       strawGasStepTag : ""
       caloShowerStepTag : ""
+      surfaceStepTag : ""
       crvStepTag : ""
       simParticleTags : [ "g4run" ]
       debugLevel : 0
       stepPointMCTags : [ "extractVD101" ] # extractVD101 was g4run
       compressionOptions : {
-        @table::DetStepCompression.extraCompression # remove some intermediate genealogy steps
+        strawGasStepCompressionLevel: "noCompression"
+        caloShowerStepCompressionLevel: "noCompression"
+        crvStepCompressionLevel: "noCompression"
+        surfaceStepCompressionLevel: "noCompression"
         stepPointMCCompressionLevel : "noCompression"
         keepNGenerations : 1 # only keep SimParticles producing DetectorSteps and their direct parents
+       	simParticleCompressionLevel : "noCompression"
+       	stepPointMCCompressionLevel : "noCompression"
+       	keepNGenerations : -1
+       	mcTrajectoryCompressionLevel : "noCompression"
       }
       mcTrajectoryTag : "" # no MC Trajectories
     }
@@ -57,7 +67,8 @@ physics: {
       # Filters events based on the size of "mu2e::StepPointMCs_compressDetStepMCsSTM__BeamToVD101" - if there are no StepPointMCs in VD101, the event is not kept.
       # Required as extractVD101 will create a StepPointMCCollection even if the collection is empty.
       module_type: STMResamplingFilter
-      VD101StepPointMCsTag : "compressDetStepMCsSTM"
+      StepPointMCsTag : @local::ResamplingFilter.StepPointMCsTag
+      verbose : @local::ResamplingFilter.verbose
     }
   }
   analyzers : {
