@@ -5,7 +5,7 @@
 physics.producers.MakeSS : {
   @table::CommonMC.MakeSS
   VDStepPointMCs : "compressDetStepMCs:virtualdetector"
-  IPAStepPointMCs : "compressDetStepMCs:protonabsorber"
+  AbsorberStepPointMCs : "compressDetStepMCs:protonabsorber"
   TargetStepPointMCs : "compressDetStepMCs:stoppingtarget"
 }
 physics.producers.compressDigiMCs.surfaceStepTags : [ "MakeSS" ]

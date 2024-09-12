@@ -21,7 +21,7 @@ Primary: {
     MakeSS : {
       @table::CommonMC.MakeSS
       VDStepPointMCs : "g4run:virtualdetector"
-      IPAStepPointMCs : "g4run:protonabsorber"
+      AbsorberStepPointMCs : "g4run:protonabsorber"
       TargetStepPointMCs : "g4run:stoppingtarget"
     }
     compressDetStepMCs : {
