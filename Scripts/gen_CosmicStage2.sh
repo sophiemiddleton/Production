@@ -33,7 +33,8 @@ usage() {
   [ --owner (opt) default mu2e ]
   [ --dsstops (opt) expllicit list of DS stop files ]
   [ --setup (opt) expllicit simjob setup ]
-  e.g. gen_CosmicStage2.sh --s1gen CRY --s1type All --campaign MDC2020 --s1ver z --over z --njobs 100 --nevents 100000 --owner mu2e ]" 1>&2
+  [ --append (opt) optionally append to the fcl template ]
+  e.g. gen_CosmicStage2.sh --s1gen CORSIKA --s1type Low --campaign MDC2020 --s1ver ab --over ag --njobs 100 --nevents 100000 --owner mu2e --setup /cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ag/setup.sh ]" 1>&2
 }
 
 # Loop: Get the next option;
@@ -70,6 +71,9 @@ while getopts ":-:" options; do
           ;;
         setup)
           SETUP=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        append)
+          APPEND=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         esac;;
     :)                                    # If expected argument omitted:
@@ -109,6 +113,10 @@ if [[ $S1TYPE == "Low" ]]; then
   echo "outputs.PrimaryOutput.fileName        : \"dts.owner.Cosmic${S1GEN}${S1TYPE}.version.sequencer.art\"" >> ResampleS1.fcl
 else
   echo "outputs.PrimaryOutput.fileName        : \"dts.owner.Cosmic${S1GEN}${S1TYPE}.version.sequencer.art\"" >> ResampleS1.fcl
+fi
+
+if [[ -n $APPEND ]]; then
+    cat $APPEND  >> ResampleS1.fcl
 fi
 
 OUTCONF=${CAMPAIGN}${OUTPUT_VERSION}

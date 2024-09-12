@@ -15,7 +15,7 @@ def exit_abnormal():
 # Function: Print a help message.
 def usage():
     print("Usage: script_name.py [--copy_input_mdh --copy_input_ifdh]")
-    print("e.g. script_name.py --copy_input_mdh")
+    print("e.g. run_JITfcl.py --copy_input_mdh")
 
 # Function to run a shell command and return the output
 def run_command(command):
@@ -24,6 +24,7 @@ def run_command(command):
     if result.returncode != 0:
         print(f"Error running command: {command}")
         print(result.stderr)
+        print(result.stdout)
         exit_abnormal()
     print(result.stdout)
     return result.stdout
@@ -62,9 +63,16 @@ def main():
 
     FCL = os.path.basename(TARF)[:-6] + f".{IND}.fcl"
 
+    run_command(f"httokendecode -H")
+    run_command(f"LV=$(which voms-proxy-init); echo $LV; ldd $LV; rpm -q -a | egrep 'voms|ssl'; printenv PATH; printenv LD_LIBRARY_PATH")
+#    run_command(f"voms-proxy-info -all")
+
+
     if copy_input_mdh:
         run_command(f"mu2ejobfcl --jobdef {TARF} --index {IND} --default-proto file --default-loc dir:{os.getcwd()}/indir > {FCL}")
-        run_command(f"mu2ejobiodetail --jobdef {TARF} --index {IND} --inputs | tee /dev/tty | mdh copy-file -e 3 -o -v -s tape -l local -")
+        infiles = run_command(f"mu2ejobiodetail --jobdef {TARF} --index {IND} --inputs")
+        print("infiles: %s"%infiles)
+        run_command(f"mdh copy-file -e 3 -o -v -s tape -l local {infiles}")
         run_command(f"mkdir indir; mv *.art indir/")
     elif copy_input_ifdh:
         run_command(f"mu2ejobfcl --jobdef {TARF} --index {IND} --default-proto file --default-loc dir:{os.getcwd()}/indir > {FCL}")

@@ -38,7 +38,8 @@ physics.producers.FindMCPrimary.PrimaryGenIds: ["CosmicCRY", "CosmicCORSIKA"]
 # add cosmic outputs
 outputs.PrimaryOutput.outputCommands : [
   "drop *_*_*_*",
-  @sequence::Primary.KeptProducts,
+  @sequence::Primary.GeneralProducts,
+  @sequence::Primary.StepProducts,
   @sequence::Cosmic.S2KeptProducts
 ]
 # for consistency with S1

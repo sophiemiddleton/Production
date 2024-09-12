@@ -1,0 +1,42 @@
+[
+    {
+	"release_v_dts": "ai",
+	"stopped_type": "Muminus",
+	"release_v_stops": "p",
+	"primary_name": "DIOtail_75",
+	"start_mom": 75,
+	"num_events": 96000,
+	"num_jobs": 5000,
+	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh"
+    },
+    {
+	"release_v_dts": "ai",
+	"stopped_type": "Muminus",
+	"release_v_stops": "p",
+	"primary_name": "DIOtail_95",
+	"start_mom": 95,
+	"num_events": 850,
+	"num_jobs": 9,
+	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh"
+    },
+    {
+	"release_v_dts": "ai",
+	"stopped_type": "Muminus",
+	"release_v_stops": "p",
+	"primary_name": "CeMLeadingLog",
+	"start_mom": 0,
+	"num_events": 10,
+	"num_jobs": 900,
+	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh"
+    },
+    {
+	"release_v_dts": "ai",
+	"stopped_type": "Piminus",
+	"release_v_stops": "t",
+	"primary_name": "RPCInternal",
+	"start_mom": 0,
+	"num_events": 1200,
+	"num_jobs": 850,
+	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh"
+    }
+]

@@ -9,6 +9,7 @@ SETUP_FILE=""
 DESC=""
 DS_CONF=""
 DS_OWNER=""
+PROD=false
 
 # Function: Print usage message
 usage() {
@@ -21,6 +22,8 @@ usage() {
     echo "  --desc <desc>          Job description"
     echo "  --dsconf <conf>        Dataset configuration"
     echo "  --dsowner <owner>      Dataset owner"
+    echo "  --prod (opt) create index definition to be used on the next stage"
+
     exit 1
 }
 
@@ -50,6 +53,9 @@ while getopts ":-:" options; do
           dsowner)
               DS_OWNER=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
               ;;
+          prod)
+              PROD=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+              ;;
       esac;;
     :)                                    # If expected argument omitted:
       echo "Error: -${OPTARG} requires an argument."
@@ -72,6 +78,10 @@ echo "  Job description: $DESC"
 echo "  Dataset configuration: $DS_CONF"
 echo "  Dataset owner: $DS_OWNER"
 
+if [[ "$PROD" = true ]]; then
+    rm cnf.*.tar
+fi
+
 cmd="mu2ejobdef --verbose --embed $EMBED_FILE --inputs $INPUTS_FILE --merge-factor $MERGE_FACTOR --setup $SETUP_FILE --desc $DESC --dsconf $DS_CONF --dsowner $DS_OWNER"
 
 echo "Running: $cmd"
@@ -79,15 +89,17 @@ $cmd
 
 idx=$(mu2ejobquery --njobs cnf.*.tar)
 idx_format=$(printf "%07d" $idx)
-echo $idx
 
-echo "Creating index definiton with size: $idx"
-samweb create-definition mu2epro_index_${DESC}_${DS_CONF} "dh.dataset etc.mu2e.index.000.txt and dh.sequencer < ${idx_format}"
+parfile=$(ls cnf.*.tar)
+# Remove "cnf." string
+index_dataset=${parfile:4}
+# Remove .0.tar
+index_dataset=${index_dataset::-6}
 
-echo "Created definiton: mu2epro_index_${DESC}_${DS_CONF}"
-samweb describe-definition mu2epro_index_${DESC}_${DS_CONF}
+if [[ "$PROD" = true ]]; then
+    source gen_IndexDef.sh
+fi
 
-ls -ltr
 echo "Embed file content:"
 cat $EMBED_FILE
 echo "Inputs file content:"

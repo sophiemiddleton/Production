@@ -36,7 +36,7 @@ physics: {
 
 outputs : { PrimaryOutput : @local::Primary.PrimaryOutput }
 
-outputs.PrimaryOutput.outputCommands : [@sequence::Primary.KeptProducts, "keep mu2e::CosmicLivetime_*_*_*", "keep mu2e::GenParticles_*_*_*"]
+outputs.PrimaryOutput.outputCommands : [@sequence::Primary.GeneralProducts, @sequence::Primary.StepProducts, "keep mu2e::CosmicLivetime_*_*_*", "keep mu2e::GenParticles_*_*_*"]
 
 physics.producers.g4run.TrajectoryControl: @local::mu2eg4DefaultTrajectories
 physics.producers.g4run.inputs.primaryTag : cosmicTimeOffset
