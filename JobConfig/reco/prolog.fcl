@@ -141,8 +141,7 @@ Reconstruction : {
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKOffSpill.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        PanelHitCollection : "makePH"
-        TimeClusterCollection : "SimpleTimeCluster"
+        CosmicTrackSeedCollections : ["LineFinder"]
       }
 
                  }
@@ -255,7 +254,7 @@ Reconstruction : {
   ]
   # OffSpill
   OffSpillReco : [
-    SimpleTimeCluster, KKOffSpill
+    SimpleTimeCluster, LineFinder, KKOffSpill
   ]
 
   # add protons for calibration TODO!
