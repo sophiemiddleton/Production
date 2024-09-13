@@ -1,0 +1,11 @@
+#
+# Database configuration for validation and CI jobs that require using digi datasets made with v1_1 or v1_0 
+#
+
+services.DbService.purpose : MDC2020_best
+services.DbService.version : v1_1
+services.ProditionsService.alignedTrackerSim.useDb : false
+services.ProditionsService.crvPhotonYield.useDb : false
+services.ProditionsService.crvStatus.useDb : false
+services.ProditionsService.crvCalib.useDb : false
+
