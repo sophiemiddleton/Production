@@ -2,13 +2,14 @@
 
 #Script to create and/or submit multiple campaign using Project-py
 #Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.ini --cfg_file CampaignConfig/mdc2020_digireco.cfg --comb_json data/mix.json --simjob MDC2020ae
-#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_primary.ini --cfg_file CampaignConfig/mdc2020_primary.cfg --comb_json data/primary_test.json --simjob MDC2020ae --comb_type list --cutoff_key primary_name
+#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_primary.ini --cfg_file CampaignConfig/mdc2020_primary.cfg --comb_json data/primary.json --simjob MDC2020ae --comb_type list --cutoff_key primary_name
 #Create, upload and submit all campaign: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.ini --cfg_file CampaignConfig/mdc2020_digireco.cfg --comb_json data/mix.json --simjob MDC2020ae --create_campaign --submit
 
 import os
 from itertools import product
 import argparse
 import json
+import sys
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description="Script to submit multiple POMS campaigns through project_py")
@@ -45,11 +46,6 @@ with open(comb_json, "r") as file:
 
 print(os.path.basename(comb_json))
 
-if test_run:
-    for key, values in combo_dict.items():
-        combo_dict[key] = [values[0]]  # Consider only one combination
-
-
 if comb_type == "product":
     list_values = list(product(*combo_dict.values()))
     list_keys = list(combo_dict.keys())
@@ -65,7 +61,7 @@ for value in list_values:
         list_keys = list(value.keys())
         value = list(value.values())
 
-    # We use only keys that appear prior to cutoff_key (i.e "primary_name"), and ignore the rest
+    # We use only keys that appear prior to cutoff_key (i.e "primary_name"), and ignore the rest in the campaign/file name
     if cutoff_key is not None:
         cutoff_key_index = list_keys.index(cutoff_key) + 1 
         campaign_name = f"{simjob}_{'_'.join(map(str, value[:cutoff_key_index]))}{ini_version}"
@@ -95,3 +91,7 @@ for value in list_values:
         cmd=f"Project.py --submit --sam_experiment mu2e --experiment mu2e --campaign {campaign_name} --poms_role production"
         print(cmd)
         os.system(cmd)
+
+    if test_run:
+        print("Test mode, exiting")
+        sys.exit(1)
