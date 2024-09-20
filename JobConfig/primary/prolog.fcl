@@ -7,7 +7,7 @@
 #include "Offline/Filters/fcl/prolog.fcl"
 #include "Offline/Compression/fcl/prolog.fcl"
 #include "Offline/CommonMC/fcl/prolog.fcl"
-#
+#include "Offline/EventGenerator/fcl/prolog.fcl"
 BEGIN_PROLOG
 
 Primary: {
@@ -190,13 +190,10 @@ Primary: {
 
 StopFilter : {
 
-  producers : {
-    @table::genFilters.producers
-  }
-  
   filters : {
     @table::genFilters.filters
   }
+  
   KeptProducts : ["keep mu2e::*_*_*_*"]
 
   analyzers: {

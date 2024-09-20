@@ -4,7 +4,7 @@
 #include "Production/JobConfig/primary/RPC.fcl"
 
 source.firstRun: 1201
-physics.filters.TargetPiStopResampler.fileNames : ["sim.tester.RPC-pionfilter-300ns.Test.1.art"]//"sim.tester.RPC.Test.1.art"]
+physics.filters.TargetPiStopResampler.fileNames : ["sim.tester.RPC-350GT.Test.1.art"]//"sim.tester.RPC.Test.1.art"]
 
 # change for Int/Ext:
 physics.producers.generate.RPCType : "mu2eInternalRPC"  
