@@ -42,3 +42,33 @@ physics.trigger_paths : [@sequence::Trig_valMenu.trigger_paths]
 physics.producers.EWMProducer.SpillType : 1
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/reco/drop_trigger.fcl"
+
+
+physics.producers.aprHelixTriggerInfoMerger.ntupMode                : 1
+physics.producers.aprHighPStopTargTriggerInfoMerger.ntupMode        : 1
+physics.producers.aprHighPTriggerInfoMerger.ntupMode                : 1
+physics.producers.aprLowPStopTargMultiTrkTriggerInfoMerger.ntupMode : 1
+physics.producers.aprLowPStopTargTriggerInfoMerger.ntupMode         : 1
+physics.producers.aprHelixTriggerInfoMerger.ntupMode                : 1
+
+physics.producers.cprDeHighPStopTargTriggerInfoMerger.ntupMode : 1
+physics.producers.cprDeHighPTriggerInfoMerger.ntupMode         : 1
+physics.producers.cprDeLowPStopTargTriggerInfoMerger.ntupMode  : 1
+physics.producers.cprHelixDeTriggerInfoMerger.ntupMode         : 1
+physics.producers.cprHelixUeTriggerInfoMerger.ntupMode         : 1
+
+physics.producers.tprDeHighPStopTargTriggerInfoMerger.ntupMode       : 1
+physics.producers.tprDeHighPTriggerInfoMerger.ntupMode               : 1
+physics.producers.tprDeLowPStopTargTriggerInfoMerger.ntupMode        : 1
+physics.producers.tprHelixDeTriggerInfoMerger.ntupMode               : 1
+physics.producers.tprHelixUeTriggerInfoMerger.ntupMode               : 1
+physics.producers.tprHelixDeIPATriggerInfoMerger.ntupMode            : 1
+physics.producers.tprHelixDeIPAPhisScaledTriggerInfoMerger.ntupMode  : 1
+
+physics.producers.caloFastPhotonTriggerInfoMerger.ntupMode           : 1
+physics.producers.caloFastMVANNCETriggerInfoMerger.ntupMode          : 1
+physics.producers.caloFastCosmicTriggerInfoMerger.ntupMode           : 1
+physics.producers.caloFastRMCTriggerInfoMerger.ntupMode              : 1
+
+physics.producers.cstCosmicTrackSeedTriggerInfoMerger.ntupMode       : 1
+
