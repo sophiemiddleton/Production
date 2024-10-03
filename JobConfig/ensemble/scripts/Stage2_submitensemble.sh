@@ -10,12 +10,12 @@ exit_abnormal() {
   exit 1
 }
 
-INRELEASE=MDC2024
-INVERSION=a_sm4
+INRELEASE=MDC2020
+INVERSION=ai
 PRC=""
 TAG="" # MDS1a
 VERBOSE=1
-SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020af/setup.sh
+SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh
 
 
 # Loop: Get the next option;
@@ -55,9 +55,10 @@ TMIN=450
 SAMPLINGSEED=1
 BB=""
 RMUE=""
+COSMICTAG="MDC2020ae"
 CONFIG=${TAG}.txt
 OUTRELEASE="MDC2020"
-OUTVERSION="ag"
+OUTVERSION="ai"
 while IFS='= ' read -r col1 col2
 do 
     if [[ "${col1}" == "njobs" ]] ; then
@@ -80,13 +81,14 @@ echo "extracted config from Stage 1"
 echo ${LIVETIME} ${DEM_EMIN} ${BB} ${RMUE}
 
 
-rm filenames_CORSIKACosmic
-rm filenames_DIO
-rm filenames_CeMLL
+#rm filenames_CORSIKACosmic
+#rm filenames_DIO
+#rm filenames_CeMLL
+rm *.tar
 
 echo "accessing files, making file lists"
-mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.MDC2020ae.art" | head -${NJOBS} > filenames_CORSIKACosmic
-mu2eDatasetFileList "dts.mu2e.DIOtailp${DEM_EMIN}MeVc.${INRELEASE}${INVERSION}.art"| head -${NJOBS} > filenames_DIO
+mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_CORSIKACosmic
+mu2eDatasetFileList "dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${INVERSION}.art"| head -${NJOBS} > filenames_DIO
 mu2eDatasetFileList "dts.mu2e.CeMLeadingLog.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_CeMLL
 
 echo "making template fcl"
@@ -94,23 +96,22 @@ make_template_fcl.py --BB=${BB} --release=${OUTRELEASE}${OUTVERSION}  --tag=${TA
 
 ##### Below is genEnsemble and Grid:
 echo "remove old files"
-rm cnf.sophie.ensemble.${INRELEASE}${INVERSION}.0.tar
+rm cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar
 rm filenames_CORSIKACosmic_${NJOBS}.txt
 rm filenames_DIO_${NJOBS}.txt
 rm filenames_CeMLL_${NJOBS}.txt
 
 echo "get NJOBS files and list"
-samweb list-files "dh.dataset=dts.mu2e.CosmicCORSIKASignalAll.MDC2020ae.art" | head -${NJOBS} > filenames_CORSIKACosmic_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.DIOtailp${DEM_EMIN}MeVc.${INRELEASE}${INVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.CosmicCORSIKASignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_CORSIKACosmic_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${INVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.CeMLeadingLog.${INRELEASE}${INVERSION}.art"  | head -${NJOBS}  >  filenames_CeMLL_${NJOBS}.txt
 
 DSCONF=${OUTRELEASE}${OUTVERSION}
 
 echo "run mu2e jobdef"
-cmd="mu2ejobdef --desc=${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:CeMLL:filenames_CeMLL_${NJOBS}.txt --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CORSIKACosmic:filenames_CORSIKACosmic_${NJOBS}.txt --embed SamplingInput_sr0.fcl --verb "
+cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:CeMLL:filenames_CeMLL_${NJOBS}.txt --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CORSIKACosmic:filenames_CORSIKACosmic_${NJOBS}.txt --embed SamplingInput_sr0.fcl --verb "
 echo "Running: $cmd"
 $cmd
-
 parfile=$(ls cnf.*.tar)
 # Remove cnf.
 index_dataset=${parfile:4}
@@ -125,7 +126,7 @@ samweb create-definition idx_${index_dataset} "dh.dataset etc.mu2e.index.000.txt
 echo "Created definiton: idx_${index_dataset}"
 samweb describe-definition idx_${index_dataset}
 
-#echo "submit jobs"
-#cmd="mu2ejobsub --jobdef cnf.sophie.ensemble.${INRELEASE}${INVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --predefined=sl7 --default-protocol ifdh --default-location tape"
-#echo "Running: $cmd"
-#$cmd
+echo "submit jobs"
+cmd="mu2ejobsub --jobdef cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --predefined=sl7 --default-protocol ifdh --default-location tape"
+echo "Running: $cmd"
+$cmd

@@ -199,13 +199,12 @@ def rpc_normalization(livetime, emin, tmin, internal):
     if (energy[i]-bin_width/2. >= emin):
       cut_norm += val[i]
 
-  geometric_stopped_pion_per_POT = 0.00211 # SU2020 - assumes infinite pion lifetime TODO - replace with SimEff
+  geometric_stopped_pion_per_POT = 0.00211 # TODO - will be replaced by new sim efficiency
   RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
   internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
 
 
   # calculate survival probability for tmin including smearing of POT
-  # ConditionsService/data/potTimingDistribution_20160511.txt, sampled by GenerateProtonTimes_module.cc 
   pot = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/POTspectrum.tbl")) 
   time = []
   cdf = []
@@ -216,8 +215,8 @@ def rpc_normalization(livetime, emin, tmin, internal):
     cdf[i] += cdf[i+1]
   for i in range(len(cdf)-1,-1,-1):
     cdf[i] /= cdf[0]
-  # TODO this needs to be updated for MDC2020
-  f = ROOT.TFile("/cvmfs/mu2e.opensciencegrid.org/DataFiles/mergedMuonStops/nts.mu2e.pion-DS-TGTstops.MDC2018a.001002_00000000.root");
+
+  f = ROOT.TFile("/cvmfs/mu2e.opensciencegrid.org/DataFiles/mergedMuonStops/nts.mu2e.pion-DS-TGTstops.MDC2018a.001002_00000000.root"); #TODO - need to get this from the art files...
   d = f.Get("stoppedPionDumper");
   t = d.Get("stops");
   total = 0;
@@ -226,9 +225,9 @@ def rpc_normalization(livetime, emin, tmin, internal):
     #  print i,t.GetEntries(),i/float(t.GetEntries())
     t.GetEntry(i)
     index = int(tmin - t.time-time[0])
-    if (index < 0):
+    if (index < 0): # if before tmin
       total += math.exp(-t.tauNormalized);
-    elif (index < len(time)-1):
+    elif (index < len(time)-1): # if 
       total += math.exp(-t.tauNormalized)*cdf[index];
   avg_survival_prob = total/t.GetEntries();
   

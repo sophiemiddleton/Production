@@ -83,7 +83,8 @@ def main(args):
 
           # determine total number of events surviving all cuts
           reco_events += te.GetEntries()
-          print(" reco events ", te.GetEntries())
+          if int(args.verbose) == 2:
+            print(" reco events ", te.GetEntries())
           
           # determine total number of events generated
           t = fin.Get("SubRuns")
@@ -110,7 +111,8 @@ def main(args):
               for i in range(t.GetEntries()):
                   t.GetEntry(i)
                   gen_events += getattr(t,bn).product().count()
-          print("total gen events ",gen_events)
+          if int(args.verbose) == 2:
+            print("total gen events ",gen_events)
 
       # mean is the normalized number of that event type as expected
       mean_gen_events = norms[signal]
