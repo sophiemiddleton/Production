@@ -127,7 +127,7 @@ echo "Created definiton: idx_${index_dataset}"
 samweb describe-definition idx_${index_dataset}
 
 echo "submit jobs"
-cmd="mu2ejobsub --jobdef cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --predefined=sl7 --default-protocol ifdh --default-location tape"
+cmd="mu2ejobsub --jobdef cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  ----default-protocol ifdh --default-location tape"
 echo "Running: $cmd"
 $cmd
 
