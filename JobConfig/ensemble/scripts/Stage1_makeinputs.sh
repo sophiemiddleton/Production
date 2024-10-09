@@ -18,6 +18,8 @@ BB=1BB
 RMUE=1e-13
 TAG="MDS1a_test"
 STOPS="MDC2020p"
+RELEASE="MDC2020"
+VERSION="ai"
 # Loop: Get the next option;
 while getopts ":-:" options; do
   case "${options}" in
@@ -47,6 +49,12 @@ while getopts ":-:" options; do
         stops)
           STOPS=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
+        release)
+          RELEASE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        version)
+          VERSION=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
         *)
           echo "Unknown option " ${OPTARG}
           exit_abnormal
@@ -71,8 +79,8 @@ mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.${COSMICS}.art" | head -${N
 
 echo -n "njobs= " >> ${TAG}.txt
 wc -l ${COSMICS} | awk '{print $1}' >> ${TAG}.txt
-
-
+echo "cosmicjob=" ${COSMICS} >> ${TAG}.txt
+echo "primaries=" ${RELEASE}${VERSION} >> ${TAG}.txt
 echo "rmue=" ${RMUE} >> ${TAG}.txt
 echo "dem_emin=" ${DEM_EMIN} >> ${TAG}.txt
 echo "stops= " ${STOPS} >> ${TAG}.txt

@@ -127,11 +127,11 @@ echo "Created definiton: idx_${index_dataset}"
 samweb describe-definition idx_${index_dataset}
 
 echo "submit jobs"
-cmd="mu2ejobsub --jobdef cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  ----default-protocol ifdh --default-location tape"
+cmd="mu2ejobsub --jobdef cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --default-protocol ifdh --default-location tape"
 echo "Running: $cmd"
 $cmd
 
 # upload to SAM/tape:
-printJson --no-parents cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar > cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar.json
-ls *.json | mu2eFileDeclare
-ls *.tar| mu2eFileUpload --tape
+#printJson --no-parents cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar > cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar.json
+#ls *.json | mu2eFileDeclare
+#ls *.tar| mu2eFileUpload --tape
