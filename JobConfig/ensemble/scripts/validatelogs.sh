@@ -48,12 +48,12 @@ done
 
 rm DIO.txt
 rm CeMLL.txt
-rm CORSIKACosmic.txt
+rm cosmic.txt
 rm gen.txt 
 
 while IFS='= ' read -r col1
 do
-  temp=$(sed -n '/Dataset          Counts /, /(no more available)/ p' ${col1})
+  temp=$(sed -n '/Dataset          Counts /, /Dataset Counts/ p' ${col1})
   echo $temp >> gen.txt
 done < logs.txt
 
