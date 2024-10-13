@@ -198,8 +198,6 @@ Reconstruction : {
   }
 
   filters : {
-    # why are CalPatRec reconstruction modules implemented as filters????
-    # They should be remade as producers FIXME!
     @table::CalPatRec.filters
     # reco filter
     RecoFilter : {
