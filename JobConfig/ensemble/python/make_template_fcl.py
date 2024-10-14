@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 from string import Template
 import argparse
 import sys
@@ -10,26 +11,16 @@ import subprocess
 
 """
 How to use:
-python ../Production/JobConfig/ensemble/python/run_si_v2.py --stdpath=/pnfs/mu2e/scratch/users/sophie/filelists/ --BB=1BB --verbose=1 --rue=1e-13 --livetime=60 --run=1201 --dem_emin=75 --tmin=450 --samplingseed=1  --prc "CE" "DIO"
+python ../Production/JobConfig/ensemble/python/make_template_fcl.py --BB=1BB --verbose=1 --rue=1e-13 --livetime=60 --run=1201 --dem_emin=75 --tmin=450 --samplingseed=1  --prc "CE" "DIO"
 """
 
 def main(args):
-  
-  if int(args.verbose) == 1:
-    print(" Running SI with options : verbose ",args.verbose," BB mode ", args.BB, " livetime [s] ", args.livetime, " Rmue ", args.rue)
-    print(" filelists located in ", args.stdpath)
-    print(" Output passed to ", args.stdpath)
-    print(" Signals ", args.prc)
-    print(" tag ", args.tag)
   
   # live time in seconds
   livetime = float(args.livetime)
 
   # r mue and rmup rates
   rue = float(args.rue)
-
-  if int(args.verbose) == 1:
-    print( "Rmue chosen ", rue)
 
   dem_emin = float(args.dem_emin)
   tmin = float(args.tmin)
@@ -62,7 +53,7 @@ def main(args):
       #FIXME starting and ending event
       
       # open file list from the filelists directory
-      ffns = open(os.path.join(args.stdpath,"filenames_%s" % signal))
+      ffns = open(os.path.join("filenames_%s" % signal))
       
       # add empty file list
       filenames[signal] = []
@@ -79,11 +70,9 @@ def main(args):
       
       # loop over files in list
       for line in ffns:
-          print("at line ", line, "of ", signal)
           
           # find a given filename
           fn = line.strip()
-          print("striped filename ",fn)
           
           # add this filename to the list of filenames
           filenames[signal].append(fn)
@@ -94,7 +83,8 @@ def main(args):
 
           # determine total number of events surviving all cuts
           reco_events += te.GetEntries()
-          #print(" reco events ", te.GetEntries())
+          if int(args.verbose) == 2:
+            print(" reco events ", te.GetEntries())
           
           # determine total number of events generated
           t = fin.Get("SubRuns")
@@ -121,7 +111,8 @@ def main(args):
               for i in range(t.GetEntries()):
                   t.GetEntry(i)
                   gen_events += getattr(t,bn).product().count()
-          #print("total gen events ",gen_events)
+          if int(args.verbose) == 2:
+            print("total gen events ",gen_events)
 
       # mean is the normalized number of that event type as expected
       mean_gen_events = norms[signal]
@@ -174,8 +165,8 @@ def main(args):
 
       d = {}
       d["datasets"] = datasets
-      d["outnameMC"] = os.path.join("dts.mu2e.ensemble"+args.tag+".MDC2024.%06d_%08d.art" % (run,subrun))
-      d["outnameData"] = os.path.join("dts.mu2e.ensemble"+args.tag+".MDC2024.%06d_%08d.art" % (run,subrun))
+      d["outnameMC"] = os.path.join("dts.mu2e.ensemble"+args.tag+"."+args.release+".%06d_%08d.art" % (run,subrun))
+      d["outnameData"] = os.path.join("dts.mu2e.ensemble"+args.tag+"."+args.release+".%06d_%08d.art" % (run,subrun))
       d["run"] = run
       d["subRun"] = subrun
       d["samplingSeed"] = samplingseed + subrun
@@ -183,7 +174,7 @@ def main(args):
       d["comments"] = "#livetime: %f\n#rue: %f\n#dem_emin: %f\n#tmin: %f\n#run: %f\n#nevts: %d\n" % (livetime,rue,dem_emin,tmin,run,events_this_run)
 
       # make the .fcl file for this subrun (subrun # d)
-      fout = open(os.path.join(args.stdpath,"SamplingInput_sr%d.fcl" % (subrun)),"w")
+      fout = open(os.path.join("SamplingInput_sr%d.fcl" % (subrun)),"w")
       fout.write(t.substitute(d))
       fout.close()
 
@@ -200,8 +191,8 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--verbose", help="verbose")
-    parser.add_argument("--stdpath", help="name of directory with full path")
     parser.add_argument("--BB", help="BB mode e.g. 1BB")
+    parser.add_argument("--release", help="e.g. MDC2020ad")
     parser.add_argument("--livetime", help="simulated livetime")
     parser.add_argument("--rue", help="signal branching rate")
     parser.add_argument("--tmin", help="arrival time cut")

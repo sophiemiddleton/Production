@@ -1,2 +1,5 @@
 PATH Scripts
 PATH Scripts/POMS
+PATH JobConfig/ensemble/python
+PYTHONPATH JobConfig/ensemble/python
+PATH JobConfig/ensemble/scripts

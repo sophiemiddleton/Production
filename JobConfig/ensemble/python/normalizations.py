@@ -1,18 +1,10 @@
+#! /usr/bin/env
 import DbService
 import argparse
 import ROOT
 import math
 import os
 
-# general
-"""
-mean_PBI =  mean_PBI_low*0.75 + mean_PBI_high*0.25 # 2.175e7 protons per pulse
-npulses_per_s = 189898.75
-onspill_dutyfactor = 0.323 # for 1BB
-offspill_dutyfactor = 0.323
-ub_per_second = (1/1695e-9)*onspill_dutyfactor # 1.905e5
-POT_per_second = ub_per_second*mean_PBI #  TODO 4.1447e12 POT/s
-"""
 
 # get stopped rates from DB
 dbtool = DbService.DbTool()
@@ -35,43 +27,41 @@ for line in lines:
         target_stopped_mu_per_POT = rate * 1000 
 #print(f"Final stops rate muon {target_stopped_mu_per_POT}")
 
-# get number of target pions stops:
-"""
-target_stopped_pi_per_POT = 1.0
-rate = 1.0
-lines= rr.split("\n")
-for line in lines:
-    words = line.split(",")
-    if words[0] == "PiminusStopsCat" or words[0] == "PiBeamCat" :
-        print(f"Including {words[0]} with rate {words[3]}")
-        rate = rate * float(words[3])
-        target_stopped_pi_per_POT = rate * 1000 
-print(f"Final stops rate pion {target_stopped_pi_per_POT}")
-"""
+
 
 # get number of POTs in given livetime
-def livetime_to_pot(livetime, run_mode = '1BB'): #livetime in seconds
+def livetime_to_pot(livetime, run_mode = '1BB',printout=False): #livetime in seconds
     # numbers from SU2020 
     # see https://github.com/Mu2e/su2020/blob/master/analysis/pot_normalization.org
     NPOT = 0.
     if(run_mode == '1BB'):
       # 1BB
       mean_PBI_low = 1.6e7
-      Tcycle = 1.33 # sec
+      Tcycle = 1.33 #s
       onspill_dutyfactor = 0.323
       POT_per_cycle = 4e12
-      onspill_time = onspill_dutyfactor*livetime
-      Ncycles = onspill_time/Tcycle
+      #onspill_time = livetime*onspill_dutyfactor
+      Ncycles = livetime/Tcycle
       NPOT = Ncycles * POT_per_cycle
+      if( printout):
+        print("Tcycle=",Tcycle)
+        print("POT_per_cycle=",POT_per_cycle)
+        print("onspilltime=",livetime*onspill_dutyfactor)
+        print ("NPOT=",NPOT)
     if(run_mode == '2BB'):
       # 2BB
       mean_PBI_high = 3.9e7
       Tcycle = 1.4 #s
       onspill_dutyfactor = 0.246
       POT_per_cycle = 8e12
-      onspill_time = onspill_dutyfactor*livetime
-      Ncycles = onspill_time/Tcycle
+      #onspill_time = livetime*onspill_dutyfactor
+      Ncycles = livetime/Tcycle
       NPOT = Ncycles * POT_per_cycle
+      if( printout):
+        print("Tcycle=",Tcycle)
+        print("POT_per_cycle=",POT_per_cycle)
+        print("onspilltime=",livetime*onspill_dutyfactor)
+        print ("NPOT=",NPOT)
     return NPOT
 
 # get number of ipa muon stops:
@@ -122,6 +112,7 @@ def dio_normalization(livetime, emin, run_mode = '1BB'):
 
     physics_events = POT * target_stopped_mu_per_POT * DIO_per_stopped_muon
     #print(f"Expected DIO {physics_events* cut_norm/total_norm}")
+    print("DIOfrac=",cut_norm/total_norm)
     return physics_events * cut_norm/total_norm
 
 
@@ -172,6 +163,22 @@ def corsika_offspill_normalization(livetime, run_mode = '1BB'):
       offspill_dutyfactor = 0.246
     #print(f"cosmics live time {livetime*offspill_dutyfactor}")
     return livetime*offspill_dutyfactor
+    
+    
+# get number of target pions stops:
+"""
+target_stopped_pi_per_POT = 1.0
+rate = 1.0
+lines= rr.split("\n")
+for line in lines:
+    words = line.split(",")
+    if words[0] == "PiminusStopsCat" or words[0] == "PiBeamCat" :
+        print(f"Including {words[0]} with rate {words[3]}")
+        rate = rate * float(words[3])
+        target_stopped_pi_per_POT = rate * 1000 
+print(f"Final stops rate pion {target_stopped_pi_per_POT}")
+"""
+    
 
 def rpc_normalization(livetime, emin, tmin, internal):
   # calculate fraction of spectrum being generated
@@ -192,13 +199,12 @@ def rpc_normalization(livetime, emin, tmin, internal):
     if (energy[i]-bin_width/2. >= emin):
       cut_norm += val[i]
 
-  geometric_stopped_pion_per_POT = 0.002484 # stops assuming infinite pion lifetime (for cd3 sim sample. in docdb-7468)
+  geometric_stopped_pion_per_POT = 0.00211 # TODO - will be replaced by new sim efficiency
   RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
   internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
 
 
   # calculate survival probability for tmin including smearing of POT
-  # ConditionsService/data/potTimingDistribution_20160511.txt, sampled by GenerateProtonTimes_module.cc 
   pot = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/POTspectrum.tbl")) 
   time = []
   cdf = []
@@ -209,8 +215,8 @@ def rpc_normalization(livetime, emin, tmin, internal):
     cdf[i] += cdf[i+1]
   for i in range(len(cdf)-1,-1,-1):
     cdf[i] /= cdf[0]
-  # TODO this needs to be updated for MDC2020
-  f = ROOT.TFile("/cvmfs/mu2e.opensciencegrid.org/DataFiles/mergedMuonStops/nts.mu2e.pion-DS-TGTstops.MDC2018a.001002_00000000.root");
+
+  f = ROOT.TFile("/cvmfs/mu2e.opensciencegrid.org/DataFiles/mergedMuonStops/nts.mu2e.pion-DS-TGTstops.MDC2018a.001002_00000000.root"); #TODO - need to get this from the art files...
   d = f.Get("stoppedPionDumper");
   t = d.Get("stops");
   total = 0;
@@ -219,9 +225,9 @@ def rpc_normalization(livetime, emin, tmin, internal):
     #  print i,t.GetEntries(),i/float(t.GetEntries())
     t.GetEntry(i)
     index = int(tmin - t.time-time[0])
-    if (index < 0):
+    if (index < 0): # if before tmin
       total += math.exp(-t.tauNormalized);
-    elif (index < len(time)-1):
+    elif (index < len(time)-1): # if 
       total += math.exp(-t.tauNormalized)*cdf[index];
   avg_survival_prob = total/t.GetEntries();
   
@@ -234,6 +240,11 @@ def rpc_normalization(livetime, emin, tmin, internal):
 
   return gen_events
 
+
 def pot_to_livetime(pot):
     return pot / POT_per_second
 
+if __name__ == '__main__':
+  tst_1BB = livetime_to_pot(9.52e6)
+  tst_2BB = livetime_to_pot(1.58e6)
+  print("SU2020", tst_1BB, tst_2BB)

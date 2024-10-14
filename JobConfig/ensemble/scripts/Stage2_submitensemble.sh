@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 usage() { echo "Usage: $0
-  e.g.  bash FileInMakeAndSubmitEnsemble.sh --config poutput.txt --tagg MDS1a
+  e.g. Stage2_submitensemble.sh --tag MDS1a
 "
 }
 
@@ -9,13 +9,13 @@ exit_abnormal() {
   usage
   exit 1
 }
-CONFIG=""
-RELEASE=MDC2024
-VERSION=a_sm4
+
+INRELEASE=MDC2020
+INVERSION=ai
 PRC=""
-TAGG="" # MDS1a
+TAG="" # MDS1a
 VERBOSE=1
-SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020af/setup.sh
+SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh
 
 
 # Loop: Get the next option;
@@ -26,11 +26,8 @@ while getopts ":-:" options; do
         prc)
           PRC=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
-        config)
-          CONFIG=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
-          ;;
-        tagg)
-          TAGG=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+        tag)
+          TAG=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         verbose)
           VERBOSE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
@@ -58,7 +55,10 @@ TMIN=450
 SAMPLINGSEED=1
 BB=""
 RMUE=""
-
+COSMICTAG="MDC2020ae"
+CONFIG=${TAG}.txt
+OUTRELEASE="MDC2020"
+OUTVERSION="ai"
 while IFS='= ' read -r col1 col2
 do 
     if [[ "${col1}" == "njobs" ]] ; then
@@ -81,39 +81,37 @@ echo "extracted config from Stage 1"
 echo ${LIVETIME} ${DEM_EMIN} ${BB} ${RMUE}
 
 
-rm filenames_CORSIKACosmic
-rm filenames_DIO
-rm filenames_CeMLL
+#rm filenames_CORSIKACosmic
+#rm filenames_DIO
+#rm filenames_CeMLL
+rm *.tar
 
 echo "accessing files, making file lists"
-mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.MDC2020ae.art" | head -${NJOBS} > filenames_CORSIKACosmic
-mu2eDatasetFileList "dts.mu2e.DIOtailp${DEM_EMIN}MeVc.${RELEASE}${VERSION}.art"| head -${NJOBS} > filenames_DIO
-mu2eDatasetFileList "dts.mu2e.CeMLeadingLog.${RELEASE}${VERSION}.art" | head -${NJOBS} > filenames_CeMLL
-
-STDPATH=$pwd # this should be the path where you are currently running
+mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_CORSIKACosmic
+mu2eDatasetFileList "dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${INVERSION}.art"| head -${NJOBS} > filenames_DIO
+mu2eDatasetFileList "dts.mu2e.CeMLeadingLog.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_CeMLL
 
 echo "making template fcl"
-python /exp/mu2e/app/users/sophie/newOffline/Production/JobConfig/ensemble/python/make_template_fcl.py --stdpath=${STDPATH} --BB=${BB}  --tag=${TAGG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "CeMLL" "DIO" "CORSIKACosmic"
+make_template_fcl.py --BB=${BB} --release=${OUTRELEASE}${OUTVERSION}  --tag=${TAG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "CeMLL" "DIO" "CORSIKACosmic"
 
 ##### Below is genEnsemble and Grid:
 echo "remove old files"
-rm cnf.sophie.ensemble.${RELEASE}${VERSION}.0.tar
+rm cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar
 rm filenames_CORSIKACosmic_${NJOBS}.txt
 rm filenames_DIO_${NJOBS}.txt
 rm filenames_CeMLL_${NJOBS}.txt
 
 echo "get NJOBS files and list"
-samweb list-files "dh.dataset=dts.mu2e.CosmicCORSIKASignalAll.MDC2020ae.art" | head -${NJOBS} > filenames_CORSIKACosmic_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.DIOtailp${DEM_EMIN}MeVc.${RELEASE}${VERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.CeMLeadingLog.${RELEASE}${VERSION}.art"  | head -${NJOBS}  >  filenames_CeMLL_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.CosmicCORSIKASignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_CORSIKACosmic_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${INVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.CeMLeadingLog.${INRELEASE}${INVERSION}.art"  | head -${NJOBS}  >  filenames_CeMLL_${NJOBS}.txt
 
-DSCONF=${RELEASE}${VERSION}
+DSCONF=${OUTRELEASE}${OUTVERSION}
 
 echo "run mu2e jobdef"
 cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:CeMLL:filenames_CeMLL_${NJOBS}.txt --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CORSIKACosmic:filenames_CORSIKACosmic_${NJOBS}.txt --embed SamplingInput_sr0.fcl --verb "
 echo "Running: $cmd"
 $cmd
-
 parfile=$(ls cnf.*.tar)
 # Remove cnf.
 index_dataset=${parfile:4}
@@ -129,6 +127,11 @@ echo "Created definiton: idx_${index_dataset}"
 samweb describe-definition idx_${index_dataset}
 
 echo "submit jobs"
-cmd="mu2ejobsub --jobdef cnf.sophie.ensemble.${RELEASE}${VERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --predefined=sl7 --default-protocol ifdh --default-location tape"
+cmd="mu2ejobsub --jobdef cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --default-protocol ifdh --default-location tape"
 echo "Running: $cmd"
 $cmd
+
+# upload to SAM/tape:
+#printJson --no-parents cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar > cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar.json
+#ls *.json | mu2eFileDeclare
+#ls *.tar| mu2eFileUpload --tape

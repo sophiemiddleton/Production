@@ -1,3 +1,7 @@
+#! /usr/bin/env
+"""
+for interactive use only!!!
+"""
 from string import Template
 import argparse
 import sys
@@ -128,7 +132,7 @@ def main(args):
         print("mean_reco_events",mean_gen_events,reco_events,float(gen_events))
       
       # factors in efficiency
-      mean_reco_events[signal] = mean_gen_events*reco_events/float(gen_events) 
+      mean_reco_events[signal] = mean_gen_events*reco_events/float(gen_events)
       if int(args.verbose) == 1:
         print(signal,"GEN_EVENTS:",gen_events,"RECO_EVENTS:",reco_events,"EXPECTED EVENTS:",mean_reco_events[signal])
 
