@@ -1,0 +1,16 @@
+#
+# epilog to add payload for EventDisplay
+#
+physics.producers.KKDeM.KKFitSettings.SaveTrajectory :"Full"
+physics.producers.KKDeP.KKFitSettings.SaveTrajectory :"Full"
+physics.producers.KKDmuM.KKFitSettings.SaveTrajectory :"Full"
+physics.producers.KKDmuP.KKFitSettings.SaveTrajectory :"Full"
+physics.producers.KKUeM.KKFitSettings.SaveTrajectory :"Full"
+physics.producers.KKUeP.KKFitSettings.SaveTrajectory :"Full"
+physics.producers.KKUmuM.KKFitSettings.SaveTrajectory :"Full"
+physics.producers.KKUmuP.KKFitSettings.SaveTrajectory :"Full"
+
+outputs.Output.outputCommands : [
+  @sequence::outputs.Output.outputCommands,
+  @sequence::Reconstruction.EventDisplayProducts
+]
