@@ -70,7 +70,6 @@ Reconstruction : {
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDeM.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        KKFitSettings.SaveTrajectory :"T0"
         HelixSeedCollections : [ "MHDeM" ]
       }
     }
@@ -79,7 +78,6 @@ Reconstruction : {
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDeP.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        KKFitSettings.SaveTrajectory :"T0"
         HelixSeedCollections : [ "MHDeP" ]
       }
     }
@@ -88,7 +86,6 @@ Reconstruction : {
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDeM.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        KKFitSettings.SaveTrajectory :"T0"
         HelixSeedCollections : [ "MHUeM" ]
       }
     }
@@ -97,7 +94,6 @@ Reconstruction : {
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDeP.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        KKFitSettings.SaveTrajectory :"T0"
         HelixSeedCollections : [ "MHUeP" ]
       }
     }
@@ -106,7 +102,6 @@ Reconstruction : {
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDmuM.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        KKFitSettings.SaveTrajectory :"T0"
         HelixSeedCollections : [ "MHDmuM" ]
       }
     }
@@ -115,7 +110,6 @@ Reconstruction : {
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDmuP.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        KKFitSettings.SaveTrajectory :"T0"
         HelixSeedCollections : [ "MHDmuP" ]
       }
     }
@@ -124,7 +118,6 @@ Reconstruction : {
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDmuM.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        KKFitSettings.SaveTrajectory :"T0"
         HelixSeedCollections : [ "MHUmuM" ]
       }
     }
@@ -133,7 +126,6 @@ Reconstruction : {
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDmuP.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        KKFitSettings.SaveTrajectory :"T0"
         HelixSeedCollections : [ "MHUmuP" ]
       }
     }
@@ -304,7 +296,7 @@ Reconstruction : {
     "keep *_compressRecoMCs_*_*",
     "keep *_CrvCoincidenceClusterMCAssns_*_*",
     "keep *_SelectRecoMC_*_*"
-
+  ]
   # Extra products for display
   EventDisplayProducts : [
     "keep mu2e::ComboHitCollection_FlagBkgHits_*_*"
@@ -388,5 +380,4 @@ Reconstruction.Output : {
     @sequence::Reconstruction.HighRecoMCProducts
   ]
 }
-
 END_PROLOG

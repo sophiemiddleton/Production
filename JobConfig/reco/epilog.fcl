@@ -10,3 +10,14 @@ services.ProditionsService.trackerStatus.Settings.useDb: true
 services.ProditionsService.trackerStatus.Settings.verbose: 0
 services.ProditionsService.strawElectronics.useDb: true
 services.ProditionsService.strawElectronics.verbose: 0
+# this should probably more to prolog
+physics.producers.KKDeM.KKFitSettings.SaveTrajectory :"T0"
+physics.producers.KKDeP.KKFitSettings.SaveTrajectory :"T0"
+physics.producers.KKDmuM.KKFitSettings.SaveTrajectory :"T0"
+physics.producers.KKDmuP.KKFitSettings.SaveTrajectory :"T0"
+physics.producers.KKUeM.KKFitSettings.SaveTrajectory :"T0"
+physics.producers.KKUeP.KKFitSettings.SaveTrajectory :"T0"
+physics.producers.KKUmuM.KKFitSettings.SaveTrajectory :"T0"
+physics.producers.KKUmuP.KKFitSettings.SaveTrajectory :"T0"
+
+
