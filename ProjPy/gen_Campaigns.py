@@ -83,7 +83,7 @@ for value in list_values:
         file.write(file_data)
 
     if create_campaign:
-        cmd=f"Project.py --create_campaign --ini_file {out_ini_file} --cfg_file {cfg_file} --poms_role production"
+        cmd=f"upload_wf --poms_role production {out_ini_file}"
         print(cmd)
         os.system(cmd)
 

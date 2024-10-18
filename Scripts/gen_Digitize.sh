@@ -158,7 +158,7 @@ then
   echo "Using user-provided input list of detector steps $DSTEPS"
   ln -s $DSTEPS ${PRIMARY}.txt
 else
-  samweb list-definition-files "dts.mu2e.${PRIMARY}${CAT}.${CAMPAIGN}${PRIMARY_VERSION}.art" > ${PRIMARY}.txt
+  samweb list-definition-files "dts.${OWNER}.${PRIMARY}${CAT}.${CAMPAIGN}${PRIMARY_VERSION}.art" > ${PRIMARY}.txt
 fi
 
 echo \#include \"Production/JobConfig/digitize/${DIGITYPE}.fcl\" >> digitize.fcl
