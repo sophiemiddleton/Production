@@ -6,7 +6,7 @@ import math
 import os
 
 
-# get stopped rates from DB
+# get muon stopped rates from DB
 dbtool = DbService.DbTool()
 dbtool.init()
 args=["print-run","--purpose","MDC2020_best","--version","v1_1","--run","1200","--table","SimEfficiencies2","--content"]
@@ -164,22 +164,43 @@ def corsika_offspill_normalization(livetime, run_mode = '1BB'):
     #print(f"cosmics live time {livetime*offspill_dutyfactor}")
     return livetime*offspill_dutyfactor
     
-    
-# get number of target pions stops:
 """
+# get stopped rates from DB
+dbtool = DbService.DbTool()
+dbtool.init()
+args=["print-run","--purpose","MDC2020_best","--version","v1_1","--run","1200","--table","PiEfficiencies","--content"] 
+# TODO make new pi table
+dbtool.setArgs(args)
+dbtool.run()
+rpi = dbtool.getResult()
+
+
+# get number of target pions stops:
 target_stopped_pi_per_POT = 1.0
-rate = 1.0
-lines= rr.split("\n")
+nstops = 1.0
+pirate = 1.0
+lines= rpi.split("\n")
 for line in lines:
     words = line.split(",")
-    if words[0] == "PiminusStopsCat" or words[0] == "PiBeamCat" :
-        print(f"Including {words[0]} with rate {words[3]}")
-        rate = rate * float(words[3])
-        target_stopped_pi_per_POT = rate * 1000 
-print(f"Final stops rate pion {target_stopped_pi_per_POT}")
+    if words[0] == "PiminusStopsCat" or words[0] == "PiBeamCat" or words[0] == "PiMinusFilter" :
+        print(f"Including {words[0]} with pirate {words[3]}")
+        pirate = pirate * float(words[3]) # stops_per_POT
+    if words[0] == "PiminusStopsCat":
+      npistops = words[1]   
+    if words[0] == "PiMinusFilter" :
+        print(f"Including {words[0]} with pirate {words[3]}")
+        timeeff = float(words[3])
+        target_stopped_pi_per_POT = pirate * timeeff # stops_per_POT*time_eff
+print(f"Final stops pirate pion {target_stopped_pi_per_POT}")
 """
-    
 
+# hack: --> will come from new table eventually
+nstops = 1287106
+target_stopped_pi_per_POT = 0.00493 * 0.01288394 * 0.1670400
+
+# constants
+RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
+internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
 def rpc_normalization(livetime, emin, tmin, internal):
   # calculate fraction of spectrum being generated
   
@@ -199,42 +220,20 @@ def rpc_normalization(livetime, emin, tmin, internal):
     if (energy[i]-bin_width/2. >= emin):
       cut_norm += val[i]
 
-  geometric_stopped_pion_per_POT = 0.00211 # TODO - will be replaced by new sim efficiency
-  RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
-  internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
-
-
   # calculate survival probability for tmin including smearing of POT
-  pot = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/POTspectrum.tbl")) 
-  time = []
-  cdf = []
-  for line in pot:
-    time.append(float(line.split()[0]))
-    cdf.append(float(line.split()[1]))
-  for i in range(len(cdf)-2,-1,-1):
-    cdf[i] += cdf[i+1]
-  for i in range(len(cdf)-1,-1,-1):
-    cdf[i] /= cdf[0]
-
-  f = ROOT.TFile("/cvmfs/mu2e.opensciencegrid.org/DataFiles/mergedMuonStops/nts.mu2e.pion-DS-TGTstops.MDC2018a.001002_00000000.root"); #TODO - need to get this from the art files...
-  d = f.Get("stoppedPionDumper");
-  t = d.Get("stops");
+  f = old ntuple
+  d = old dumper
+  t = old stops treee
   total = 0;
   for i in range(t.GetEntries()):
-    #if i%10000 == 0:
-    #  print i,t.GetEntries(),i/float(t.GetEntries())
     t.GetEntry(i)
-    index = int(tmin - t.time-time[0])
-    if (index < 0): # if before tmin
-      total += math.exp(-t.tauNormalized);
-    elif (index < len(time)-1): # if 
-      total += math.exp(-t.tauNormalized)*cdf[index];
+    total += math.exp(-t.tauNormalized);
   avg_survival_prob = total/t.GetEntries();
-  
-  physics_events = POT_per_year * geometric_stopped_pion_per_POT * RPC_per_stopped_pion * livetime * avg_survival_prob
+
+  physics_events = POT * target_stopped_pi_per_POT * RPC_per_stopped_pion * avg_survival_prob
   gen_events = physics_events * cut_norm/total_norm;
 
-  if internal:
+  if internal == 1:
     physics_events *= internalRPC_per_RPC;
     gen_events *= internalRPC_per_RPC;
 
@@ -247,4 +246,5 @@ def pot_to_livetime(pot):
 if __name__ == '__main__':
   tst_1BB = livetime_to_pot(9.52e6)
   tst_2BB = livetime_to_pot(1.58e6)
+  tst_rpc = rpc_normalization(1e6,0,350,1)
   print("SU2020", tst_1BB, tst_2BB)
