@@ -202,6 +202,7 @@ def rpc_normalization(livetime, tmin, internal, run_mode = '1BB'):
   time_eff = 83146/npistops
   print("pi time eff", time_eff)
   total_sum_of_weights = 1148
+  selected_sum_of_weights = 0.178864
 
   # constants
   RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
@@ -209,7 +210,7 @@ def rpc_normalization(livetime, tmin, internal, run_mode = '1BB'):
   # calculate survival probability for tmin including smearing of POT
   avg_survival_prob = total_sum_of_weights/npistops;
   print("pi surv prob", avg_survival_prob)
-  physics_events = POT * target_stopped_pi_per_POT * time_eff * RPC_per_stopped_pion * avg_survival_prob
+  physics_events = POT * target_stopped_pi_per_POT * time_eff * RPC_per_stopped_pion * avg_survival_prob * selected_sum_of_weights/total_sum_of_weights
 
   if int(internal) == 1:
     physics_events *= internalRPC_per_RPC;
