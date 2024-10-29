@@ -6,8 +6,8 @@
 source.firstRun: 1201
 physics.filters.TargetPiStopResampler.fileNames : ["/pnfs/mu2e/tape/phy-sim/sim/mu2e/PiMinusFilter/MDC2020aj/art/02/e7/sim.mu2e.PiMinusFilter.MDC2020aj.001201_00000899.art"]
 # change for Int/Ext:
-physics.producers.generate.RPCType : "mu2eInternalRPC"  
-physics.producers.FindMCPrimary.PrimaryProcess : "mu2eInternalRPC"
+physics.producers.generate.RPCType : "mu2eExternalRPC"  
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eExternalRPC"
 
 physics.filters.TargetPiStopResampler.mu2e.MaxEventsToSkip: 0
 physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: 0

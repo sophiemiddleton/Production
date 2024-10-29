@@ -9,7 +9,7 @@ import ROOT
 import subprocess
 
 def main():
-    prc = ["RPCInternal"]
+    prc = ["RPCInternal","StopPions"]
     processes = ""
     for i, j in enumerate(prc):
         processes +=str(j)

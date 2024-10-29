@@ -82,12 +82,22 @@ def main(args):
           # use ROOT to get the events in that file
           fin = ROOT.TFile(fn)
           te = fin.Get("Events")
-
-          # determine total number of events surviving all cuts
-          reco_events += te.GetEntries()
+          if signal == "RPCInternal" or signal == "RPCExternal":
+                print("extracting weights")
+                bl = te.GetListOfBranches()
+                bn = ""
+                for i in range(bl.GetEntries()):
+                    if bl[i].GetName().startswith("mu2e::EventWeight"):
+                        bn = bl[i].GetName()
+                for i in range(te.GetEntries()):
+                    te.GetEntry(i)
+                    reco_events += getattr(te,bn).product().weight()
+          else:
+            # determine total number of events surviving all cuts
+            reco_events += te.GetEntries()
           if int(args.verbose) == 2:
             print(" reco events ", te.GetEntries())
-          
+        
           # determine total number of events generated
           t = fin.Get("SubRuns")
           
@@ -113,6 +123,10 @@ def main(args):
               for i in range(t.GetEntries()):
                   t.GetEntry(i)
                   gen_events += getattr(t,bn).product().count()
+          
+          if signal == "RPCInternal" or signal == "RPCExternal":
+            gen_events *= 1148/1287106 # to factor in lifetime - FIXME - automate this!!!!
+          
           if int(args.verbose) == 2:
             print("total gen events ",gen_events)
 

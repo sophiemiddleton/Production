@@ -198,9 +198,8 @@ def rpc_normalization(livetime, tmin, internal, run_mode = '1BB'):
   # hack: --> will come from new table eventually
   npistops = 1287106
   target_stopped_pi_per_POT =  0.01337 * 0.1670
-  print("pistops/POT",target_stopped_pi_per_POT)
   time_eff = 83146/npistops
-  print("pi time eff", time_eff)
+  
   total_sum_of_weights = 1148
   selected_sum_of_weights = 0.178864
 
@@ -209,14 +208,49 @@ def rpc_normalization(livetime, tmin, internal, run_mode = '1BB'):
   internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
   # calculate survival probability for tmin including smearing of POT
   avg_survival_prob = total_sum_of_weights/npistops;
-  print("pi surv prob", avg_survival_prob)
+  if(internal == 1): 
+    print("pistoprate",target_stopped_pi_per_POT)
+    print("pitimeeff", time_eff)
+    print("pisurv", avg_survival_prob)
+    print("pitotalweight", total_sum_of_weights)
   physics_events = POT * target_stopped_pi_per_POT * time_eff * RPC_per_stopped_pion * avg_survival_prob * selected_sum_of_weights/total_sum_of_weights
 
   if int(internal) == 1:
     physics_events *= internalRPC_per_RPC;
   return physics_events
 
+def rmc_normalization(livetime, emin, kmax,internal, run_mode = '1BB'):
+  POT = livetime_to_pot(livetime, run_mode)
+  energy = []
+  val = []
+  # closure approximation as implemented in MuonCaptureSpectrum.cc
+  for i in range(int((kmax-57.05)/0.1)):
+    temp_e = 57.05 + i*0.1
+    xFit = temp_e/kmax
+    energy.append(temp_e)
+    val.append((1 - 2*xFit +2*xFit*xFit)*xFit*(1-xFit)*(1-xFit))
+  bin_width = energy[1]-energy[0];
 
+  total_norm = 0
+  cut_norm = 0
+  for i in range(len(val)):
+    total_norm += val[i]
+    if (energy[i]-bin_width/2. >= emin):
+      cut_norm += val[i]
+
+  captures_per_stopped_muon = 0.609 # from AL capture studies
+  RMC_gt_57_per_capture = 1.43e-5 # from literature (to overall captures)
+  internalRPC_per_RPC = 0.00690; # just copy RPC value
+
+  physics_events = POT * stopped_mu_per_POT * captures_per_stopped_muon * RMC_gt_57_per_capture
+  gen_events = physics_events * cut_norm/total_norm
+
+  if internal:
+    physics_events *= internalRPC_per_RPC;
+    gen_events *= internalRPC_per_RPC;
+
+  return gen_events
+  
 def pot_to_livetime(pot):
     return pot / POT_per_second
 
