@@ -140,7 +140,7 @@ else
   exit 1
 fi
 
-dataset=sim.mu2e.${TYPE}Stops${CAT}.${STOPS_CAMPAIGN}.art
+dataset=sim.${OWNER}.${TYPE}Stops${CAT}.${STOPS_CAMPAIGN}.art
 
 if [[ "${TYPE}" == "Muminus" ]] ||  [[ "${TYPE}" == "Muplus" ]]; then
   resampler=TargetStopResampler
