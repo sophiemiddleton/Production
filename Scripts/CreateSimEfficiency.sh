@@ -13,5 +13,5 @@ sim.mu2e.MuminusStopsCat.$1.art sim.mu2e.MuplusStopsCat.$1.art sim.mu2e.IPAMumin
 dts.mu2e.MuBeamFlashCat.$1.art dts.mu2e.EleBeamFlashCat.$1.art dts.mu2e.NeutralsFlashCat.$1.art \
 dts.mu2e.MuStopPileupCat.$1.art \
 dts.mu2e.EarlyMuBeamFlashCat.$1.art dts.mu2e.EarlyEleBeamFlashCat.$1.art dts.mu2e.EarlyNeutralsFlashCat.$1.art \
-sim.mu2e.PiBeam.$1.art sim.mu2e.PiminusStopsCat.$1.art sim.mu2e.PiMinusFilter.$2.art
+sim.mu2e.PiBeam.$3.art sim.mu2e.PiminusStopsCat.$3.art sim.mu2e.PiMinusFilter.$4.art
 sed -i -e 's/dts\.mu2e\.//' -e 's/sim\.mu2e\.//' -e 's/\..*\.art//' -e 's/ IOV//' $1_SimEff.txt
