@@ -9,6 +9,7 @@
 #include "Offline/fcl/standardServices.fcl"
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/pileup/prolog.fcl"
+#include "Production/JobConfig/beam/prolog.fcl"
 
 process_name: MuBeamResampler
 
@@ -45,8 +46,6 @@ outputs: {
     module_type: RootOutput
     outputCommands:   [ "drop *_*_*_*",
       @sequence::Pileup.SimKeptProducts,
-      "keep *_TargetStopFilter_*_*",
-      "keep *_compressPVTargetStops_*_*"
     ]
     SelectEvents: [targetStopPath]
     fileName : "sim.owner.TargetStops.version.sequencer.art"
@@ -55,9 +54,7 @@ outputs: {
   IPAStopOutput : {
     module_type: RootOutput
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Pileup.SimKeptProducts,
-      "keep *_IPAStopFilter_*_*",
-      "keep *_compressPVIPAStops_*_*"
+      @sequence::Pileup.SimKeptProducts
     ]
     SelectEvents: [IPAStopPath]
     fileName : "sim.owner.IPAStops.version.sequencer.art"
