@@ -5,7 +5,6 @@ import sys
 import argparse
 import subprocess
 from datetime import datetime
-import shlex
 
 # Function: Exit with error.
 def exit_abnormal():
@@ -88,6 +87,7 @@ def main():
     with open(FCL, 'r') as f:
         print(f.read())
     run_command(f"loggedMu2e.sh -c {FCL}")
+    run_command(f"ls {fname}")
 
 if __name__ == "__main__":
     main()
