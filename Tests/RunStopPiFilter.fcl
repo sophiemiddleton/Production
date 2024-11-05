@@ -1,0 +1,8 @@
+//to run: mu2e -c Production/Tests/RunStopPiFilter.fcl -S pions.txt
+//
+// this file makes a set of filtered stops (time > 450ns is nominal)
+//
+#include "Production/JobConfig/primary/TargetPiStopPreFilter.fcl"
+
+outputs.StopFilterOutput.fileName  : "sim.tester.PiMinusFilter.Test.1.art"
+services.TFileService.fileName: "nts.owner.FilterPlots.version.sequencer.root"

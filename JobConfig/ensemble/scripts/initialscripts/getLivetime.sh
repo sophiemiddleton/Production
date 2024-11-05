@@ -34,5 +34,5 @@ while getopts ":-:" options; do
     esac
 done
 
-mu2e -c ../Offline/Print/fcl/printCosmicLivetime.fcl -S ${FILENAME} | grep 'Livetime:' | awk -F: '{print $NF}' > ${FILENAME}.livetime
+mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S ${FILENAME} | grep 'Livetime:' | awk -F: '{print $NF}' > ${FILENAME}.livetime
 awk '{sum += $1} END {print "Total Livetime:", sum}' ${FILENAME}.livetime

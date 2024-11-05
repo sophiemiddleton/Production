@@ -261,6 +261,8 @@ echo services.DbService.purpose: ${CAMPAIGN}_${DBPURPOSE} >> mix.fcl
 echo services.DbService.version: ${DBVERSION} >> mix.fcl
 echo services.DbService.verbose : 2 >> mix.fcl
 echo "services.GeometryService.bFieldFile : \"${FIELD}\"" >> mix.fcl
+echo "#include \"Production/JobConfig/digitize/MakeSurfaceSteps.fcl\"">> mix.fcl
+
 # overwrite the outputs
 echo outputs.TriggeredOutput.fileName: \"dig.owner.${OUTDESC}Triggered.version.sequencer.art\" >> mix.fcl
 echo outputs.TriggerableOutput.fileName: \"dig.owner.${OUTDESC}Triggerable.version.sequencer.art\" >> mix.fcl

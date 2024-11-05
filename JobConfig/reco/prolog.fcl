@@ -167,7 +167,7 @@ Reconstruction : {
       CrvDigiMCCollection : "compressDigiMCs"
       KalSeedCollections  : [
         "KKDeM", "KKDeP", "KKDmuM", "KKDmuP",
-        "KKUeM", "KKUmuP", "KKUmuM", "KKUmuP",
+        "KKUeM", "KKUeP", "KKUmuM", "KKUmuP",
         "KKLine","KKOffSpill"]
       HelixSeedCollections  : ["MHDeM", "MHDeP", "MHDmuM", "MHDmuP",
         "MHUeM", "MHUeP", "MHUmuM", "MHUmuP" ]
