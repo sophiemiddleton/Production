@@ -1,5 +1,5 @@
 # Module labels needed for compressed detector steps
-physics.producers.makeSD.StrawGasStepModule : "compressDetStepMCs"
+physics.producers.makeSD.StrawGasStepModules : [ "compressDetStepMCs" ]
 physics.producers.CaloShowerROMaker.caloShowerStepCollection : ["compressDetStepMCs"]
 physics.producers.compressDigiMCs.simParticleTags : ["compressDetStepMCs"]
 physics.producers.compressDigiMCs.caloShowerStepTags : ["compressDetStepMCs"]
