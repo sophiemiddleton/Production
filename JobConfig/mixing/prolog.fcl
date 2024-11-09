@@ -36,6 +36,10 @@ Mixing : {
       MaxEventsToSkip: @nil
     }
   }
+
+  DetStepFilter: {
+    module_type: MixingFilter
+  }
 }
 Mixing : {
   producers : {
@@ -44,6 +48,23 @@ Mixing : {
       SDF: @nil
       extendedMean: @nil
       cutMax:@nil
+    }
+    # inline filters to remove any double-counting of primaries
+    MuStopPileupFilter: {
+      @table::Mixing.DetStepFilter
+      MixingModule: "MuStopPileupMixer"
+    }
+    EleBeamFlashFilter: {
+      @table::Mixing.DetStepFilter
+      MixingModule: "EleBeamFlashMixer"
+    }
+    MuBeamFlashFilter: {
+      @table::Mixing.DetStepFilter
+      MixingModule: "MuBeamFlashMixer"
+    }
+    NeutralsFlashFilter: {
+      @table::Mixing.DetStepFilter
+      MixingModule: "NeutralsFlashMixer"
     }
   }
   filters : {
@@ -55,10 +76,11 @@ Mixing : {
   }
 
   StepMixSequence : [ MuStopPileupMixer, EleBeamFlashMixer, MuBeamFlashMixer, NeutralsFlashMixer ]
+  StepFilterSequence : [ MuStopPileupFilter, EleBeamFlashFilter, MuBeamFlashFilter, NeutralsFlashFilter ]
   # when mixing early events the intensity must be scaled down
   EarlyReductionFactor : 1.0e-2
 }
-Mixing.PileupMixSequence : [ PBISim, @sequence::Mixing.StepMixSequence ]
+Mixing.PileupMixSequence : [ PBISim, @sequence::Mixing.StepMixSequence, @sequence::Mixing.StepFilterSequence ]
 Mixing.MixSequence : [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
 # override the Trigger 'PrepareDigis' sequence; the mixers must preceed the digi making.  Note CRV doesn't participate in trigger, so isn't included
 TrigRecoSequences.artFragmentsGen: [ @sequence::Mixing.PileupMixSequence, @sequence::CommonMC.DigiSim, @sequence::TrackerMC.DigiSim, @sequence::CaloMC.DigiSim ]
