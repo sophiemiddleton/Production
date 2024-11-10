@@ -1,0 +1,119 @@
+[
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CeEndpoint",
+        "digitype": "OnSpill",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CeEndpoint",
+        "digitype": "OnSpill",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CePlusEndpoint",
+        "digitype": "OnSpill",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CePlusEndpoint",
+        "digitype": "OnSpill",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CosmicCORSIKACalibAllOff",
+        "digitype": "Spill",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CosmicCORSIKACalibAllOff",
+        "digitype": "Spill",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CosmicCORSIKACalibAllOn",
+        "digitype": "Spill",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CosmicCORSIKACalibAllOn",
+        "digitype": "Spill",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CosmicCORSIKASignalAllOff",
+        "digitype": "Spill",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CosmicCORSIKASignalAllOff",
+        "digitype": "Spill",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CosmicCORSIKASignalAllOn",
+        "digitype": "Spill",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CosmicCORSIKASignalAllOn",
+        "digitype": "Spill",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CosmicCRYExtractedCat",
+        "digitype": "Triggered",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+    }
+]

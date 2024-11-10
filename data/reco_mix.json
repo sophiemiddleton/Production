@@ -1,0 +1,92 @@
+[
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CeEndpoint",
+        "digitype": "Mix1BB",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CeEndpoint",
+        "digitype": "Mix1BB",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CeEndpoint",
+        "digitype": "Mix2BB",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CeEndpoint",
+        "digitype": "Mix2BB",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CePlusEndpoint",
+        "digitype": "Mix1BB",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "CePlusEndpoint",
+        "digitype": "Mix1BB",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "NoPrimary",
+        "digitype": "Mix1BB",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "NoPrimary",
+        "digitype": "Mix1BB",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "NoPrimary",
+        "digitype": "Mix2BB",
+        "db_purpose": "best",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    },
+    {
+        "release_v_dig": "ae",
+        "release_v_rec": "aj",
+        "primary_name": "NoPrimary",
+        "digitype": "Mix2BB",
+        "db_purpose": "perfect",
+        "stream": "Triggered",
+        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ae/setup.sh"
+    }
+]
