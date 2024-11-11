@@ -154,7 +154,7 @@ else
 fi
 
 if [[ "${TYPE}" == "Piminus" ]]; then
-  samweb list-files "dh.dataset=sim.mu2e.PiMinusFilter.MDC2020aj.art and event_count > 0"  > Stops.txt
+  samweb list-files "dh.dataset=sim.${OWNER}.PiMinusFilter.${STOPS_CAMPAIGN}.art and event_count > 0"  > Stops.txt
 else
   samweb list-definition-files $dataset  > Stops.txt
 fi
