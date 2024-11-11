@@ -46,7 +46,7 @@ usage() {
   [ --cat(opt) default Cat ]
   [ --setup (opt) expllicit simjob setup ]
 
-  bash gen_Primary.sh --primary DIOTail --type MuMinus --campaign MDC2020 -pver z_sm3 --sver p --njobs 100 --events 100 --start 75 --end 95 --setup /cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ag/setup.sh
+  bash gen_Primary.sh --primary DIOTail --type Muminus --campaign MDC2020 --pver z_sm3 --sver p --njobs 100 --events 100 --start 75 --end 95 --setup /cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ag/setup.sh
   " 1>&2
 }
 
@@ -140,19 +140,24 @@ else
   exit 1
 fi
 
-dataset=sim.mu2e.${TYPE}Stops${CAT}.${STOPS_CAMPAIGN}.art
+dataset=sim.${OWNER}.${TYPE}Stops${CAT}.${STOPS_CAMPAIGN}.art
 
 if [[ "${TYPE}" == "Muminus" ]] ||  [[ "${TYPE}" == "Muplus" ]]; then
   resampler=TargetStopResampler
-elif [[ "${TYPE}" == "Piminus" ]] ||  [[ "${TYPE}" == "Piplus" ]]; then
+elif [[ "${TYPE}" == "Piplus" ]]; then
   resampler=TargetPiStopResampler
+elif [[ "${TYPE}" == "Piminus" ]]; then
+  resampler=TargetPiStopResampler
+  dataset=sim.${OWNER}.PiMinusFilter.${STOPS_CAMPAIGN}.art # since we prefilter these for a given time
 else
   resampler=${TYPE}StopResampler
 fi
 
-
-samweb list-definition-files $dataset  > Stops.txt
-
+if [[ "${TYPE}" == "Piminus" ]]; then
+  samweb list-files "dh.dataset=sim.mu2e.PiMinusFilter.MDC2020aj.art and event_count > 0"  > Stops.txt
+else
+  samweb list-definition-files $dataset  > Stops.txt
+fi
 # calucate the max skip from the dataset
 nfiles=`samCountFiles.sh $dataset`
 nevts=`samCountEvents.sh $dataset`
@@ -165,6 +170,7 @@ echo "#include \"Production/JobConfig/primary/${FCLNAME}.fcl\"" >> primary.fcl
 echo physics.filters.${resampler}.mu2e.MaxEventsToSkip: ${nskip} >> primary.fcl
 echo "services.GeometryService.bFieldFile : \"${FIELD}\"" >> primary.fcl
 echo outputs.PrimaryOutput.fileName: \"dts.owner.${PRIMARY}.version.sequencer.art\"  >> primary.fcl
+echo services.TFileService.fileName: \"nts.owner.GenPlots.version.sequencer.root\"  >> primary.fcl
 
 if [[ "${PRIMARY}" == "DIOtail"* ]]; then
   echo physics.producers.generate.decayProducts.spectrum.ehi: ${ENDMOM}        >> primary.fcl

@@ -14,6 +14,13 @@ def main(args):
     if(args.prc == "CORSIKA"):
       Yield = corsika_onspill_normalization(float(args.livetime), str(args.BB))
       print("CORSIKA=",Yield)
+    if(args.prc == "RPC" and int(args.internalrpc) == 1):
+      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internalrpc), str(args.BB))
+      print("InternalRPC=",Yield)
+    if(args.prc == "RPC" and int(args.internalrpc) == 0):
+      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internalrpc), str(args.BB))
+      print("ExternalRPC=",Yield)
+
     return (Yield)
     
 # for testing only
@@ -25,6 +32,8 @@ if __name__ == '__main__':
     parser.add_argument("--dem_emin", help="min energy cut")
     parser.add_argument("--prc", help="process")
     parser.add_argument("--printpot", help="print pot", default="no")
+    parser.add_argument("--tmin", help="tmin", default=0)
+    parser.add_argument("--internalrpc", help="internal rpc", default=1)
     args = parser.parse_args()
     (args) = parser.parse_args()
     main(args)

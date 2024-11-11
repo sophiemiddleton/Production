@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 usage() { echo "Usage: $0
-  e.g.  Stage1_makeinputs.sh --cosmics MDC2020ae --dem_emin 95 --rmue 1e-13 --BB 1BB --tag MDS1a
+  e.g.  Stage1_makeinputs.sh --cosmics MDC2020ae --dem_emin 95 --rmue 1e-13 --BB 1BB --tag MDS1a --tmin 350
 
 "
 }
@@ -16,6 +16,7 @@ LIVETIME="" #seconds
 DEM_EMIN=95
 BB=1BB
 RMUE=1e-13
+TMIN=0
 TAG="MDS1a_test"
 STOPS="MDC2020p"
 RELEASE="MDC2020"
@@ -42,6 +43,9 @@ while getopts ":-:" options; do
           ;;
         rmue)
           RMUE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        tmin)
+          TMIN=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         tag)
           TAG=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
@@ -97,3 +101,7 @@ calculateEvents.py --livetime ${LIVETIME} --rue ${RMUE} --prc "CEMLL" --BB ${BB}
 calculateEvents.py --livetime ${LIVETIME}  --dem_emin ${DEM_EMIN} --prc "DIO" --BB ${BB} --printpot "no" >> ${TAG}.txt
 
 calculateEvents.py --livetime ${LIVETIME} --prc "CORSIKA" --BB ${BB} --printpot "no" >> ${TAG}.txt
+
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internalrpc 1  --BB ${BB} --printpot "no" >> ${TAG}.txt
+
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internalrpc 0  --BB ${BB} --printpot "no" >> ${TAG}.txt

@@ -4,5 +4,5 @@
 //
 #include "Production/JobConfig/primary/TargetPiStopPreFilter.fcl"
 
-outputs.StopFilterOutput.fileName  : "sim.tester.PiMinusFilter.Test.1.art"
+outputs.StopFilterOutput.fileName  : "sim.owner.PiMinusFilter.version.sequencer.art"
 services.TFileService.fileName: "nts.owner.FilterPlots.version.sequencer.root"

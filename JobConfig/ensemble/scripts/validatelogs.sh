@@ -50,6 +50,7 @@ rm DIO.txt
 rm CeMLL.txt
 rm cosmic.txt
 rm gen.txt 
+ls logs/* &> logs.txt
 
 while IFS='= ' read -r col1
 do
@@ -75,3 +76,9 @@ echo $temp >> cosmic.txt
 sed -i -e 's/ /\n/g' cosmic.txt
 temp2=$(awk '{s+=$1} END {print s}' cosmic.txt)
 echo "total cosmic " ${temp2}
+
+temp=$(sed -r  's/.* RPCInternal ([^ ]+).*/\1/' gen.txt) 
+echo $temp >> intRPC.txt
+sed -i -e 's/ /\n/g' intRPC.txt
+temp2=$(awk '{s+=$1} END {print s}' intRPC.txt)
+echo "total internal RPC " ${temp2}

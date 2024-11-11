@@ -51,7 +51,7 @@ NJOBS="" #to help calculate the number of events per job
 LIVETIME="" #seconds
 RUN=1201
 DEM_EMIN=""
-TMIN=450
+TMIN=350
 SAMPLINGSEED=1
 BB=""
 RMUE=""
@@ -80,19 +80,22 @@ done <${CONFIG}
 echo "extracted config from Stage 1"
 echo ${LIVETIME} ${DEM_EMIN} ${BB} ${RMUE}
 
-
-#rm filenames_CORSIKACosmic
-#rm filenames_DIO
-#rm filenames_CeMLL
+rm filenames_CORSIKACosmic
+rm filenames_DIO
+rm filenames_CeMLL
+rm filenames_RPCInternal
+rm filenames_RPCExternal
 rm *.tar
 
 echo "accessing files, making file lists"
 mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_CORSIKACosmic
 mu2eDatasetFileList "dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${INVERSION}.art"| head -${NJOBS} > filenames_DIO
 mu2eDatasetFileList "dts.mu2e.CeMLeadingLog.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_CeMLL
+mu2eDatasetFileList "dts.sophie.RPCInternal.${INRELEASE}aj.art" | head -${NJOBS} > filenames_RPCInternal
+#mu2eDatasetFileList "dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RPCExternal
 
 echo "making template fcl"
-make_template_fcl.py --BB=${BB} --release=${OUTRELEASE}${OUTVERSION}  --tag=${TAG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "CeMLL" "DIO" "CORSIKACosmic"
+make_template_fcl.py --BB=${BB} --release=${OUTRELEASE}${OUTVERSION}  --tag=${TAG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "CeMLL" "DIO" "CORSIKACosmic" "RPCInternal" "RPCExternal"
 
 ##### Below is genEnsemble and Grid:
 echo "remove old files"
@@ -100,16 +103,20 @@ rm cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar
 rm filenames_CORSIKACosmic_${NJOBS}.txt
 rm filenames_DIO_${NJOBS}.txt
 rm filenames_CeMLL_${NJOBS}.txt
+rm filenames_RPCInternal_${NJOBS}.txt
+rm filenames_RPCExternal_${NJOBS}.txt
 
 echo "get NJOBS files and list"
 samweb list-files "dh.dataset=dts.mu2e.CosmicCORSIKASignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_CORSIKACosmic_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${INVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.CeMLeadingLog.${INRELEASE}${INVERSION}.art"  | head -${NJOBS}  >  filenames_CeMLL_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.sophie.RPCInternal.${INRELEASE}aj.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCInternal_${NJOBS}.txt
+#samweb list-files "dh.dataset=dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCExternal_${NJOBS}.txt
 
 DSCONF=${OUTRELEASE}${OUTVERSION}
 
 echo "run mu2e jobdef"
-cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:CeMLL:filenames_CeMLL_${NJOBS}.txt --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CORSIKACosmic:filenames_CORSIKACosmic_${NJOBS}.txt --embed SamplingInput_sr0.fcl --verb "
+cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:CeMLL:filenames_CeMLL_${NJOBS}.txt --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CORSIKACosmic:filenames_CORSIKACosmic_${NJOBS}.txt --sampling=1:RPCInternal:filenames_RPCInternal_${NJOBS}.txt  --embed SamplingInput_sr0.fcl --verb " #--sampling=1:RPCExternal:filenames_RPCExternal_${NJOBS}.txt
 echo "Running: $cmd"
 $cmd
 parfile=$(ls cnf.*.tar)
