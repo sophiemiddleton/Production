@@ -1,10 +1,12 @@
 #!/bin/bash
-#echo ${@}
-samweb list-files --summary "dh.dataset=${@}" | while read line
-do
-  read -a strarr <<< "$line"
-#  echo ${strarr[0]} ${strarr[1]} 
-  if [[ "${strarr[0]}" =~ "File" ]]; then
-    echo "${strarr[2]}"
-  fi
-done
+
+# Usage: ./script.sh [--include_empty] <dataset_definition>
+
+if [[ "$1" == "--include_empty" ]]; then
+    shift
+    DATASET_DEF="$1"
+    samweb count-files "defname: $DATASET_DEF"
+else
+    DATASET_DEF="$1"
+    samweb count-files "defname: $DATASET_DEF and event_count>0"
+fi
