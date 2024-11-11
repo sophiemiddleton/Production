@@ -148,13 +148,13 @@ elif [[ "${TYPE}" == "Piplus" ]]; then
   resampler=TargetPiStopResampler
 elif [[ "${TYPE}" == "Piminus" ]]; then
   resampler=TargetPiStopResampler
-  dataset=sim.${OWNER}.PiminusStopsFilt.${STOPS_CAMPAIGN}.art # since we prefilter these for a given time
+  dataset=sim.${OWNER}.${TYPE}StopsFilt.${STOPS_CAMPAIGN}.art # since we prefilter these for a given time
 else
   resampler=${TYPE}StopResampler
 fi
 
 if [[ "${TYPE}" == "Piminus" ]]; then
-  samweb list-files "dh.dataset=sim.${OWNER}.PiminusStopsFilt.${STOPS_CAMPAIGN}.art and event_count > 0"  > Stops.txt
+  samweb list-files "dh.dataset=$dataset and event_count > 0"  > Stops.txt
 else
   samweb list-definition-files $dataset  > Stops.txt
 fi
