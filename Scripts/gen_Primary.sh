@@ -144,11 +144,8 @@ dataset=sim.${OWNER}.${TYPE}Stops${CAT}.${STOPS_CAMPAIGN}.art
 
 if [[ "${TYPE}" == "Muminus" ]] ||  [[ "${TYPE}" == "Muplus" ]]; then
   resampler=TargetStopResampler
-elif [[ "${TYPE}" == "Piplus" ]]; then
+elif [[ "${TYPE}" == "Piplus" || "${TYPE}" == "Piminus" ]]; then
   resampler=TargetPiStopResampler
-elif [[ "${TYPE}" == "Piminus" ]]; then
-  resampler=TargetPiStopResampler
-  dataset=sim.${OWNER}.PiMinusFilter.${STOPS_CAMPAIGN}.art # since we prefilter these for a given time
 else
   resampler=${TYPE}StopResampler
 fi
