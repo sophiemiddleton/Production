@@ -45,7 +45,7 @@ outputs: {
   TargetStopOutput : {
     module_type: RootOutput
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Pileup.SimKeptProducts,
+      @sequence::Pileup.SimKeptProducts
     ]
     SelectEvents: [targetStopPath]
     fileName : "sim.owner.TargetStops.version.sequencer.art"
