@@ -64,6 +64,7 @@ Reconstruction : {
       HelixFinders : [ "HelixFinderUmu:Positive" ]
     }
     # KinKal fits
+
     KKDeM : {
       @table::Mu2eKinKal.producers.KKDeM
       ModuleSettings : {
@@ -143,8 +144,7 @@ Reconstruction : {
         @table::Mu2eKinKal.KKPrecursors
         CosmicTrackSeedCollections : ["LineFinder"]
       }
-
-                 }
+    }
 
     # Implicit TrkPatRec config for Final Fits and upstream fits (no merging)
     #
@@ -198,8 +198,6 @@ Reconstruction : {
   }
 
   filters : {
-    # why are CalPatRec reconstruction modules implemented as filters????
-    # They should be remade as producers FIXME!
     @table::CalPatRec.filters
     # reco filter
     RecoFilter : {
@@ -299,7 +297,10 @@ Reconstruction : {
     "keep *_CrvCoincidenceClusterMCAssns_*_*",
     "keep *_SelectRecoMC_*_*"
   ]
-
+  # Extra products for display
+  EventDisplayProducts : [
+    "keep mu2e::ComboHitCollection_FlagBkgHits_*_*"
+  ]
   GeneralProducts : [
     @sequence::Digitize.GeneralProducts,
     @sequence::Digitize.TriggerProducts # not sure we want to keep these
@@ -379,5 +380,4 @@ Reconstruction.Output : {
     @sequence::Reconstruction.HighRecoMCProducts
   ]
 }
-
 END_PROLOG

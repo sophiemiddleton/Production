@@ -6,7 +6,7 @@ import math
 import os
 
 
-# get stopped rates from DB
+# get muon stopped rates from DB
 dbtool = DbService.DbTool()
 dbtool.init()
 args=["print-run","--purpose","MDC2020_best","--version","v1_1","--run","1200","--table","SimEfficiencies2","--content"]
@@ -164,32 +164,71 @@ def corsika_offspill_normalization(livetime, run_mode = '1BB'):
     #print(f"cosmics live time {livetime*offspill_dutyfactor}")
     return livetime*offspill_dutyfactor
     
-    
-# get number of target pions stops:
 """
+# get stopped rates from DB
+dbtool = DbService.DbTool()
+dbtool.init()
+args=["print-run","--purpose","MDC2020_best","--version","v1_1","--run","1200","--table","PiSimEfficiencies","--content"] 
+dbtool.setArgs(args)
+dbtool.run()
+rpi = dbtool.getResult()
+
+
+# get number of target pions stops:
 target_stopped_pi_per_POT = 1.0
-rate = 1.0
-lines= rr.split("\n")
+nstops = 1.0
+target_stopped_pi_per_POT = 1.0
+lines= rpi.split("\n")
 for line in lines:
     words = line.split(",")
-    if words[0] == "PiminusStopsCat" or words[0] == "PiBeamCat" :
-        print(f"Including {words[0]} with rate {words[3]}")
-        rate = rate * float(words[3])
-        target_stopped_pi_per_POT = rate * 1000 
-print(f"Final stops rate pion {target_stopped_pi_per_POT}")
+    if words[0] == "PiBeam" or words[0] == "PiminusStopsCat":
+        target_stopped_pi_per_POT *= float(words[3]) # stops_per_POT
+    if words[0] == "PiminusStopsCat":
+        npistops = words[1]   
+    if words[0] == "PiMinusFilter" :
+        timeeff_times_stoprate = float(words[3])
+        target_stopped_pi_per_POT *=  timeeff_times_stoprate
+    if words[0] == "PiMinusFilter" :
+        total_sum_of_weights = words[1]
 """
-    
 
-def rpc_normalization(livetime, emin, tmin, internal):
-  # calculate fraction of spectrum being generated
+
+def rpc_normalization(livetime, tmin, internal, run_mode = '1BB'):
+  POT = livetime_to_pot(livetime, run_mode)
+  # hack: --> will come from new table eventually
+  npistops = 1287106
+  target_stopped_pi_per_POT =  0.01337 * 0.1670
+  time_eff = 83146/npistops
   
-  spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/RPCspectrum.tbl")) 
-  # Bistirlich spectrum from 0.05 to 139.95 in steps of 0.1
+  total_sum_of_weights = 1148
+  selected_sum_of_weights = 0.178864
+
+  # constants
+  RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
+  internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
+  # calculate survival probability for tmin including smearing of POT
+  avg_survival_prob = total_sum_of_weights/npistops;
+  if(internal == 1): 
+    print("pistoprate",target_stopped_pi_per_POT)
+    print("pitimeeff", time_eff)
+    print("pisurv", avg_survival_prob)
+    print("pitotalweight", total_sum_of_weights)
+  physics_events = POT * target_stopped_pi_per_POT * time_eff * RPC_per_stopped_pion * avg_survival_prob * selected_sum_of_weights/total_sum_of_weights
+
+  if int(internal) == 1:
+    physics_events *= internalRPC_per_RPC;
+  return physics_events
+
+def rmc_normalization(livetime, emin, kmax,internal, run_mode = '1BB'):
+  POT = livetime_to_pot(livetime, run_mode)
   energy = []
   val = []
-  for line in spec:
-    energy.append(float(line.split()[0]))
-    val.append(float(line.split()[1]))
+  # closure approximation as implemented in MuonCaptureSpectrum.cc
+  for i in range(int((kmax-57.05)/0.1)):
+    temp_e = 57.05 + i*0.1
+    xFit = temp_e/kmax
+    energy.append(temp_e)
+    val.append((1 - 2*xFit +2*xFit*xFit)*xFit*(1-xFit)*(1-xFit))
   bin_width = energy[1]-energy[0];
 
   total_norm = 0
@@ -199,52 +238,24 @@ def rpc_normalization(livetime, emin, tmin, internal):
     if (energy[i]-bin_width/2. >= emin):
       cut_norm += val[i]
 
-  geometric_stopped_pion_per_POT = 0.00211 # TODO - will be replaced by new sim efficiency
-  RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
-  internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
+  captures_per_stopped_muon = 0.609 # from AL capture studies
+  RMC_gt_57_per_capture = 1.43e-5 # from literature (to overall captures)
+  internalRPC_per_RPC = 0.00690; # just copy RPC value
 
-
-  # calculate survival probability for tmin including smearing of POT
-  pot = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/POTspectrum.tbl")) 
-  time = []
-  cdf = []
-  for line in pot:
-    time.append(float(line.split()[0]))
-    cdf.append(float(line.split()[1]))
-  for i in range(len(cdf)-2,-1,-1):
-    cdf[i] += cdf[i+1]
-  for i in range(len(cdf)-1,-1,-1):
-    cdf[i] /= cdf[0]
-
-  f = ROOT.TFile("/cvmfs/mu2e.opensciencegrid.org/DataFiles/mergedMuonStops/nts.mu2e.pion-DS-TGTstops.MDC2018a.001002_00000000.root"); #TODO - need to get this from the art files...
-  d = f.Get("stoppedPionDumper");
-  t = d.Get("stops");
-  total = 0;
-  for i in range(t.GetEntries()):
-    #if i%10000 == 0:
-    #  print i,t.GetEntries(),i/float(t.GetEntries())
-    t.GetEntry(i)
-    index = int(tmin - t.time-time[0])
-    if (index < 0): # if before tmin
-      total += math.exp(-t.tauNormalized);
-    elif (index < len(time)-1): # if 
-      total += math.exp(-t.tauNormalized)*cdf[index];
-  avg_survival_prob = total/t.GetEntries();
-  
-  physics_events = POT_per_year * geometric_stopped_pion_per_POT * RPC_per_stopped_pion * livetime * avg_survival_prob
-  gen_events = physics_events * cut_norm/total_norm;
+  physics_events = POT * stopped_mu_per_POT * captures_per_stopped_muon * RMC_gt_57_per_capture
+  gen_events = physics_events * cut_norm/total_norm
 
   if internal:
     physics_events *= internalRPC_per_RPC;
     gen_events *= internalRPC_per_RPC;
 
   return gen_events
-
-
+  
 def pot_to_livetime(pot):
     return pot / POT_per_second
 
 if __name__ == '__main__':
   tst_1BB = livetime_to_pot(9.52e6)
   tst_2BB = livetime_to_pot(1.58e6)
+  tst_rpc = rpc_normalization(3.77e19,350,1)
   print("SU2020", tst_1BB, tst_2BB)

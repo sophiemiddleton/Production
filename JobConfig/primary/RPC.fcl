@@ -1,4 +1,4 @@
-#
+##
 # RPC photon spectrum, based on on Bistrilich spectrum
 # Option of Internal or External to be set in driving FCL instance
 # original author: S Middleton
@@ -17,8 +17,9 @@ physics.producers.generate : {
     ehi : 140.
     spectrumResolution : 0.1 #MeV
   }
-  pionDecayOff : true
+  pionDecayOff : true # will apply surv prob
   doHistograms : true
+  #SurvivalProbScaling : 1
 }
 
 physics.producers.FindMCPrimary.PrimaryProcess : @nil

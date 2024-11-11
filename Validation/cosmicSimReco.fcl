@@ -122,7 +122,7 @@ physics.producers.g4run.Mu2eG4CommonCut: @local::Cosmic.Mu2eG4CommonCutCosmicNoF
 physics.producers.CrvPhotons.crvStepModuleLabels  : ["CrvSteps"]
 physics.producers.CrvPhotons.crvStepProcessNames  : ["cosmicSimReco"]
 
-physics.producers.makeSD.StrawGasStepModule : "StrawGasStepMaker"
+physics.producers.makeSD.StrawGasStepModules : [ "StrawGasStepMaker" ]
 physics.producers.CaloShowerROMaker.caloShowerStepCollection : [ "CaloShowerStepMaker" ]
 # turn off very verbose
 physics.producers.CrvCoincidence.verboseLevel : 0
