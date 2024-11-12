@@ -144,9 +144,7 @@ dataset=sim.${OWNER}.${TYPE}Stops${CAT}.${STOPS_CAMPAIGN}.art
 
 if [[ "${TYPE}" == "Muminus" ]] ||  [[ "${TYPE}" == "Muplus" ]]; then
   resampler=TargetStopResampler
-elif [[ "${TYPE}" == "Piplus" ]]; then
-  resampler=TargetPiStopResampler
-elif [[ "${TYPE}" == "Piminus" ]]; then
+elif [[ "${TYPE}" == "Piminus" ]] ||  [[ "${TYPE}" == "Piplus" ]]; then
   resampler=TargetPiStopResampler
 else
   resampler=${TYPE}StopResampler
