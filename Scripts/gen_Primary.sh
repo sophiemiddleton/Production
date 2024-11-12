@@ -144,21 +144,19 @@ dataset=sim.${OWNER}.${TYPE}Stops${CAT}.${STOPS_CAMPAIGN}.art
 
 if [[ "${TYPE}" == "Muminus" ]] ||  [[ "${TYPE}" == "Muplus" ]]; then
   resampler=TargetStopResampler
-elif [[ "${TYPE}" == "Piplus" ]]; then
+elif [[ "${TYPE}" == "Piminus" ]] ||  [[ "${TYPE}" == "Piplus" ]]; then
   resampler=TargetPiStopResampler
-elif [[ "${TYPE}" == "Piminus" ]]; then
-  resampler=TargetPiStopResampler
-  dataset=sim.${OWNER}.PiMinusFilter.${STOPS_CAMPAIGN}.art # since we prefilter these for a given time
 else
   resampler=${TYPE}StopResampler
 fi
 
 if [[ "${TYPE}" == "Piminus" ]]; then
-  samweb list-files "dh.dataset=sim.mu2e.PiMinusFilter.MDC2020aj.art and event_count > 0"  > Stops.txt
+  samweb list-files "dh.dataset=$dataset and event_count > 0"  > Stops.txt
 else
   samweb list-definition-files $dataset  > Stops.txt
 fi
 # calucate the max skip from the dataset
+
 nfiles=`samCountFiles.sh $dataset`
 nevts=`samCountEvents.sh $dataset`
 let nskip=nevts/nfiles
