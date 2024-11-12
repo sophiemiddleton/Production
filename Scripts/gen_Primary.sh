@@ -159,11 +159,8 @@ else
   samweb list-definition-files $dataset  > Stops.txt
 fi
 # calucate the max skip from the dataset
-nfiles= 0
-if [[ "${TYPE}" == "Piminus" ]]; then
-  nfiles=`wc -l  Stops.txt`
-else
-  nfiles=`samCountFiles.sh $dataset`
+
+nfiles=`samCountFiles.sh $dataset`
 nevts=`samCountEvents.sh $dataset`
 let nskip=nevts/nfiles
 # write the template
