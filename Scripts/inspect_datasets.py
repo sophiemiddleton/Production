@@ -69,7 +69,7 @@ def analyze_dataset(cli, dataset):
 def main():
     # Get input file from command line
     if len(sys.argv) != 2:
-        print("Usage: ./script.py input_file")
+        print("Usage: ./inspect_datasets.py input_file")
         sys.exit(1)
     input_file = sys.argv[1]
 
