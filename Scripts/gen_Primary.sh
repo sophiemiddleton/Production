@@ -148,7 +148,6 @@ elif [[ "${TYPE}" == "Piplus" ]]; then
   resampler=TargetPiStopResampler
 elif [[ "${TYPE}" == "Piminus" ]]; then
   resampler=TargetPiStopResampler
-  dataset=sim.${OWNER}.${TYPE}StopsFilt.${STOPS_CAMPAIGN}.art # since we prefilter these for a given time
 else
   resampler=${TYPE}StopResampler
 fi
