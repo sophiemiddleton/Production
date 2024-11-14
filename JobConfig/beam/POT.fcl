@@ -45,9 +45,7 @@ outputs: {
     module_type: RootOutput
     SelectEvents: ["BeamPath"]
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Beam.SimKeptProducts,
-      "keep *_BeamFilter_*_*",
-      "keep *_compressPVBeam_*_*"
+      @sequence::Beam.SimKeptProducts
     ]
     fileName : "sim.owner.Beam.version.sequencer.art"
   }
@@ -55,9 +53,7 @@ outputs: {
     module_type: RootOutput
     SelectEvents: ["NeutralsPath"]
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Beam.SimKeptProducts,
-      "keep *_NeutralsFilter_*_*",
-      "keep *_compressPVNeutrals_*_*"
+      @sequence::Beam.SimKeptProducts
     ]
     fileName : "sim.owner.Neutrals.version.sequencer.art"
   }
