@@ -1,0 +1,11 @@
+#
+# RMC External photons, kmax = 101.9 MeV, saving events with a photon conversion
+#
+
+#include "Production/JobConfig/primary/RMCGammaWriter.fcl"
+
+physics.producers.generate.decayProducts.spectrum.ehi      : 101.9
+physics.producers.generate.decayProducts.spectrum.kMaxUser : 101.9
+outputs.TargetOutput.fileName : "sim.owner.RMCGammaEndpointWriter.version.sequencer.art"
+outputs.WireOutput.fileName : "sim.owner.RMCWireGammaEndpointWriter.version.sequencer.art"
+outputs.IPAOutput.fileName : "sim.owner.RMCIPAGammaEndpointWriter.version.sequencer.art"

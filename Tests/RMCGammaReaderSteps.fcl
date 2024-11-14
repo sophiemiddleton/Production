@@ -1,0 +1,8 @@
+#include "Production/JobConfig/primary/RMCGammaReader.fcl"
+source.firstRun: 501 #TODO
+physics.filters.GammaConversionResampler.fileNames : [
+"sim.owner.RMCGammaWriter.version.sequencer.art"]
+
+physics.filters.GammaConversionResampler.mu2e.MaxEventsToSkip: 0
+physics.producers.generate.makeHistograms : true
+services.TFileService.fileName: "nts.owner.RMCGammaReaderSteps.version.sequencer.root"

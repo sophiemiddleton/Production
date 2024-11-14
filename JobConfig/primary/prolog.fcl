@@ -131,7 +131,7 @@ Primary: {
       }
     }
 
-    WireGammaStopResampler : {
+    GammaConversionResampler : {
       module_type: ResamplingMixer
       readMode            : sequential
       wrapFiles           : true
@@ -142,16 +142,30 @@ Primary: {
         debugLevel : 0
         products: {
           genParticleMixer: { mixingMap: [ [ "TargetStopResampler", "" ] ] }
-          simParticleMixer: { mixingMap: [ [ "WireStopFilter", "" ] ] }
-          stepPointMCMixer: { mixingMap: [ [ "WireStopFilter:virtualdetector", ":" ] ] }
+          simParticleMixer: { mixingMap: [ [ "GammasFilter", "" ] ] }
+          stepPointMCMixer: { mixingMap: [ [ "GammasFilter:virtualdetector", ":" ] ] }
           volumeInfoMixer: {
-            srInput: "compressPVWireStops"
+            srInput: "compressGammas"
             evtOutInstanceName: "eventlevel"
           }
         }
       }
     }
+
+    GammaConversionFilter : {
+	module_type : GammaConversionPoints
+	g4ModuleLabel : "g4run"
+	doFilter : true
+	rMin : 0.   # Include target and IPA
+	rMax : 500.
+	zMin : 5000.
+	zMax : 8000.
+	eMin : 1.5
+	verbosity : 0
+	saveTree : true
+    }
   }
+
   # sequence to create DetectorSteps
   DetStepSequence : [
     @sequence::TrackerMC.StepSim,

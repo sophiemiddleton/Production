@@ -1,0 +1,14 @@
+#
+# RMC Internal, kmax = 90.1 MeV
+#
+
+#include "Production/JobConfig/primary/RMC.fcl"
+physics.producers.generate.decayProducts.spectrum.external : false
+
+# Filter low energy internal conversions out
+physics.filters.GenFilter.filterEnergy : true
+physics.filters.GenFilter.emin : 84.
+physics.filters.GenFilter.emax : 1000.
+
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eInternalRMC"
+outputs.PrimaryOutput.fileName : "dts.owner.RMCInternal.version.sequencer.art"

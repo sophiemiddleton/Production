@@ -1,0 +1,25 @@
+#
+# Radiative muon capture (RMC) spectrum using the Closure Approximation as measured by TRIUMF (1999)
+#
+# original author: M. MacKenzie, based on DIOTail.fcl
+#
+#include "Production/JobConfig/primary/TargetStopParticle.fcl"
+
+physics.producers.generate : {
+  module_type : SingleProcessGenerator
+  inputSimParticles: TargetStopResampler
+  stoppingTargetMaterial : "Al"
+  decayProducts : {
+    tool_type : RMCGenerator
+    spectrum : {
+      elow              : 85
+      ehi               : 90.1
+      kMaxUserSet       : true
+      kMaxUser          : 90.1
+      external          : true
+      spectrumShape     : "RMC"
+      spectrumResolution: 0.1
+    }
+  }
+  verbosity : 0
+}

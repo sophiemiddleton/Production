@@ -1,0 +1,8 @@
+#
+# RMC Internal, kmax = 101.9 MeV
+#
+
+#include "Production/JobConfig/primary/RMCInternal.fcl"
+physics.producers.generate.decayProducts.spectrum.ehi      : 101.9
+physics.producers.generate.decayProducts.spectrum.kMaxUser : 101.9
+outputs.PrimaryOutput.fileName : "dts.owner.RMCInternalEndpoint.version.sequencer.art"
