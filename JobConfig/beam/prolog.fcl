@@ -163,13 +163,15 @@ Beam: {
     ]
   }
   #
-  # define products that need to be kept
+  # define products that need to be kept for downstream simulation
   #
   SimKeptProducts : [
     "keep art::EventIDs_*_*_*",
     "keep mu2e::GenParticles_*_*_*",
     "keep mu2e::GenEventCount_*_*_*",
-    "keep mu2e::StatusG4_*_*_*"
+    "keep mu2e::StatusG4_*_*_*",
+    "keep *_compressPV*_*_*",
+    "keep *_*Filter_*_*"
   ]
 
 }

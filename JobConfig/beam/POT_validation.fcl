@@ -56,9 +56,7 @@ outputs: {
     module_type: RootOutput
     SelectEvents: ["BeamPath"]
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Beam.SimKeptProducts,
-      "keep *_BeamFilter_*_*",
-      "keep *_compressPVBeam_*_*"
+      @sequence::Beam.SimKeptProducts
     ]
     fileName : "sim.owner.Beam.version.sequencer.art"
   }
@@ -66,9 +64,7 @@ outputs: {
     module_type: RootOutput
     SelectEvents: ["NeutralsPath"]
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Beam.SimKeptProducts,
-      "keep *_NeutralsFilter_*_*",
-      "keep *_compressPVNeutrals_*_*"
+      @sequence::Beam.SimKeptProducts
     ]
     fileName : "sim.owner.Neutrals.version.sequencer.art"
   }
@@ -76,9 +72,7 @@ outputs: {
     module_type: RootOutput
     SelectEvents: ["extmonBeamPath"]
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Beam.SimKeptProducts,
-      "keep *_extmonBeamFilter_*_*",
-      "keep *_compressPVextmonBeam_*_*"
+      @sequence::Beam.SimKeptProducts
     ]
     fileName : "sim.owner.ExtMonBeam.version.sequencer.art"
   }
@@ -86,9 +80,7 @@ outputs: {
     module_type: RootOutput
     SelectEvents: ["extmonRegionPath"]
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Beam.SimKeptProducts,
-      "keep *_extmonRegionFilter_*_*",
-      "keep *_compressPVextmonRegion_*_*"
+      @sequence::Beam.SimKeptProducts
     ]
     fileName : "sim.owner.ExtmMonRegion.version.sequencer.art"
   }
