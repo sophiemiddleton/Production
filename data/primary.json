@@ -7,6 +7,7 @@
 	"start_mom": 75,
 	"num_events": 96000,
 	"num_jobs": 5000,
+	"cat": "Cat",	
 	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh"
     },
     {
@@ -17,6 +18,7 @@
 	"start_mom": 95,
 	"num_events": 850,
 	"num_jobs": 900,
+	"cat": "Cat",	
 	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh"
     },
     {
@@ -27,16 +29,32 @@
 	"start_mom": 0,
 	"num_events": 10,
 	"num_jobs": 900,
+	"cat": "Cat",
 	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh"
     },
     {
-	"release_v_o": "ai",
+	"release_v_o": "ak",
 	"stopped_type": "Piminus",
-	"release_v_stops": "t",
+	"release_v_stops": "ak",
 	"primary_name": "RPCInternal",
 	"start_mom": 0,
-	"num_events": 1200,
+	"num_events": 42000,
 	"num_jobs": 850,
-	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh"
+	"cat": "Filt",
+	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ak/setup.sh"
+    },
+    {
+	"release_v_o": "ak",
+	"stopped_type": "Piminus",
+	"release_v_stops": "ak",
+	"primary_name": "RPCExternal",
+	"start_mom": 0,
+	"num_events": 6110000,
+	"num_jobs": 850,
+	"cat": "Filt",
+	"simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ak/setup.sh"
     }
+
+
+    
 ]
