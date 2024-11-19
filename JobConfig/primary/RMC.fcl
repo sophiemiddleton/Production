@@ -13,9 +13,9 @@ physics.producers.generate : {
     tool_type : RMCGenerator
     spectrum : {
       elow              : 85
-      ehi               : 90.1
+      ehi               : @local::RMCInfo.kmaxMeasured
       kMaxUserSet       : true
-      kMaxUser          : 90.1
+      kMaxUser          : @local::RMCInfo.kmaxMeasured
       external          : true
       spectrumShape     : "RMC"
       spectrumResolution: 0.1

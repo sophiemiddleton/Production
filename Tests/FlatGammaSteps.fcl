@@ -1,6 +1,2 @@
 #include "Production/JobConfig/primary/FlatGamma.fcl"
-source.firstRun: 501
-physics.filters.TargetStopResampler.fileNames : [
-  "/cvmfs/mu2e.opensciencegrid.org/DataFiles/Validation/sim.brownd.MuminusStops.MDC2020d.001202_00000000.art"
-]
-physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: 0
+#include "Production/Tests/MuonStopConfig.fcl"

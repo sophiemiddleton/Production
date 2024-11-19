@@ -202,6 +202,12 @@ Primary: {
   EndSequence : [ genCountLogger ]
 }
 
+# RMC information
+RMCInfo : {
+    kmaxMeasured : 90.1 # Measured as 90.1 +- 1.8
+    kmaxEndpoint : 101.9 # Maximum photon kinematically allowed on aluminum
+}
+
 StopFilter : {
 
   filters : {

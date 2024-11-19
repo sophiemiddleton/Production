@@ -1,8 +1,6 @@
 #include "Production/JobConfig/primary/FlatePlus.fcl"
-source.firstRun: 501
-physics.filters.TargetStopResampler.fileNames : [
-  "/cvmfs/mu2e.opensciencegrid.org/DataFiles/Validation/sim.brownd.MuminusStops.MDC2020d.001202_00000000.art"
-]
+#include "Production/Tests/MuonStopConfig.fcl"
+
 physics.producers.generate.startMom : 80
 physics.producers.generate.endMom : 102
 physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: 0

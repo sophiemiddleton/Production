@@ -1,12 +1,5 @@
 #include "Production/JobConfig/primary/RMCInternal.fcl"
-source.firstRun: 501 #TODO
-physics.filters.TargetStopResampler.fileNames : [
-"/pnfs/mu2e/persistent/datasets/phy-sim/sim/mu2e/MuminusStopsCat/MDC2020p/art/6d/cf/sim.mu2e.MuminusStopsCat.MDC2020p.001201_00000000.art"]
-# NOTE: to use on the grid do samweb list-file-locations --schema=root --defname="sim.mu2e.MuminusStopsCat.MDC2020p.art" | cut -f1 and place that file name here
-
-physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: 0
-
+#include "Production/Tests/MuonStopConfig.fcl"
 
 physics.producers.generate.decayProducts.spectrum.makeHistograms : true
-physics.filters.GenFilter.makeplots : true
 services.TFileService.fileName: "nts.owner.RMCInternal.version.sequencer.root"

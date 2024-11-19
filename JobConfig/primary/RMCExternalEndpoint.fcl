@@ -4,6 +4,6 @@
 
 #include "Production/JobConfig/primary/RMCExternal.fcl"
 
-physics.producers.generate.decayProducts.spectrum.ehi      : 101.9
-physics.producers.generate.decayProducts.spectrum.kMaxUser : 101.9
+physics.producers.generate.decayProducts.spectrum.ehi      : @local::RMCInfo.kmaxEndpoint
+physics.producers.generate.decayProducts.spectrum.kMaxUser : @local::RMCInfo.kmaxEndpoint
 outputs.PrimaryOutput.fileName : "dts.owner.RMCExternalEndpoint.version.sequencer.art"
