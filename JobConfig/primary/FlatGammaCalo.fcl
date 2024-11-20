@@ -1,0 +1,16 @@
+#
+# generate and produce Detector Steps from flat photon spectrum using mu- target stops, aimed at the calorimeter
+#
+# original author: M. MacKenzie
+#
+#include "Production/JobConfig/primary/FlatGamma.fcl"
+physics.producers.generate.czMin    : 0.992
+physics.producers.generate.czMax    : 0.999
+physics.producers.generate.startMom : 50
+physics.producers.generate.endMom   : 110
+
+physics.filters.PrimaryFilter.MinimumPartMom : 1
+physics.filters.PrimaryFilter.MinimumSumCaloStepE : 50
+
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlatPhoton"
+outputs.PrimaryOutput.fileName: "dts.owner.FlatGammaCalo.version.sequencer.art"

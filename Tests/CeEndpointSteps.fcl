@@ -1,11 +1,6 @@
 #include "Production/JobConfig/primary/CeEndpoint.fcl"
-source.firstRun: 501
-physics.filters.TargetStopResampler.fileNames : [
-"/pnfs/mu2e/tape/phy-sim/sim/mu2e/MuminusStopsCat/MDC2020k/art/39/6a/sim.mu2e.MuminusStopsCat.MDC2020k.001201_00000000.art"]
-# NOTE: to use on the grid do samweb list-file-locations --schema=root --defname="sim.mu2e.MuminusStopsCat.MDC2020k.art" | cut -f1 and place that file name here
+#include "Production/Tests/MuonStopConfig.fcl"
 
-physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: 0
 outputs.Output.fileName : "dts.tester.CeEndpoint.Test.1.art"
-
 services.TFileService.fileName: "nts.owner.GenPlots.version.sequencer.root"
 

@@ -1,0 +1,2 @@
+#include "Production/JobConfig/primary/FlatGamma.fcl"
+#include "Production/Tests/MuonStopConfig.fcl"

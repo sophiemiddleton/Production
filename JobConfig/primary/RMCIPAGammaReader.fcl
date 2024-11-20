@@ -1,0 +1,19 @@
+#
+# RMC External photons, resampling events with a photon conversion in the IPA
+#
+
+#include "Production/JobConfig/primary/RMCGammaReader.fcl"
+
+physics.producers.generate.material: 6 # Assume carbon conversions, but the spectrum does not strongly depend on this
+
+# Update the mixing module inputs
+physics.filters.GammaConversionResampler.mu2e.products.simParticleMixer.mixingMap:[ ["IPAGammasFilter", ""] ]
+physics.filters.GammaConversionResampler.mu2e.products.stepPointMCMixer.mixingMap:[ ["IPAGammasFilter:virtualdetector", ""] ]
+physics.filters.GammaConversionResampler.mu2e.products.volumeInfoMixer.srInput: "compressIPAGammas"
+
+# Don't filter low energy conversions out as we want to reconstruct pairs
+physics.filters.GenFilter.filterEnergy : false
+physics.filters.GenFilter.emin : 0.
+physics.filters.PrimaryFilter.MinimumPartMom : 30. #less than half the minimum photon energy, at least one should pass this
+
+outputs.PrimaryOutput.fileName : "dts.owner.RMCIPAGammaReader.version.sequencer.art"
