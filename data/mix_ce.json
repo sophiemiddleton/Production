@@ -1,6 +1,7 @@
 {
-    "release_v_dts": ["r"],
-    "primary_name": ["NoPrimary", "CeplusEndpoint", "CeEndpoint"],
+    "release_v_dts": ["ak"],
+    "release_v_o": ["am"],
+    "primary_name": ["NoPrimary", "CeplusEndpoint", "CeEndpoint", "CeMLeadingLog"],
     "db_purpose": ["perfect", "best"],
     "digitype": ["Mix1BB", "Mix2BB"]
 }

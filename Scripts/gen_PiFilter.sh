@@ -109,9 +109,11 @@ parfile=$(ls cnf.*.tar)
 index_dataset=${parfile:4}
 # Remove .0.tar
 index_dataset=${index_dataset::-6}
-idx_format=$(printf "%07d" ${JOBS})
+
+idx=$(mu2ejobquery --njobs cnf.*.tar)
+idx_format=$(printf "%07d" $idx)
+echo $idx
 
 if [[ "$PROD" = true ]]; then
     source gen_IndexDef.sh
 fi
-
