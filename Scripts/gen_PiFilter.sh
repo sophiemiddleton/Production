@@ -117,4 +117,3 @@ echo $idx
 if [[ "$PROD" = true ]]; then
     source gen_IndexDef.sh
 fi
-
