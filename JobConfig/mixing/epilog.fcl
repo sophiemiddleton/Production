@@ -7,9 +7,9 @@ physics.filters.NeutralsFlashMixer.mu2e.simStageEfficiencyTags: ["NeutralsCat", 
 physics.filters.MuStopPileupMixer.mu2e.simStageEfficiencyTags: ["MuBeamCat", "MuminusStopsCat", "MuStopPileupCat"]
 physics.filters.MuStopPileupMixer.mu2e.meanEventsPerPOTFactors : [ @local::Pileup.MuminusTargetStopPrescale ]
 # adjust detstep lists to include pileup
-physics.producers.makeSD.StrawGasStepModules : [ compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
 physics.producers.compressDigiMCs.simParticleTags : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
-physics.producers.compressDigiMCs.caloShowerStepTags : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
-physics.producers.CaloShowerROMaker.caloShowerStepCollection : [compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
-physics.producers.CrvPhotons.crvStepModuleLabels : [ compressDetStepMCs, @sequence::Mixing.StepMixSequence ]
+physics.producers.makeSD.StrawGasStepModules : [ compressDetStepMCs, @sequence::Mixing.StepFilterSequence ]
+physics.producers.compressDigiMCs.caloShowerStepTags : [compressDetStepMCs, @sequence::Mixing.StepFilterSequence ]
+physics.producers.CaloShowerROMaker.caloShowerStepCollection : [compressDetStepMCs, @sequence::Mixing.StepFilterSequence ]
+physics.producers.CrvPhotons.crvStepModuleLabels : [ compressDetStepMCs, @sequence::Mixing.StepFilterSequence ]
 physics.producers.CrvPhotons.crvStepProcessNames : [ "","","","","" ]
