@@ -155,7 +155,7 @@ Reconstruction : {
     RecoFilter : {
       module_type   : RecoMomFilter
       KalFinalTagRoot : ""
-      TrkTags : [ "KKDe"
+      TrkTags : [ "KKDe",
             "KKUe",
             "KKDmu",
             "KKUmu", "KKLine","KKOffSpill"
