@@ -11,11 +11,11 @@ exit_abnormal() {
 }
 
 INRELEASE=MDC2020
-INVERSION=ai
+INVERSION=ak
 PRC=""
 TAG="" # MDS1a
 VERBOSE=1
-SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ai/setup.sh
+SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh
 
 
 # Loop: Get the next option;
@@ -58,7 +58,8 @@ RMUE=""
 COSMICTAG="MDC2020ae"
 CONFIG=${TAG}.txt
 OUTRELEASE="MDC2020"
-OUTVERSION="ai"
+OUTVERSION="am"
+DIOVERSION="ai"
 while IFS='= ' read -r col1 col2
 do 
     if [[ "${col1}" == "njobs" ]] ; then
@@ -89,10 +90,10 @@ rm *.tar
 
 echo "accessing files, making file lists"
 mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_CORSIKACosmic
-mu2eDatasetFileList "dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${INVERSION}.art"| head -${NJOBS} > filenames_DIO
+mu2eDatasetFileList "dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${DIOVERSION}.art"| head -${NJOBS} > filenames_DIO
 mu2eDatasetFileList "dts.mu2e.CeMLeadingLog.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_CeMLL
-mu2eDatasetFileList "dts.sophie.RPCInternal.${INRELEASE}aj.art" | head -${NJOBS} > filenames_RPCInternal
-#mu2eDatasetFileList "dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RPCExternal
+mu2eDatasetFileList "dts.mu2e.RPCInternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RPCInternal
+mu2eDatasetFileList "dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RPCExternal
 
 echo "making template fcl"
 make_template_fcl.py --BB=${BB} --release=${OUTRELEASE}${OUTVERSION}  --tag=${TAG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "CeMLL" "DIO" "CORSIKACosmic" "RPCInternal" "RPCExternal"
@@ -108,15 +109,15 @@ rm filenames_RPCExternal_${NJOBS}.txt
 
 echo "get NJOBS files and list"
 samweb list-files "dh.dataset=dts.mu2e.CosmicCORSIKASignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_CORSIKACosmic_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${INVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${DIOVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.CeMLeadingLog.${INRELEASE}${INVERSION}.art"  | head -${NJOBS}  >  filenames_CeMLL_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.sophie.RPCInternal.${INRELEASE}aj.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCInternal_${NJOBS}.txt
-#samweb list-files "dh.dataset=dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCExternal_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.RPCInternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCInternal_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCExternal_${NJOBS}.txt
 
 DSCONF=${OUTRELEASE}${OUTVERSION}
 
 echo "run mu2e jobdef"
-cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:CeMLL:filenames_CeMLL_${NJOBS}.txt --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CORSIKACosmic:filenames_CORSIKACosmic_${NJOBS}.txt --sampling=1:RPCInternal:filenames_RPCInternal_${NJOBS}.txt  --embed SamplingInput_sr0.fcl --verb " #--sampling=1:RPCExternal:filenames_RPCExternal_${NJOBS}.txt
+cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:CeMLL:filenames_CeMLL_${NJOBS}.txt --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CORSIKACosmic:filenames_CORSIKACosmic_${NJOBS}.txt --sampling=1:RPCInternal:filenames_RPCInternal_${NJOBS}.txt  --embed SamplingInput_sr0.fcl  --sampling=1:RPCExternal:filenames_RPCExternal_${NJOBS}.txt --verb "
 echo "Running: $cmd"
 $cmd
 parfile=$(ls cnf.*.tar)
@@ -134,7 +135,7 @@ echo "Created definiton: idx_${index_dataset}"
 samweb describe-definition idx_${index_dataset}
 
 echo "submit jobs"
-cmd="mu2ejobsub --jobdef cnf.sophie.ensemble${TAG}.${INRELEASE}${INVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --default-protocol ifdh --default-location tape"
+cmd="mu2ejobsub --jobdef cnf.sophie.ensemble${TAG}.${INRELEASE}${OUTVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --default-protocol ifdh --default-location tape"
 echo "Running: $cmd"
 $cmd
 

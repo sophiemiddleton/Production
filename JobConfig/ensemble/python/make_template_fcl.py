@@ -39,8 +39,8 @@ def main(args):
           "CeMLL": ce_normalization(livetime,rue, args.BB),
           "CRYCosmic": cry_onspill_normalization(livetime, args.BB),
           "CORSIKACosmic": corsika_onspill_normalization(livetime, args.BB),
-          "RPCInternal": rpc_normalization(livetime, args.tmin, 1, args.BB),
-          "ExternalRPC": rpc_normalization(livetime, args.tmin, 0, args.BB)
+          "RPCInternal": rpc_normalization(livetime, args.tmin, 1, 1.0, args.BB),
+          "RPCExternal": rpc_normalization(livetime, args.tmin, 0, 1.0, args.BB)
           }
 
   starting_event_num = {}
@@ -83,7 +83,6 @@ def main(args):
           fin = ROOT.TFile(fn)
           te = fin.Get("Events")
           if signal == "RPCInternal" or signal == "RPCExternal":
-                print("extracting weights")
                 bl = te.GetListOfBranches()
                 bn = ""
                 for i in range(bl.GetEntries()):

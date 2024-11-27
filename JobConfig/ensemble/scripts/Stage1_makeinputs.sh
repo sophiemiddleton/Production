@@ -20,7 +20,7 @@ TMIN=0
 TAG="MDS1a_test"
 STOPS="MDC2020p"
 RELEASE="MDC2020"
-VERSION="ai"
+VERSION="am"
 # Loop: Get the next option;
 while getopts ":-:" options; do
   case "${options}" in

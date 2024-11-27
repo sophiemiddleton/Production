@@ -14,7 +14,9 @@ dbtool.setArgs(args)
 dbtool.run()
 rr = dbtool.getResult()
 
-
+"""
+This first section focuses on muon stop backgrounds at the target: DIO and CE
+"""
 # get number of target muon stops:
 target_stopped_mu_per_POT = 1.0
 rate = 1.0
@@ -64,17 +66,6 @@ def livetime_to_pot(livetime, run_mode = '1BB',printout=False): #livetime in sec
         print ("NPOT=",NPOT)
     return NPOT
 
-# get number of ipa muon stops:
-ipa_stopped_mu_per_POT = 1.0
-rate = 1.0
-lines= rr.split("\n")
-for line in lines:
-    words = line.split(",")
-    if words[0] == "IPAStopsCat" or words[0] == "MuBeamCat" :
-        #print(f"Including {words[0]} with rate {words[3]}")
-        rate = rate * float(words[3])
-        ipa_stopped_mu_per_POT = rate
-#print(f"Final ipa stops rate {ipa_stopped_mu_per_POT}")
 
 # get CE normalization:
 def ce_normalization(livetime, rue, run_mode = '1BB'):
@@ -82,13 +73,6 @@ def ce_normalization(livetime, rue, run_mode = '1BB'):
     captures_per_stopped_muon = 0.609 # for Al
     #print(f"Expected CE's {POT * target_stopped_mu_per_POT * captures_per_stopped_muon * rue}")
     return POT * target_stopped_mu_per_POT * captures_per_stopped_muon * rue
-
-# get IPA Michel normalization:
-def ipaMichel_normalization(livetime):
-    POT = livetime_to_pot(livetime)
-    IPA_decays_per_stopped_muon = 0.92 # carbon....#TODO
-    #print(f"Expected IPA Michel e- {POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon}")
-    return POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon
 
 # get DIO normalization:
 def dio_normalization(livetime, emin, run_mode = '1BB'):
@@ -115,7 +99,10 @@ def dio_normalization(livetime, emin, run_mode = '1BB'):
     print("DIOfrac=",cut_norm/total_norm)
     return physics_events * cut_norm/total_norm
 
-
+"""
+The following section derives the cosmic yield for on spill/off spill for two specific generators (CRY/CORSIKA)
+The cosmics are normalized according to the livetime fraction which overlaps with beam (Depends on duty factor and BB mode)
+"""
 # note this returns CosmicLivetime not # of generated events
 def cry_onspill_normalization(livetime, run_mode = '1BB'):
     onspill_dutyfactor = 1.
@@ -163,7 +150,12 @@ def corsika_offspill_normalization(livetime, run_mode = '1BB'):
       offspill_dutyfactor = 0.246
     #print(f"cosmics live time {livetime*offspill_dutyfactor}")
     return livetime*offspill_dutyfactor
-    
+
+"""
+The next section is for the RPC background. There are two parts:
+* Establishing how many pions stop in the target
+* Establsihing how many RPC events are accepted in our time window 
+"""   
 """
 # get stopped rates from DB
 dbtool = DbService.DbTool()
@@ -193,33 +185,53 @@ for line in lines:
 """
 
 
-def rpc_normalization(livetime, tmin, internal, run_mode = '1BB'):
+def rpc_normalization(livetime, tmin, emin, internal, run_mode = '1BB'):
   POT = livetime_to_pot(livetime, run_mode)
   # hack: --> will come from new table eventually
-  npistops = 1287106
-  target_stopped_pi_per_POT =  0.01337 * 0.1670
-  time_eff = 83146/npistops
+  npistops = 1287106 # from above
+  target_stopped_pi_per_POT =  0.01337 * 0.1670 # from above
+  time_eff = 83146/npistops # from above
   
-  total_sum_of_weights = 1148
-  selected_sum_of_weights = 0.178864
+  total_sum_of_weights = 1148 # from filter - TODO
+  selected_sum_of_weights = 0.178864 # from filter - TODO
+  
+  spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/rpcspectrum.tbl")) #Bistrilich
+    energy = []
+    val = []
+    for line in spec:
+        energy.append(float(line.split()[0]))
+        val.append(float(line.split()[1]))
 
+    total_norm = 0
+    cut_norm = 0
+    for i in range(len(val)):
+        total_norm += val[i]
+        if energy[i] >= emin:
+            cut_norm += val[i]
+  rpcESampleFrac = cut_norm/total_norm
+  
   # constants
   RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
   internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
   # calculate survival probability for tmin including smearing of POT
   avg_survival_prob = total_sum_of_weights/npistops;
   if(internal == 1): 
-    print("pistoprate",target_stopped_pi_per_POT)
-    print("pitimeeff", time_eff)
-    print("pisurv", avg_survival_prob)
-    print("pitotalweight", total_sum_of_weights)
-  physics_events = POT * target_stopped_pi_per_POT * time_eff * RPC_per_stopped_pion * avg_survival_prob * selected_sum_of_weights/total_sum_of_weights
+    print("RPCsampleEFrac=",rpcESampleFrac
+    print("pistoprate=",target_stopped_pi_per_POT)
+    print("pitimeeff=", time_eff)
+    print("pisurv=", avg_survival_prob)
+    print("pitotalweight=", total_sum_of_weights)
+  physics_events = POT * target_stopped_pi_per_POT * time_eff * RPC_per_stopped_pion * avg_survival_prob * rpcESampleFrac * selected_sum_of_weights/total_sum_of_weights
 
   if int(internal) == 1:
     physics_events *= internalRPC_per_RPC;
   return physics_events
 
-def rmc_normalization(livetime, emin, kmax,internal, run_mode = '1BB'):
+"""
+The next section is for the RMC background. There
+
+"""
+def rmc_normalization(livetime, internal, emin = 85, kmax = 90.1, run_mode = '1BB'):
   POT = livetime_to_pot(livetime, run_mode)
   energy = []
   val = []
@@ -239,23 +251,51 @@ def rmc_normalization(livetime, emin, kmax,internal, run_mode = '1BB'):
       cut_norm += val[i]
 
   captures_per_stopped_muon = 0.609 # from AL capture studies
-  RMC_gt_57_per_capture = 1.43e-5 # from literature (to overall captures)
-  internalRPC_per_RPC = 0.00690; # just copy RPC value
+  RMC_gt_57_per_capture = 1.43e-5 # from Phys. Rev. C 59, 2853 (1999).
+  internal_per_RMC = 0.00690; # just copy RPC value
 
   physics_events = POT * stopped_mu_per_POT * captures_per_stopped_muon * RMC_gt_57_per_capture
-  gen_events = physics_events * cut_norm/total_norm
+  physics_events *= cut_norm/total_norm
 
   if internal:
-    physics_events *= internalRPC_per_RPC;
-    gen_events *= internalRPC_per_RPC;
+    physics_events *= internal_per_RMC;
+  return physics_events
 
-  return gen_events
-  
+"""
+The next set of code is for the IPA michel electron contribution. There are two parts to normalizing this:
+* extract the stopped muon rate at the IPA (from SimEff table)
+* calculate the amount of IPA Michel produced once stopped: factor in the energy sampled in the generator and the expected decay BR for the IPA material.
+
+"""
+# get number of ipa muon stops:
+ipa_stopped_mu_per_POT = 1.0
+rate = 1.0
+lines= rr.split("\n")
+for line in lines:
+    words = line.split(",")
+    if words[0] == "IPAStopsCat" or words[0] == "MuBeamCat" :
+        #print(f"Including {words[0]} with rate {words[3]}")
+        rate = rate * float(words[3])
+        ipa_stopped_mu_per_POT = rate
+        print("IPAStopMuonRate=", rate)
+#print(f"Final ipa stops rate {ipa_stopped_mu_per_POT}")
+
+# get IPA Michel normalization:
+def ipaMichel_normalization(livetime):
+    POT = livetime_to_pot(livetime)
+    IPA_decays_per_stopped_muon = 0.86 # carbon....#TODO
+    fraction_sampled = 1 #TODO
+    #print(f"Expected IPA Michel e- {POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon}")
+    nIPA = POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon * fraction_sampled
+    print("nIPAMichecl=",nIPA)
+    return nIPA
+
+
 def pot_to_livetime(pot):
     return pot / POT_per_second
 
 if __name__ == '__main__':
   tst_1BB = livetime_to_pot(9.52e6)
   tst_2BB = livetime_to_pot(1.58e6)
-  tst_rpc = rpc_normalization(3.77e19,350,1)
+  tst_rpc = rpc_normalization(3.77e19,350,1.22,1)
   print("SU2020", tst_1BB, tst_2BB)
