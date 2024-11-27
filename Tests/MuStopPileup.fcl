@@ -3,5 +3,5 @@
 
 services.SeedService.baseSeed : @local::Common.BaseSeed
 services.TFileService.fileName: "nts.owner.MuStopPileup.version.sequencer.root"
-physics.producers.generate.captureProducts[4].spectrum.makeHistograms: true #Turn on RMC histogramming
+physics.producers.generate.captureProducts[4].makeHistograms: true #Turn on RMC histogramming
 

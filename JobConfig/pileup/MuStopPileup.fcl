@@ -61,11 +61,10 @@ physics : {
 	    ehi               : 90.1
 	    kMaxUser          : 90.1
 	    kMaxUserSet       : true
-	    external          : true
 	    spectrumShape     : "RMC"
 	    spectrumResolution: 0.1
-	    useRate           : true
           }
+	  mode     : "physical"
           tool_type: "RMCGenerator"
         }
       ]
