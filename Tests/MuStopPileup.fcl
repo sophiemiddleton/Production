@@ -1,0 +1,7 @@
+#include "Production/JobConfig/pileup/MuStopPileup.fcl"
+#include "Production/Tests/MuonStopConfig.fcl"
+
+services.SeedService.baseSeed : @local::Common.BaseSeed
+services.TFileService.fileName: "nts.owner.MuStopPileup.version.sequencer.root"
+physics.producers.generate.captureProducts[4].makeHistograms: true #Turn on RMC histogramming
+

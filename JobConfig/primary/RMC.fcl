@@ -16,10 +16,10 @@ physics.producers.generate : {
       ehi               : @local::RMCInfo.kmaxMeasured
       kMaxUserSet       : true
       kMaxUser          : @local::RMCInfo.kmaxMeasured
-      external          : true
       spectrumShape     : "RMC"
       spectrumResolution: 0.1
     }
+    mode : @nil #Options are "external" "internal" or "physical"
   }
   verbosity : 0
 }
