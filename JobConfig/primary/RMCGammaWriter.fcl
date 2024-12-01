@@ -150,5 +150,5 @@ physics.end_paths : [ EndPath ]
 #------------------------------------------------------------------------
 # Generation configuration
 
-physics.producers.generate.decayProducts.spectrum.external : true
+physics.producers.generate.decayProducts.mode : "external"
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eExternalRMC"
