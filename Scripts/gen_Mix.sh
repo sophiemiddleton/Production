@@ -251,7 +251,10 @@ if [ "${PRIMARY}" == "NoPrimary" ]; then
   echo '#include "Production/JobConfig/mixing/NoPrimary.fcl"' >> mix.fcl
 fi
 # Override dts filters conditioned on primary
-echo "#include \"Production/JobConfig/mixing/filters/${PRIMARY}.fcl\"" >> mix.fcl
+filter="Production/JobConfig/mixing/filters/${PRIMARY}.fcl"
+if test -f "${PRODUCTION_INC}/${filter}"; then
+  echo "#include \"${filter}\"" >> mix.fcl
+fi
 
 # set the skips
 echo physics.filters.MuBeamFlashMixer.mu2e.MaxEventsToSkip: ${nskip_MuBeamFlash} >> mix.fcl
