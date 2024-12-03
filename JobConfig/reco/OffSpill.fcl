@@ -2,5 +2,21 @@
 # Reconstruct from digis using straight line tracks
 #
 #include "Production/JobConfig/reco/Reco.fcl"
-#
-physics.RecoPath : [ @sequence::Reconstruction.OffSpillRecoMCPath ]
+
+physics.CHPath : [ @sequence::Reconstruction.OffSpillCentralHelixRecoMCPath ]
+physics.LHPath : [ @sequence::Reconstruction.OffSpillLoopHelixRecoMCPath ]
+
+physics.trigger_paths : [ CHPath, LHPath ]
+
+outputs: {
+  CentralHelixOutput : {
+    @table::Reconstruction.Output
+    SelectEvents : [ "CHPath" ]
+  }
+  LoopHelixOutput : {
+    @table::Reconstruction.Output
+    SelectEvents : [ "LHPath" ]
+  }
+}
+
+physics.EndPath : [ @sequence::Reconstruction.EndSequence, CentralHelixOutput, LoopHelixOutput]
