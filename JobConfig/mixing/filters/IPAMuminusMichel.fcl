@@ -3,5 +3,6 @@ physics.producers.MuStopPileupFilter.selection: {
   tool_type: ProcessVolumeDetectorStepAntiSelectionTool
   processes: [ "DIO" ]
   volumes: [ "protonabs1" ]
-  momentum_threshold: 1.0
+  minimum_energy: 1.0
+  maximum_energy: 110.0
 }
