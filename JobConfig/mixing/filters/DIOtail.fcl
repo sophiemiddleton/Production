@@ -1,0 +1,8 @@
+# remove steps descendant from stopping target DIOs generated in Mu2e code
+physics.producers.MuStopPileupFilter.selection: {
+  tool_type: ProcessVolumeDetectorStepAntiSelectionTool
+  processes: [ "mu2eMuonDecayAtRest" ]
+  volumes: [ @sequence::Mixing.StoppingTargetFoilVolumes ]
+  minimum_energy: 100.00
+  maximum_energy: 104.97
+}
