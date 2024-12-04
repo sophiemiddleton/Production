@@ -29,104 +29,56 @@ Reconstruction : {
 
     # instantiate explicit helix merger modules
     # NB: positive here refers to helicity, not charge!
-    MHDeM : {
+    MHDe : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderDe:Positive", "CalHelixFinderDe:Positive" ]
+      HelixFinders : [ "HelixFinderDe", "CalHelixFinderDe" ]
     }
-    MHDeP : {
+    MHDmu : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderDe:Negative", "CalHelixFinderDe:Negative" ]
-    }
-    MHDmuM : {
-      @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderDmu:Positive" , "CalHelixFinderDmu:Positive" ]
-    }
-    MHDmuP : {
-      @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderDmu:Negative", "CalHelixFinderDmu:Negative" ]
+      HelixFinders : [ "HelixFinderDmu" , "CalHelixFinderDmu" ]
     }
     # run helix merging on upstream, even though there is only one input collection,
     # as the merging also suppresses duplicates
-    MHUeM : {
+    MHUe : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderUe:Negative" ]
+      HelixFinders : [ "HelixFinderUe" ]
     }
-    MHUeP : {
+    MHUmu : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderUe:Positive" ]
-    }
-    MHUmuM : {
-      @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderUmu:Negative" ]
-    }
-    MHUmuP : {
-      @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderUmu:Positive" ]
+      HelixFinders : [ "HelixFinderUmu" ]
     }
     # KinKal fits
 
-    KKDeM : {
-      @table::Mu2eKinKal.producers.KKDeM
+    KKDe : {
+      @table::Mu2eKinKal.producers.KKDe
       ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKDeM.ModuleSettings
+        @table::Mu2eKinKal.producers.KKDe.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        HelixSeedCollections : [ "MHDeM" ]
+        HelixSeedCollections : [ "MHDe" ]
       }
     }
-    KKDeP : {
-      @table::Mu2eKinKal.producers.KKDeP
+    KKUe : {
+      @table::Mu2eKinKal.producers.KKUe
       ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKDeP.ModuleSettings
+        @table::Mu2eKinKal.producers.KKDe.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        HelixSeedCollections : [ "MHDeP" ]
+        HelixSeedCollections : [ "MHUe" ]
       }
     }
-    KKUeM : {
-      @table::Mu2eKinKal.producers.KKUeM
+    KKDmu : {
+      @table::Mu2eKinKal.producers.KKDmu
       ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKDeM.ModuleSettings
+        @table::Mu2eKinKal.producers.KKDmu.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        HelixSeedCollections : [ "MHUeM" ]
+        HelixSeedCollections : [ "MHDmu" ]
       }
     }
-    KKUeP : {
-      @table::Mu2eKinKal.producers.KKUeP
+    KKUmu : {
+      @table::Mu2eKinKal.producers.KKUmu
       ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKDeP.ModuleSettings
+        @table::Mu2eKinKal.producers.KKDmu.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
-        HelixSeedCollections : [ "MHUeP" ]
-      }
-    }
-    KKDmuM : {
-      @table::Mu2eKinKal.producers.KKDmuM
-      ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKDmuM.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
-        HelixSeedCollections : [ "MHDmuM" ]
-      }
-    }
-    KKDmuP : {
-      @table::Mu2eKinKal.producers.KKDmuP
-      ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKDmuP.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
-        HelixSeedCollections : [ "MHDmuP" ]
-      }
-    }
-    KKUmuM : {
-      @table::Mu2eKinKal.producers.KKUmuM
-      ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKDmuM.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
-        HelixSeedCollections : [ "MHUmuM" ]
-      }
-    }
-    KKUmuP : {
-      @table::Mu2eKinKal.producers.KKUmuP
-      ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKDmuP.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
-        HelixSeedCollections : [ "MHUmuP" ]
+        HelixSeedCollections : [ "MHUmu" ]
       }
     }
     KKLine : {
@@ -166,11 +118,11 @@ Reconstruction : {
       StrawDigiMCCollection : "compressDigiMCs"
       CrvDigiMCCollection : "compressDigiMCs"
       KalSeedCollections  : [
-        "KKDeM", "KKDeP", "KKDmuM", "KKDmuP",
-        "KKUeM", "KKUeP", "KKUmuM", "KKUmuP",
-        "KKLine","KKOffSpill"]
-      HelixSeedCollections  : ["MHDeM", "MHDeP", "MHDmuM", "MHDmuP",
-        "MHUeM", "MHUeP", "MHUmuM", "MHUmuP" ]
+            "KKDe", "KKDmu",
+            "KKUe", "KKUmu",
+            "KKLine","KKOffSpill"]
+      HelixSeedCollections  : ["MHDe", "MHDmu",
+            "MHUe", "MHUmu" ]
       VDSPCollection : "compressDigiMCs:virtualdetector"
     }
     # Compresion
@@ -203,16 +155,16 @@ Reconstruction : {
     RecoFilter : {
       module_type   : RecoMomFilter
       KalFinalTagRoot : ""
-      TrkTags : [ "KKDeM", "KKDeP",
-        "KKUeM", "KKUeP",
-        "KKDmuM", "KKDmuP",
-        "KKUmuM", "KKUmuP","KKLine","KKOffSpill"
+      TrkTags : [ "KKDe",
+            "KKUe",
+            "KKDmu",
+            "KKUmu", "KKLine","KKOffSpill"
       ]
       # // set low cutoffs
-      MomentumCutoff : [ 60.0, 60.0,
-        60.0, 60.0,
-        60.0, 60.0,
-        60.0, 60.0, 60.0, 60.0 ]
+      MomentumCutoff : [ 60.0,
+        60.0,
+        60.0,
+        60.0, 60.0 , 60.0 ]
     }
   }
 
@@ -222,29 +174,29 @@ Reconstruction : {
   # reconstruct multiple types of tracks.  These are separate sequences to allow granular execution
   # Downstream electron sequence (plus and minus), using merged helices
   DeReco : [
-    TimeClusterFinderDe, HelixFinderDe,  # TrkPatRec
+    TimeClusterFinderDe, HelixFinderDe,   # TrkPatRec
     CalTimePeakFinder, CalHelixFinderDe,  # CalPatRec
-    MHDeM, MHDeP, # helix merging
-    KKDeM, KKDeP # KinKal drift fits
+    MHDe, # helix merging
+    KKDe  # KinKal drift fits
   ]
   # Upstream electron sequence (plus and minus): TrkPatRec only
   UeReco : [
     TimeClusterFinderUe, HelixFinderUe,
-    MHUeM, MHUeP, # helix merging
-    KKUeM, KKUeP # KinKal drift fits
+    MHUe, # helix merging
+    KKUe  # KinKal drift fits
   ]
   # Downstream muon sequence (plus and minus)
   DmuReco : [
     TimeClusterFinderDmu, HelixFinderDmu,  # TrkPatRec
     CalTimePeakFinderMu, CalHelixFinderDmu,  # CalPatRec
-    MHDmuM, MHDmuP, # helix merging
-    KKDmuM, KKDmuP # KinKal drift fits
+    MHDmu, # helix merging
+    KKDmu  # KinKal drift fits
   ]
   # Upstream muon sequence (plus and minus)
   UmuReco : [
     TimeClusterFinderUmu, HelixFinderUmu,
-    MHUmuM, MHUmuP, # helix merging
-    KKUmuM, KKUmuP # KinKal drift fits
+    MHUmu, # helix merging
+    KKUmu  # KinKal drift fits
   ]
   # NoField straight line
   LineReco : [

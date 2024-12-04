@@ -31,12 +31,10 @@ physics.producers.TimeClusterFinderUmu.Ymin : 1e7
 # primary finding
 physics.producers.FindMCPrimary.SinglePrimary : true
 # TPR downstream electrons only for now
-physics.producers.MHDeM.HelixFinders : ["HelixFinderDe:Positive"]
-physics.producers.MHDeP.HelixFinders : []
-physics.producers.MHDmuM.HelixFinders : []
-physics.producers.MHDmuP.HelixFinders : []
+physics.producers.MHDe.HelixFinders : ["HelixFinderDe"]
+physics.producers.MHDmu.HelixFinders : []
 # output filter update
-physics.filters.RecoFilter.TrkTags : [ "KKDeM" ]
+physics.filters.RecoFilter.TrkTags : [ "KKDe" ]
 physics.filters.RecoFilter.MomentumCutoff : [1.0]
 
 services.scheduler.wantSummary: true
