@@ -20,3 +20,10 @@ outputs: {
 }
 
 physics.EndPath : [ @sequence::Reconstruction.EndSequence, CentralHelixOutput, LoopHelixOutput]
+
+physics.producers.makeSH.MinimumTime : 0.0
+physics.producers.makeSH.MaximumTime : 100.0e3
+physics.producers.makeSH.MinimumRadius : 0.0
+physics.producers.makeSH.MaximumRadius : 800.0
+physics.producers.makePH.MinimumTime : 0.0
+physics.producers.makePH.MaximumTime : 100.0e3
