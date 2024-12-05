@@ -54,6 +54,18 @@ physics : {
             spectrumShape: "flat"
           }
           tool_type: "MuCapPhotonGenerator"
+        },
+	{
+          spectrum: {
+	    elow              :  0.0
+	    ehi               : 90.1
+	    kMaxUser          : 90.1
+	    kMaxUserSet       : true
+	    spectrumShape     : "RMC"
+	    spectrumResolution: 0.1
+          }
+	  mode     : "physical"
+          tool_type: "RMCGenerator"
         }
       ]
       decayProducts: [

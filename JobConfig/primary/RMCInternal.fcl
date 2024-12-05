@@ -3,7 +3,7 @@
 #
 
 #include "Production/JobConfig/primary/RMC.fcl"
-physics.producers.generate.decayProducts.spectrum.external : false
+physics.producers.generate.decayProducts.mode : "internal"
 
 # Filter low energy internal conversions out
 physics.filters.GenFilter.filterEnergy : true
