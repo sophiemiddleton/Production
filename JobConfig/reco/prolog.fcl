@@ -189,7 +189,7 @@ Reconstruction : {
   # Downstream muon sequence (plus and minus)
   DmuReco : [
     TZClusterFinder, AgnosticHelixFinder,    # AgnosticPatRec
-    CalTimePeakFinderMu, CalHelixFinderDmu,  # CalPatRec
+    CalTimePeakFinderDmu, CalHelixFinderDmu,  # CalPatRec
     MHDmu, # helix merging
     KKDmu  # KinKal drift fits
   ]
