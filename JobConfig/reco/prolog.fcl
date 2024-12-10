@@ -89,10 +89,10 @@ Reconstruction : {
         CosmicTrackSeedCollections : ["LineFinder"]
       }
     }
-    KKOffSpill : {
-      @table::Mu2eKinKal.producers.KKOffSpill
+    KKCentralHelix : {
+      @table::Mu2eKinKal.producers.KKCentralHelix
       ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKOffSpill.ModuleSettings
+        @table::Mu2eKinKal.producers.KKCentralHelix.ModuleSettings
         @table::Mu2eKinKal.KKPrecursors
         CosmicTrackSeedCollections : ["LineFinder"]
       }
@@ -120,7 +120,7 @@ Reconstruction : {
       KalSeedCollections  : [
             "KKDe", "KKDmu",
             "KKUe", "KKUmu",
-            "KKLine","KKOffSpill"]
+            "KKLine","KKCentralHelix"]
       HelixSeedCollections  : ["MHDe", "MHDmu",
             "MHUe", "MHUmu" ]
       VDSPCollection : "compressDigiMCs:virtualdetector"
@@ -155,16 +155,23 @@ Reconstruction : {
     RecoFilter : {
       module_type   : RecoMomFilter
       KalFinalTagRoot : ""
-      TrkTags : [ "KKDe",
-            "KKUe",
-            "KKDmu",
-            "KKUmu", "KKLine","KKOffSpill"
-      ]
+      TrkTags : [ "KKDe", "KKUe", "KKDmu", "KKUmu", "KKLine", "KKCentralHelix" ]
       # // set low cutoffs
-      MomentumCutoff : [ 60.0,
-        60.0,
-        60.0,
-        60.0, 60.0 , 60.0 ]
+      MomentumCutoff : [ 60.0, 60.0, 60.0, 60.0, 60.0 , 60.0 ]
+    }
+    RecoFilterCH : {
+      module_type   : RecoMomFilter
+      KalFinalTagRoot : ""
+      TrkTags : [ "KKCentralHelix" ]
+      # // set low cutoffs
+      MomentumCutoff : [ 60.0 ]
+    }
+    RecoFilterLH : {
+      module_type   : RecoMomFilter
+      KalFinalTagRoot : ""
+      TrkTags : [ "KKDe", "KKUe", "KKDmu", "KKUmu" ]
+      # // set low cutoffs
+      MomentumCutoff : [ 50.0, 50.0, 50.0, 50.0 ]
     }
   }
 
@@ -202,9 +209,9 @@ Reconstruction : {
   LineReco : [
     SimpleTimeCluster, LineFinder, KKLine
   ]
-  # OffSpill
-  OffSpillReco : [
-    SimpleTimeCluster, LineFinder, KKOffSpill
+  # Central helix
+  CentralHelixReco : [
+    SimpleTimeCluster, LineFinder, KKCentralHelix
   ]
 
   # add protons for calibration TODO!
@@ -305,18 +312,29 @@ Reconstruction.LineRecoMCPath : [
   @sequence::Reconstruction.MCReco,
   RecoFilter
 ]
-# OffSpill reco path
+# OffSpill reco paths
 Reconstruction.OffSpillRecoPath : [
   @sequence::Reconstruction.CaloReco,
   @sequence::Reconstruction.TrkReco,
   @sequence::Reconstruction.CrvReco,
-  @sequence::Reconstruction.OffSpillReco
+  @sequence::Reconstruction.CentralHelixReco,
+  @sequence::Reconstruction.TrackReco
 ]
 # OffSpill reco path with MC
 Reconstruction.OffSpillRecoMCPath : [
   @sequence::Reconstruction.OffSpillRecoPath,
-  @sequence::Reconstruction.MCReco,
-  RecoFilter
+  @sequence::Reconstruction.MCReco
+]
+
+Reconstruction.OffSpillCentralHelixRecoMCPath : [
+  @sequence::Reconstruction.OffSpillRecoMCPath,
+  RecoFilterCH
+]
+Reconstruction.OffSpillLoopHelixRecoMCPath : [
+  @sequence::Reconstruction.OffSpillRecoMCPath,
+  RecoFilterLH
+]
+Reconstruction.OffSpillCaloOnlyRecoMCPath : [
 ]
 
 # default output
