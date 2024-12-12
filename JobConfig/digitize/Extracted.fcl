@@ -1,7 +1,7 @@
 # configure Extracted digitization
 # first, trigger filtesr and paths
-#include "mu2e_trig_config/gen/trig_extrPosMenuPSConfig_OffSpill.fcl"
-#include "mu2e_trig_config/gen/trig_extrPosMenu_OffSpill.fcl"
+#include "mu2e_trig_config/gen/trig_extrPosMenuPSConfig.fcl"
+#include "mu2e_trig_config/gen/trig_extrPosMenu.fcl"
 # then generic digitization
 #include "Production/JobConfig/digitize/Digitize.fcl"
 # set OffSpill timing

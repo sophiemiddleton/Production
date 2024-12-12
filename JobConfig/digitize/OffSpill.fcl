@@ -1,25 +1,17 @@
-# configure OffSpill digitization
-# first, trigger filtesr and paths
-#include "mu2e_trig_config/gen/trig_physMenuPSConfig_OffSpill.fcl"
-#include "mu2e_trig_config/gen/trig_physMenu_OffSpill.fcl"
-# then generic digitization
-#include "Production/JobConfig/digitize/Digitize.fcl"
-# set OffSpill timing
-#include "Production/JobConfig/digitize/OffSpill_epilog.fcl"
-# add trigger filters
-physics.filters : { @table::physics.filters @table::Trig_physMenuPSConfig }
-# add the trigger paths
-physics.trigger_paths : [ @sequence::Digitize.trigger_paths, @sequence::Trig_physMenu.trigger_paths]
-# configure 'Triggered' output to be signal plus calibration triggers
+#include "Production/JobConfig/digitize/Spill.fcl"
+
+# set the spill type
+physics.producers.EWMProducer.SpillType : 0
+# configure 'Triggered' output to be signal
+# FIXME, should match OnSpill?
 outputs.TriggeredOutput.SelectEvents : [
   @sequence::Digitize.SignalTriggers,
   @sequence::Digitize.TrkTriggers,
   @sequence::Digitize.CaloTriggers ]
+
 physics.filters.TriggerablePrescale.prescaleFactor : 10 # reduce untriggered
-# override prescales to avoid saturating the Triggered stream with straight tracks and calo clusters.
-# It's not clear how to adapt this to the external trigconfig TODO
-physics.filters.cstTimeClusterEventPrescale.nPrescale: 1000
-physics.filters.cstEventPrescale.nPrescale: 1000
-physics.filters.caloFastCosmicEventPrescale.nPrescale: 1000
-physics.filters.caloFastMVANNCEEventPrescale.nPrescale: 1000
-physics.filters.caloFastPhotonEventPrescale.nPrescale: 1000
+# Temporarily turn off Crv noise
+physics.producers.CrvSiPMCharges.ThermalRate : 0
+# same for calorimeter
+physics.producers.CaloDigiMaker.addNoise : false
+
