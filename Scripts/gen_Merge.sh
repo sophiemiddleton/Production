@@ -9,7 +9,6 @@ SETUP_FILE=""
 DESC=""
 DS_CONF=""
 DS_OWNER=""
-PROD=false
 
 # Function: Print usage message
 usage() {
@@ -96,7 +95,8 @@ index_dataset=${parfile:4}
 # Remove .0.tar
 index_dataset=${index_dataset::-6}
 
-if [[ "$PROD" = true ]]; then
+if [[ "$PROD" == "true" ]]; then
+    echo "Prod is set. Executing gen_IndexDef.sh"
     source gen_IndexDef.sh
 fi
 
