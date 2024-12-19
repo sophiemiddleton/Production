@@ -75,6 +75,19 @@ Digitize: {
       prescaleFactor : 1 # by default, don't prescale
       prescaleOffset : 0
     }
+     TriggerableCH : {
+      module_type : StrawDigiMCFilter
+      MinNDigis : 15
+      MinParticleMom : 500.0
+      MaxParticleMom : 1e10
+      StrawDigiMCCollection : compressDigiMCs
+      particleTypes : [ 11,-11, 13, -13] # e+-, mu+-
+    }
+    TriggerableCHPrescale : {
+      module_type : Prescaler
+      prescaleFactor : 0 # by default, disable this path
+      prescaleOffset : 0
+    }
     @table::TrigFilters.filters
   }
 
@@ -92,6 +105,8 @@ Digitize: {
 
   TriggerableSequence : [
     TriggerablePrescale, Triggerable ]
+  TriggerableCHSequence : [
+    TriggerableCHPrescale, TriggerableCH ]
 
   TriggerProducts : [
     "keep art::TriggerResults_*_*_*",
@@ -131,7 +146,7 @@ Digitize: {
   #
   TriggerableOutput : {
     module_type : RootOutput
-    SelectEvents : [ "TriggerablePath" ] # require events pass 'Triggerable' filter
+    SelectEvents : [ "TriggerablePath", "TriggerableCHPath" ] # require events pass 'Triggerable' filter
     fileName    : @nil
   }
   #
@@ -168,7 +183,7 @@ Digitize.Outputs : {
   TriggerableOutput : @local::Digitize.TriggerableOutput
 }
 # give paths specific numbers outside trigger path range
-Digitize.trigger_paths : ["0:DigitizePath", "1:TriggerablePath" ]
+Digitize.trigger_paths : ["0:DigitizePath", "1:TriggerablePath", "2:TriggerableCHPath" ]
 Digitize.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, TriggerableOutput ]
 
 END_PROLOG

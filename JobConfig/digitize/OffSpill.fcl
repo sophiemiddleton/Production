@@ -15,3 +15,5 @@ physics.producers.CrvSiPMCharges.ThermalRate : 0
 # same for calorimeter
 physics.producers.CaloDigiMaker.addNoise : false
 
+# enable centralhelix triggerable
+physics.filters.TriggerableCHPrescale.prescaleFactor : 10
