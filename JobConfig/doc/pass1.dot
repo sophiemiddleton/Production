@@ -1,0 +1,159 @@
+digraph diagram {
+    // primary inputs, from DAQ
+    OffspillFragments
+        [
+         label = "Offspill Fragments",
+         shape = box
+        ];
+    OnspillFragments
+        [
+         label = "Onspill Fragments",
+         shape = box
+        ];
+
+    // temporary on-disk samples
+    //  - ephemeral collections, e.g. salt
+    //  - accumulating collections, e.g. reconstructed signal-likes
+    OnspillDigis
+        [
+         label = "OnspillDigis",
+         shape = box
+        ];
+    SaltTracks
+        [
+         label = "Candidate salt tracks",
+         shape = box
+        ];
+    SaltEvents
+        [
+         label = "Candidate salt events",
+         shape = box
+        ];
+    OffspillTrackerCalib
+        [
+         label = "Offspill tracker calib.",
+         shape = box
+        ];
+    OffspillCaloCalib
+        [
+         label = "Offspill calo. calib.",
+         shape = box
+        ];
+    OnspillTrackerCalib
+        [
+         label = "Onspill tracker calib.",
+         shape = box
+        ];
+    OnspillCaloCalib
+        [
+         label = "Onspill calo. calib.",
+         shape = box
+        ];
+    HighPNegative
+        [
+         label = "High-momentum electron-likes",
+         shape = box
+        ];
+    HighPPositive
+        [
+         label = "High-momentum positron-likes",
+         shape = box
+        ];
+    MultiTrack
+        [
+         label = "Multitrack signal-like",
+         shape = box
+        ];
+
+    // TODO
+    // monitoring / calibration plots and database
+
+    // tape-backed storage
+    MinimumBiasEvents
+        [
+         label = "Minimum bias sample",
+         shape = box
+        ];
+    TrackerCalibSample
+        [
+         label = "Reco for tracker calib.",
+         shape = box
+        ];
+    CaloCalibSample
+        [
+         label = "Reco for calo. calib.",
+         shape = box
+        ];
+    NominalDigis
+        [
+         label = "Nominal digis"
+         shape = box
+        ];
+
+    // online high-level processing blocks
+    OffspillTrigger
+        [
+         label = "Offspill coarse reco."
+         shape = oval
+        ];
+    OnspillTrigger
+        [
+         label = "Onspill coarse reco. and trigger"
+         shape = oval
+        ];
+
+    // offline high-level processing blocks
+    CalibrationAccumulators
+        [
+         label = "Calibration accumulators",
+         shape = oval
+        ];
+    SaltOverlay
+        [
+         label = "Salt overlay",
+         shape = oval
+        ];
+    NominalPhysics
+        [
+         label = "Pass-1 Physics",
+         shape = oval
+        ];
+
+    // TODO
+    // calibration processors and preprocessors
+
+    // dependencies
+    OffspillFragments -> OffspillTrigger;
+    OnspillFragments  -> OnspillTrigger;
+
+    // ejc: no offspill ``physics'' sample here?
+    OffspillTrigger -> SaltTracks;
+    OffspillTrigger -> OffspillTrackerCalib;
+    OffspillTrigger -> OffspillCaloCalib;
+
+    OnspillTrigger -> OnspillDigis;
+    OnspillTrigger -> MinimumBiasEvents;
+    OnspillTrigger -> OnspillTrackerCalib;
+    OnspillTrigger -> OnspillCaloCalib;
+
+    OffspillTrackerCalib    -> CalibrationAccumulators;
+    OffspillCaloCalib       -> CalibrationAccumulators;
+    OnspillTrackerCalib     -> CalibrationAccumulators;
+    OnspillCaloCalib        -> CalibrationAccumulators;
+    CalibrationAccumulators -> TrackerCalibSample;
+    CalibrationAccumulators -> CaloCalibSample;
+
+    SaltTracks        -> SaltOverlay;
+    MinimumBiasEvents -> SaltOverlay;
+    SaltOverlay       -> SaltEvents;
+
+    OnspillDigis       -> NominalPhysics;
+    SaltEvents         -> NominalPhysics;
+    TrackerCalibSample -> NominalPhysics;
+    CaloCalibSample    -> NominalPhysics;
+
+    NominalPhysics -> NominalDigis;
+    NominalPhysics -> HighPNegative;
+    NominalPhysics -> HighPPositive;
+    NominalPhysics -> MultiTrack;
+}
