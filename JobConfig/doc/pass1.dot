@@ -26,6 +26,7 @@ digraph diagram {
       label="Data Format";
       fontsize=16;
       raw [shape=parallelogram, label = "Fragment" ];
+      digi [shape=pentagon, lable = "Reco" ];
       reco [shape=box, lable = "Reco" ];
       tuple [shape=hexagon, lable = "Tuple" ];
       other [shape=trapezium, lable = "Other" ];
@@ -64,7 +65,7 @@ digraph diagram {
           shape = box,
           color="fuchsia"
     ];
-  OffSpillPhysics
+  OffSpillPhysis
     [
     label = "OffSpill Physics",
           shape = box,
@@ -76,60 +77,67 @@ digraph diagram {
           shape = box,
           color="fuchsia"
     ];
-  SaltEvents
-    [
+  SaltEvents [
     label = "Salt events",
           shape = box,
           color="fuchsia"
     ];
-  OffSpillTrackerCalib
-    [
+  OffSpillTrackerCalib [
     label = "OffSpill Tracker",
           shape = box,
           color="blue"
     ];
-  OffSpillCaloCalib
-    [
+  OffSpillCaloCalib [
     label = "OffSpill calo.",
           shape = box,
           color="blue"
     ];
-  OnSpillTrackerCalib
-    [
+  OnSpillTrackerCalib [
     label = "OnSpill tracker",
           shape = box,
           color="blue"
     ];
-  OnSpillCaloCalib
-    [
+  OnSpillCaloCalib [
     label = "OnSpill Calo.",
           shape = box,
           color="blue"
     ];
-  OnSpillNZS
-    [
+  OnSpillNZS [
     label = "OnSpill NZS",
-          shape=parallelogram,
+          shape=pentagon,
+          color="cyan"
     ];
-  OffSpillNZS
-    [
+  OffSpillNZS [
     label = "OffSpill NZS",
-          shape=parallelogram,
+          shape=pentagon,
+          color="cyan"
     ];
-  HighPNegative
-    [
-    label = "High-P electron",
-          shape = box
+  Other [
+    label = "Other Physics"
+      shape = hexagon,
+            peripheries=3,
+            color=blue
+  ];
+
+  HighPNegative [
+    label = "High-P e-",
+          shape = hexagon,
+          color = blue
     ];
-  HighPPositive
-    [
-    label = "High-P positron",
-          shape = box
+  HighPPositive [
+    label = "High-P e+",
+          shape = hexagon,
+          color = blue
     ];
-  MultiTrack
-    [
+  MultiTrack [
     label = "Multitrack",
-          shape = box
+          shape = hexagon,
+          color = blue
+    ];
+  OnSpill [
+    label = "OnSpill Physics",
+          shape = box,
+          color = black
     ];
 
   // TODO
@@ -172,62 +180,47 @@ digraph diagram {
           color=cyan
   ];
  {rank=same TrkDBTable CaloDBTable CRVDBTable}
-  AllPhysics [
-    label = "All Physics"
-      shape = box
-      shape = hexagon,
-            peripheries=3,
-            color=cyan
-  ];
-  {rank=same OffSpillPhysics AllPhysics};
+  {rank=same OffSpillPhysics };
 
   // online high-level processing blocks
-  OffSpillReco
-    [
-    label = "OffSpill Coarse reco"
+  OffSpillReco [
+    label = "OffSpill Reco"
       shape = oval
     ];
-  OnSpillReco
-    [
-    label = "OnSpill Coarse reco"
+  OnSpillReco [
+    label = "OnSpill Reco"
       shape = oval
     ];
 
   // offline high-level processing blocks
-  TrackerCalibSelect
-    [
+  TrackerCalibSelect [
     label = "Tracker Calib Select",
           peripheries=3,
           shape = oval
     ];
-  CaloCalibSelect
-    [
+  CaloCalibSelect [
     label = "Calo Calib Select",
           peripheries=3,
           shape = oval
     ];
 
-  TrackerCalibExtract
-    [
+  TrackerCalibExtract [
     label = "Tracker Calibration Extract",
           peripheries=3,
           shape = oval
     ];
-  CaloCalibExtract
-    [
+  CaloCalibExtract [
     label = "Calo Calibration Extract",
           peripheries=3,
           shape = oval
     ];
 
-  SaltOverlay
-    [
-    label = "Salt + Pileup overlay",
+  SaltOverlay [
+    label = "Salt + Pileup Overlay",
           shape = oval
     ];
-  PhysicsMerging
-    [
-    label = "Physics Merge and Select",
+  PhysicsMerging [
+    label = "Physics Merge and Sort",
           shape = oval
     ];
 
@@ -279,8 +272,9 @@ digraph diagram {
   OnSpillPhysics       -> PhysicsMerging;
   SaltEvents         -> PhysicsMerging;
 
-  PhysicsMerging -> AllPhysics;
+  PhysicsMerging -> OnSpill
   PhysicsMerging -> HighPNegative;
   PhysicsMerging -> HighPPositive;
   PhysicsMerging -> MultiTrack;
+  PhysicsMerging -> Other;
 }
