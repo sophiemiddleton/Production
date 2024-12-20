@@ -155,7 +155,7 @@ digraph diagram {
   ];
 
   DetDBTable [
-    label="Det DB Tables",
+    label="Detector DB Tables",
     shape=trapezium,
     peripheries=3,
     color=cyan
@@ -221,14 +221,14 @@ digraph diagram {
   OnSpillFragments  -> OnSpillReco;
 
   // ejc: no offSpill ``physics'' sample here?
-  OffSpillReco -> OffSpillPhysics [label="Physics Selector"];
-  OffSpillReco -> SaltTracks [label="Salt Selector" ];
-  OffSpillReco -> OffSpillDetectorCalib [label="Detector Selector"];
+  OffSpillReco -> OffSpillPhysics [label="Physics Selectors"];
+  OffSpillReco -> SaltTracks [label="Salt Selectors" ];
+  OffSpillReco -> OffSpillDetectorCalib [label="Detector Selectors"];
   OffSpillReco -> OffSpillNZS [label="NZS Selector"];
 
-  OnSpillReco -> OnSpillUnsalted [label="Physics Selector"];
+  OnSpillReco -> OnSpillUnsalted [label="Physics Selectors"];
   OnSpillReco -> Pileup [label="Pileup Selector"];
-  OnSpillReco -> OnSpillDetectorCalib [label="Detector Selector"];
+  OnSpillReco -> OnSpillDetectorCalib [label="Detector Selectors"];
   OnSpillReco -> OnSpillNZS [label="NZS Selector"];
 
   OffSpillDetectorCalib    -> DetectorCalibSelect;
