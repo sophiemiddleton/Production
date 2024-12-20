@@ -34,84 +34,72 @@ digraph diagram {
 
   }
 
-  DAQ [ label = "DAQ",
-      shape= ellipse
+  DAQ [
+    label = "DAQ",
+          shape= ellipse
   ];
   ConditionsDB [ label = "Conditions Database",
-  shape = trapezium, color=green
+               shape = trapezium, color=green
   ];
   ConditionsDB -> DAQ [constraint=false];
   {rank=same ConditionsDB DAQ};
 
   // primary inputs, from DAQ
-  OffSpillFragments
-    [
+  OffSpillFragments [
     label = "OffSpill",
           shape = parallelogram
-    ];
-  OnSpillFragments
-    [
+  ];
+  OnSpillFragments [
     label = "OnSpill",
           shape = parallelogram
-    ]
+  ]
   DAQ->OffSpillFragments
   DAQ->OnSpillFragments
   // temporary on-disk samples
   //  - ephemeral collections, e.g. salt
   //  - accumulating collections, e.g. reconstructed signal-likes
-  OnSpillPhysics
-    [
-    label = "OnSpill Physics",
-          shape = box,
-          color="fuchsia"
-    ];
-  OffSpillPhysis
-    [
+  OnSpillHidden [
+    label = "OnSpill Physics (hidden)",
+    shape = box,
+    color="fuchsia"
+  ];
+  OffSpillPhysics [
     label = "OffSpill Physics",
-          shape = box,
-          color="black"
-    ];
-  SaltTracks
-    [
+    shape = box,
+    color="black"
+  ];
+  SaltTracks [
     label = "Salt tracks",
-          shape = box,
-          color="fuchsia"
-    ];
+    shape = box,
+    color="fuchsia"
+  ];
   SaltEvents [
     label = "Salt events",
-          shape = box,
-          color="fuchsia"
-    ];
-  OffSpillTrackerCalib [
-    label = "OffSpill Tracker",
-          shape = box,
-          color="blue"
-    ];
-  OffSpillCaloCalib [
-    label = "OffSpill calo.",
-          shape = box,
-          color="blue"
-    ];
-  OnSpillTrackerCalib [
-    label = "OnSpill tracker",
-          shape = box,
-          color="blue"
-    ];
-  OnSpillCaloCalib [
-    label = "OnSpill Calo.",
-          shape = box,
-          color="blue"
-    ];
+    shape = box,
+    color="fuchsia"
+  ];
+  OffSpillDetectorCalib [
+    label = "OffSpill Detector",
+    shape = box,
+    peripheries=3,
+    color="blue"
+  ];
+  OnSpillDetectorCalib [
+    label = "OnSpill Detector",
+    shape = box,
+    peripheries=3,
+    color="blue"
+  ];
   OnSpillNZS [
     label = "OnSpill NZS",
-          shape=pentagon,
-          color="cyan"
-    ];
+    shape=pentagon,
+    color="cyan"
+  ];
   OffSpillNZS [
     label = "OffSpill NZS",
-          shape=pentagon,
-          color="cyan"
-    ];
+    shape=pentagon,
+    color="cyan"
+  ];
   Other [
     label = "Other Physics"
       shape = hexagon,
@@ -123,22 +111,22 @@ digraph diagram {
     label = "High-P e-",
           shape = hexagon,
           color = blue
-    ];
+  ];
   HighPPositive [
     label = "High-P e+",
           shape = hexagon,
           color = blue
-    ];
+  ];
   MultiTrack [
     label = "Multitrack",
           shape = hexagon,
           color = blue
-    ];
-  OnSpill [
+  ];
+  OnSpillPhysics [
     label = "OnSpill Physics",
           shape = box,
           color = black
-    ];
+  ];
 
   // TODO
   // monitoring /ation plots and database
@@ -148,81 +136,80 @@ digraph diagram {
     label = "Pileup",
           shape = box
   ];
-  TrkCalib [
-    label = "Trk Calib",
-          shape = hexagon,
-          peripheries=3,
-          color=cyan
+  DetCalib [
+    label = "Detector Calib",
+    shape = hexagon,
+    peripheries=3,
+    color=cyan
   ];
-  TrkDBTable [
-    label = "Trk DB Table",
+
+  DetMonPlots [
+    label = "Detector Monitor Plots",
+    shape = trapezium,
+    peripheries=3,
+    color=blue
+  ];
+
+  PhysMonPlots [
+    label = "Physics Monitor Plots",
+    shape = trapezium,
+    peripheries=3,
+    color=blue
+  ];
+
+  DetDBTable [
+    label = "Det DB Table",
           shape = trapezium,
           peripheries=3,
           color=cyan
   ];
 
-  CaloCalib [
-    label = "Cal Calib",
-          shape = hexagon,
-          peripheries=3,
-          color=cyan
-  ];
-  CaloDBTable [
-    label = "Calo DB Table",
-          shape = trapezium,
-          peripheries=3,
-          color=cyan
-  ];
   CRVDBTable [
     label = "CRV DB Table",
           shape = trapezium,
           peripheries=3,
           color=cyan
   ];
- {rank=same TrkDBTable CaloDBTable CRVDBTable}
+  {rank=same DetDBTable CRVDBTable}
   {rank=same OffSpillPhysics };
 
   // online high-level processing blocks
   OffSpillReco [
     label = "OffSpill Reco"
       shape = oval
-    ];
+  ];
   OnSpillReco [
     label = "OnSpill Reco"
       shape = oval
-    ];
+  ];
 
   // offline high-level processing blocks
-  TrackerCalibSelect [
-    label = "Tracker Calib Select",
+  DetectorCalibSelect [
+    label = "Detector Calib Select",
           peripheries=3,
           shape = oval
-    ];
-  CaloCalibSelect [
-    label = "Calo Calib Select",
-          peripheries=3,
-          shape = oval
-    ];
+  ];
 
-  TrackerCalibExtract [
-    label = "Tracker Calibration Extract",
+  DetectorCalibExtract [
+    label = "Detector Calibration Extract",
           peripheries=3,
           shape = oval
-    ];
-  CaloCalibExtract [
-    label = "Calo Calibration Extract",
-          peripheries=3,
-          shape = oval
-    ];
+  ];
+
+  DetectorMonitoring [
+    label = "Detector Monitoring",
+    shape = oval
+  ];
+
 
   SaltOverlay [
     label = "Salt + Pileup Overlay",
           shape = oval
-    ];
+  ];
   PhysicsMerging [
     label = "Physics Merge and Sort",
           shape = oval
-    ];
+  ];
 
   // TODO
   //ation processors and preprocessors
@@ -234,47 +221,50 @@ digraph diagram {
   // ejc: no offSpill ``physics'' sample here?
   OffSpillReco -> OffSpillPhysics [label="Physics Selector"];
   OffSpillReco -> SaltTracks [label="Salt Selector" ];
-  OffSpillReco -> OffSpillTrackerCalib [label="Tracker Selector"];
-  OffSpillReco -> OffSpillCaloCalib [label="Calo Selector"];
+  OffSpillReco -> OffSpillDetectorCalib [label="Detector Selector"];
   OffSpillReco -> OffSpillNZS [label="NZS Selector"];
 
-  OnSpillReco -> OnSpillPhysics [label="Physics Selector"];
+  OnSpillReco -> OnSpillHidden [label="Physics Selector"];
   OnSpillReco -> Pileup [label="Pileup Selector"];
-  OnSpillReco -> OnSpillTrackerCalib [label="Tracker Selector"];
-  OnSpillReco -> OnSpillCaloCalib [label="Calo Selector"];
+  OnSpillReco -> OnSpillDetectorCalib [label="Detector Selector"];
   OnSpillReco -> OnSpillNZS [label="NZS Selector"];
 
-  OffSpillTrackerCalib    -> TrackerCalibSelect;
-  OnSpillTrackerCalib     -> TrackerCalibSelect;
-  OffSpillCaloCalib       -> CaloCalibSelect;
-  OnSpillCaloCalib        -> CaloCalibSelect;
+  OffSpillDetectorCalib    -> DetectorCalibSelect;
+  OnSpillDetectorCalib     -> DetectorCalibSelect;
 
-  TrackerCalibSelect ->TrkCalib;
-  TrkCalib -> TrackerCalibExtract;
-  TrackerCalibExtract -> TrkDBTable
-  TrkDBTable -> ConditionsDB [label="Calibration Verification"]
+  OffSpillDetectorCalib    -> DetectorMonitoring
+  OnSpillDetectorCalib     -> DetectorMonitoring;
 
-  CaloCalibSelect -> CaloCalib;
-  CaloCalib -> CaloCalibExtract;
-  CaloCalibExtract -> CaloDBTable
-  CaloDBTable -> ConditionsDB [label="Calibration Verification"]
+  DetectorCalibSelect ->DetCalib;
+  DetCalib -> DetectorCalibExtract;
+  DetectorCalibExtract -> DetDBTable;
+//  DetDBTable -> ConditionsDB [label="Calibration Verification"];
+  DetDBTable -> ConditionsDB;
+
+  DetectorMonitoring -> DetMonPlots;
 
   OffSpillNZS -> CRVCalibExtract;
   OnSpillNZS -> CRVCalibExtract;
-  CRVCalibExtract -> CRVDBTable
-  CRVDBTable -> ConditionsDB [label="Calibration Verification"]
+  CRVCalibExtract -> CRVDBTable;
+//  CRVDBTable -> ConditionsDB [label="Calibration Verification"];
+  CRVDBTable -> ConditionsDB;
 
   SaltTracks        -> SaltOverlay;
   Pileup -> SaltOverlay;
   SaltOverlay       -> SaltEvents;
 
 
-  OnSpillPhysics       -> PhysicsMerging;
+  OnSpillHidden       -> PhysicsMerging;
   SaltEvents         -> PhysicsMerging;
 
-  PhysicsMerging -> OnSpill
+  PhysicsMerging -> OnSpillPhysics;
   PhysicsMerging -> HighPNegative;
   PhysicsMerging -> HighPPositive;
   PhysicsMerging -> MultiTrack;
   PhysicsMerging -> Other;
+
+  OffSpillPhysics -> PhysicsMonitoring;
+  OnSpillPhysics -> PhysicsMonitoring;
+  PhysicsMonitoring -> PhysMonPlots;
+
 }
