@@ -1,159 +1,286 @@
 digraph diagram {
-    // primary inputs, from DAQ
-    OffspillFragments
-        [
-         label = "Offspill Fragments",
-         shape = box
-        ];
-    OnspillFragments
-        [
-         label = "Onspill Fragments",
-         shape = box
-        ];
+  label = "Mu2e Data Processing (Pass 1)";
+  fontname="Helvetica";
+  fontsize="36";
+  labelloc = t;
+  subgraph clusterLegend {
+    rankdir=TB;
+    color="black";
+    label="Legend";
+    fontsize="24";
 
-    // temporary on-disk samples
-    //  - ephemeral collections, e.g. salt
-    //  - accumulating collections, e.g. reconstructed signal-likes
-    OnspillDigis
-        [
-         label = "OnspillDigis",
-         shape = box
-        ];
-    SaltTracks
-        [
-         label = "Candidate salt tracks",
-         shape = box
-        ];
-    SaltEvents
-        [
-         label = "Candidate salt events",
-         shape = box
-        ];
-    OffspillTrackerCalib
-        [
-         label = "Offspill tracker calib.",
-         shape = box
-        ];
-    OffspillCaloCalib
-        [
-         label = "Offspill calo. calib.",
-         shape = box
-        ];
-    OnspillTrackerCalib
-        [
-         label = "Onspill tracker calib.",
-         shape = box
-        ];
-    OnspillCaloCalib
-        [
-         label = "Onspill calo. calib.",
-         shape = box
-        ];
-    HighPNegative
-        [
-         label = "High-momentum electron-likes",
-         shape = box
-        ];
-    HighPPositive
-        [
-         label = "High-momentum positron-likes",
-         shape = box
-        ];
-    MultiTrack
-        [
-         label = "Multitrack signal-like",
-         shape = box
-        ];
+    process [shape=ellipse,color=black,
+            label=<<table border="0" cellborder="0" cellspacing="1">
+              <tr><td align="center"><b>Process</b></td></tr>
+              </table>>];
+    storage [shape=box,color=black,
+            label=<<table border="0" cellborder="0" cellspacing="1">
+              <tr><td align="center"><b>Data Storage</b></td></tr>
+              <tr><td align="left"><b><font color="fuchsia">ephemeral</font></b></td></tr>
+              <tr><td align="left"><font color="cyan">scratch</font></td></tr>
+              <tr><td align="left"><font color="blue">persistent</font></td></tr>
+              <tr><td align="left"><font color="black">tape</font></td></tr>
+              <tr><td align="left"><font color="green">other</font></td></tr>
+              </table>>];
+    subgraph clustertype {
+      label="Data Format";
+      fontsize=16;
+      raw [shape=parallelogram, label = "Fragment" ];
+      reco [shape=box, lable = "Reco" ];
+      tuple [shape=hexagon, lable = "Tuple" ];
+      other [shape=trapezium, lable = "Other" ];
+    }
 
-    // TODO
-    // monitoring / calibration plots and database
+  }
 
-    // tape-backed storage
-    MinimumBiasEvents
-        [
-         label = "Minimum bias sample",
-         shape = box
-        ];
-    TrackerCalibSample
-        [
-         label = "Reco for tracker calib.",
-         shape = box
-        ];
-    CaloCalibSample
-        [
-         label = "Reco for calo. calib.",
-         shape = box
-        ];
-    NominalDigis
-        [
-         label = "Nominal digis"
-         shape = box
-        ];
+  DAQ [ label = "DAQ",
+      shape= ellipse
+  ];
+  ConditionsDB [ label = "Conditions Database",
+  shape = trapezium, color=green
+  ];
+  ConditionsDB -> DAQ [constraint=false];
+  {rank=same ConditionsDB DAQ};
 
-    // online high-level processing blocks
-    OffspillTrigger
-        [
-         label = "Offspill coarse reco."
-         shape = oval
-        ];
-    OnspillTrigger
-        [
-         label = "Onspill coarse reco. and trigger"
-         shape = oval
-        ];
+  // primary inputs, from DAQ
+  OffSpillFragments
+    [
+    label = "OffSpill",
+          shape = parallelogram
+    ];
+  OnSpillFragments
+    [
+    label = "OnSpill",
+          shape = parallelogram
+    ]
+  DAQ->OffSpillFragments
+  DAQ->OnSpillFragments
+  // temporary on-disk samples
+  //  - ephemeral collections, e.g. salt
+  //  - accumulating collections, e.g. reconstructed signal-likes
+  OnSpillPhysics
+    [
+    label = "OnSpill Physics",
+          shape = box,
+          color="fuchsia"
+    ];
+  OffSpillPhysics
+    [
+    label = "OffSpill Physics",
+          shape = box,
+          color="black"
+    ];
+  SaltTracks
+    [
+    label = "Salt tracks",
+          shape = box,
+          color="fuchsia"
+    ];
+  SaltEvents
+    [
+    label = "Salt events",
+          shape = box,
+          color="fuchsia"
+    ];
+  OffSpillTrackerCalib
+    [
+    label = "OffSpill Tracker",
+          shape = box,
+          color="blue"
+    ];
+  OffSpillCaloCalib
+    [
+    label = "OffSpill calo.",
+          shape = box,
+          color="blue"
+    ];
+  OnSpillTrackerCalib
+    [
+    label = "OnSpill tracker",
+          shape = box,
+          color="blue"
+    ];
+  OnSpillCaloCalib
+    [
+    label = "OnSpill Calo.",
+          shape = box,
+          color="blue"
+    ];
+  OnSpillNZS
+    [
+    label = "OnSpill NZS",
+          shape=parallelogram,
+    ];
+  OffSpillNZS
+    [
+    label = "OffSpill NZS",
+          shape=parallelogram,
+    ];
+  HighPNegative
+    [
+    label = "High-P electron",
+          shape = box
+    ];
+  HighPPositive
+    [
+    label = "High-P positron",
+          shape = box
+    ];
+  MultiTrack
+    [
+    label = "Multitrack",
+          shape = box
+    ];
 
-    // offline high-level processing blocks
-    CalibrationAccumulators
-        [
-         label = "Calibration accumulators",
-         shape = oval
-        ];
-    SaltOverlay
-        [
-         label = "Salt overlay",
-         shape = oval
-        ];
-    NominalPhysics
-        [
-         label = "Pass-1 Physics",
-         shape = oval
-        ];
+  // TODO
+  // monitoring /ation plots and database
 
-    // TODO
-    // calibration processors and preprocessors
+  // tape-backed storage
+  Pileup [
+    label = "Pileup",
+          shape = box
+  ];
+  TrkCalib [
+    label = "Trk Calib",
+          shape = hexagon,
+          peripheries=3,
+          color=cyan
+  ];
+  TrkDBTable [
+    label = "Trk DB Table",
+          shape = trapezium,
+          peripheries=3,
+          color=cyan
+  ];
 
-    // dependencies
-    OffspillFragments -> OffspillTrigger;
-    OnspillFragments  -> OnspillTrigger;
+  CaloCalib [
+    label = "Cal Calib",
+          shape = hexagon,
+          peripheries=3,
+          color=cyan
+  ];
+  CaloDBTable [
+    label = "Calo DB Table",
+          shape = trapezium,
+          peripheries=3,
+          color=cyan
+  ];
+  CRVDBTable [
+    label = "CRV DB Table",
+          shape = trapezium,
+          peripheries=3,
+          color=cyan
+  ];
+ {rank=same TrkDBTable CaloDBTable CRVDBTable}
+  AllPhysics [
+    label = "All Physics"
+      shape = box
+      shape = hexagon,
+            peripheries=3,
+            color=cyan
+  ];
+  {rank=same OffSpillPhysics AllPhysics};
 
-    // ejc: no offspill ``physics'' sample here?
-    OffspillTrigger -> SaltTracks;
-    OffspillTrigger -> OffspillTrackerCalib;
-    OffspillTrigger -> OffspillCaloCalib;
+  // online high-level processing blocks
+  OffSpillReco
+    [
+    label = "OffSpill Coarse reco"
+      shape = oval
+    ];
+  OnSpillReco
+    [
+    label = "OnSpill Coarse reco"
+      shape = oval
+    ];
 
-    OnspillTrigger -> OnspillDigis;
-    OnspillTrigger -> MinimumBiasEvents;
-    OnspillTrigger -> OnspillTrackerCalib;
-    OnspillTrigger -> OnspillCaloCalib;
+  // offline high-level processing blocks
+  TrackerCalibSelect
+    [
+    label = "Tracker Calib Select",
+          peripheries=3,
+          shape = oval
+    ];
+  CaloCalibSelect
+    [
+    label = "Calo Calib Select",
+          peripheries=3,
+          shape = oval
+    ];
 
-    OffspillTrackerCalib    -> CalibrationAccumulators;
-    OffspillCaloCalib       -> CalibrationAccumulators;
-    OnspillTrackerCalib     -> CalibrationAccumulators;
-    OnspillCaloCalib        -> CalibrationAccumulators;
-    CalibrationAccumulators -> TrackerCalibSample;
-    CalibrationAccumulators -> CaloCalibSample;
+  TrackerCalibExtract
+    [
+    label = "Tracker Calibration Extract",
+          peripheries=3,
+          shape = oval
+    ];
+  CaloCalibExtract
+    [
+    label = "Calo Calibration Extract",
+          peripheries=3,
+          shape = oval
+    ];
 
-    SaltTracks        -> SaltOverlay;
-    MinimumBiasEvents -> SaltOverlay;
-    SaltOverlay       -> SaltEvents;
+  SaltOverlay
+    [
+    label = "Salt + Pileup overlay",
+          shape = oval
+    ];
+  PhysicsMerging
+    [
+    label = "Physics Merge and Select",
+          shape = oval
+    ];
 
-    OnspillDigis       -> NominalPhysics;
-    SaltEvents         -> NominalPhysics;
-    TrackerCalibSample -> NominalPhysics;
-    CaloCalibSample    -> NominalPhysics;
+  // TODO
+  //ation processors and preprocessors
 
-    NominalPhysics -> NominalDigis;
-    NominalPhysics -> HighPNegative;
-    NominalPhysics -> HighPPositive;
-    NominalPhysics -> MultiTrack;
+  // dependencies
+  OffSpillFragments -> OffSpillReco;
+  OnSpillFragments  -> OnSpillReco;
+
+  // ejc: no offSpill ``physics'' sample here?
+  OffSpillReco -> OffSpillPhysics [label="Physics Selector"];
+  OffSpillReco -> SaltTracks [label="Salt Selector" ];
+  OffSpillReco -> OffSpillTrackerCalib [label="Tracker Selector"];
+  OffSpillReco -> OffSpillCaloCalib [label="Calo Selector"];
+  OffSpillReco -> OffSpillNZS [label="NZS Selector"];
+
+  OnSpillReco -> OnSpillPhysics [label="Physics Selector"];
+  OnSpillReco -> Pileup [label="Pileup Selector"];
+  OnSpillReco -> OnSpillTrackerCalib [label="Tracker Selector"];
+  OnSpillReco -> OnSpillCaloCalib [label="Calo Selector"];
+  OnSpillReco -> OnSpillNZS [label="NZS Selector"];
+
+  OffSpillTrackerCalib    -> TrackerCalibSelect;
+  OnSpillTrackerCalib     -> TrackerCalibSelect;
+  OffSpillCaloCalib       -> CaloCalibSelect;
+  OnSpillCaloCalib        -> CaloCalibSelect;
+
+  TrackerCalibSelect ->TrkCalib;
+  TrkCalib -> TrackerCalibExtract;
+  TrackerCalibExtract -> TrkDBTable
+  TrkDBTable -> ConditionsDB [label="Calibration Verification"]
+
+  CaloCalibSelect -> CaloCalib;
+  CaloCalib -> CaloCalibExtract;
+  CaloCalibExtract -> CaloDBTable
+  CaloDBTable -> ConditionsDB [label="Calibration Verification"]
+
+  OffSpillNZS -> CRVCalibExtract;
+  OnSpillNZS -> CRVCalibExtract;
+  CRVCalibExtract -> CRVDBTable
+  CRVDBTable -> ConditionsDB [label="Calibration Verification"]
+
+  SaltTracks        -> SaltOverlay;
+  Pileup -> SaltOverlay;
+  SaltOverlay       -> SaltEvents;
+
+
+  OnSpillPhysics       -> PhysicsMerging;
+  SaltEvents         -> PhysicsMerging;
+
+  PhysicsMerging -> AllPhysics;
+  PhysicsMerging -> HighPNegative;
+  PhysicsMerging -> HighPPositive;
+  PhysicsMerging -> MultiTrack;
 }
