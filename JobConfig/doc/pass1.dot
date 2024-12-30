@@ -9,6 +9,7 @@ digraph diagram {
     label="Legend";
     fontsize="24";
 
+
     process [shape=ellipse,color=black,
             label=<<table border="0" cellborder="0" cellspacing="1">
               <tr><td align="center"><b>Process</b></td></tr>
@@ -22,16 +23,17 @@ digraph diagram {
               <tr><td align="left"><font color="black">tape</font></td></tr>
               <tr><td align="left"><font color="green">other</font></td></tr>
               </table>>];
-    subgraph clustertype {
-      label="Data Format";
+
+   subgraph clustertype {
+      label="Data Format ( multiple contours = >1 instance)";
       fontsize=16;
       raw [shape=parallelogram, label="Fragment" ];
       digi [shape=pentagon, lable="Reco" ];
       reco [shape=box, lable="Reco" ];
       tuple [shape=hexagon, lable="Tuple" ];
       other [shape=trapezium, lable="Other" ];
+      {rank=same raw digi reco tuple other};
     }
-
   }
 
   DAQ [
@@ -44,6 +46,10 @@ digraph diagram {
   ConditionsDB -> DAQ [constraint=false];
   {rank=same ConditionsDB DAQ};
 
+  Catalog[ label="File Catalog",
+               shape=trapezium, color=green
+  ];
+
   // primary inputs, from DAQ
   OffSpillFragments [
     label="OffSpill",
@@ -55,6 +61,7 @@ digraph diagram {
   ]
   DAQ->OffSpillFragments
   DAQ->OnSpillFragments
+  {rank=same OffSpillFragments OnSpillFragments Catalog};
   // temporary on-disk samples
   //  - ephemeral collections, e.g. salt
   //  - accumulating collections, e.g. reconstructed signal-likes
