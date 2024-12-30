@@ -1,7 +1,7 @@
-/*  Mu2e org chart, analysis branch only
+/*  Mu2e org chart, Down to L4 in Analysis
  * To compile:
  *
- *     dot -T(suf) Production/Documents/OrgChart_Analysis.dot -o OrgChart_Analysis.(suf), suf=tiff, jpg, pdf, ...
+ *     dot -T(suf) OrgChart_Analysis.dot -o OrgChart_Analysis.(suf), suf=tiff, jpg, pdf, png, ...
  *    See https://graphviz.gitlab.io/documentation/ for more details
  *
  */
@@ -13,8 +13,8 @@ digraph OrgChart {
   fontname="Helvetica";
   fontsize="36";
   labelloc = t;
-
-
+  splines=ortho
+  edge[sametail ="",samehead =""]
   /* L1 and L2 */
 
   Spokespersons [shape=box, peripheries=1, color=black, fontsize="24",

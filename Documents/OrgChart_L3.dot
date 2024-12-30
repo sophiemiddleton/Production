@@ -1,7 +1,7 @@
-/*  Mu2e org chart, analysis branch only
+/*  Mu2e org chart, down to Level 3
  * To compile:
  *
- *     dot -T(suf) Production/Documents/OrgChart_L3.dot -o OrgChart_L3.(suf), suf=tiff, jpg, pdf, ...
+ *     dot -T(suf) OrgChart_L3.dot -o OrgChart_L3.(suf), suf=tiff, jpg, pdf, ...
  *    See https://graphviz.gitlab.io/documentation/ for more details
  *
  */
@@ -13,6 +13,8 @@ digraph OrgChart {
   fontname="Helvetica";
   fontsize="72";
   labelloc = t;
+  concentrate = true;
+  ordering = out;
 
 
   /* L1 and L2 */
@@ -55,6 +57,7 @@ digraph OrgChart {
   Spokespersons -> Operations_Coordinators;
 
   {rank=same Analysis_Coordinators Operations_Coordinators };
+  edge[samehead = Analysis,sametail = Analysis]
 
   /* Analysis L3 */
 
@@ -121,7 +124,7 @@ digraph OrgChart {
               label=<<table border="0" cellborder="0" cellspacing="1">
                 <tr><td align="center"><b>Calorimeter</b></td></tr>
                 <tr><td align="center"></td></tr>
-                <tr><td align="left"><font color="darkgreen">Simon Giovannella</font></td></tr>
+                <tr><td align="left"><font color="darkgreen">Simona Giovannella</font></td></tr>
                 <tr><td align="left"><font color="darkgreen">Luca Morescalchi</font></td></tr>
                 </table>>];
   Cosmic_Ray_Veto [shape=box, peripheries=1, color=black, fontsize="14",
@@ -148,7 +151,7 @@ digraph OrgChart {
             label=<<table border="0" cellborder="0" cellspacing="1">
               <tr><td align="center"><b>Solenoids</b></td></tr>
               <tr><td align="center"></td></tr>
-              <tr><td align="left"><font color="blue">Badgley</font></td></tr>
+              <tr><td align="left"><font color="blue">Karie Badgley</font></td></tr>
               <tr><td align="left"><font color="blue">Andrew Hocker</font></td></tr>
               </table>>];
 
