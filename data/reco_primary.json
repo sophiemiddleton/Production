@@ -1,119 +1,119 @@
 [
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
+        "release_v_rec": "am",
         "primary_name": "CeEndpoint",
         "digitype": "OnSpill",
         "db_purpose": "best",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
+        "release_v_rec": "am",
         "primary_name": "CeEndpoint",
         "digitype": "OnSpill",
         "db_purpose": "perfect",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
+        "release_v_rec": "am",
         "primary_name": "CePlusEndpoint",
         "digitype": "OnSpill",
         "db_purpose": "best",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
+        "release_v_rec": "am",
         "primary_name": "CePlusEndpoint",
         "digitype": "OnSpill",
         "db_purpose": "perfect",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
-        "primary_name": "CosmicCORSIKACalibAllOff",
-        "digitype": "Spill",
+        "release_v_rec": "am",
+        "primary_name": "CosmicCORSIKACalibAll",
+        "digitype": "OffSpill",
         "db_purpose": "best",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
-        "primary_name": "CosmicCORSIKACalibAllOff",
-        "digitype": "Spill",
+        "release_v_rec": "am",
+        "primary_name": "CosmicCORSIKACalibAll",
+        "digitype": "OffSpill",
         "db_purpose": "perfect",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
-        "primary_name": "CosmicCORSIKACalibAllOn",
-        "digitype": "Spill",
+        "release_v_rec": "am",
+        "primary_name": "CosmicCORSIKACalibAll",
+        "digitype": "OnSpill",
         "db_purpose": "best",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
-        "primary_name": "CosmicCORSIKACalibAllOn",
-        "digitype": "Spill",
+        "release_v_rec": "am",
+        "primary_name": "CosmicCORSIKACalibAll",
+        "digitype": "OnSpill",
         "db_purpose": "perfect",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
-        "primary_name": "CosmicCORSIKASignalAllOff",
-        "digitype": "Spill",
+        "release_v_rec": "am",
+        "primary_name": "CosmicCORSIKASignalAll",
+        "digitype": "OffSpill",
         "db_purpose": "best",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
-        "primary_name": "CosmicCORSIKASignalAllOff",
-        "digitype": "Spill",
+        "release_v_rec": "am",
+        "primary_name": "CosmicCORSIKASignalAll",
+        "digitype": "OffSpill",
         "db_purpose": "perfect",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
-        "primary_name": "CosmicCORSIKASignalAllOn",
-        "digitype": "Spill",
+        "release_v_rec": "am",
+        "primary_name": "CosmicCORSIKASignalAll",
+        "digitype": "OnSpill",
         "db_purpose": "best",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
-        "primary_name": "CosmicCORSIKASignalAllOn",
-        "digitype": "Spill",
+        "release_v_rec": "am",
+        "primary_name": "CosmicCORSIKASignalAll",
+        "digitype": "OnSpill",
         "db_purpose": "perfect",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     },
     {
         "release_v_dig": "ae",
-        "release_v_rec": "aj",
+        "release_v_rec": "am",
         "primary_name": "CosmicCRYExtractedCat",
-        "digitype": "Triggered",
+        "digitype": "Extracted",
         "db_purpose": "best",
         "stream": "Triggered",
-        "simjob_release": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aj/setup.sh"
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020am/setup.sh"
     }
 ]
