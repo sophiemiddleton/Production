@@ -31,21 +31,21 @@ Reconstruction : {
     # NB: positive here refers to helicity, not charge!
     MHDe : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderDe", "CalHelixFinderDe" ]
+      HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderDe" ]
     }
     MHDmu : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderDmu" , "CalHelixFinderDmu" ]
+      HelixFinders : [ "AgnosticHelixFinder" , "CalHelixFinderDmu" ]
     }
     # run helix merging on upstream, even though there is only one input collection,
     # as the merging also suppresses duplicates
     MHUe : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderUe" ]
+      HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderUe" ]
     }
     MHUmu : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "HelixFinderUmu" ]
+      HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderUmu" ]
     }
     # KinKal fits
 
@@ -181,27 +181,29 @@ Reconstruction : {
   # reconstruct multiple types of tracks.  These are separate sequences to allow granular execution
   # Downstream electron sequence (plus and minus), using merged helices
   DeReco : [
-    TimeClusterFinderDe, HelixFinderDe,   # TrkPatRec
-    CalTimePeakFinder, CalHelixFinderDe,  # CalPatRec
+    TZClusterFinder, AgnosticHelixFinder,   # AgnosticPatRec
+    CalTimePeakFinderDe, CalHelixFinderDe,  # CalPatRec
     MHDe, # helix merging
     KKDe  # KinKal drift fits
   ]
   # Upstream electron sequence (plus and minus): TrkPatRec only
   UeReco : [
-    TimeClusterFinderUe, HelixFinderUe,
+    TZClusterFinder, AgnosticHelixFinder,   # AgnosticPatRec
+    CalTimePeakFinderUe, CalHelixFinderUe,  # CalPatRec
     MHUe, # helix merging
     KKUe  # KinKal drift fits
   ]
   # Downstream muon sequence (plus and minus)
   DmuReco : [
-    TimeClusterFinderDmu, HelixFinderDmu,  # TrkPatRec
-    CalTimePeakFinderMu, CalHelixFinderDmu,  # CalPatRec
+    TZClusterFinder, AgnosticHelixFinder,    # AgnosticPatRec
+    CalTimePeakFinderDmu, CalHelixFinderDmu,  # CalPatRec
     MHDmu, # helix merging
     KKDmu  # KinKal drift fits
   ]
   # Upstream muon sequence (plus and minus)
   UmuReco : [
-    TimeClusterFinderUmu, HelixFinderUmu,
+    TZClusterFinder, AgnosticHelixFinder,     # AgnosticPatRec
+    CalTimePeakFinderUmu, CalHelixFinderUmu,  # CalPatRec
     MHUmu, # helix merging
     KKUmu  # KinKal drift fits
   ]
@@ -258,7 +260,7 @@ Reconstruction : {
   ]
   # Extra products for display
   EventDisplayProducts : [
-    "keep mu2e::ComboHitCollection_FlagBkgHits_*_*"
+    "keep mu2e::ComboHitCollection_DeltaFinder_*_*"
   ]
   GeneralProducts : [
     @sequence::Digitize.GeneralProducts,
