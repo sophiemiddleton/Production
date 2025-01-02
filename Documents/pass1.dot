@@ -77,7 +77,7 @@ digraph diagram {
   ];
   SaltTracks [
     label="Salt tracks",
-    shape=box,
+    shape=pentagon,
     color="fuchsia"
   ];
   SaltEvents [
@@ -138,7 +138,7 @@ digraph diagram {
   // tape-backed storage
   Pileup [
     label="Pileup",
-    shape=box
+    shape=pentagon
   ];
   DetCalib [
     label="Detector Calib",
@@ -212,7 +212,7 @@ digraph diagram {
 
 
   SaltOverlay [
-    label="Salt + Pileup Overlay",
+    label="Salt + Pileup Overlay + Reco",
     shape=oval
   ];
   PhysicsMerging [
