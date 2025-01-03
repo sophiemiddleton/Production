@@ -201,7 +201,8 @@ digraph diagram {
 
   TableVerify [
     label="Calib Table Verification",
-    shape=oval
+    shape=oval,
+    peripheries=3
   ];
 
   DetectorMonitoring [
@@ -270,7 +271,6 @@ digraph diagram {
   NZSCalibExtract -> NZSDBTable;
   NZSCalibExtract -> DetMonPlots;
   NZSDBTable -> TableVerify;
-  TableVerify -> ConditionsDB;
 
   SaltTracks        -> SaltOverlay;
   Pileup -> SaltOverlay;
