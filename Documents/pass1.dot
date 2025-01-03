@@ -233,7 +233,10 @@ digraph diagram {
   {rank=same DetDBTable NZSDBTable}
 
   ConditionsDB -> DAQ [constraint=false];
-  other->DAQ [penwidth=0.0,arrowsize=0.0];
+  ConditionsDB -> OnSpillReco;
+  ConditionsDB -> OffSpillReco;
+  ConditionsDB -> SaltOverlay;
+  raw->DAQ [penwidth=0.0,arrowsize=0.0];
   DAQ->OffSpillFragments;
   DAQ->OnSpillFragments;
   OffSpillFragments -> OffSpillReco;
