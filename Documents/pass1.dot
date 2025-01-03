@@ -28,12 +28,13 @@ digraph diagram {
       label="Data Format ( multiple contours = >1 instance)";
       fontsize=16;
       raw [shape=parallelogram, label="Fragment" ];
-      digi [shape=pentagon, lable="Reco" ];
-      reco [shape=box, lable="Reco" ];
-      tuple [shape=hexagon, lable="Tuple" ];
-      other [shape=trapezium, lable="Other" ];
+      digi [shape=pentagon, label="Digi" ];
+      reco [shape=box, label="Reco" ];
+      tuple [shape=hexagon, label="Historgrams/Tuples" ];
+      other [shape=trapezium, label="Other" ];
+//      raw -> digi -> reco -> tuple -> other [penwidth=0.0];
       {rank=same raw digi reco tuple other};
-    }
+   }
   }
 
   DAQ [
@@ -43,8 +44,6 @@ digraph diagram {
   ConditionsDB [ label="Conditions Database",
                shape=trapezium, color=green
   ];
-  ConditionsDB -> DAQ [constraint=false];
-  {rank=same ConditionsDB DAQ};
 
   Catalog[ label="File Catalog",
                shape=trapezium, color=green
@@ -59,9 +58,6 @@ digraph diagram {
     label="OnSpill",
     shape=parallelogram
   ]
-  DAQ->OffSpillFragments
-  DAQ->OnSpillFragments
-  {rank=same OffSpillFragments OnSpillFragments Catalog};
   // temporary on-disk samples
   //  - ephemeral collections, e.g. salt
   //  - accumulating collections, e.g. reconstructed signal-likes
@@ -124,11 +120,11 @@ digraph diagram {
     shape=hexagon,
     color=blue
   ];
-  MultiTrack [
-    label="Multitrack",
-    shape=hexagon,
-    color=blue
-  ];
+//  MultiTrack [
+//    label="Multitrack",
+//    shape=hexagon,
+//    color=blue
+//  ];
   OnSpillSalted [
     label="Salted OnSpill Physics",
     shape=box,
@@ -149,14 +145,14 @@ digraph diagram {
 
   DetMonPlots [
     label="Detector Monitor Plots",
-    shape=trapezium,
+    shape=hexagon,
     peripheries=3,
     color=blue
   ];
 
   PhysMonPlots [
     label="Physics Monitor Plots",
-    shape=trapezium,
+    shape=hexagon,
     peripheries=3,
     color=blue
   ];
@@ -174,8 +170,6 @@ digraph diagram {
     shape=trapezium,
     color=cyan
   ];
-  {rank=same DetDBTable NZSDBTable}
-  {rank=same OffSpillPhysics };
 
   // online high-level processing blocks
   OffSpillReco [
@@ -205,6 +199,11 @@ digraph diagram {
     shape=oval
   ];
 
+  TableVerify [
+    label="Calib Table Verification",
+    shape=oval
+  ];
+
   DetectorMonitoring [
     label="Detector Monitoring",
     shape=oval
@@ -219,11 +218,23 @@ digraph diagram {
     label="Physics Merge and Sort",
     shape=oval
   ];
+  PhysicsMonitoring [
+    label="Physics Monitoring",
+    shape=oval
+  ];
 
-  // TODO
-  //ation processors and preprocessors
 
   // dependencies
+
+  {rank=same ConditionsDB DAQ};
+  {rank=same OnSpillReco OffSpillReco TableVerify};
+  {rank=same OffSpillFragments OnSpillFragments Catalog};
+  {rank=same DetDBTable NZSDBTable}
+
+  ConditionsDB -> DAQ [constraint=false];
+  other->DAQ [penwidth=0.0,arrowsize=0.0];
+  DAQ->OffSpillFragments;
+  DAQ->OnSpillFragments;
   OffSpillFragments -> OffSpillReco;
   OnSpillFragments  -> OnSpillReco;
 
@@ -241,14 +252,15 @@ digraph diagram {
   OffSpillDetectorCalib    -> DetectorCalibSelect;
   OnSpillDetectorCalib     -> DetectorCalibSelect;
 
-  OffSpillDetectorCalib    -> DetectorMonitoring
-    OnSpillDetectorCalib     -> DetectorMonitoring;
+  OffSpillDetectorCalib    -> DetectorMonitoring;
+  OnSpillDetectorCalib     -> DetectorMonitoring;
 
   DetectorCalibSelect ->DetCalib;
   DetCalib -> DetectorCalibExtract;
   DetectorCalibExtract -> DetDBTable;
-  //  DetDBTable -> ConditionsDB [label="Calibration Verification"];
-  DetDBTable -> ConditionsDB;
+
+  DetDBTable -> TableVerify;
+  TableVerify -> ConditionsDB;
 
   DetectorCalibSelect -> DetMonPlots;
   DetectorMonitoring -> DetMonPlots;
@@ -256,7 +268,9 @@ digraph diagram {
   OffSpillNZS -> NZSCalibExtract;
   OnSpillNZS -> NZSCalibExtract;
   NZSCalibExtract -> NZSDBTable;
-  NZSDBTable -> ConditionsDB;
+  NZSCalibExtract -> DetMonPlots;
+  NZSDBTable -> TableVerify;
+  TableVerify -> ConditionsDB;
 
   SaltTracks        -> SaltOverlay;
   Pileup -> SaltOverlay;
@@ -269,7 +283,7 @@ digraph diagram {
   PhysicsMerging -> OnSpillSalted;
   PhysicsMerging -> HighPNegative;
   PhysicsMerging -> HighPPositive;
-  PhysicsMerging -> MultiTrack;
+//  PhysicsMerging -> MultiTrack;
   PhysicsMerging -> Other;
 
   OffSpillPhysics -> PhysicsMonitoring;
