@@ -81,12 +81,16 @@ Digitize: {
       MinParticleMom : 500.0
       MaxParticleMom : 1e10
       StrawDigiMCCollection : compressDigiMCs
-      particleTypes : [ 11,-11, 13, -13] # e+-, mu+-
+      particleTypes : [ 11,-11, 13, -13, 211, -211] # e+-, mu+-, pi+-
     }
     TriggerableCHPrescale : {
       module_type : Prescaler
-      prescaleFactor : 0 # by default, disable this path
+      prescaleFactor : 10
       prescaleOffset : 0
+    }
+    TriggerableCHEnable : {
+      module_type : FixedFilter
+      ReturnValue : false # by default disable CH triggerable
     }
     @table::TrigFilters.filters
   }
@@ -106,7 +110,7 @@ Digitize: {
   TriggerableSequence : [
     TriggerablePrescale, Triggerable ]
   TriggerableCHSequence : [
-    TriggerableCHPrescale, TriggerableCH ]
+    TriggerableCHEnable, TriggerableCHPrescale, TriggerableCH ]
 
   TriggerProducts : [
     "keep art::TriggerResults_*_*_*",

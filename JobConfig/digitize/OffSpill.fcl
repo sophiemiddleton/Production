@@ -10,10 +10,8 @@ outputs.TriggeredOutput.SelectEvents : [
   @sequence::Digitize.CaloTriggers ]
 
 physics.filters.TriggerablePrescale.prescaleFactor : 10 # reduce untriggered
+physics.filters.TriggerableCHEnable.ReturnValue : true # enable high mom triggerable
 # Temporarily turn off Crv noise
 physics.producers.CrvSiPMCharges.ThermalRate : 0
 # same for calorimeter
 physics.producers.CaloDigiMaker.addNoise : false
-
-# enable centralhelix triggerable
-physics.filters.TriggerableCHPrescale.prescaleFactor : 10
