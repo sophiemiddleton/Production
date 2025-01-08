@@ -1,0 +1,29 @@
+#
+# Configuration for resampling target antiproton stops
+#
+# Original author: Michael MacKenzie (2025)
+#
+#include "Production/JobConfig/primary/TargetStopParticle.fcl"
+
+physics.producers.generate : {
+    module_type       : AntiprotonResampling
+    inputSimParticles : "TargetStopResampler"
+}
+
+physics.filters.TargetStopResampler.mu2e.products : {
+    genParticleMixer: { mixingMap: [ [ "generate", "" ] ] }
+    simParticleMixer: { mixingMap: [ [ "tgtStopFilter", "" ] ] }
+    stepPointMCMixer: { mixingMap: [ [ "tgtStopFilter:virtualdetector", ":" ] ] }
+    volumeInfoMixer: {
+        srInput: "compressPVTGTStops"
+        evtOutInstanceName: "eventlevel"
+    }
+}
+
+# Reduce the primary filter cuts
+physics.filters.PrimaryFilter.MinimumPartMom : 40.
+
+physics.producers.g4run.inputs.simStageOverride : 1
+
+physics.producers.FindMCPrimary.PrimaryProcess : mu2eAntiproton
+outputs.PrimaryOutput.fileName: "dts.owner.AntiprotonStop.version.sequencer.art"
