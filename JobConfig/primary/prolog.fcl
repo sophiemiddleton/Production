@@ -162,7 +162,7 @@ Primary: {
 	zMax : 8000.
 	eMin : 1.5
 	verbosity : 0
-	saveTree : true
+	saveTree : false
     }
   }
 
