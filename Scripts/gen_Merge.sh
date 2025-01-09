@@ -55,6 +55,9 @@ while getopts ":-:" options; do
           prod)
               PROD=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
               ;;
+	  dataset)
+              DATASET=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+              ;;
       esac;;
     :)                                    # If expected argument omitted:
       echo "Error: -${OPTARG} requires an argument."
@@ -65,6 +68,22 @@ while getopts ":-:" options; do
       ;;
   esac
 done
+
+
+# If dataset is provided, parse it to extract DESC, DS_CONF, DS_OWNER
+if [ -n "$DATASET" ]; then
+    # Expected format: mcs.mu2e.<DESC>.<DS_CONF>.art
+    IFS='.' read -r PREFIX OWNER DESC_EXTRACT DS_CONF_EXTRACT SUFFIX <<< "$DATASET"
+
+    # If the dataset follows the pattern:
+    # mcs.mu2e.CosmicCORSIKASignalAllOnSpillTriggered.MDC2020am_perfect_v1_3.art
+    # Then:
+    # DESC = CosmicCORSIKASignalAllOnSpillTriggered
+    # DS_CONF = MDC2020am_perfect_v1_3
+
+    [ -z "$DESC" ] && DESC="$DESC_EXTRACT"
+    [ -z "$DS_CONF" ] && DS_CONF="$DS_CONF_EXTRACT"
+fi
 
 
 # Run the merge command with the specified options
