@@ -2,11 +2,11 @@
 # RMC External photons with a flat energy spectrum, saving events with a photon conversion for resampling purposes
 #
 
-#include "Production/JobConfig/primary/RMCGammaWriter.fcl"
+#include "Production/JobConfig/primary/RMCGammaStops.fcl"
 
-outputs.TargetOutput.fileName : "sim.owner.RMCFlatGammaWriter.version.sequencer.art"
-outputs.WireOutput.fileName   : "sim.owner.RMCFlatWireGammaWriter.version.sequencer.art"
-outputs.IPAOutput.fileName    : "sim.owner.RMCFlatIPAGammaWriter.version.sequencer.art"
+outputs.TargetOutput.fileName : "sim.owner.RMCFlatGammaStops.version.sequencer.art"
+outputs.WireOutput.fileName   : "sim.owner.RMCFlatWireGammaStops.version.sequencer.art"
+outputs.IPAOutput.fileName    : "sim.owner.RMCFlatIPAGammaStops.version.sequencer.art"
 
 #------------------------------------------------------------------------
 # Generation configuration

@@ -2,7 +2,7 @@
 # RMC External photons, resampling events with a photon conversion in the stopping target wires
 #
 
-#include "Production/JobConfig/primary/RMCGammaReader.fcl"
+#include "Production/JobConfig/primary/RMCGammaResampling.fcl"
 
 physics.producers.generate.material: 74 # Assume tungsten conversions, but the spectrum does not strongly depend on this
 
@@ -16,4 +16,4 @@ physics.filters.GenFilter.filterEnergy : false
 physics.filters.GenFilter.emin : 0.
 physics.filters.PrimaryFilter.MinimumPartMom : 30. #less than half the minimum photon energy, at least one should pass this
 
-outputs.PrimaryOutput.fileName : "dts.owner.RMCWireGammaReader.version.sequencer.art"
+outputs.PrimaryOutput.fileName : "dts.owner.RMCWireGammaResampling.version.sequencer.art"
