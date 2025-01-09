@@ -1,0 +1,89 @@
+# Shoot antiprotons directly at the stopping target for antiproton studies
+# Original author: Michael MacKenzie (2025)
+
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/EventGenerator/fcl/prolog.fcl"
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/beam/prolog.fcl"
+
+process_name : SimpleAntiprotons
+
+source : {
+    module_type : EmptyEvent
+    maxEvents : @nil
+}
+
+services : @local::Services.Sim
+
+physics : {
+    # setup the modules
+    producers: {
+        @table::Common.producers
+        generate: {
+            module_type : SimpleAntiprotonGun
+	    t0          :  400.
+	    tmax        : 2000.
+            pzmax       :  100.
+        }
+        compressPVTGTStops: {
+            module_type: CompressPhysicalVolumes
+            volumesInput : "g4run"
+            hitInputs : []
+            particleInputs : [ "tgtStopFilter" ]
+        }
+        stoppedAntiprotonFinder : {
+            module_type : StoppedParticlesFinder
+            particleInput : "g4run"
+            # multiple matches, we'll get the one from the current process, which is what we want
+            physVolInfoInput : "g4run"
+            stoppingMaterial : "StoppingTarget_Al"
+            particleTypes : [ -2212 ] # pbar
+            verbosityLevel: 1
+        }
+    }
+    filters: {
+        @table::Common.filters
+        tgtStopFilter: {
+            module_type: FilterG4Out
+            mainHitInputs: []
+            extraHitInputs: [ "g4run:virtualdetector" ]
+            mainSPPtrInputs: [ "stoppedAntiprotonFinder" ]
+        }
+    }
+    analyzers : @local::Common.analyzers
+
+    # setup the paths
+    tgtFilter : [ @sequence::Common.generateSequence, @sequence::Common.g4Sequence, stoppedAntiprotonFinder, tgtStopFilter, compressPVTGTStops]
+    trigger_paths : [tgtFilter]
+    LogPath : [ genCountLogger ]
+    OutputPath : [ tgtStopOutput ]
+    end_paths : [OutputPath, LogPath ]
+}
+
+# setup outputs
+outputs: {
+    tgtStopOutput : {
+        module_type : RootOutput
+        SelectEvents : [ tgtFilter ]
+        outputCommands :   [ "drop *_*_*_*",
+                             "keep mu2e::GenParticles_*_*_*",
+                             "keep mu2e::GenEventCount_*_*_*",
+                             "keep mu2e::StatusG4_*_*_*",
+                             "keep *_tgtStopFilter_*_*",
+                             "keep *_compressPVTGTStops_*_*"
+                            ]
+        fileName : "sim.owner.stoppedSimpleAntiprotons.version.sequencer.art"
+    }
+}
+
+physics.producers.g4run.SDConfig.enableSD: [ virtualdetector ] # only VDs are active
+
+#include "Production/JobConfig/beam/epilog.fcl"
+#include "Production/JobConfig/common/epilog.fcl"
+
+# restricted BField for efficiency
+services.GeometryService.bFieldFile : "Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt"
+
+# the following is overwritten by generate_fcl
+services.SeedService.baseSeed : @local::Common.BaseSeed
+
