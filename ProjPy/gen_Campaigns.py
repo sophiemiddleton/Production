@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 #Script to create and/or submit multiple campaign using Project-py
-#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.ini --cfg_file CampaignConfig/mdc2020_digireco.cfg --comb_json data/mix.json --simjob MDC2020ae
-#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_primary.ini --cfg_file CampaignConfig/mdc2020_primary.cfg --comb_json data/primary.json --simjob MDC2020ae --comb_type list --cutoff_key primary_name
-#Create, upload and submit all campaign: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.ini --cfg_file CampaignConfig/mdc2020_digireco.cfg --comb_json data/mix.json --simjob MDC2020ae --create_campaign --submit
+#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.in --comb_json data/mix.json --simjob MDC2020ae
+#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_primary.ini --comb_json data/primary.json --simjob MDC2020ae --comb_type list --cutoff_key primary_name
+#Create, upload and submit all campaign: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.ini --cfg_file CampaignConfig/mdc2020_digireco.cfg --comb_json data/mix.json --simjob MDC2020ae --upload --submit
 
 #To upload setup poms-client first, delete voms-proxy (NOT as mu2epro!!!), get kx509:
 #source /cvmfs/fermilab.opensciencegrid.org/packages/common/setup-env.sh
@@ -19,27 +19,25 @@ import sys
 parser = argparse.ArgumentParser(description="Script to submit multiple POMS campaigns through project_py")
 requiredNamed = parser.add_argument_group('required arguments')
 requiredNamed.add_argument("--ini_file", type=str, help="INI file", required=True)
-requiredNamed.add_argument("--cfg_file", type=str, help="CFG file", required=True)
-requiredNamed.add_argument("--simjob", type=str, help="SimJob version, i.e. MDC2020ae", required=True)
 requiredNamed.add_argument("--comb_json", type=str, help="JSON file that contains combinations to run over", required=True)
 requiredNamed.add_argument("--comb_type", type=str, help="JSON file type: list or product", required=True)
-requiredNamed.add_argument("--cutoff_key", type=str, help="Ignore keys in the campaign name after the cutoff_key", default=None)
 
-parser.add_argument("--create_campaign", action="store_true", help="Create campaigns")
+parser.add_argument("--cutoff_key", type=str, help="Ignore keys in the campaign name after the cutoff_key", default=None)
+parser.add_argument("--simjob", type=str, help="SimJob version, i.e. MDC2020", default="MDC2020")
+parser.add_argument("--upload", action="store_true", help="Create campaigns")
 parser.add_argument("--submit", action="store_true", help="Submit campaigns")
 parser.add_argument("--test_run", action="store_true", help="Run in test run mode")
 parser.add_argument("--ini_version", default="", type=str, help="Append version to the end of campaign name, i.e. _v1")
 
 args = parser.parse_args()
 ini_file = args.ini_file
-cfg_file = args.cfg_file
 simjob = args.simjob
 comb_json = args.comb_json
 comb_type = args.comb_type
 cutoff_key = args.cutoff_key
 ini_version = args.ini_version
 
-create_campaign = args.create_campaign
+upload = args.upload
 submit = args.submit
 test_run = args.test_run
 ini_version = args.ini_version
@@ -65,12 +63,15 @@ for value in list_values:
         list_keys = list(value.keys())
         value = list(value.values())
 
+    # Drop setup.sh from the campaign/file name
+    campain_name_list = [item for item in value if 'setup.sh' not in item]
+
     # We use only keys that appear prior to cutoff_key (i.e "primary_name"), and ignore the rest in the campaign/file name
     if cutoff_key is not None:
         cutoff_key_index = list_keys.index(cutoff_key) + 1 
-        campaign_name = f"{simjob}_{'_'.join(map(str, value[:cutoff_key_index]))}{ini_version}"
+        campaign_name = f"{simjob}_{'_'.join(map(str, campain_name_list[:cutoff_key_index]))}{ini_version}"
     else:
-        campaign_name = f"{simjob}_{'_'.join(map(str, value))}{ini_version}"
+        campaign_name = f"{simjob}_{'_'.join(map(str, campain_name_list))}{ini_version}"
         
     out_ini_file = f"{campaign_name}.ini"
     os.system(f"cp {ini_file} {out_ini_file}")
@@ -86,7 +87,7 @@ for value in list_values:
     with open(out_ini_file, 'w') as file:
         file.write(file_data)
 
-    if create_campaign:
+    if upload:
         cmd=f"upload_wf --poms_role production {out_ini_file}"
         print(cmd)
         os.system(cmd)
