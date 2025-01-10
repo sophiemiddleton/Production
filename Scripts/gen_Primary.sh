@@ -141,11 +141,14 @@ else
 fi
 
 dataset=sim.${OWNER}.${TYPE}Stops${CAT}.${STOPS_CAMPAIGN}.art
+echo "Input dataset: ${dataset}"
 
 if [[ "${TYPE}" == "Muminus" ]] ||  [[ "${TYPE}" == "Muplus" ]]; then
   resampler=TargetStopResampler
 elif [[ "${TYPE}" == "Piminus" ]] ||  [[ "${TYPE}" == "Piplus" ]]; then
   resampler=TargetPiStopResampler
+elif [[ "${TYPE}" == RMC* ]]; then
+  resampler=GammaConversionResampler
 else
   resampler=${TYPE}StopResampler
 fi
