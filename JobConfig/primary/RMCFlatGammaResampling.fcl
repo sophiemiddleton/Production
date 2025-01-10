@@ -1,0 +1,7 @@
+#
+# RMC External photons, flat energy spectrum, resampling events with a photon conversion
+#
+
+#include "Production/JobConfig/primary/RMCGammaResampling.fcl"
+outputs.PrimaryOutput.fileName : "dts.owner.RMCFlatGammaConversions.version.sequencer.art"
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlatPhoton"

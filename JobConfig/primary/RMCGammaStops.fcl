@@ -108,7 +108,7 @@ physics.trigger_paths : [ TargetPath, WirePath, IPAPath ]
 outputs.TargetOutput : {
     module_type : RootOutput
     SelectEvents : [ TargetPath ]
-    fileName    : "sim.owner.RMCGammaWriter.version.sequencer.art"
+    fileName    : "sim.owner.RMCGammaStops.version.sequencer.art"
     outputCommands : ["drop *_*_*_*",
 		      "keep art::EventIDs_*_*_*",
 		      "keep mu2e::GenParticles_*_*_*",
@@ -121,7 +121,7 @@ outputs.TargetOutput : {
 outputs.WireOutput : {
     module_type : RootOutput
     SelectEvents : [ WirePath ]
-    fileName    : "sim.owner.RMCWireGammaWriter.version.sequencer.art"
+    fileName    : "sim.owner.RMCWireGammaStops.version.sequencer.art"
     outputCommands : ["drop *_*_*_*",
 		      "keep art::EventIDs_*_*_*",
 		      "keep mu2e::GenParticles_*_*_*",
@@ -134,7 +134,7 @@ outputs.WireOutput : {
 outputs.IPAOutput : {
     module_type : RootOutput
     SelectEvents : [ IPAPath ]
-    fileName    : "sim.owner.RMCIPAGammaWriter.version.sequencer.art"
+    fileName    : "sim.owner.RMCIPAGammaStops.version.sequencer.art"
     outputCommands : ["drop *_*_*_*",
 		      "keep art::EventIDs_*_*_*",
 		      "keep mu2e::GenParticles_*_*_*",

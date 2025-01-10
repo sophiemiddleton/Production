@@ -1,2 +1,0 @@
-#include "Production/JobConfig/primary/RMCGammaEndpointWriter.fcl"
-#include "Production/Tests/MuonStopConfig.fcl"
