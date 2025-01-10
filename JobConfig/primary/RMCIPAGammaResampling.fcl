@@ -16,4 +16,4 @@ physics.filters.GenFilter.filterEnergy : false
 physics.filters.GenFilter.emin : 0.
 physics.filters.PrimaryFilter.MinimumPartMom : 30. #less than half the minimum photon energy, at least one should pass this
 
-outputs.PrimaryOutput.fileName : "dts.owner.RMCIPAGammaResampling.version.sequencer.art"
+outputs.PrimaryOutput.fileName : "dts.owner.RMCIPAGammaConversions.version.sequencer.art"

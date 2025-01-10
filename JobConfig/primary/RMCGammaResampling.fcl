@@ -28,4 +28,4 @@ physics.producers.g4run.inputs.updateEventLevelVolumeInfos: {
 physics.producers.g4run.inputs.simStageOverride: 3
 
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eExternalRMC"
-outputs.PrimaryOutput.fileName : "dts.owner.RMCGammaResampling.version.sequencer.art"
+outputs.PrimaryOutput.fileName : "dts.owner.RMCGammaConversions.version.sequencer.art"

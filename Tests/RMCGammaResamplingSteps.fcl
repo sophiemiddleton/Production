@@ -5,4 +5,4 @@ physics.filters.GammaConversionResampler.fileNames : [
 
 physics.filters.GammaConversionResampler.mu2e.MaxEventsToSkip: 0
 physics.producers.generate.makeHistograms : true
-services.TFileService.fileName: "nts.owner.RMCGammaResamplingSteps.version.sequencer.root"
+services.TFileService.fileName: "nts.owner.RMCGammaConversions.version.sequencer.root"

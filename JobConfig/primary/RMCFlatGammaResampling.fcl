@@ -3,4 +3,5 @@
 #
 
 #include "Production/JobConfig/primary/RMCGammaResampling.fcl"
-outputs.PrimaryOutput.fileName : "dts.owner.RMCFlatGammaResampling.version.sequencer.art"
+outputs.PrimaryOutput.fileName : "dts.owner.RMCFlatGammaConversions.version.sequencer.art"
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlatPhoton"

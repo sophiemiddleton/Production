@@ -3,4 +3,4 @@
 #
 
 #include "Production/JobConfig/primary/RMCGammaResampling.fcl"
-outputs.PrimaryOutput.fileName : "dts.owner.RMCGammaEndpointResampling.version.sequencer.art"
+outputs.PrimaryOutput.fileName : "dts.owner.RMCGammaEndpointConversions.version.sequencer.art"
