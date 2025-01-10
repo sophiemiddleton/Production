@@ -1,11 +1,9 @@
 # configure Extracted digitization
 # first, trigger filtesr and paths
-#include "mu2e_trig_config/gen/trig_extrPosMenuPSConfig_OffSpill.fcl"
-#include "mu2e_trig_config/gen/trig_extrPosMenu_OffSpill.fcl"
+#include "mu2e_trig_config/gen/trig_extrPosMenuPSConfig.fcl"
+#include "mu2e_trig_config/gen/trig_extrPosMenu.fcl"
 # then generic digitization
 #include "Production/JobConfig/digitize/Digitize.fcl"
-# set OffSpill timing
-#include "Production/JobConfig/digitize/OffSpill_epilog.fcl"
 # add trigger filters
 physics.filters : { @table::physics.filters @table::Trig_extrPosMenuPSConfig }
 # add the trigger paths
@@ -14,12 +12,19 @@ physics.trigger_paths : [ @sequence::Digitize.trigger_paths, @sequence::Trig_ext
 outputs.TriggeredOutput.SelectEvents : [
   @sequence::Digitize.TrkTriggers,
   @sequence::Digitize.CaloTriggers ]
-# override some prescales
-physics.filters.TriggerablePrescale.prescaleFactor : 100 # only record 1% of the untriggered
-physics.filters.Triggerable.MaxParticleMom : 1e10 # allow 'infintie' momentum cosmics
 # extracted-specific overrides
 # extracted geometry
 services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_common_extracted.txt"
 services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
+# override some prescales
+physics.filters.TriggerablePrescale.prescaleFactor : 100 # only record 1% of the untriggered
+physics.filters.TriggerableCHEnable.ReturnValue : true # enable high mom triggerable
+physics.filters.TriggerableCHPrescale.prescaleFactor : 100 # only record 1% of the untriggered
+# set the spill type
+physics.producers.EWMProducer.SpillType : 0
+# Temporarily turn off Crv noise
+physics.producers.CrvSiPMCharges.ThermalRate : 0
+# same for calorimeter
+physics.producers.CaloDigiMaker.addNoise : false
 # override CRV lookup tables, photon yields, etc. for the extracted position
 #include "Offline/CRVResponse/fcl/epilog_extracted.fcl"
