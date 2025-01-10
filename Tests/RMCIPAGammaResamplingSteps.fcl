@@ -1,6 +1,6 @@
-#include "Production/JobConfig/primary/RMCGammaEndpointReader.fcl"
+#include "Production/JobConfig/primary/RMCIPAGammaResampling.fcl"
 source.firstRun: 501 #TODO
 physics.filters.GammaConversionResampler.fileNames : [
-"sim.owner.RMCGammaEndpointWriter.version.sequencer.art"]
+"sim.owner.RMCIPAGammaStops.version.sequencer.art"]
 
 physics.filters.GammaConversionResampler.mu2e.MaxEventsToSkip: 0

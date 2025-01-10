@@ -11,5 +11,6 @@ physics.producers.MakeSS : {
 physics.producers.compressDigiMCs.surfaceStepTags : [ "MakeSS" ]
 physics.DigitizePath : [ "MakeSS" , @sequence::physics.DigitizePath ]
 physics.TriggerablePath : [ "MakeSS" , @sequence::physics.TriggerablePath ]
+physics.TriggerableCHPath : [ "MakeSS" , @sequence::physics.TriggerablePath ]
 
 
