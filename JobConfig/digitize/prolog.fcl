@@ -9,12 +9,13 @@
 #include "Offline/CRVResponse/fcl/prolog.fcl"
 #include "Offline/Filters/fcl/prolog.fcl"
 #include "Offline/Compression/fcl/prolog.fcl"
+#include "Offline/CommonMC/fcl/prolog.fcl"
 #
-# core trigger
+# core trigger; I have to override the digi sequence
 #
+#include "Production/JobConfig/digitize/trigSequencesMC.fcl"
 #include "mu2e_trig_config/core/trigProducers.fcl"
 #include "mu2e_trig_config/core/trigFilters.fcl"
-#include "mu2e_trig_config/core/trigMCProductionSequences.fcl"
 #include "mu2e_trig_config/core/trigSequences.fcl"
 #
 BEGIN_PROLOG
@@ -30,12 +31,12 @@ Digitize: {
       module_type : CompressDigiMCs
       strawDigiMCTag : @local::DigiCompressionTags.commonStrawDigiMCTag
       crvDigiMCTag : @local::DigiCompressionTags.commonCrvDigiMCTag
-      simParticleTags : [ @local::DigiCompressionTags.primarySimParticleTag ]
-      mcTrajectoryTag : @local::DigiCompressionTags.primarySimParticleTag
-      extraStepPointMCTags : @local::DigiCompressionTags.commonExtraStepPointMCTags
-      caloShowerStepTags : @local::DigiCompressionTags.primaryCaloShowerStepTags
       caloShowerSimTag : @local::DigiCompressionTags.commonCaloShowerSimTag
       caloShowerROTag : @local::DigiCompressionTags.commonCaloShowerROTag
+      simParticleTags : ["compressDetStepMCs"]
+      caloShowerStepTags : ["compressDetStepMCs"]
+      extraStepPointMCTags : ["compressDetStepMCs:virtualdetector"]
+      mcTrajectoryTag : "compressDetStepMCs"
       surfaceStepTags : [ "compressDetStepMCs" ]
       primaryParticleTag : "FindMCPrimary"
       keepAllGenParticles : true
@@ -54,11 +55,18 @@ Digitize: {
       mean : 1
       halfWidth : 0
     }
+# Trigger MC matching for paths using KK fits to trigger
+    TTAprKSFMC : {
+      @table::CommonMC.TTSelectRecoMC
+        KalSeedCollections  : [ "TTAprKSF" ]
+        HelixSeedCollections  : [ ]
+#        HelixSeedCollections  : ["TTAprHelixMerger" ]
+#        StrawDigiMCCollection : "makeSD"
+    }
   }
-
   filters : {
-    # filter for Triggerable stream.  These should be events that might have
-    # triggered.  The default setting is a particle with enough tracker digis
+# filter for Triggerable stream.  These should be events that might have
+# triggered.  The default setting is a particle with enough tracker digis
     # in the right momentum range to be reconstructable as a helix
     # This filter should be overriden as needed for other kinds of primaries (straight cosmics, calo signals, ...)
     Triggerable : {
@@ -95,9 +103,12 @@ Digitize: {
 
   TriggerProducts : [
     "keep art::TriggerResults_*_*_*",
-    "keep mu2e::KalSeeds_TT*_*_*",
     "keep mu2e::CaloClusters_*_*_*",
-    "keep mu2e::TriggerInfo_*_*_*"
+    "keep mu2e::TriggerInfo_*_*_*",
+    "keep mu2e::KalSeeds_TT*_*_*",
+    "keep *_TTAprKSFMC_*_*",
+    "keep mu2e::SimParticlemv_compressDetStepMCs_*_*",
+    "keep mu2e::GenParticles_compressDetStepMCs_*_*"
   ]
 
   GeneralProducts : [
@@ -144,8 +155,6 @@ Digitize: {
 
   EndSequence : [digiCompressionCheck]
 }
-# override the Trigger sequence to prepare digis
-TrigRecoSequences.artFragmentsGen : [ @sequence::CommonMC.DigiSim, @sequence::TrackerMC.DigiSim, @sequence::CaloMC.DigiSim ]
 
 Digitize.TriggeredOutput.outputCommands : [ "drop *_*_*_*",
   @sequence::Digitize.GeneralProducts,

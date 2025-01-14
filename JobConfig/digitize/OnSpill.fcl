@@ -1,10 +1,12 @@
 # configure OnSpill digitization
+# Note that the DB is required and must be configured outside this script
 # first, trigger filtesr and paths
 #include "mu2e_trig_config/gen/trig_physMenuPSConfig_OnSpill.fcl"
 #include "mu2e_trig_config/gen/trig_physMenu_OnSpill.fcl"
 # then generic digitization
 #include "Production/JobConfig/digitize/Digitize.fcl"
 # final overrides
+#include "Production/JobConfig/digitize/MakeSurfaceSteps.fcl"
 # set the event timing for OnSpill
 physics.producers.EWMProducer.SpillType : 1
 # add trigger filters
@@ -13,3 +15,14 @@ physics.filters : { @table::physics.filters @table::Trig_physMenuPSConfig }
 physics.trigger_paths : [ @sequence::Digitize.trigger_paths, @sequence::Trig_physMenu.trigger_paths]
 # configure 'Triggered' output to be signal
 outputs.TriggeredOutput.SelectEvents : @local::Digitize.SignalTriggers
+# this next produces additional hit-level payload to support MC truth matching.
+# It produces functionally equivalent output as the standard module but is slower, so don't use this script for timing studies
+physics.producers.TTmakeSH.FilterHits : false
+physics.producers.TTmakePH.TestFlag : true
+physics.producers.TTmakePH.StrawHitSelectionBits : ["EnergySelection","TimeSelection","RadiusSelection"]
+physics.producers.TTmakePH.StrawHitMask          : ["Dead"]
+# add the trigger MC matching to the appropriate paths
+physics.apr_highP : [@sequence::physics.apr_highP, TTAprKSFMC ]
+physics.apr_highP_stopTarg : [@sequence::physics.apr_highP_stopTarg, TTAprKSFMC ]
+physics.apr_lowP_stopTarg : [@sequence::physics.apr_lowP_stopTarg, TTAprKSFMC ]
+physics.apr_lowP_stopTarg_multiTrk : [@sequence::physics.apr_lowP_stopTarg_multiTrk, TTAprKSFMC ]

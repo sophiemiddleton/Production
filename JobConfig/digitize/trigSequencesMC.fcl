@@ -1,0 +1,8 @@
+#include "mu2e_trig_config/core/trigRecoSequences.fcl"
+BEGIN_PROLOG
+TrigRecoSequences:{
+   @table::TrigRecoSequences
+   artFragmentsGen    : [ @sequence::CommonMC.DigiSim, @sequence::TrackerMC.DigiSim, @sequence::CaloMC.DigiSim ]
+}
+
+END_PROLOG

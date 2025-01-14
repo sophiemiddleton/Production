@@ -1,10 +1,6 @@
 # Module labels needed for compressed detector steps
 physics.producers.makeSD.StrawGasStepModules : [ "compressDetStepMCs" ]
 physics.producers.CaloShowerROMaker.caloShowerStepCollection : ["compressDetStepMCs"]
-physics.producers.compressDigiMCs.simParticleTags : ["compressDetStepMCs"]
-physics.producers.compressDigiMCs.caloShowerStepTags : ["compressDetStepMCs"]
-physics.producers.compressDigiMCs.extraStepPointMCTags : ["compressDetStepMCs:virtualdetector", "compressDetStepMCs:stoppingtarget", "compressDetStepMCs:protonabsorber" ]
-physics.producers.compressDigiMCs.mcTrajectoryTag : "compressDetStepMCs"
 physics.producers.CrvPhotons.crvStepModuleLabels : [ "compressDetStepMCs" ]
 physics.producers.CrvPhotons.crvStepProcessNames : [ "" ]
 # digitization needs seeds
