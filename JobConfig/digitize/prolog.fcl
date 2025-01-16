@@ -55,13 +55,22 @@ Digitize: {
       mean : 1
       halfWidth : 0
     }
-# Trigger MC matching for paths using KK fits to trigger
+# Trigger MC matching instances for each helix algorithm
     TTAprKSFMC : {
       @table::CommonMC.TTSelectRecoMC
-        KalSeedCollections  : [ "TTAprKSF" ]
-        HelixSeedCollections  : [ ]
-#        HelixSeedCollections  : ["TTAprHelixMerger" ]
-#        StrawDigiMCCollection : "makeSD"
+      KalSeedCollections  : [ "TTAprKSF" ]
+    }
+    TTTprDeKSFMC : {
+      @table::CommonMC.TTSelectRecoMC
+      KalSeedCollections  : [ "TTKSFDe" ]
+    }
+    TTMprDeKSFMC : {
+      @table::CommonMC.TTSelectRecoMC
+      KalSeedCollections  : [ "TTKSFMprDe" ]
+    }
+    TTCprDeKSFMC : {
+      @table::CommonMC.TTSelectRecoMC
+      KalSeedCollections  : [ "TTCalSeedFitDe" ]
     }
   }
   filters : {
@@ -73,7 +82,7 @@ Digitize: {
       module_type : StrawDigiMCFilter
       MinNDigis : 15
       MinParticleMom : 75.0
-      MaxParticleMom : 300.0 # nominally particles that can form helices in the tracker
+      MaxParticleMom : 300.0 # nominally particles that can form Loophelices in the tracker
       StrawDigiMCCollection : compressDigiMCs
       particleTypes : [ 11,-11, 13, -13, 211, -211] # e+-, mu+-, pi+-
     }
@@ -106,7 +115,7 @@ Digitize: {
     "keep mu2e::CaloClusters_*_*_*",
     "keep mu2e::TriggerInfo_*_*_*",
     "keep mu2e::KalSeeds_TT*_*_*",
-    "keep *_TTAprKSFMC_*_*",
+    "keep *_TT*KSFMC_*_*",
     "keep mu2e::SimParticlemv_compressDetStepMCs_*_*",
     "keep mu2e::GenParticles_compressDetStepMCs_*_*"
   ]
@@ -148,7 +157,7 @@ Digitize: {
   #
   # trigger selections that can be used to finalize the triggerOutput selection, depending on digitization mode and source
   #
-  SignalTriggers : [ "tprDe_highP_stopTarg*", "cprDe_highP_stopTarg*" ]  # events with 'high' momentum tracks with good KinKal fits
+  SignalTriggers : [ "tpr*_highP*", "cpr*_highP*", "apr_highP*" ]  # events with 'high' momentum tracks with KinKal fits
   TrkTriggers : [ "*_lowP_*","*_ipa_*", "cst*" ] # events useful only for tracker calibration
   CaloTriggers : [ "calo*" ] # events useful only for calo calibration
   DiagTriggers : [ "minBias_*" , "*Helix*M", "*Helix*P"] # events useful for trigger diagnostics
