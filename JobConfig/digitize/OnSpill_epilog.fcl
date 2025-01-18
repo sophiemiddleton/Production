@@ -1,0 +1,24 @@
+# set the event timing for OnSpill
+physics.producers.EWMProducer.SpillType : 1
+# this next produces additional hit-level payload to support MC truth matching.
+# It produces functionally equivalent output as the standard module but is slower, so don't use this script for timing studies
+physics.producers.TTmakeSH.FilterHits : false
+physics.producers.TTmakePH.TestFlag : true
+physics.producers.TTmakePH.StrawHitSelectionBits : ["EnergySelection","TimeSelection","RadiusSelection"]
+physics.producers.TTmakePH.StrawHitMask          : ["Dead"]
+# add the trigger MC matching to the appropriate paths
+# apr
+physics.apr_highP : [@sequence::physics.apr_highP, TTAprKSFMC ]
+physics.apr_highP_stopTarg : [@sequence::physics.apr_highP_stopTarg, TTAprKSFMC ]
+physics.apr_lowP_stopTarg : [@sequence::physics.apr_lowP_stopTarg, TTAprKSFMC ]
+physics.apr_lowP_stopTarg_multiTrk : [@sequence::physics.apr_lowP_stopTarg_multiTrk, TTAprKSFMC ]
+# tpr
+physics.tprDe_highP : [@sequence::physics.tprDe_highP, TTTprDeKSFMC ]
+physics.tprDe_highP_stopTarg : [@sequence::physics.tprDe_highP_stopTarg, TTTprDeKSFMC ]
+physics.tprDe_lowP_stopTarg : [@sequence::physics.tprDe_lowP_stopTarg, TTTprDeKSFMC ]
+# cpr
+physics.cprDe_highP : [@sequence::physics.cprDe_highP, TTCprDeKSFMC ]
+physics.cprDe_highP_stopTarg : [@sequence::physics.cprDe_highP_stopTarg, TTCprDeKSFMC ]
+physics.cprDe_lowP_stopTarg : [@sequence::physics.cprDe_lowP_stopTarg, TTCprDeKSFMC ]
+# mpr
+physics.mprDe_highP_stopTarg : [@sequence::physics.mprDe_highP_stopTarg, TTMprDeKSFMC ]

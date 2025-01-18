@@ -10,14 +10,9 @@
 #include "Offline/Filters/fcl/prolog.fcl"
 #include "Offline/Compression/fcl/prolog.fcl"
 #include "Offline/CommonMC/fcl/prolog.fcl"
-#
-# core trigger; I have to override the digi sequence
-#
-#include "Production/JobConfig/digitize/trigSequencesMC.fcl"
 #include "mu2e_trig_config/core/trigProducers.fcl"
 #include "mu2e_trig_config/core/trigFilters.fcl"
-#include "mu2e_trig_config/core/trigSequences.fcl"
-#
+#include "mu2e_trig_config/core/trigRecoSequences.fcl"
 BEGIN_PROLOG
 
 Digitize: {
@@ -72,6 +67,12 @@ Digitize: {
       @table::CommonMC.TTSelectRecoMC
       KalSeedCollections  : [ "TTCalSeedFitDe" ]
     }
+    MakeSS : {
+      @table::CommonMC.MakeSS
+      VDStepPointMCs : "compressDetStepMCs:virtualdetector"
+      AbsorberStepPointMCs : "compressDetStepMCs:protonabsorber"
+      TargetStepPointMCs : "compressDetStepMCs:stoppingtarget"
+    }
   }
   filters : {
 # filter for Triggerable stream.  These should be events that might have
@@ -105,6 +106,7 @@ Digitize: {
     @sequence::TrackerMC.DigiSim,
     @sequence::CaloMC.DigiSim,
     @sequence::CrvDAQPackage.CrvDAQSequence,
+    MakeSS,
     compressDigiMCs ]
 
   TriggerableSequence : [
@@ -115,18 +117,20 @@ Digitize: {
     "keep mu2e::CaloClusters_*_*_*",
     "keep mu2e::TriggerInfo_*_*_*",
     "keep mu2e::KalSeeds_TT*_*_*",
-    "keep *_TT*KSFMC_*_*",
-    "keep mu2e::SimParticlemv_compressDetStepMCs_*_*",
-    "keep mu2e::GenParticles_compressDetStepMCs_*_*"
+    "keep mu2e::KalSeedMCs_TT*KSFMC_*_*",
+    "keep mu2e::KalSeedmu2e::KalSeedMCvoidart::Assns_TT*KSFMC_*_*",
+    "keep mu2e::RecoCount_TT*KSFMC_*_*"
   ]
+    #    "keep mu2e::SimParticlemv_compressDetStepMCs_*_*",
+    #"keep mu2e::GenParticles_compressDetStepMCs_*_*"
 
   GeneralProducts : [
     "keep mu2e::EventWindowMarker_*_*_*",
     "keep mu2e::ProtonBunchTime_*_*_*"
   ]
   DigiProducts : [
-    "keep mu2e::StrawDigis_*_*_*",
-    "keep mu2e::StrawDigiADCWaveforms_*_*_*",
+    "keep mu2e::StrawDigis_makeSD_*_*",
+    "keep mu2e::StrawDigiADCWaveforms_makeSD_*_*",
     "keep mu2e::CaloDigis_*_*_*",
     "keep mu2e::CrvDigis_*_*_*"
   ]
@@ -188,5 +192,8 @@ Digitize.Outputs : {
 # give paths specific numbers outside trigger path range
 Digitize.trigger_paths : ["0:DigitizePath", "1:TriggerablePath" ]
 Digitize.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, TriggerableOutput ]
-
+# override the trigger digitization sequence
+TrigRecoSequences.artFragmentsGen : @local::Digitize.DigitizeSequence
 END_PROLOG
+# Trigger Sequences have to come after
+#include "mu2e_trig_config/core/trigSequences.fcl"

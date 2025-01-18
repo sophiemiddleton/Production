@@ -5,10 +5,9 @@ physics.producers.TTmakeSH.MinimumTime : 0.0
 physics.producers.TTmakeSH.MaximumTime : 100.0e3
 physics.producers.TTmakeSH.MinimumRadius : 0.0
 physics.producers.TTmakeSH.MaximumRadius : 800.0
-#physics.producers.TTmakeSH.MinimumEnergy : 0.0
-#physics.producers.TTmakeSH.MaximumEnergy : 0.01
 physics.producers.TTmakePH.MinimumTime : 0.0
 physics.producers.TTmakePH.MaximumTime : 100.0e3
+# The following need to be improved in code FIXME
 # Temporarily turn off Crv noise
 physics.producers.CrvSiPMCharges.ThermalRate : 0
 # same for calorimeter
