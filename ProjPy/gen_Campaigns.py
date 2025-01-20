@@ -64,7 +64,7 @@ for value in list_values:
         value = list(value.values())
 
     # Drop setup.sh from the campaign/file name
-    campain_name_list = [item for item in value if 'setup.sh' not in item]
+    campain_name_list = [item for item in value if isinstance(item, str) and 'setup.sh' not in item]
 
     # We use only keys that appear prior to cutoff_key (i.e "primary_name"), and ignore the rest in the campaign/file name
     if cutoff_key is not None:
