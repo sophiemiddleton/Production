@@ -31,6 +31,7 @@ physics: {
     @table::Primary.producers
     @table::Digitize.producers
     @table::Reconstruction.producers
+    flagPH : @local::CalPatRec.producers.DeltaFinder
   }
   filters : {
     @table::Common.filters
@@ -103,6 +104,11 @@ outputs : {
     ]
   }
 }
+# fix MakeSS config (overwritten by digi, reco)
+physics.producers.MakeSS.VDStepPointMCs : "g4run:virtualdetector"
+physics.producers.MakeSS.AbsorberStepPointMCs : "g4run:protonabsorber"
+physics.producers.MakeSS.TargetStepPointMCs : "g4run:stoppingtarget"
+
 #include "Production/JobConfig/primary/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
 #include "Production/JobConfig/reco/epilog.fcl"

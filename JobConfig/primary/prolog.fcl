@@ -33,8 +33,8 @@ Primary: {
       simParticleTags : [ "g4run" ]
       mcTrajectoryTag : "g4run"
       debugLevel : 0
-      # save StepPoints in VDs, ProtonAbsorber and ST
-      stepPointMCTags : [ "g4run:virtualdetector", "g4run:protonabsorber", "g4run:stoppingtarget" ]
+      # save StepPoints in VDs
+      stepPointMCTags : [ "g4run:virtualdetector"]
       compressionOptions : @local::DetStepCompression.standardCompression
     }
     FindMCPrimary : {
@@ -46,7 +46,7 @@ Primary: {
       module_type: NullMCPrimary
       ExtraSteps : [ "virtualdetector", "stoppingtarget", "protonabsorber" ] # these will be created but empty
     }
- }
+  }
 
   filters : {
     # basic step filter configuration: these can get refined for particular primaries
@@ -153,16 +153,16 @@ Primary: {
     }
 
     GammaConversionFilter : {
-	module_type : GammaConversionPoints
-	g4ModuleLabel : "g4run"
-	doFilter : true
-	rMin : 0.   # Include target and IPA
-	rMax : 500.
-	zMin : 5000.
-	zMax : 8000.
-	eMin : 1.5
-	verbosity : 0
-	saveTree : true
+      module_type : GammaConversionPoints
+      g4ModuleLabel : "g4run"
+      doFilter : true
+      rMin : 0.   # Include target and IPA
+      rMax : 500.
+      zMin : 5000.
+      zMax : 8000.
+      eMin : 1.5
+      verbosity : 0
+      saveTree : true
     }
   }
 
@@ -204,8 +204,8 @@ Primary: {
 
 # RMC information
 RMCInfo : {
-    kmaxMeasured : 90.1 # Measured as 90.1 +- 1.8
-    kmaxEndpoint : 101.9 # Maximum photon kinematically allowed on aluminum
+  kmaxMeasured : 90.1 # Measured as 90.1 +- 1.8
+  kmaxEndpoint : 101.9 # Maximum photon kinematically allowed on aluminum
 }
 
 StopFilter : {
@@ -213,7 +213,7 @@ StopFilter : {
   filters : {
     @table::genFilters.filters
   }
-  
+
   KeptProducts : ["keep mu2e::*_*_*_*"]
 
   analyzers: {

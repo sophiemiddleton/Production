@@ -135,7 +135,7 @@ Reconstruction : {
       strawDigiMCTag : "compressDigiMCs"
       crvDigiMCTag : "compressDigiMCs"
       simParticleTags : [ "compressDigiMCs" ]
-      extraStepPointMCTags : ["compressDigiMCs:virtualdetector", "compressDigiMCs:stoppingtarget", "compressDigiMCs:protonabsorber" ]
+      extraStepPointMCTags : ["compressDigiMCs:virtualdetector" ]
       surfaceStepTags : [ "compressDigiMCs" ]
       caloShowerStepTags : [ ]
       caloShowerSimTag : ""
