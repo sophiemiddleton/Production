@@ -2,6 +2,7 @@
 #  Simple mixing test, piggy-backing on the primary and mudau production
 #
 #include "Production/JobConfig/mixing/Mix.fcl"
+physics.producers.MakeSS : { module_type : NullProducer }
 services.SeedService.baseSeed         :  8
 source.fileNames : [ "dts.owner.ceSteps.dsconf.seq.art" ]
 physics.filters.MuStopPileupMixer.mu2e.simStageEfficiencyTags: []
