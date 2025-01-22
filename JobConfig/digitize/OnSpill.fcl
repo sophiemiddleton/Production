@@ -1,14 +1,8 @@
-# configure OnSpill digitization
-# Note that the DB is required and must be configured outside this script
-# first, trigger filtesr and paths
-#include "mu2e_trig_config/gen/trig_physMenuPSConfig_OnSpill.fcl"
-#include "mu2e_trig_config/gen/trig_physMenu_OnSpill.fcl"
-# then generic digitization
-#include "Production/JobConfig/digitize/Digitize.fcl"
-# add trigger filters
-physics.filters : { @table::physics.filters @table::Trig_physMenuPSConfig }
-# add the trigger paths
-physics.trigger_paths : [ @sequence::Digitize.trigger_paths, @sequence::Trig_physMenu.trigger_paths]
+#include "Production/JobConfig/digitize/Spill.fcl"
+
+# set the spill type
+physics.producers.EWMProducer.SpillType : 1
 # configure 'Triggered' output to be signal
+# FIXME, should match OffSpill?
 outputs.TriggeredOutput.SelectEvents : @local::Digitize.SignalTriggers
 #include "Production/JobConfig/digitize/OnSpill_epilog.fcl"

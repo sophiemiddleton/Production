@@ -1,0 +1,6 @@
+#
+# RMC External photons, kmax = 101.9 MeV, resampling events with a photon conversion
+#
+
+#include "Production/JobConfig/primary/RMCGammaResampling.fcl"
+outputs.PrimaryOutput.fileName : "dts.owner.RMCGammaEndpointConversions.version.sequencer.art"

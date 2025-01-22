@@ -1,6 +1,9 @@
 {
-    "release_v_dts": ["af"],
-    "primary_name": ["CosmicCORSIKASignalAll", "CosmicCRYSignalAll", "CosmicCORSIKASignalLow", "CosmicCRYSignalLow", "CosmicCORSIKACalibAll", "CosmicCRYCalibAll", "CosmicCORSIKACalibLow", "CosmicCRYCalibLow"],
+    "release_v_o": ["ap"],
+    "release_v_dig": ["ap"],
+    "release_v_rec": ["ap"],
+    "release_v_dts": ["ae"],
+    "primary_name": ["CosmicCORSIKASignalAll", "CosmicCRYSignalAll"],
     "db_purpose": ["perfect", "best"],
     "digitype": ["Mix1BB", "Mix2BB"]
 }

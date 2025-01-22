@@ -1,0 +1,24 @@
+#
+# RMC External photons with a flat energy spectrum, saving events with a photon conversion for resampling purposes
+#
+
+#include "Production/JobConfig/primary/RMCGammaStops.fcl"
+
+outputs.TargetOutput.fileName : "sim.owner.RMCFlatGammaStops.version.sequencer.art"
+outputs.WireOutput.fileName   : "sim.owner.RMCFlatWireGammaStops.version.sequencer.art"
+outputs.IPAOutput.fileName    : "sim.owner.RMCFlatIPAGammaStops.version.sequencer.art"
+
+#------------------------------------------------------------------------
+# Generation configuration
+
+physics.producers.generate : {
+  module_type            : FlatMuonDaughterGenerator
+  inputSimParticles      : TargetStopResampler
+  stoppingTargetMaterial : "Al"
+  pdgId                  : 22
+  startMom               : 80
+  endMom                 : 102
+  verbosity              : 0
+}
+physics.producers.FindMCPrimary.PrimaryProcess    : "mu2eFlatPhoton"
+physics.filters.GammaConversionFilter.processCode : "mu2eFlatPhoton"
