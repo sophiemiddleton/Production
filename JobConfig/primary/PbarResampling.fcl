@@ -26,4 +26,4 @@ physics.filters.PrimaryFilter.MinimumPartMom : 40.
 physics.producers.g4run.inputs.simStageOverride : 1
 
 physics.producers.FindMCPrimary.PrimaryProcess : mu2eAntiproton
-outputs.PrimaryOutput.fileName: "dts.owner.AntiprotonStop.version.sequencer.art"
+outputs.PrimaryOutput.fileName: "dts.owner.PbarResampling.version.sequencer.art"
