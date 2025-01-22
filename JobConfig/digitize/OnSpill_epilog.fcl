@@ -1,11 +1,9 @@
-# set the event timing for OnSpill
-physics.producers.EWMProducer.SpillType : 1
 # this next produces additional hit-level payload to support MC truth matching.
 # It produces functionally equivalent output as the standard module but is slower, so don't use this script for timing studies
 physics.producers.TTmakeSH.FilterHits : false
 physics.producers.TTmakePH.TestFlag : true
-physics.producers.TTmakePH.StrawHitSelectionBits : ["EnergySelection","TimeSelection","RadiusSelection"]
-physics.producers.TTmakePH.StrawHitMask          : ["Dead"]
+physics.producers.TTmakePH.StrawHitSelectionBits : @local::TrkHitReco.makePH.StrawHitSelectionBits
+physics.producers.TTmakePH.StrawHitMask          : @local::TrkHitReco.makePH.StrawHitMask
 # add the trigger MC matching to the appropriate paths
 # apr
 physics.apr_highP : [@sequence::physics.apr_highP, TTAprKSFMC ]
