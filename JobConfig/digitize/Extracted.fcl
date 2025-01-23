@@ -17,9 +17,7 @@ outputs.TriggeredOutput.SelectEvents : [
 services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_common_extracted.txt"
 services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
 # override some prescales
-physics.filters.TriggerablePrescale.prescaleFactor : 100 # only record 1% of the untriggered
 physics.filters.TriggerableCHEnable.ReturnValue : true # enable high mom triggerable
-physics.filters.TriggerableCHPrescale.prescaleFactor : 100 # only record 1% of the untriggered
 # set the spill type
 physics.producers.EWMProducer.SpillType : 0
 # Temporarily turn off Crv noise

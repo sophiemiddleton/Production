@@ -8,10 +8,14 @@ outputs.TriggeredOutput.SelectEvents : [
   @sequence::Digitize.SignalTriggers,
   @sequence::Digitize.TrkTriggers,
   @sequence::Digitize.CaloTriggers ]
+# Lower thresholds for LoopHelix triggerable
+physics.filters.Triggerable.MinParticleMom : 50.0
+physics.filters.Triggerable.MaxParticleMom : 300.0
 
-physics.filters.TriggerablePrescale.prescaleFactor : 10 # reduce untriggered
 physics.filters.TriggerableCHEnable.ReturnValue : true # enable high mom triggerable
 # Temporarily turn off Crv noise
 physics.producers.CrvSiPMCharges.ThermalRate : 0
 # same for calorimeter
 physics.producers.CaloDigiMaker.addNoise : false
+# turn on MC truth matching for OnSpill triggers run Offline
+#include "Production/JobConfig/digitize/OnSpill_epilog.fcl"

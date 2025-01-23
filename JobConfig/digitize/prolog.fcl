@@ -103,12 +103,12 @@ Digitize: {
     }
     TriggerableCHPrescale : {
       module_type : Prescaler
-      prescaleFactor : 10
+      prescaleFactor : 100
       prescaleOffset : 0
     }
     TriggerableCHEnable : {
       module_type : FixedFilter
-      ReturnValue : false # by default disable CH triggerable
+      # ReturnValue must be set in specific scripts
     }
     @table::TrigFilters.filters
   }

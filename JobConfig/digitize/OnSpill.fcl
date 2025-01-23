@@ -3,6 +3,6 @@
 # set the spill type
 physics.producers.EWMProducer.SpillType : 1
 # configure 'Triggered' output to be signal
-# FIXME, should match OffSpill?
+physics.filters.TriggerableCHEnable.ReturnValue : false
 outputs.TriggeredOutput.SelectEvents : @local::Digitize.SignalTriggers
 #include "Production/JobConfig/digitize/OnSpill_epilog.fcl"
