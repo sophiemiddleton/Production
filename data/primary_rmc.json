@@ -1,0 +1,29 @@
+[
+    {
+	"release_v_o": "ap",
+	"stopped_type": "Muminus",
+	"release_v_stops": "p",
+	"primary_name": "RMCFlatGammaStops",
+	"num_events": 1000000,
+	"num_jobs": 100,
+	"start_mom": 0,
+        "end_mom": 110,
+	"cat": "Cat",	
+	"simjob_setup": "/cvmfs/mu2e-development.opensciencegrid.org/museCIBuild/main/d0247a0d_c55e1782_370dab41/setup.sh"
+    },
+
+    {
+	"release_v_o": "ap",
+	"stopped_type": "RMCFlatIPAGamma",
+	"release_v_stops": "p",
+	"primary_name": "RMCIPAGammaResampling",
+	"num_events": 100000,
+	"num_jobs": 20,
+	"start_mom": 0,
+        "end_mom": 110,
+	"cat": "Cat",	
+	"simjob_setup": "/cvmfs/mu2e-development.opensciencegrid.org/museCIBuild/main/d0247a0d_c55e1782_370dab41/setup.sh"
+    }
+
+    
+]

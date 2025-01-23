@@ -44,7 +44,7 @@ Optional:
   --field           FILE   Overridden field map
   --owner           STR    Default = mu2e
   --run             INT    Default = 1202
-  --setup           FILE   Setup script
+  --simjob_setup           FILE   Setup script
   --set_fnames      TRUE   Append dts names to the file
   --help                   Print this message
 
@@ -115,8 +115,8 @@ while getopts ":-:" options; do
         run)
           RUN=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
-        setup)
-          SETUP=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+        simjob_setup)
+          SIMJOB_SETUP=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         set_fnames)
           SET_FNAMES=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
@@ -188,10 +188,10 @@ if [[ "${FLAT}" == "FlatMuDaughter" ]]; then
   echo physics.producers.generate.endMom: ${ENDMOM}        >> primary.fcl
 fi
 
-if [[ -n $SETUP ]]; then
-  echo "Using user-provided setup $SETUP"
+if [[ -n $SIMJOB_SETUP ]]; then
+  echo "Using user-provided setup $SIMJOB_SETUP"
 else
-  SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/${DSCONF}/setup.sh
+  SIMJOB_SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/${DSCONF}/setup.sh
 fi
 
 cat primary.fcl
@@ -202,7 +202,7 @@ cat primary.fcl
 cmd=(
   mu2ejobdef
   --embed primary.fcl
-  --setup "${SETUP}"
+  --setup "${SIMJOB_SETUP}"
   --run-number="${RUN}"
   --events-per-job="${EVENTS}"
   --desc "${DESC}"
