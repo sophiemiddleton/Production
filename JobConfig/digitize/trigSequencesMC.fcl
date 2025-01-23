@@ -1,0 +1,8 @@
+#include "mu2e_trig_config/core/trigRecoSequences.fcl"
+# override digi making
+BEGIN_PROLOG
+TrigRecoSequences:{
+   @table::TrigRecoSequences
+   artFragmentsGen    : [ @sequence::Digitize.DigitizeSequence ]
+}
+END_PROLOG

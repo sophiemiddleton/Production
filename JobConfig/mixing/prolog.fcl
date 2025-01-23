@@ -42,6 +42,7 @@ Mixing : {
   }
 }
 Mixing : {
+  @table::Mixing
   producers : {
     PBISim : {
       module_type: ProtonBunchIntensityLogNormal
@@ -82,8 +83,10 @@ Mixing : {
 }
 Mixing.PileupMixSequence : [ PBISim, @sequence::Mixing.StepMixSequence, @sequence::Mixing.StepFilterSequence ]
 Mixing.MixSequence : [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
-# override the Trigger 'PrepareDigis' sequence; the mixers must preceed the digi making.  Note CRV doesn't participate in trigger, so isn't included
-TrigRecoSequences.artFragmentsGen: [ @sequence::Mixing.PileupMixSequence, @sequence::CommonMC.DigiSim, @sequence::TrackerMC.DigiSim, @sequence::CaloMC.DigiSim ]
+# override the Trigger 'PrepareDigis' sequence; the mixers must preceed the digi making
+TrigRecoSequences.artFragmentsGen: [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
+#
+# The following is used to guarantee consistency when filtering pileup when mixing a primary that could also be part of pileup
+#
 Mixing.StoppingTargetFoilVolumes: [ "Foil_00", "Foil_01", "Foil_02", "Foil_03", "Foil_04", "Foil_05", "Foil_06", "Foil_07", "Foil_08", "Foil_09", "Foil_10", "Foil_11", "Foil_12", "Foil_13", "Foil_14", "Foil_15", "Foil_16", "Foil_17", "Foil_18", "Foil_19", "Foil_20", "Foil_21", "Foil_22", "Foil_23", "Foil_24", "Foil_25", "Foil_26", "Foil_27", "Foil_28", "Foil_29", "Foil_30", "Foil_31", "Foil_32", "Foil_33", "Foil_34", "Foil_35", "Foil_36" ]
-
 END_PROLOG

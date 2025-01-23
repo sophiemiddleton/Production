@@ -8,7 +8,7 @@
 #include "mu2e_trig_config/core/trigSequences.fcl"
 #include "mu2e_trig_config/gen/trig_physMenuPSConfig.fcl"
 #include "mu2e_trig_config/gen/trig_physMenu.fcl"
-process_name: Mix
+process_name: Digitize
 source : { module_type : RootInput }
 services : @local::Services.SimAndReco # reco is needed for the trigger
 physics : {
@@ -36,7 +36,7 @@ physics.trigger_paths : [ "0:DigitizePath", "1:TriggerablePath" , "2:Triggerable
 outputs.TriggeredOutput.SelectEvents : @local::Digitize.SignalTriggers
 # Final configuration
 #include "Production/JobConfig/common/epilog.fcl"
-#include "Production/JobConfig/digitize/epilog.fcl"
+#include "Production/JobConfig/digitize/OnSpill_epilog.fcl"
 #include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"
 #include "Production/JobConfig/mixing/epilog.fcl"
 

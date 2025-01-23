@@ -27,6 +27,10 @@ Reconstruction : {
     @table::CrvResponsePackage.producers
     @table::CosmicReco.producers
 
+    # choose the hit flagger
+    flagPH : @local::CalPatRec.producers.DeltaFinder
+    # flagPH : @local::TrkHitReco.producers.FlagBkgHits
+
     # instantiate explicit helix merger modules
     # NB: positive here refers to helicity, not charge!
     MHDe : {
@@ -131,7 +135,7 @@ Reconstruction : {
       strawDigiMCTag : "compressDigiMCs"
       crvDigiMCTag : "compressDigiMCs"
       simParticleTags : [ "compressDigiMCs" ]
-      extraStepPointMCTags : ["compressDigiMCs:virtualdetector", "compressDigiMCs:stoppingtarget", "compressDigiMCs:protonabsorber" ]
+      extraStepPointMCTags : ["compressDigiMCs:virtualdetector" ]
       surfaceStepTags : [ "compressDigiMCs" ]
       caloShowerStepTags : [ ]
       caloShowerSimTag : ""
@@ -260,7 +264,7 @@ Reconstruction : {
   ]
   # Extra products for display
   EventDisplayProducts : [
-    "keep mu2e::ComboHitCollection_DeltaFinder_*_*"
+    "keep mu2e::ComboHitCollection_flagPH_*_*"
   ]
   GeneralProducts : [
     @sequence::Digitize.GeneralProducts,
