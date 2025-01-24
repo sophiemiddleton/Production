@@ -3,6 +3,9 @@
 #
 #include "Production/JobConfig/mixing/Mix.fcl"
 physics.producers.MakeSS : { module_type : NullProducer }
+# temporary fix: this won't be needed after starting MDC2025 production
+physics.producers.compressDigiMCs.surfaceStepTags : [ "compressDetStepMCs" ]
+# complete the mixing config
 services.SeedService.baseSeed         :  8
 source.fileNames : [ "dts.owner.ceSteps.dsconf.seq.art" ]
 physics.filters.MuStopPileupMixer.mu2e.simStageEfficiencyTags: []

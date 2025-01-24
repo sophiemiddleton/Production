@@ -1,5 +1,7 @@
 #include "Production/JobConfig/digitize/OnSpill.fcl"
 physics.producers.MakeSS : { module_type : NullProducer }
+# temporary fix: this won't be needed after starting MDC2025 production
+physics.producers.compressDigiMCs.surfaceStepTags : [ "compressDetStepMCs" ]
 
 services.scheduler.wantSummary: true
 services.TimeTracker.printSummary: true

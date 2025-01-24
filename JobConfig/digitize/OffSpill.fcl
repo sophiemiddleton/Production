@@ -2,8 +2,7 @@
 
 # set the spill type
 physics.producers.EWMProducer.SpillType : 0
-# configure 'Triggered' output to be signal
-# FIXME, should match OnSpill?
+# configure 'Triggered' output to include calib triggers
 outputs.TriggeredOutput.SelectEvents : [
   @sequence::Digitize.SignalTriggers,
   @sequence::Digitize.TrkTriggers,
@@ -11,11 +10,12 @@ outputs.TriggeredOutput.SelectEvents : [
 # Lower thresholds for LoopHelix triggerable
 physics.filters.Triggerable.MinParticleMom : 50.0
 physics.filters.Triggerable.MaxParticleMom : 300.0
-
-physics.filters.TriggerableCHEnable.ReturnValue : true # enable high mom triggerable
+physics.trigger_paths : [ "0:DigitizePath", "1:TriggerablePath" , "2:TriggerableCHPath" , @sequence::Trig_physMenu.trigger_paths]
+outputs.TriggerableOutput.SelectEvents : [ "TriggerablePath", "TriggerableCHPath" ]
+physics.filters.TriggerableCHPrescale.prescaleFactor : 10 # only record 10% of triggerable high-momentum tracks
 # Temporarily turn off Crv noise
 physics.producers.CrvSiPMCharges.ThermalRate : 0
 # same for calorimeter
 physics.producers.CaloDigiMaker.addNoise : false
-# turn on MC truth matching for OnSpill triggers run Offline
+# turn on MC truth matching for OnSpill triggers run OffSpill
 #include "Production/JobConfig/digitize/OnSpill_epilog.fcl"
