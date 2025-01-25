@@ -103,12 +103,8 @@ Digitize: {
     }
     TriggerableCHPrescale : {
       module_type : Prescaler
-      prescaleFactor : 10
+      prescaleFactor : 100
       prescaleOffset : 0
-    }
-    TriggerableCHEnable : {
-      module_type : FixedFilter
-      ReturnValue : false # by default disable CH triggerable
     }
     @table::TrigFilters.filters
   }
@@ -128,8 +124,7 @@ Digitize: {
 
   TriggerableSequence : [
     TriggerablePrescale, Triggerable ]
-  TriggerableCHSequence : [
-    TriggerableCHEnable, TriggerableCHPrescale, TriggerableCH ]
+  TriggerableCHSequence : [ TriggerableCHPrescale, TriggerableCH ]
 
   TriggerProducts : [
     "keep art::TriggerResults_*_*_*",
@@ -174,7 +169,6 @@ Digitize: {
   #
   TriggerableOutput : {
     module_type : RootOutput
-    SelectEvents : [ "TriggerablePath", "TriggerableCHPath" ] # require events pass 'Triggerable' filter
     fileName    : @nil
   }
   #
@@ -208,8 +202,6 @@ Digitize.Outputs : {
   TriggeredOutput : @local::Digitize.TriggeredOutput
   TriggerableOutput : @local::Digitize.TriggerableOutput
 }
-# give paths specific numbers outside trigger path range
-Digitize.trigger_paths : ["0:DigitizePath", "1:TriggerablePath", "2:TriggerableCHPath" ]
 Digitize.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, TriggerableOutput ]
 # override the trigger digitization sequence
 TrigRecoSequences.artFragmentsGen : @local::Digitize.DigitizeSequence

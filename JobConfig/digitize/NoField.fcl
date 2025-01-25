@@ -1,22 +1,28 @@
 # configure NoField digitization
-# add trigger paths; for now use the Extracted trigger menu, as these assume no field (should become renamed TODO
-#include "mu2e_trig_config/gen/trig_extrPosPSConfig.fcl"
-#include "mu2e_trig_config/gen/trig_extrPos.fcl"
+# first, trigger filtesr and paths
+#include "mu2e_trig_config/gen/trig_extrPosMenuPSConfig.fcl"
+#include "mu2e_trig_config/gen/trig_extrPosMenu.fcl"
 # then generic digitization
 #include "Production/JobConfig/digitize/Digitize.fcl"
-# set OffSpill timing
-#include "Production/JobConfig/digitize/OffSpill_epilog.fcl"
 # add trigger filters
-physics.filters : { @table::physics.filters @table::Trig_physMenuPSConfig }
+physics.filters : { @table::physics.filters @table::Trig_extrPosMenuPSConfig }
 # add the trigger paths
-physics.trigger_paths : [ @sequence::Digitize.trigger_paths, @sequence::Trig_physMenu.trigger_paths]
+# give paths specific numbers outside trigger path range
+physics.trigger_paths : ["0:DigitizePath", "1:TriggerablePath", @sequence::Trig_extrPosMenu.trigger_paths]
 # configure 'Triggered' output to be calibration triggers
 outputs.TriggeredOutput.SelectEvents : [
   @sequence::Digitize.TrkTriggers,
   @sequence::Digitize.CaloTriggers ]
+outputs.TriggerableOutput.SelectEvents : [ "TriggerablePath" ]
+# set the spill type
+physics.producers.EWMProducer.SpillType : 0
+# Temporarily turn off Crv noise
+physics.producers.CrvSiPMCharges.ThermalRate : 0
+# same for calorimeter
+physics.producers.CaloDigiMaker.addNoise : false
 # no-field
 services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
-physics.filters.TriggerablePrescale.prescaleFactor : 100 # only record 1% of the untriggered
+# allow infinite momemtum
 physics.filters.Triggerable.MaxParticleMom : 1e10
-physics.trigger_paths : [@sequence::Trig_extrPos.trigger_paths]
+physics.filters.TriggerablePrescale.prescaleFactor : 10 # only record 10% of triggerable tracks
 #include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"

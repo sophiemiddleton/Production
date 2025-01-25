@@ -6,5 +6,3 @@
 #include "Production/JobConfig/digitize/Digitize.fcl"
 # add trigger filters
 physics.filters : { @table::physics.filters @table::Trig_physMenuPSConfig }
-# add the trigger paths
-physics.trigger_paths : [ @sequence::Digitize.trigger_paths, @sequence::Trig_physMenu.trigger_paths]
