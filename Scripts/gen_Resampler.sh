@@ -140,16 +140,6 @@ if [[ ${DSCONF} == "" || ${DESC} == ""|| ${RESAMPLER_NAME} == "" || ${JOBS} == "
   exit_abnormal
 fi
 
-# Test: run a test to check the SimJob for this dsconf verion exists TODO
-DIR=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/${DSCONF}
-if [ -d "$DIR" ];
-then
-  echo "$DIR directory exists."
-else
-  echo "$DIR directory does not exist."
-  exit 1
-fi
-
 echo "Input dataset: $RESAMPLER_DATA"
 samweb list-files "dh.dataset=$RESAMPLER_DATA and event_count > 0"  > Stops.txt
 
@@ -169,7 +159,7 @@ fi
 echo physics.filters.${RESAMPLER_NAME}.mu2e.MaxEventsToSkip: ${nskip} >> primary.fcl
 echo "services.GeometryService.bFieldFile : \"${FIELD}\"" >> primary.fcl
 
-#Append optional strings to the primary.fcl 
+#Append optional strings to the primary.fcl
 if [[ "${SET_FNAMES}" == "True" ]]; then
   echo outputs.PrimaryOutput.fileName: \"dts.owner.${DESC}.version.sequencer.art\"  >> primary.fcl
   echo services.TFileService.fileName: \"nts.owner.GenPlots.version.sequencer.root\"  >> primary.fcl
