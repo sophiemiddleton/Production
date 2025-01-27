@@ -2,7 +2,7 @@
     {
 	"desc": "RMCFlatGammaStops",
 	"dsconf": "MDC2020ap",
-	"fcl": "",
+	"fcl": "Production/JobConfig/primary/RMCFlatGammaStops.fcl",
 	"resampler_name": "TargetStopResampler",
 	"resampler_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
 	"events": 1000000,
@@ -15,8 +15,8 @@
     
     {
 	"desc": "RMCFlatGammaResampling",
-	"dsconf": "MDC2020ap",
-	"fcl": "",
+	"dsconf": "MDC2020test",
+	"fcl": "Production/JobConfig/primary/RMCFlatGammaResampling.fcl",
 	"resampler_name": "GammaConversionResampler",
 	"resampler_data": "sim.mu2e.RMCFlatGammaStops.MDC2020ap.art",	
 	"events": 100000,
@@ -24,12 +24,12 @@
 	"start_mom": 0,
 	"end_mom": 1000,
 	"run": 1202,
-	"simjob_setup": ""
+	"simjob_setup": "/cvmfs/mu2e-development.opensciencegrid.org/museCIBuild/main/5e277911_d232e047_6318fda7/setup.sh"
     },
     {
 	"desc": "RMCIPAFlatGammaResampling",
 	"dsconf": "MDC2020ap",
-	"fcl": "",
+	"fcl": "Production/JobConfig/primary/RMCIPAFlatGammaResampling.fcl",
 	"resampler_name": "GammaConversionResampler",
 	"resampler_data": "sim.mu2e.RMCFlatIPAGammaStops.MDC2020ap.art",	
 	"events": 100000,
@@ -42,7 +42,7 @@
     {
 	"desc": "RMCWireFlatGammaResampling",
 	"dsconf": "MDC2020ap",
-	"fcl": "",
+	"fcl": "Production/JobConfig/primary/RMCWireFlatGammaResampling.fcl",
 	"resampler_name": "GammaConversionResampler",
 	"resampler_data": "sim.mu2e.RMCFlatWireGammaStops.MDC2020ap.art",	
 	"events": 100000,
