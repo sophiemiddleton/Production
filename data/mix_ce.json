@@ -1,6 +1,7 @@
 {
     "release_v_dts": ["ak"],
-    "release_v_o": ["am"],
+    "release_v_dig": ["ap"],
+    "release_v_rec": ["ap"],
     "primary_name": ["NoPrimary", "CeplusEndpoint", "CeEndpoint", "CeMLeadingLog"],
     "db_purpose": ["perfect", "best"],
     "digitype": ["Mix1BB", "Mix2BB"]
