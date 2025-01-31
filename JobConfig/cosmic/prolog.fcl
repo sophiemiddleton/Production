@@ -210,15 +210,8 @@ Cosmic: {
     ]
   }
   Mu2eG4CommonCutCosmicNoField: {
-    type: union
-    pars:
-    [
-      @local::cosmicKineticEnergyCutS1,
-      {
-        type: inVolume
-        pars: [ worldDirtBottom ]
-      }
-    ]
+    type: inVolume
+    pars: [ worldDirtBottom ]
   }
 
   S2KeptProducts : [
