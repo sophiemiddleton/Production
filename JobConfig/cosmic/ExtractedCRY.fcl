@@ -11,4 +11,5 @@ services.GeometryService.inputFile: "Production/JobConfig/cosmic/geom_cosmic_ext
 services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
 physics.filters.PrimaryFilter.CrvSteps: [ "CrvSteps" ]
 physics.producers.g4run.physics.minRangeCut : 10.
-physics.producers.g4run.physics.minRangeRegionCuts: { CalorimeterMother : 0.1 TrackerMother : 0.001 }
+physics.producers.g4run.physics.minRangeRegionCuts: { CalorimeterMother : 0.1 TrackerMother : 0.001 CRSmother_CRV_EX : 0.1 CRSmother_CRV_T1: 0.1 CRSmother_CRV_T2: 0.1} // {RegionName : mm }
+physics.producers.g4run.TrajectoryControl.defaultMinPointDistance: 15
