@@ -3,7 +3,7 @@
 # Generate S1 job definitions for Mu2e
 
 # Usage example:
-#   bash Scripts/gen_S1.sh --dsconf MDC2020ap --owner mu2e --run 1202 --events 2000 --jobs 1000 --desc POT --fcl input.fcl --simjob_setup /path/to/setup.sh --prod
+#   bash Scripts/gen_S1.sh --dsconf MDC2020ap --owner mu2e --run 1202 --events 2000 --jobs 1000 --desc POT --fcl input.fcl --simjob_setup /path/to/setup.sh
 
 # Default parameters (can be overridden via command-line arguments)
 DSCONF=""
@@ -14,7 +14,6 @@ NJOBS=1000
 DESC="POT"
 FCL="template.fcl"
 SIMJOB_SETUP=""
-PROD=false  # Default: Not in production mode
 
 # Function: Print a help message.
 usage() {
@@ -29,13 +28,12 @@ Usage: $0 [options]
   --desc           NAME   Explicit DS stop files list (default: POT)
   --fcl            FILE   Input FCL file (default: template.fcl)
   --simjob_setup          FILE   Explicit SimJob setup file (required)
-  --prod                  Enable production mode (optional)
   --help                  Print this message
 
 Example:
   $0 --dsconf MDC2020ap --owner mu2e --run 1202 --events 2000 --njobs 1000 \\
      --desc POT --fcl Production/JobConfig/beam/POT.fcl \\
-     --simjob_setup /cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ap/setup.sh --prod
+     --simjob_setup /cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ap/setup.sh
 EOF
 }
 
@@ -73,9 +71,6 @@ while getopts ":-:" options; do
           ;;
         simjob_setup)
           SIMJOB_SETUP=${!OPTIND} OPTIND=$((OPTIND + 1))
-          ;;
-        prod)
-          PROD=true
           ;;
         help)
           usage
@@ -140,5 +135,3 @@ idx_format=$(printf "%07d" ${NJOBS})
 
 # Run gen_IndexDef.sh in production mode
 [ "$PROD" = true ] && source gen_IndexDef.sh
-
-ls -ltr
