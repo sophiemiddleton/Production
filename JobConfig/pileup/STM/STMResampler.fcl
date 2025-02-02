@@ -26,7 +26,7 @@ physics: {
     # TODO BEFORE NEXT CAMPAIGN - add the CompressPhysicalVolumes module here keeping the output from the FilterG4Out module label.
     ShiftStepsHPGe : { # Shift the steps to upstream of the HPGe absorber along the SSC aperture
       module_type : ShiftVirtualDetectorStepPointMCs
-      StepPointMCsTag : "stmResampler:virtualdetector"
+      StepPointMCsTag : "stmResampler:virtualdetector" # virtualdetector"
       VirtualDetectorID : @local::ShiftVD101Steps.VirtualDetectorID
       InputRadius : @local::ShiftVD101Steps.InputRadius
       OutputRadius : @local::ShiftVD101Steps.OutputRadius
@@ -38,6 +38,7 @@ physics: {
       OutputX : @local::ShiftVD101Steps.HPGeUpStr.X
       OutputY : @local::ShiftVD101Steps.HPGeUpStr.Y
       OutputZ : @local::ShiftVD101Steps.HPGeUpStr.Z
+      pdgID : @local::ShiftVD101Steps.pdgID
     }
     ShiftStepsLaBr : { # Shift the steps to upstream of the LaBr SSC aperture
       module_type : ShiftVirtualDetectorStepPointMCs
@@ -53,6 +54,7 @@ physics: {
       OutputX : @local::ShiftVD101Steps.LaBrUpStr.X
       OutputY : @local::ShiftVD101Steps.LaBrUpStr.Y
       OutputZ : @local::ShiftVD101Steps.LaBrUpStr.Z
+      pdgID : @local::ShiftVD101Steps.pdgID
     }
     compressSTMDet : { # Keeps only the wanted StepPoints and SimParticles for this study
       # Creates "mu2e::SimParticlemv_compressSTMDet__STMResampler" and "mu2e::StepPointMCs_compressSTMDet__STMResampler" objects
@@ -65,7 +67,7 @@ physics: {
       crvStepTag : ""
       simParticleTags : [ "g4run" ]
       debugLevel : 0
-      stepPointMCTags : [ "g4run:STMDet" ]
+      stepPointMCTags : [ "g4run:STMDet", "g4run:virtualdetector" ]
       compressionOptions : {
         strawGasStepCompressionLevel: "noCompression"
         caloShowerStepCompressionLevel: "noCompression"
@@ -108,11 +110,12 @@ outputs: {
       "keep mu2e::GenEventCount_*_*_*",
       "keep art::EventIDs_*_*_*",
       "keep mu2e::StepPointMCs_compressSTMDet_STMDet_STMResampler",
+      "keep mu2e::StepPointMCs_compressSTMDet_virtualdetector_STMResampler",
       "keep mu2e::SimParticlemv_compressSTMDet_*_STMResampler",
       "keep mu2e::SimTimeOffset_protonTimeOffset_*_STMResampler",
       "keep mu2e::PhysicalVolumeInfomvs_*_*_*"
     ]
-    fileName : @nil
+    fileName : "dts.plesniak.STMDet.version.sequencer.art"
   }
 }
 
@@ -121,7 +124,7 @@ physics.producers.g4run.inputs: {
   primaryType: "StepPoints"
   primaryTag: "ShiftStepsHPGe:"
   inputMCTrajectories: ""
-  simStageOverride: 2
+  simStageOverride: 2 # 3
   inputPhysVolumeMultiInfo: "stmResampler"
   updateEventLevelVolumeInfos: {
     input: "stmResampler:eventlevel"
