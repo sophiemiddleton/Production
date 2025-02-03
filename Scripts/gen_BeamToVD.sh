@@ -30,7 +30,7 @@ samweb list-file-locations --schema=root --defname="$eleDataset"  | cut -f1 > El
 nEleFiles=`samCountFiles.sh $eleDataset`
 nEleEvts=`samCountEvents.sh $eleDataset`
 nEleSkip=$((nEleEvts/nEleFiles))
-echo "Electrons: found $nEleEvts in $nEleFiles, skipping max of $nEleSkip events per job"
+echo "Electrons: found $nEleEvts events in $nEleFiles files, skipping max of $nEleSkip events per job"
 
 # Write the base propagation script for electrons
 if [ -f tmp.fcl ]; then
@@ -50,6 +50,7 @@ for dirname in 000 001 002 003 004 005 006 007 008 009; do
   mv $dirname Ele_$dirname
  fi
 done
+rm -f tmp.fcl
 
 
 # Do the same thing but for MuBeamCat
@@ -63,12 +64,11 @@ samweb list-file-locations --schema=root --defname="$muDataset"  | cut -f1 > MuB
 nMuFiles=`samCountFiles.sh $muDataset`
 nMuEvts=`samCountEvents.sh $muDataset`
 nMuSkip=$((nMuEvts/nMuFiles))
-echo "Muons: found $nMuEvts in $nMuFiles, skipping max of $nMuSkip events per job"
+echo "Muons: found $nMuEvts events in $nMuFiles files, skipping max of $nMuSkip events per job"
 
 # Write the base propagation script for muons
-rm -f beamToVD101Resampler.fcl
-echo '#include "Production/JobConfig/pileup/STM/BeamToVD101.fcl"' >> beamToVD101Resampler.fcl
-echo physics.filters.beamResampler.mu2e.MaxEventsToSkip: ${nMuSkip} >> beamToVD101Resampler.fcl
+echo '#include "Production/JobConfig/pileup/STM/BeamToVD.fcl"' >> tmp.fcl
+echo physics.filters.beamResampler.mu2e.MaxEventsToSkip: ${nMuSkip} >> tmp.fcl
 # Generate the electrons fcl files
 generate_fcl --dsconf=$1$3 --dsowner=$USER --run-number=1205 --description=BeamToVDMu --events-per-job=$6 --njobs=$7 \
   --embed tmp.fcl --auxinput=1:physics.filters.beamResampler.fileNames:MuBeamCat.txt 
@@ -82,14 +82,14 @@ done
 
 # Save the seed file to a directory
 seedDir="BeamToVDSeeds"
-if [ ! -f $seedDir ]; then
+if [ ! -d $seedDir ]; then
   mkdir $seedDir
 fi
 mv seeds.$USER.BeamToVD*.$1$3.*.txt $seedDir
 
 # Cleanup
 echo "Removing produced files"
-rm -f beamToVD101Resampler.fcl
 rm -f EleBeamCat.txt
 rm -f MuBeamCat.txt
+rm -f tmp.fcl
 echo "Finished"

@@ -2,83 +2,85 @@
 # Original author: Dave Brown, LBNL
 # Updated for STM studies: Pawel Plesniak
 
+# Offline includes
 #include "Offline/fcl/standardServices.fcl"
 #include "Offline/EventGenerator/fcl/prolog.fcl"
+#include "Offline/STMMC/fcl/prolog.fcl"
+
+# Production includes
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/pileup/prolog.fcl"
 #include "Production/JobConfig/primary/prolog.fcl"
-#include "Offline/Analyses/fcl/prolog.fcl"
-#include "Offline/STMMC/fcl/prolog.fcl"
 
-process_name: 1809BeamToVD101
+process_name: BeamToVD1809
+
 source: {
   module_type : EmptyEvent
   maxEvents : @nil
 }
+
 services : @local::Services.Sim
+
 physics : {
   producers : {
     @table::Common.producers
     @table::Pileup.producers
-    # resampling generator
-    generate : {
+    generate : { # Generates the 1809 keV peaks from muon target stop positions
       module_type: Pileup
       inputSimParticles: TargetStopResampler
       stoppingTargetMaterial : "Al"
       verbosity: 0
-      captureProducts: [
-	{
-          tool_type : "MuCap1809keVGammaGenerator"
-        }
-      ]
-      decayProducts: [ ] # Test with just captureProducts in the future
+      captureProducts: [{tool_type : "MuCap1809keVGammaGenerator"}]
+      decayProducts: []
     }
-    extractVD101 : {
-      # Creates "mu2e::StepPointMCs_extractVD101__BeamToVD101" objects that only store StepPointMCs in VD101. Will create empty collections if no hits are found -> filter required.
+    extractVirtualDetectorSteps : {
+      # Creates "mu2e::StepPointMCs_extractVirtualDetectorSteps__BeamToVD1809" products that only store StepPointMCs in the selected virtual detector
+      # Want to only keep events with the given virtual detector ID and filter out the rest
+      # Empty collections will be generated if the selected virtual detector has no associated StepPointMCs to allow the compression to take place
       module_type : STMResamplingProducer
       StepPointMCsTag : @local::ResamplingProducer.StepPointMCsTag
       VirtualDetectorID : @local::ResamplingProducer.VirtualDetectorID
-      verbose : @local::ResamplingProducer.verbose
     }
     compressDetStepMCsSTM : {
-      # Creates "mu2e::SimParticlemv_compressDetStepMCsSTM__BeamToVD101" and "mu2e::StepPointMCs_compressDetStepMCsSTM__BeamToVD101" objects
-      # from "mu2e::StepPointMCs_extractVD101_virtualdetector_BeamToVD101" objects that only keep SimParticles and StepPointMCs going through VD101.
-      # This removes the SimParticles that do not go through VD101, as this is the largest contributor to the data volume with this study.
+      # Creates "mu2e::SimParticlemv_compressDetStepMCsSTM__BeamToVD1809" and "mu2e::StepPointMCs_compressDetStepMCsSTM__BeamToVD1809" products from "mu2e::StepPointMCs_extractVirtualDetectorSteps__BeamToVD1809" products
+      # Keeps SimParticles and StepPointMCs going through the selected virtual detector only
       module_type : CompressDetStepMCs
       strawGasStepTag : ""
       caloShowerStepTag : ""
       surfaceStepTag : ""
       crvStepTag : ""
-      simParticleTags : [ "g4run" ] 
+      simParticleTags : ["g4run"] 
       debugLevel : 0
-      stepPointMCTags : [ "extractVD101" ] # extractVD101 was g4run
+      stepPointMCTags : ["extractVirtualDetectorSteps"]
       compressionOptions : {
         strawGasStepCompressionLevel: "noCompression"
         caloShowerStepCompressionLevel: "noCompression"
         crvStepCompressionLevel: "noCompression"
         surfaceStepCompressionLevel: "noCompression"
-        keepNGenerations : -1 # only keep SimParticles producing DetectorSteps and their direct parents
+        keepNGenerations : -1
         simParticleCompressionLevel : "fullCompression"
         stepPointMCCompressionLevel : "noCompression"
         mcTrajectoryCompressionLevel : "noCompression"
       }
-      mcTrajectoryTag : "" # no MC Trajectories
+      mcTrajectoryTag : ""
     }
   }
   filters : {
     @table::Common.filters
     @table::Pileup.filters
     TargetStopResampler : @local::Primary.filters.TargetStopResampler
-    VD101Filter: {
+    filterVirtualDetectorSteps: {
+      # Filters events based on the size of "mu2e::StepPointMCs_compressDetStepMCsSTM__BeamToVD1809"
+      # If there are no StepPointMCs in the selected virtual detector, the event is not kept
+      # Required as extractVirtualDetectorSteps will create a StepPointMCCollection even if the collection is empty
       module_type: STMResamplingFilter
-      StepPointMCsTag : "compressDetStepMCsSTM:" # @local::ResamplingFilter.StepPointMCsTag
-      verbose : @local::ResamplingFilter.verbose
+      StepPointMCsTag : @local::ResamplingFilter.StepPointMCsTag
     }
   }
-  PileupPath : [ TargetStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, extractVD101, compressDetStepMCsSTM, VD101Filter ]
-  EndPath : [ Output ]
-  trigger_paths : [ PileupPath ]
-  end_paths : [ EndPath ]
+  PileupPath : [TargetStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, extractVirtualDetectorSteps, compressDetStepMCsSTM, filterVirtualDetectorSteps]
+  EndPath : [Output]
+  trigger_paths : [PileupPath]
+  end_paths : [EndPath]
 }
 outputs : {
   Output : {
@@ -96,11 +98,6 @@ outputs : {
     fileName: "dts.owner.MuStopPileup.version.sequencer.art"
   }
 }
-#include "Production/JobConfig/common/MT.fcl"
-#include "Production/JobConfig/common/epilog.fcl"
-#include "Production/JobConfig/pileup/epilog.fcl"
-# No time cut; muons decay late anyways, this lets us use the output for both regulary and 'Early' mixing
-physics.filters.DetStepFilter.TimeCutConfig : @erase
 
 # resampling configuration
 physics.producers.g4run.inputs: {
@@ -115,3 +112,7 @@ physics.producers.g4run.inputs: {
   }
 }
 
+# Epilog includes
+#include "Production/JobConfig/common/MT.fcl"
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/pileup/epilog.fcl"

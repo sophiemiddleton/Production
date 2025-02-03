@@ -42,9 +42,9 @@ physics: {
       caloShowerStepTag : ""
       surfaceStepTag : ""
       crvStepTag : ""
-      simParticleTags : [ "g4run" ]
+      simParticleTags : ["g4run"]
       debugLevel : 0
-      stepPointMCTags : [ "extractVirtualDetectorSteps" ]
+      stepPointMCTags : ["extractVirtualDetectorSteps"]
       compressionOptions : {
         strawGasStepCompressionLevel: "noCompression"
         caloShowerStepCompressionLevel: "noCompression"
@@ -110,11 +110,11 @@ physics.producers.g4run.inputs: {
     outInstance: "eventlevel"
   }
 }
+physics.producers.g4run.SDConfig.preSimulatedHits:  ["beamResampler:virtualdetector"]
 physics.producers.g4run.SDConfig.enableSD: [virtualdetector]
 physics.producers.g4run.Mu2eG4CommonCut: {}
 
-# copy over VD hits
-physics.producers.g4run.SDConfig.preSimulatedHits:  ["beamResampler:virtualdetector"]
+# Epilog includes
 #include "Production/JobConfig/common/MT.fcl"
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/pileup/epilog.fcl"
