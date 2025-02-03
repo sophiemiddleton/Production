@@ -222,7 +222,7 @@ Pileup: {
     stmResampler: {
       module_type: ResamplingMixer
       fileNames: @nil
-      readMode: "sequential" # "sequential" # randomNoReplace if randomly sampling, sequential if resampling
+      readMode: "sequential" # randomNoReplace
       wrapFiles: true
       mu2e: {
         writeEventIDs : true
@@ -234,34 +234,12 @@ Pileup: {
           stepPointMCMixer: { mixingMap: [ [ "compressDetStepMCsSTM:virtualdetector", ":" ] ] } 
           simTimeOffset : "protonTimeOffset"
           volumeInfoMixer: {
-            srInput: "g4run" # ""
-            evtOutInstanceName: "eventlevel" # ""
+            srInput: "g4run"
+            evtOutInstanceName: "eventlevel"
           }
         }
       }
     }
-    stmResampler1809: {
-      module_type: ResamplingMixer
-      fileNames: @nil
-      readMode: "sequential" # "sequential" # randomNoReplace if randomly sampling, sequential if resampling
-      wrapFiles: true
-      mu2e: {
-        writeEventIDs : true
-        MaxEventsToSkip: @nil
-        debugLevel : 1
-        products: {
-          genParticleMixer: { mixingMap: [ [ "compressDetStepMCsSTM", "" ] ] }
-          simParticleMixer: { mixingMap: [ [ "compressDetStepMCsSTM", "" ] ] }
-          stepPointMCMixer: { mixingMap: [ [ "compressDetStepMCsSTM:", ":" ] ] } 
-          simTimeOffset : "protonTimeOffset"
-          volumeInfoMixer: {
-            srInput: "g4run" # ""
-            evtOutInstanceName: "eventlevel" # ""
-          }
-        }
-      }
-    }
-
   }
 
   Output : {

@@ -16,6 +16,7 @@ process_name: STMResampler
 
 source: {
   module_type : EmptyEvent
+  maxEvents : @nil
 }
 
 services : @local::Services.Sim
@@ -24,42 +25,37 @@ physics: {
     @table::Common.producers
     @table::Pileup.producers # Contains stmResampler
     # TODO BEFORE NEXT CAMPAIGN - add the CompressPhysicalVolumes module here keeping the output from the FilterG4Out module label.
-    ShiftStepsHPGe : { # Shift the steps to upstream of the HPGe absorber along the SSC aperture
-      module_type : ShiftVirtualDetectorStepPointMCs
-      StepPointMCsTag : "stmResampler:virtualdetector" # virtualdetector"
-      VirtualDetectorID : @local::ShiftVD101Steps.VirtualDetectorID
-      InputRadius : @local::ShiftVD101Steps.InputRadius
-      OutputRadius : @local::ShiftVD101Steps.OutputRadius
-      STMStudy : @local::ShiftVD101Steps.STMStudy
-      verbose : @local::ShiftVD101Steps.verbose
-      InputX : @local::ShiftVD101Steps.VD101.X
-      InputY : @local::ShiftVD101Steps.VD101.Y
-      InputZ : @local::ShiftVD101Steps.VD101.Z
-      OutputX : @local::ShiftVD101Steps.HPGeUpStr.X
-      OutputY : @local::ShiftVD101Steps.HPGeUpStr.Y
-      OutputZ : @local::ShiftVD101Steps.HPGeUpStr.Z
-      pdgID : @local::ShiftVD101Steps.pdgID
-    }
-    ShiftStepsLaBr : { # Shift the steps to upstream of the LaBr SSC aperture
+    shiftStepsHPGe : { # Shift the steps to upstream of the HPGe absorber along the SSC aperture
       module_type : ShiftVirtualDetectorStepPointMCs
       StepPointMCsTag : "stmResampler:virtualdetector"
       VirtualDetectorID : @local::ShiftVD101Steps.VirtualDetectorID
       InputRadius : @local::ShiftVD101Steps.InputRadius
       OutputRadius : @local::ShiftVD101Steps.OutputRadius
-      STMStudy : @local::ShiftVD101Steps.STMStudy
-      verbose : @local::ShiftVD101Steps.verbose
-      InputX : @local::ShiftVD101Steps.VD101.X
-      InputY : @local::ShiftVD101Steps.VD101.Y
-      InputZ : @local::ShiftVD101Steps.VD101.Z
-      OutputX : @local::ShiftVD101Steps.LaBrUpStr.X
-      OutputY : @local::ShiftVD101Steps.LaBrUpStr.Y
-      OutputZ : @local::ShiftVD101Steps.LaBrUpStr.Z
+      InputX : @local::ComponentPositions.VD101.x
+      InputY : @local::ComponentPositions.VD101.y
+      InputZ : @local::ComponentPositions.VD101.z
+      OutputX : @local::ShiftVD101Steps.HPGeUpStr.x
+      OutputY : @local::ShiftVD101Steps.HPGeUpStr.y
+      OutputZ : @local::ShiftVD101Steps.HPGeUpStr.z
+      pdgID : @local::ShiftVD101Steps.pdgID
+    }
+    shiftStepsLaBr : { # Shift the steps to upstream of the LaBr SSC aperture
+      module_type : ShiftVirtualDetectorStepPointMCs
+      StepPointMCsTag : "stmResampler:virtualdetector"
+      VirtualDetectorID : @local::ShiftVD101Steps.VirtualDetectorID
+      InputRadius : @local::ShiftVD101Steps.InputRadius
+      OutputRadius : @local::ShiftVD101Steps.OutputRadius
+      InputX : @local::ComponentPositions.VD101.x
+      InputY : @local::ComponentPositions.VD101.y
+      InputZ : @local::ComponentPositions.VD101.z
+      OutputX : @local::ShiftVD101Steps.LaBrUpStr.x
+      OutputY : @local::ShiftVD101Steps.LaBrUpStr.y
+      OutputZ : @local::ShiftVD101Steps.LaBrUpStr.z
       pdgID : @local::ShiftVD101Steps.pdgID
     }
     compressSTMDet : { # Keeps only the wanted StepPoints and SimParticles for this study
-      # Creates "mu2e::SimParticlemv_compressSTMDet__STMResampler" and "mu2e::StepPointMCs_compressSTMDet__STMResampler" objects
-      # from "mu2e::StepPointMCs_g4run_STMDet_STMResampler" objects that only keep SimParticles and StepPointMCs going through STMDet.
-      # This removes the SimParticles that do not go through STMDet, as this is the largest contributor to the data volume with this study.
+      # Creates "mu2e::SimParticlemv_compressSTMDet__STMResampler" and "mu2e::StepPointMCs_compressSTMDet__STMResampler" products from "mu2e::StepPointMCs_g4run_STMDet_STMResampler" products
+      # Keeps SimParticles and StepPointMCs going through STMDet only
       module_type : CompressDetStepMCs
       strawGasStepTag : ""
       caloShowerStepTag : ""
@@ -79,26 +75,26 @@ physics: {
         keepNGenerations : -1
         mcTrajectoryCompressionLevel : "noCompression"
       }
-      mcTrajectoryTag : "" # no MC Trajectories
+      mcTrajectoryTag : ""
     }
-}
+  }
   filters : {
     @table::Common.filters
     @table::Pileup.filters
   }
   analyzers : {
     @table::Common.analyzers
-    countVDs : {
-      module_type : CountVDHits
-      StepPointMCsTag : "g4run:virtualdetector"
-      enableVDs : [88, 89, 90, 101]
-      verbose : true
+    countVirtualDetectorHits : {
+      # Runs a counter over the virtual detectors to keep track of hits
+      module_type : CountVirtualDetectorHits
+      StepPointMCsTag : @local::VirtualDetectorCounter.StepPointMCsTag
+      virtualDetectorIDs : @local::VirtualDetectorCounter.virtualDetectorIDs
     }
   }
-  HPGePath : [ @sequence::Pileup.stmResamplerSequence, ShiftStepsHPGe, @sequence::Common.g4Sequence, compressSTMDet ]
-  LaBrPath : [ @sequence::Pileup.stmResamplerSequence, ShiftStepsLaBr, @sequence::Common.g4Sequence, compressSTMDet ]
+  HPGePath : [ @sequence::Pileup.stmResamplerSequence, shiftStepsHPGe, @sequence::Common.g4Sequence, compressSTMDet ]
+  LaBrPath : [ @sequence::Pileup.stmResamplerSequence, shiftStepsLaBr, @sequence::Common.g4Sequence, compressSTMDet ]
   trigger_paths: [ HPGePath ]
-  outPathCompressed : [ genCountLogger, countVDs, CompressedOutput ]
+  outPathCompressed : [ genCountLogger, countVirtualDetectorHits, CompressedOutput ]
   end_paths: [ outPathCompressed ]
 }
 
@@ -132,10 +128,10 @@ physics.producers.g4run.inputs: {
   }
 }
 physics.producers.g4run.SDConfig.enableSD: [virtualdetector, STMDet]
+physics.producers.g4run.SDConfig.preSimulatedHits: ["stmResampler:virtualdetector"]
 physics.producers.g4run.Mu2eG4CommonCut: {}
 
 # copy over VD hits
-physics.producers.g4run.SDConfig.preSimulatedHits: ["stmResampler:virtualdetector"]
 #include "Production/JobConfig/common/MT.fcl"
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/pileup/epilog.fcl"
