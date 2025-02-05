@@ -127,14 +127,19 @@ if [[ -n $DIGIS ]];
 then
   echo "Using user-provided input list of digs $DIGIS"
   ln -s $DIGIS Digis.txt
-elif [[ "${DIGITYPE}" == "Extracted" || "${DIGITYPE}" == "NoField" ]]; then
+elif [[ "${DIGITYPE}" == "Extracted" || "${DIGITYPE}" == "NoField" || "${DIGITYPE}" == "OffSpill" ]]; then
     samweb list-definition-files "dig.${OWNER}.${PRIMARY}${CAT}${STREAM}.${CAMPAIGN}${DIGI_VERSION}_${DB_PURPOSE}_${DIGIDB_VERSION}.art" > Digis.txt
 else
     samweb list-definition-files "dig.${OWNER}.${PRIMARY}${DIGITYPE}${CAT}${STREAM}.${CAMPAIGN}${DIGI_VERSION}_${DB_PURPOSE}_${DIGIDB_VERSION}.art" > Digis.txt
 fi
 
 if [[ "${DIGITYPE}" == "Extracted" || "${DIGITYPE}" == "NoField" ]]; then
-  echo "#include \"Production/JobConfig/reco/${DIGITYPE}.fcl\"" > reco.fcl
+    echo "#include \"Production/JobConfig/reco/${DIGITYPE}.fcl\"" > reco.fcl
+elif [[ "${DIGITYPE}" == "OffSpill" ]]; then
+    echo "#include \"Production/JobConfig/reco/${DIGITYPE}.fcl\"" > reco.fcl
+    echo "outputs.CentralHelixOutput.fileName : \"mcs.${OWNER}.${PRIMARY}${CAT}${STREAM}-CH.version.sequencer.art\"" >> reco.fcl
+    echo "outputs.LoopHelixOutput.fileName : \"mcs.${OWNER}.${PRIMARY}${CAT}${STREAM}-LH.version.sequencer.art\"" >> reco.fcl
+
 else
   echo '#include "Production/JobConfig/reco/Reco.fcl"' > reco.fcl
 fi
@@ -155,7 +160,12 @@ fi
 
 DSCONF=${CAMPAIGN}${RECO_VERSION}_${DB_PURPOSE}_${RECODB_VERSION}
 
-cmd="mu2ejobdef --embed reco.fcl --override-output-description --auto-description --setup ${SETUP} --auto-description --dsconf ${DSCONF} --inputs Digis.txt --merge-factor=${MERGE}"
+if [[ "${DIGITYPE}" == "OffSpill" ]]; then
+    cmd="mu2ejobdef --embed reco.fcl --setup ${SETUP} --dsconf ${DSCONF} --auto-description --inputs Digis.txt --merge-factor=${MERGE}"
+else
+    cmd="mu2ejobdef --embed reco.fcl --override-output-description --setup ${SETUP} --auto-description --dsconf ${DSCONF} --inputs Digis.txt --merge-factor=${MERGE}"
+fi
+
 echo "Running: $cmd"
 $cmd
 

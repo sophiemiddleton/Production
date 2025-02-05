@@ -10,3 +10,5 @@ outputs.PrimaryOutput.fileName : "dts.owner.CosmicCRYExtracted.version.sequencer
 services.GeometryService.inputFile: "Production/JobConfig/cosmic/geom_cosmic_extracted.txt"
 services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
 physics.filters.PrimaryFilter.CrvSteps: [ "CrvSteps" ]
+physics.producers.g4run.physics.minRangeCut : 10.
+physics.producers.g4run.physics.minRangeRegionCuts: { CalorimeterMother : 0.1 TrackerMother : 0.001 }

@@ -1,0 +1,15 @@
+[
+    {
+	"desc": "PbarSTGun",
+	"dsconf": "MDC2020ap",
+	"fcl": "Production/JobConfig/primary/AntiprotonStop.fcl",
+	"resampler_name": "TargetStopResampler",
+	"resampler_data": "sim.mu2e.stoppedSimpleAntiprotons.MDC2020ap.art",
+	"njobs": 100,
+	"events": 10000,
+	"run": 1202,
+	"start_mom": 0,
+        "end_mom": 1000,
+	"simjob_setup": "/cvmfs/mu2e-development.opensciencegrid.org/museCIBuild/main/d0247a0d_c55e1782_370dab41/setup.sh"
+    }
+]
