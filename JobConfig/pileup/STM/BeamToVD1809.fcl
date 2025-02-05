@@ -78,12 +78,12 @@ physics : {
     }
   }
   PileupPath : [TargetStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, extractVirtualDetectorSteps, compressDetStepMCsSTM, filterVirtualDetectorSteps]
-  EndPath : [Output]
+  EndPath : [compressedOutput]
   trigger_paths : [PileupPath]
   end_paths : [EndPath]
 }
 outputs : {
-  Output : {
+  compressedOutput : {
     module_type: RootOutput
     outputCommands : [
       "drop *_*_*_*",

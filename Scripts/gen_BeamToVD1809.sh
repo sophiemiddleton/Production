@@ -21,10 +21,10 @@ fi
 muStopDataset=sim.mu2e.TargetStopsCat.$1$2.art
 echo $eleDataset
 if [ -f EleBeamCat.txt ]; then
-    rm -f TargetStops.txt
+    rm -f TargetStopsCat.txt
 fi
 # Generate a list of all the staged EleBeamCat files and count the events
-samweb list-file-locations --schema=root --defname="$muStopDataset"  | cut -f1 > TargetStops.txt
+samweb list-file-locations --schema=root --defname="$muStopDataset"  | cut -f1 > TargetStopsCat.txt
 nFiles=`samCountFiles.sh $muStopDataset`
 nEvts=`samCountEvents.sh $muStopDataset`
 nSkip=$((nEvts/nFiles))
@@ -35,11 +35,11 @@ if [ -f tmp.fcl ]; then
     rm -f tmp.fcl
 fi
 echo '#include "Production/JobConfig/pileup/STM/BeamToVD1809.fcl"' >> tmp.fcl
-echo physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: ${nEleSkip} >> tmp.fcl
+echo physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: ${nSkip} >> tmp.fcl
 
 # Generate the electrons fcl files
 generate_fcl --dsconf=$1$3 --dsowner=$USER --run-number=1206 --description=BeamToVD1809 --events-per-job=$4 --njobs=$5 \
-  --embed tmp.fcl --auxinput=1:physics.filters.TargetStopResampler.fileNames:EleBeamCat.txt 
+  --embed tmp.fcl --auxinput=1:physics.filters.TargetStopResampler.fileNames:TargetStopsCat.txt 
 
 # Write the files to the correct directories
 for dirname in 000 001 002 003 004 005 006 007 008 009; do
@@ -59,4 +59,5 @@ mv seeds.$USER.BeamToVD*.$1$3.*.txt $seedDir
 # Cleanup
 echo "Removing produced files"
 rm -f tmp.fcl
+rm -f TargetStopsCat.txt
 echo "Finished"
