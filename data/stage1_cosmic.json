@@ -1,0 +1,11 @@
+[
+    {
+	"dsconf": "MDC2020ap_test",
+	"desc": "ExtractedCRY",
+	"fcl": "Production/JobConfig/cosmic/ExtractedCRY.fcl",
+	"njobs": 10,
+	"events": 10000,
+	"run": 1202,
+	"simjob_setup": "/cvmfs/mu2e-development.opensciencegrid.org/museCIBuild/main/e1260f8c_e9ccdad5_3f28b70d/setup.sh"
+    }
+]
