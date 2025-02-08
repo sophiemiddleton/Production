@@ -1,0 +1,130 @@
+#pass1 for data from CRV modules at Wideband
+
+#contact: R. Ehrlich
+
+#include "mu2e_trig_config/core/trigProducers.fcl"
+#include "Offline/fcl/standardProducers.fcl"
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/CRVResponse/fcl/prolog.fcl"
+
+process_name : CrvPass1
+
+services :
+{
+  @table::Services.Core
+  @table::Services.Reco
+}
+
+source :
+{
+  module_type : RootInput
+  fileNames   : @nil
+  maxEvents   : -1
+}
+
+physics :
+{
+  producers :
+  {
+    genFrags :
+    {
+       module_type  : ArtFragmentsFromDTCEvents
+       diagLevel    : 0
+       makeCaloFrag : 0
+       makeTrkFrag  : 0
+       makeCRVFrag  : 1
+       makeSTMFrag  : 0
+
+    }
+    CrvDigi :
+    {
+      module_type : CrvDigisFromFragments
+      crvTag      : "genFrags"
+      diagLevel   : 0
+    }
+    CrvRecoPulses: @local::CrvRecoPulses
+    CrvCoincidenceClusterFinder: @local::CrvCoincidenceClusterFinder
+  }
+
+  t1 : [ genFrags, CrvDigi, CrvRecoPulses, CrvCoincidenceClusterFinder ]
+  e1 : [ outfileReco, outfileNZS ]
+
+  trigger_paths  : [t1]
+  end_paths      : [e1]
+
+}
+
+outputs:
+{
+  outfileReco :
+  {
+    module_type   :   RootOutput
+    fileName      :   "crvRecoWideband.art"
+    outputCommands : [ "keep *_*_*_*" ,
+                       "drop artdaq::*_*_*_*" ,
+                       "drop mu2e::CrvDigis_*_NZS_*" ,
+                       "drop mu2e::CRVDataDecoders_*_*_*" ] #dictionary doesn't exist
+  }
+  outfileNZS :
+  {
+    module_type   :   RootOutput
+    fileName      :   "crvDigiNZSWideband.art"
+    outputCommands : [ "drop *_*_*_*" ,
+                       "keep mu2e::CrvDigis_*_NZS_*" ]
+  }
+}
+
+physics.producers.CrvCoincidenceClusterFinder.verboseLevel: 0
+physics.producers.CrvCoincidenceClusterFinder.sectorConfig:
+      [
+        {
+          CRVSector : "EX"
+          PEthreshold : 8
+          maxTimeDifferenceAdjacentPulses : 10
+          maxTimeDifference : 10
+          minOverlapTimeAdjacentPulses : 30
+          minOverlapTime : 30
+          minSlope :-6
+          maxSlope : 6
+          maxSlopeDifference : 4
+          coincidenceLayers : 3
+          minClusterPEs : 0
+        },
+        {
+          CRVSector : "T1"
+          PEthreshold : 8
+          maxTimeDifferenceAdjacentPulses : 10
+          maxTimeDifference : 10
+          minOverlapTimeAdjacentPulses : 30
+          minOverlapTime : 30
+          minSlope :-6
+          maxSlope : 6
+          maxSlopeDifference : 4
+          coincidenceLayers : 3
+          minClusterPEs : 0
+        },
+        {
+          CRVSector : "T2"
+          PEthreshold : 8
+          maxTimeDifferenceAdjacentPulses : 10
+          maxTimeDifference : 10
+          minOverlapTimeAdjacentPulses : 30
+          minOverlapTime : 30
+          minSlope :-6
+          maxSlope : 6
+          maxSlopeDifference : 4
+          coincidenceLayers : 3
+          minClusterPEs : 0
+        }
+      ]
+
+services.TFileService.fileName : "crvRecoWideband.root"
+services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_WidebandExtracted.txt"
+services.ProditionsService.crvStatus.useDb: false
+services.ProditionsService.crvCalib.useDb: true
+services.DbService.textFile : ["Offline/CRVConditions/data/calib_widebandExtracted.txt"]
+services.DbService.verbose : 0
+#services.message.destinations.log.categories.ArtReport.reportEvery : 1
+#services.message.destinations.log.categories.ArtReport.limit : 1
+#services.message.destinations.log.categories.ArtReport.timespan : 300
+

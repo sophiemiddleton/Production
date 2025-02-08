@@ -1,0 +1,41 @@
+#
+# finds the pedestal of CRV channels
+#
+#include "Offline/fcl/standardProducers.fcl"
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/CRVResponse/fcl/prolog.fcl"
+
+process_name : pedestalFinderWideband
+
+source :
+{
+  module_type : RootInput
+}
+services :
+{
+  @table::Services.Reco
+}
+
+physics: {
+  producers :
+  {
+  }
+  analyzers:
+  {
+    CrvPedestalFinder: @local::CrvPedestalFinder
+  }
+
+  TriggerPath : [ ]
+  EndPath :     [ CrvPedestalFinder ]
+  trigger_paths : [ TriggerPath ]
+  end_paths :     [ EndPath ]
+}
+
+physics.analyzers.CrvPedestalFinder.tmpDBfileName  : "pedestalsWideband.txt"
+services.TFileService.fileName : "pedestalsWideband.root"
+services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_WidebandExtracted.txt"
+services.DbService.verbose : 0
+services.ProditionsService.crvStatus.useDb: false
+services.ProditionsService.crvStatus.verbose: 0
+services.ProditionsService.crvCalib.useDb: false
+services.ProditionsService.crvCalib.verbose: 0
