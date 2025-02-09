@@ -70,6 +70,7 @@ outputs:
     module_type   :   RootOutput
     fileName      :   "crvDigiNZSWideband.art"
     outputCommands : [ "drop *_*_*_*" ,
+                       "keep mu2e::CrvDAQerrors_*_*_*" ,
                        "keep mu2e::CrvDigis_*_NZS_*" ]
   }
 }
