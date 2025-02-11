@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 #Script to create and/or submit multiple campaign using Project-py
-#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.in --comb_json data/mix.json --simjob MDC2020ae
-#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_primary.ini --comb_json data/primary.json --simjob MDC2020ae --comb_type list --cutoff_key primary_name
-#Create, upload and submit all campaign: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.ini --cfg_file CampaignConfig/mdc2020_digireco.cfg --comb_json data/mix.json --simjob MDC2020ae --upload --submit
+#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.in --comb_json data/mix.json
+#Create ini files: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_primary.ini --comb_json data/primary.json --comb_type list --cutoff_key primary_name
+#Create, upload and submit all campaign: ./ProjPy/gen_Campaigns.py --ini_file ProjPy/mdc2020_mixing.ini --cfg_file CampaignConfig/mdc2020_digireco.cfg --comb_json data/mix.json --upload --submit
 
 #To upload setup poms-client first, delete voms-proxy (NOT as mu2epro!!!), get kx509:
 #source /cvmfs/fermilab.opensciencegrid.org/packages/common/setup-env.sh
@@ -23,7 +23,6 @@ requiredNamed.add_argument("--comb_json", type=str, help="JSON file that contain
 requiredNamed.add_argument("--comb_type", type=str, help="JSON file type: list or product", required=True)
 
 parser.add_argument("--cutoff_key", type=str, help="Ignore keys in the campaign name after the cutoff_key", default=None)
-parser.add_argument("--simjob", type=str, help="SimJob version, i.e. MDC2020", default="MDC2020")
 parser.add_argument("--upload", action="store_true", help="Create campaigns")
 parser.add_argument("--submit", action="store_true", help="Submit campaigns")
 parser.add_argument("--test_run", action="store_true", help="Run in test run mode")
@@ -31,7 +30,6 @@ parser.add_argument("--ini_version", default="", type=str, help="Append version 
 
 args = parser.parse_args()
 ini_file = args.ini_file
-simjob = args.simjob
 comb_json = args.comb_json
 comb_type = args.comb_type
 cutoff_key = args.cutoff_key
@@ -69,9 +67,9 @@ for value in list_values:
     # We use only keys that appear prior to cutoff_key (i.e "primary_name"), and ignore the rest in the campaign/file name
     if cutoff_key is not None:
         cutoff_key_index = list_keys.index(cutoff_key) + 1 
-        campaign_name = f"{simjob}_{'_'.join(map(str, campain_name_list[:cutoff_key_index]))}{ini_version}"
+        campaign_name = f"{'_'.join(map(str, campain_name_list[:cutoff_key_index]))}{ini_version}"
     else:
-        campaign_name = f"{simjob}_{'_'.join(map(str, campain_name_list))}{ini_version}"
+        campaign_name = f"{'_'.join(map(str, campain_name_list))}{ini_version}"
         
     out_ini_file = f"{campaign_name}.ini"
     os.system(f"cp {ini_file} {out_ini_file}")
