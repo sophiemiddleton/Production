@@ -41,8 +41,6 @@ Reconstruction : {
       @table::TrkReco.producers.MergeHelices
       HelixFinders : [ "AgnosticHelixFinder" , "CalHelixFinderDmu" ]
     }
-    # run helix merging on upstream, even though there is only one input collection,
-    # as the merging also suppresses duplicates
     MHUe : {
       @table::TrkReco.producers.MergeHelices
       HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderUe" ]
@@ -187,13 +185,17 @@ Reconstruction : {
   DeReco : [
     TZClusterFinder, AgnosticHelixFinder,   # AgnosticPatRec
     CalTimePeakFinderDe, CalHelixFinderDe,  # CalPatRec
+    TimeClusterFinderDe, HelixFinderDe,   # TrkPatRec
+    MultiHelixFinderDe,   # MPR
     MHDe, # helix merging
     KKDe  # KinKal drift fits
   ]
-  # Upstream electron sequence (plus and minus): TrkPatRec only
+  # Upstream electron sequence (plus and minus)
   UeReco : [
     TZClusterFinder, AgnosticHelixFinder,   # AgnosticPatRec
     CalTimePeakFinderUe, CalHelixFinderUe,  # CalPatRec
+    TimeClusterFinderUe, HelixFinderUe,   # TrkPatRec
+    MultiHelixFinderUe,   # MPR
     MHUe, # helix merging
     KKUe  # KinKal drift fits
   ]
@@ -201,6 +203,8 @@ Reconstruction : {
   DmuReco : [
     TZClusterFinder, AgnosticHelixFinder,    # AgnosticPatRec
     CalTimePeakFinderDmu, CalHelixFinderDmu,  # CalPatRec
+    TimeClusterFinderDmu, HelixFinderDmu,   # TrkPatRec
+    MultiHelixFinderDmu,   # MPR
     MHDmu, # helix merging
     KKDmu  # KinKal drift fits
   ]
@@ -208,9 +212,12 @@ Reconstruction : {
   UmuReco : [
     TZClusterFinder, AgnosticHelixFinder,     # AgnosticPatRec
     CalTimePeakFinderUmu, CalHelixFinderUmu,  # CalPatRec
+    TimeClusterFinderUmu, HelixFinderUmu,   # TrkPatRec
+    MultiHelixFinderUmu,   # MPR
     MHUmu, # helix merging
     KKUmu  # KinKal drift fits
   ]
+ #
   # NoField straight line
   LineReco : [
     SimpleTimeCluster, LineFinder, KKLine
@@ -285,8 +292,8 @@ Reconstruction.EndPath : [ @sequence::Reconstruction.EndSequence, Output  ]
 Reconstruction.producers.CaloHitTruthMatch.caloShowerSimCollection : "compressDigiMCs"
 Reconstruction.producers.CaloHitTruthMatch.primaryParticle : "compressDigiMCs"
 
-# all production tracks
-Reconstruction.TrackReco : [
+# LoopHelix tracks
+Reconstruction.LoopHelixReco : [
   @sequence::Reconstruction.DeReco,
   @sequence::Reconstruction.UeReco,
   @sequence::Reconstruction.DmuReco,
@@ -297,7 +304,7 @@ Reconstruction.RecoPath : [
   @sequence::Reconstruction.CaloReco,
   @sequence::Reconstruction.TrkReco,
   @sequence::Reconstruction.CrvReco,
-  @sequence::Reconstruction.TrackReco
+  @sequence::Reconstruction.LoopHelixReco
 ]
 # Full reco path with MC
 Reconstruction.RecoMCPath : [
@@ -324,7 +331,7 @@ Reconstruction.OffSpillRecoPath : [
   @sequence::Reconstruction.TrkReco,
   @sequence::Reconstruction.CrvReco,
   @sequence::Reconstruction.CentralHelixReco,
-  @sequence::Reconstruction.TrackReco
+  @sequence::Reconstruction.LoopHelixReco
 ]
 # OffSpill reco path with MC
 Reconstruction.OffSpillRecoMCPath : [
