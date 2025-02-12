@@ -45,9 +45,13 @@ physics :
     CrvRecoPulses: @local::CrvRecoPulses
     CrvCoincidenceClusterFinder: @local::CrvCoincidenceClusterFinder
   }
+  analyzers :
+  {
+    CrvDQMcollector: @local::CrvDQMcollector
+  }
 
   t1 : [ genFrags, CrvDigi, CrvRecoPulses, CrvCoincidenceClusterFinder ]
-  e1 : [ outfileReco, outfileNZS ]
+  e1 : [ CrvDQMcollector, outfileReco, outfileNZS ]
 
   trigger_paths  : [t1]
   end_paths      : [e1]
@@ -121,9 +125,9 @@ physics.producers.CrvCoincidenceClusterFinder.sectorConfig:
 
 services.TFileService.fileName : "crvRecoWideband.root"
 services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_WidebandExtracted.txt"
-services.ProditionsService.crvStatus.useDb: false
+services.ProditionsService.crvStatus.useDb: true
 services.ProditionsService.crvCalib.useDb: true
-services.DbService.textFile : ["Offline/CRVConditions/data/calib_widebandExtracted.txt"]
+services.DbService.textFile : ["Offline/CRVConditions/data/status_widebandExtracted.txt","Offline/CRVConditions/data/calib_widebandExtracted.txt"]
 services.DbService.verbose : 0
 #services.message.destinations.log.categories.ArtReport.reportEvery : 1
 #services.message.destinations.log.categories.ArtReport.limit : 1
