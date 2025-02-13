@@ -29,19 +29,10 @@ for line in lines:
         target_stopped_mu_per_POT = rate * 1000 
 #print(f"Final stops rate muon {target_stopped_mu_per_POT}")
 
-def get_duty_factor(run_mode = '1BB'):
-  dutyfactor = 1.
-  if(run_mode == '1BB'):
-    # 1BB
-    dutyfactor = 0.323
-  if(run_mode == '2BB'):
-    # 2BB
-    dutyfactor = 0.246
-  #print(f"cosmics live time {livetime*onspill_dutyfactor}")
-  return dutyfactor
+
 
 # get number of POTs in given livetime
-def getPOT(onspilltime, run_mode = '1BB',printout=False): #livetime in seconds
+def livetime_to_pot(livetime, run_mode = '1BB',printout=False): #livetime in seconds
     # numbers from SU2020 
     # see https://github.com/Mu2e/su2020/blob/master/analysis/pot_normalization.org
     NPOT = 0.
@@ -50,40 +41,41 @@ def getPOT(onspilltime, run_mode = '1BB',printout=False): #livetime in seconds
       mean_PBI_low = 1.6e7
       Tcycle = 1.33 #s
       POT_per_cycle = 4e12
-      dutyfactor = get_duty_factor(run_mode)
-      Ncycles = onspilltime/Tcycle
-      NPOT = Ncycles * POT_per_cycle 
+      #onspill_time = livetime*onspill_dutyfactor
+      Ncycles = livetime/Tcycle
+      NPOT = Ncycles * POT_per_cycle
       if( printout):
         print("Tcycle=",Tcycle)
         print("POT_per_cycle=",POT_per_cycle)
-        print("livetime=",onspilltime/dutyfactor)
-        print("NPOT=",NPOT)
+        print("onspilltime=",livetime*onspill_dutyfactor)
+        print ("NPOT=",NPOT)
     if(run_mode == '2BB'):
       # 2BB
       mean_PBI_high = 3.9e7
       Tcycle = 1.4 #s
+      onspill_dutyfactor = 0.246
       POT_per_cycle = 8e12
-      dutyfactor = get_duty_factor(run_mode)
-      Ncycles = onspilltime/Tcycle
-      NPOT = Ncycles * POT_per_cycle 
+      #onspill_time = livetime*onspill_dutyfactor
+      Ncycles = livetime/Tcycle
+      NPOT = Ncycles * POT_per_cycle
       if( printout):
         print("Tcycle=",Tcycle)
         print("POT_per_cycle=",POT_per_cycle)
-        print("livetime=",onspilltime/dutyfactor)
-        print("NPOT=",NPOT)
+        print("onspilltime=",livetime*onspill_dutyfactor)
+        print ("NPOT=",NPOT)
     return NPOT
 
 
 # get CE normalization:
-def ce_normalization(onspilltime, rue, run_mode = '1BB'):
-    POT = getPOT(onspilltime, run_mode)
+def ce_normalization(livetime, rue, run_mode = '1BB'):
+    POT = livetime_to_pot(livetime, run_mode)
     captures_per_stopped_muon = 0.609 # for Al
     #print(f"Expected CE's {POT * target_stopped_mu_per_POT * captures_per_stopped_muon * rue}")
     return POT * target_stopped_mu_per_POT * captures_per_stopped_muon * rue
 
 # get DIO normalization:
-def dio_normalization(onspilltime, emin, run_mode = '1BB'):
-    POT = getPOT(onspilltime, run_mode)
+def dio_normalization(livetime, emin, run_mode = '1BB'):
+    POT = livetime_to_pot(livetime, run_mode)
     # calculate fraction of spectrum generated
     spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/heeck_finer_binning_2016_szafron.tbl")) 
     energy = []
@@ -113,21 +105,49 @@ The cosmics are normalized according to the livetime fraction which overlaps wit
 # note this returns CosmicLivetime not # of generated events
 def cry_onspill_normalization(livetime, run_mode = '1BB'):
     onspill_dutyfactor = 1.
+    if(run_mode == '1BB'):
+      # 1BB
+      onspill_dutyfactor = 0.323
+    if(run_mode == '2BB'):
+      # 2BB
+      onspill_dutyfactor = 0.246
+    #print(f"cosmics live time {livetime*onspill_dutyfactor}")
     return livetime*onspill_dutyfactor
 
 # note this returns CosmicLivetime not # of generated events
 def cry_offspill_normalization(livetime, run_mode = '1BB'):
     offspill_dutyfactor = 1.
+    if(run_mode == '1BB'):
+      # 1BB
+      offspill_dutyfactor = 0.323
+    if(run_mode == '2BB'):
+      # 2BB
+      offspill_dutyfactor = 0.246
+    #print(f"cosmics live time {livetime*offspill_dutyfactor}")
     return livetime*offspill_dutyfactor
     
 # note this returns CosmicLivetime not # of generated events
 def corsika_onspill_normalization(livetime, run_mode = '1BB'):
     onspill_dutyfactor = 1.
+    if(run_mode == '1BB'):
+      # 1BB
+      onspill_dutyfactor = 0.323
+    if(run_mode == '2BB'):
+      # 2BB
+      onspill_dutyfactor = 0.246
+    #print(f"cosmics live time {livetime*onspill_dutyfactor}")
     return livetime*onspill_dutyfactor
 
 # note this returns CosmicLivetime not # of generated events
 def corsika_offspill_normalization(livetime, run_mode = '1BB'):
     offspill_dutyfactor = 1.
+    if(run_mode == '1BB'):
+      # 1BB
+      offspill_dutyfactor = 0.323
+    if(run_mode == '2BB'):
+      # 2BB
+      offspill_dutyfactor = 0.246
+    #print(f"cosmics live time {livetime*offspill_dutyfactor}")
     return livetime*offspill_dutyfactor
 
 """
@@ -163,8 +183,9 @@ for line in lines:
         total_sum_of_weights = words[1]
 """
 
-def rpc_normalization(onspilltime, tmin, internal, emin, run_mode = '1BB'):
-  POT = getPOT(onspilltime, run_mode)
+
+def rpc_normalization(livetime, tmin, internal, run_mode = '1BB'):
+  POT = livetime_to_pot(livetime, run_mode)
   # hack: --> will come from new table eventually
   npistops = 1287106
   target_stopped_pi_per_POT =  0.01337 * 0.1670
@@ -188,56 +209,13 @@ def rpc_normalization(onspilltime, tmin, internal, emin, run_mode = '1BB'):
   if int(internal) == 1:
     physics_events *= internalRPC_per_RPC;
   return physics_events
-"""
-def rpc_normalization(onspilltime, tmin, emin, internal, run_mode = '1BB'):
-  POT = getPOT(onspilltime, run_mode)
-  # hack: --> will come from new table eventually
-  npistops = 1287106 # from above
-  target_stopped_pi_per_POT =  0.01337 * 0.1670 # from above
-  time_eff = 83146/npistops # from above
-  
-  total_sum_of_weights = 1148 # from filter - TODO
-  selected_sum_of_weights = 0.178864 # from filter - TODO
 
-  spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/rpcspectrum.tbl")) #Bistrilich
-  energy = []
-  val = []
-  for line in spec:
-      energy.append(float(line.split()[0]))
-      val.append(float(line.split()[1]))
-
-  total_norm = 0
-  cut_norm = 0
-  for i in range(len(val)):
-      total_norm += val[i]
-      if energy[i] >= emin:
-          cut_norm += val[i]
-
-  rpcESampleFrac = 1
-  
-  # constants
-  RPC_per_stopped_pion = 0.0215; # from reference, uploaded on docdb-469
-  internalRPC_per_RPC = 0.00690; # from reference, uploaded on docdb-717
-  # calculate survival probability for tmin including smearing of POT
-  avg_survival_prob = total_sum_of_weights/npistops;
-  if(internal == 1): 
-    print("RPCsampleEFrac=",rpcESampleFrac
-    print("pistoprate=",target_stopped_pi_per_POT)
-    print("pitimeeff=", time_eff)
-    print("pisurv=", avg_survival_prob)
-    print("pitotalweight=", total_sum_of_weights)
-  physics_events = POT * target_stopped_pi_per_POT * time_eff * RPC_per_stopped_pion * avg_survival_prob * rpcESampleFrac * selected_sum_of_weights/total_sum_of_weights
-
-  if int(internal) == 1:
-    physics_events *= internalRPC_per_RPC;
-  return physics_events
-  """
 """
 The next section is for the RMC background. There
 
 """
-def rmc_normalization(onspilltime, internal, emin = 85, kmax = 90.1, run_mode = '1BB'):
-  POT = getPOT(onspilltime, run_mode)
+def rmc_normalization(livetime, internal, emin = 85, kmax = 90.1, run_mode = '1BB'):
+  POT = livetime_to_pot(livetime, run_mode)
   energy = []
   val = []
   # closure approximation as implemented in MuonCaptureSpectrum.cc
@@ -282,12 +260,12 @@ for line in lines:
         #print(f"Including {words[0]} with rate {words[3]}")
         rate = rate * float(words[3])
         ipa_stopped_mu_per_POT = rate
-        #print("IPAStopMuonRate=", rate)
+        print("IPAStopMuonRate=", rate)
 #print(f"Final ipa stops rate {ipa_stopped_mu_per_POT}")
 
 # get IPA Michel normalization:
-def ipaMichel_normalization(onspilltime):
-    POT = getPOT(onspilltime)
+def ipaMichel_normalization(livetime):
+    POT = livetime_to_pot(livetime)
     IPA_decays_per_stopped_muon = 0.86 # carbon....#TODO
     fraction_sampled = 1 #TODO
     #print(f"Expected IPA Michel e- {POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon}")
@@ -296,8 +274,11 @@ def ipaMichel_normalization(onspilltime):
     return nIPA
 
 
+def pot_to_livetime(pot):
+    return pot / POT_per_second
+
 if __name__ == '__main__':
-  tst_1BB = getPOT(9.52e6)
-  tst_2BB = getPOT(1.58e6)
+  tst_1BB = livetime_to_pot(9.52e6)
+  tst_2BB = livetime_to_pot(1.58e6)
   tst_rpc = rpc_normalization(3.77e19,350,1.22,1)
   print("SU2020", tst_1BB, tst_2BB)

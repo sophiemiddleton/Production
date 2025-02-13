@@ -91,8 +91,8 @@ echo "stops= " ${STOPS} >> ${TAG}.txt
 
 mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S ${COSMICS} | grep 'Livetime:' | awk -F: '{print $NF}' > ${COSMICS}.livetime
 LIVETIME=$(awk '{sum += $1} END {print sum}' ${COSMICS}.livetime)
-
-echo "livetime=" ${LIVETIME} >> ${TAG}.txt
+# note new use of the cosmics as a whole, assuming everything is "onspill" and using the duty factor in POT only
+echo "onspilltime=" ${LIVETIME} >> ${TAG}.txt
 echo "BB=" ${BB} >> ${TAG}.txt
 calculateEvents.py --livetime ${LIVETIME} --BB ${BB} --printpot "print" >> ${TAG}.txt
 
@@ -102,6 +102,6 @@ calculateEvents.py --livetime ${LIVETIME}  --dem_emin ${DEM_EMIN} --prc "DIO" --
 
 calculateEvents.py --livetime ${LIVETIME} --prc "CORSIKA" --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internalrpc 1  --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internalrpc 1 --rpcemin 1 --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internalrpc 0  --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internalrpc 0  --rpcemin 1 --BB ${BB} --printpot "no" >> ${TAG}.txt

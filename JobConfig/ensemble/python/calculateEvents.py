@@ -1,10 +1,11 @@
 #! /usr/bin/env python
+##from normalizationsOld import *
 from normalizations import *
 
 def main(args):
     Yield = 0
     if (str(args.printpot) == "print"):
-      livetime_to_pot(float(args.livetime), str(args.BB),True)
+      getPOT(float(args.livetime), str(args.BB),True)
     if(args.prc == "CEMLL"):
       Yield = ce_normalization(float(args.livetime), float(args.rue), str(args.BB))
       print("CEMLL=",Yield)
@@ -15,10 +16,10 @@ def main(args):
       Yield = corsika_onspill_normalization(float(args.livetime), str(args.BB))
       print("CORSIKA=",Yield)
     if(args.prc == "RPC" and int(args.internalrpc) == 1):
-      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internalrpc), str(args.BB))
+      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internalrpc), str(args.rpcemin), str(args.BB))
       print("InternalRPC=",Yield)
     if(args.prc == "RPC" and int(args.internalrpc) == 0):
-      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internalrpc), str(args.BB))
+      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internalrpc), str(args.rpcemin)), str(args.BB))
       print("ExternalRPC=",Yield)
 
     return (Yield)

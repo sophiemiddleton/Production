@@ -9,7 +9,7 @@ exit_abnormal() {
   usage
   exit 1
 }
-
+OWNER="mu2e"
 INRELEASE=MDC2020
 INVERSION=ak
 PRC=""
@@ -23,6 +23,9 @@ while getopts ":-:" options; do
   case "${options}" in
     -)
       case "${OPTARG}" in
+        owner)
+          OWNER=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
         prc)
           PRC=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
@@ -31,6 +34,9 @@ while getopts ":-:" options; do
           ;;
         verbose)
           VERBOSE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        setup)
+          SETUP=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         *)
           echo "Unknown option " ${OPTARG}
@@ -115,7 +121,7 @@ samweb list-files "dh.dataset=dts.mu2e.RPCInternal.${INRELEASE}${INVERSION}.art 
 samweb list-files "dh.dataset=dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCExternal_${NJOBS}.txt
 
 DSCONF=${OUTRELEASE}${OUTVERSION}
-
+# note change setup to code to use a custom tarball
 echo "run mu2e jobdef"
 cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:CeMLL:filenames_CeMLL_${NJOBS}.txt --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CORSIKACosmic:filenames_CORSIKACosmic_${NJOBS}.txt --sampling=1:RPCInternal:filenames_RPCInternal_${NJOBS}.txt  --embed SamplingInput_sr0.fcl  --sampling=1:RPCExternal:filenames_RPCExternal_${NJOBS}.txt --verb "
 echo "Running: $cmd"
@@ -135,7 +141,7 @@ echo "Created definiton: idx_${index_dataset}"
 samweb describe-definition idx_${index_dataset}
 
 echo "submit jobs"
-cmd="mu2ejobsub --jobdef cnf.sophie.ensemble${TAG}.${INRELEASE}${OUTVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --default-protocol ifdh --default-location tape"
+cmd="mu2ejobsub --jobdef cnf.${OWNER}.ensemble${TAG}.${INRELEASE}${OUTVERSION}.0.tar --firstjob=0 --njobs=${NJOBS}  --default-protocol ifdh --default-location tape"
 echo "Running: $cmd"
 $cmd
 
