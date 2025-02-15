@@ -27,7 +27,7 @@ physics: {
     # TODO BEFORE NEXT CAMPAIGN - add the CompressPhysicalVolumes module here keeping the output from the FilterG4Out module label.
     shiftStepsHPGe : { # Shift the steps to upstream of the HPGe absorber along the SSC aperture
       module_type : ShiftVirtualDetectorStepPointMCs
-      StepPointMCsTag : "stmResampler:virtualdetector"
+      StepPointMCsTag : "stmResampler:"
       VirtualDetectorID : @local::ShiftVD101Steps.VirtualDetectorID
       InputRadius : @local::ShiftVD101Steps.InputRadius
       OutputRadius : @local::ShiftVD101Steps.OutputRadius
@@ -41,7 +41,7 @@ physics: {
     }
     shiftStepsLaBr : { # Shift the steps to upstream of the LaBr SSC aperture
       module_type : ShiftVirtualDetectorStepPointMCs
-      StepPointMCsTag : "stmResampler:virtualdetector"
+      StepPointMCsTag : "stmResampler:"
       VirtualDetectorID : @local::ShiftVD101Steps.VirtualDetectorID
       InputRadius : @local::ShiftVD101Steps.InputRadius
       OutputRadius : @local::ShiftVD101Steps.OutputRadius
@@ -87,15 +87,15 @@ physics: {
     countVirtualDetectorHits : {
       # Runs a counter over the virtual detectors to keep track of hits
       module_type : CountVirtualDetectorHits
-      StepPointMCsTag : @local::VirtualDetectorCounter.StepPointMCsTag
+      stepPointMCsTag : @local::VirtualDetectorCounter.StepPointMCsTag
       virtualDetectorIDs : @local::VirtualDetectorCounter.virtualDetectorIDs
     }
   }
-  HPGePath : [ @sequence::Pileup.stmResamplerSequence, shiftStepsHPGe, @sequence::Common.g4Sequence, compressSTMDet ]
-  LaBrPath : [ @sequence::Pileup.stmResamplerSequence, shiftStepsLaBr, @sequence::Common.g4Sequence, compressSTMDet ]
-  trigger_paths: [ HPGePath ]
-  outPathCompressed : [ genCountLogger, countVirtualDetectorHits, CompressedOutput ]
-  end_paths: [ outPathCompressed ]
+  HPGePath : [@sequence::Pileup.stmResamplerSequence, shiftStepsHPGe, @sequence::Common.g4Sequence, compressSTMDet ]
+  LaBrPath : [@sequence::Pileup.stmResamplerSequence, shiftStepsLaBr, @sequence::Common.g4Sequence, compressSTMDet ]
+  trigger_paths: [HPGePath]
+  outPathCompressed : [genCountLogger, countVirtualDetectorHits, CompressedOutput]
+  end_paths: [outPathCompressed]
 }
 
 outputs: {
@@ -105,8 +105,7 @@ outputs: {
       "drop *_*_*_*",
       "keep mu2e::GenEventCount_*_*_*",
       "keep art::EventIDs_*_*_*",
-      "keep mu2e::StepPointMCs_compressSTMDet_STMDet_STMResampler",
-      "keep mu2e::StepPointMCs_compressSTMDet_virtualdetector_STMResampler",
+      "keep mu2e::StepPointMCs_compressSTMDet_*_STMResampler",
       "keep mu2e::SimParticlemv_compressSTMDet_*_STMResampler",
       "keep mu2e::SimTimeOffset_protonTimeOffset_*_STMResampler",
       "keep mu2e::PhysicalVolumeInfomvs_*_*_*"
@@ -118,9 +117,9 @@ outputs: {
 # Point Mu2eG4 to the pre-simulated data
 physics.producers.g4run.inputs: {
   primaryType: "StepPoints"
-  primaryTag: "ShiftStepsHPGe:"
+  primaryTag: "shiftStepsHPGe:"
   inputMCTrajectories: ""
-  simStageOverride: 2 # 3
+  simStageOverride: 3 # 2
   inputPhysVolumeMultiInfo: "stmResampler"
   updateEventLevelVolumeInfos: {
     input: "stmResampler:eventlevel"
@@ -128,8 +127,10 @@ physics.producers.g4run.inputs: {
   }
 }
 physics.producers.g4run.SDConfig.enableSD: [virtualdetector, STMDet]
-physics.producers.g4run.SDConfig.preSimulatedHits: ["stmResampler:virtualdetector"]
 physics.producers.g4run.Mu2eG4CommonCut: {}
+
+# physics.producers.g4run.debug.trackingVerbosityLevel : 1
+# physics.producers.g4run.debug.steppingVerbosityLevel : 1
 
 # copy over VD hits
 #include "Production/JobConfig/common/MT.fcl"

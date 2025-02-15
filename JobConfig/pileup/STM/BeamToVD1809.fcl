@@ -77,23 +77,27 @@ physics : {
       StepPointMCsTag : @local::ResamplingFilter.StepPointMCsTag
     }
   }
+  analyzers : {
+    @table::Common.analyzers
+    countVirtualDetectorHits : {
+      # Runs a counter over the virtual detectors to keep track of hits
+      module_type : CountVirtualDetectorHits
+      stepPointMCsTag : @local::VirtualDetectorCounter.StepPointMCsTag
+      virtualDetectorIDs : @local::VirtualDetectorCounter.virtualDetectorIDs
+    }
+  }
   PileupPath : [TargetStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, extractVirtualDetectorSteps, compressDetStepMCsSTM, filterVirtualDetectorSteps]
-  EndPath : [compressedOutput]
   trigger_paths : [PileupPath]
-  end_paths : [EndPath]
+  outPathCompressed : [genCountLogger, countVirtualDetectorHits, compressedOutput]
+  end_paths: [outPathCompressed]
 }
 outputs : {
   compressedOutput : {
     module_type: RootOutput
     outputCommands : [
       "drop *_*_*_*",
-      "keep art::EventIDs_*_*_*",
-      "keep mu2e::GenParticles_*_*_*",
-      "keep mu2e::StepPointMCs_compressDetStepMCsSTM_*_*",
-      "keep mu2e::SimParticlemv_compressDetStepMCsSTM_*_*",
-      "keep mu2e::SimTimeOffset_*_*_*",
-      "keep mu2e::PhysicalVolumeInfomvs_g4run_*_*"
-      ]
+      @sequence::Pileup.BeamToVDKeptProducts
+    ]
     SelectEvents: [ PileupPath ]
     fileName: "dts.owner.MuStopPileup.version.sequencer.art"
   }

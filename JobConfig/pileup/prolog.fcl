@@ -231,7 +231,7 @@ Pileup: {
         products: {
           genParticleMixer: { mixingMap: [ [ "compressDetStepMCsSTM", "" ] ] }
           simParticleMixer: { mixingMap: [ [ "compressDetStepMCsSTM", "" ] ] }
-          stepPointMCMixer: { mixingMap: [ [ "compressDetStepMCsSTM:virtualdetector", ":" ] ] } 
+          stepPointMCMixer: { mixingMap: [ [ "compressDetStepMCsSTM:", ":" ] ] } # virtualdetector
           simTimeOffset : "protonTimeOffset"
           volumeInfoMixer: {
             srInput: "g4run"
@@ -312,7 +312,6 @@ Pileup: {
     "keep mu2e::GenEventCount_*_*_*",
     "keep mu2e::StatusG4_*_*_*"
   ]
-
   DtsKeptProducts : [
     "keep art::EventIDs_*_*_*",
     "keep mu2e::GenEventCount_*_*_*",
@@ -330,7 +329,8 @@ Pileup: {
     "keep mu2e::StepPointMCs_compressDetStepMCsSTM_*_*",
     "keep mu2e::SimParticlemv_compressDetStepMCsSTM_*_*",
     "keep mu2e::SimTimeOffset_*_*_*",
-    "keep mu2e::PhysicalVolumeInfomvs_g4run_*_*"
+    "keep mu2e::PhysicalVolumeInfomvs_g4run_*_*",
+    "keep mu2e::StatusG4_*_*_*"
   ]
   # define some common sequences
   beamResamplerSequence : [genCounter, protonTimeOffset, beamResampler]

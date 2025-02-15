@@ -74,14 +74,14 @@ physics: {
     countVirtualDetectorHits : {
       # Runs a counter over the virtual detectors to keep track of hits
       module_type : CountVirtualDetectorHits
-      StepPointMCsTag : @local::VirtualDetectorCounter.StepPointMCsTag
+      stepPointMCsTag : @local::VirtualDetectorCounter.StepPointMCsTag
       virtualDetectorIDs : @local::VirtualDetectorCounter.virtualDetectorIDs
     }
   }
   # setup paths
   STMCompressedPath : [@sequence::Pileup.beamResamplerSequence, @sequence::Common.g4Sequence, extractVirtualDetectorSteps, compressDetStepMCsSTM, filterVirtualDetectorSteps]
   trigger_paths: [STMCompressedPath]
-  outPathCompressed : [countVirtualDetectorHits, genCountLogger, compressedOutput]
+  outPathCompressed : [genCountLogger, countVirtualDetectorHits, compressedOutput]
   end_paths: [outPathCompressed]
 }
 
