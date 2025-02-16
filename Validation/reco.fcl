@@ -1,7 +1,6 @@
 #
 # run tracker and cal reco from a file of digis
 #
-#include "Offline/Mu2eKinKal/fcl/prolog.fcl"
 #include "Production/JobConfig/reco/Reco.fcl"
 # add KinKal fits
 #
