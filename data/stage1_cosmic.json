@@ -1,11 +1,20 @@
 [
     {
-	"dsconf": "MDC2020ap_test",
+	"dsconf": "MDC2020aq",
 	"desc": "ExtractedCRY",
 	"fcl": "Production/JobConfig/cosmic/ExtractedCRY.fcl",
+	"njobs": 50000,
+	"events": 200000,
+	"run": 1202,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aq/setup.sh"
+    },
+    {
+	"dsconf": "MDC2020ap_v30",
+	"desc": "WidebandCRV",
+	"fcl": "wideband4modules.fcl",
 	"njobs": 10,
 	"events": 10000,
 	"run": 1202,
-	"simjob_setup": "/cvmfs/mu2e-development.opensciencegrid.org/museCIBuild/main/e1260f8c_e9ccdad5_3f28b70d/setup.sh"
+	"simjob_setup": "/cvmfs/mu2e-development.opensciencegrid.org/museCIBuild/main/21a5060a_ca01ba6f_3f28b70d/setup.sh"
     }
 ]
