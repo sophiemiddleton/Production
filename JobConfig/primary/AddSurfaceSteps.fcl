@@ -1,0 +1,35 @@
+#
+# This script is a patch to create SurfaceSteps in primary dts files created without them
+#
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/CommonMC/fcl/prolog.fcl"
+process_name: AddSS
+source: { module_type : RootInput }
+services : @local::Services.Reco
+outputs : {
+  CopyOutput : {
+    module_type: RootOutput
+    outputCommands : [ "keep *_*_*_*",
+    "drop  mu2e::StepPointMCs_*_protonabsorber_*",
+    "drop  mu2e::StepPointMCs_*_stoppingtarget_*" ]
+    fileName : "dts.mu2e.AddSurfaceSteps.Test.0.art"
+  }
+}
+
+physics : {
+  producers : {
+    # the following name is a hack to make the provenance of the SurfaceSteps correct
+    compressDetStepMCs : {
+      @table::CommonMC.MakeSS
+      VDStepPointMCs : "compressDetStepMCs:virtualdetector"
+      AbsorberStepPointMCs : "compressDetStepMCs:protonabsorber"
+      TargetStepPointMCs : "compressDetStepMCs:stoppingtarget"
+    }
+  }
+  AddSSPath : [ "compressDetStepMCs" ]
+  trigger_paths : [ "AddSSPath" ]
+  CopyPath : [ "CopyOutput" ]
+  end_paths : [ "CopyPath" ]
+}
+
+
