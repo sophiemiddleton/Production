@@ -67,12 +67,6 @@ Digitize: {
       @table::CommonMC.TTSelectRecoMC
       KalSeedCollections  : [ "TTCalSeedFitDe" ]
     }
-    MakeSS : {
-      @table::CommonMC.MakeSS
-      VDStepPointMCs : "compressDetStepMCs:virtualdetector"
-      AbsorberStepPointMCs : "compressDetStepMCs:protonabsorber"
-      TargetStepPointMCs : "compressDetStepMCs:stoppingtarget"
-    }
   }
   filters : {
 # filter for Triggerable stream.  These should be events that might have
@@ -119,7 +113,6 @@ Digitize: {
     @sequence::TrackerMC.DigiSim,
     @sequence::CaloMC.DigiSim,
     @sequence::CrvDAQPackage.CrvDAQSequence,
-    MakeSS,
     compressDigiMCs ]
 
   TriggerableSequence : [
