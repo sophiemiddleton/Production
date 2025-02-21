@@ -16,5 +16,7 @@ services.ProditionsService.strawElectronics.useDb: true
 services.ProditionsService.strawElectronics.verbose: 0
 # don't use database time offsets in digitization
 services.ProditionsService.strawElectronics.overrideDbTimeOffsets : true
-# temporary fix: this needs to be remove before starting MDC2025 production
-physics.producers.compressDigiMCs.surfaceStepTags : [ "MakeSS" ]
+# not all digis in MDC2020 include SurfaceSteps. If processing a sample without those,
+# uncomment the first line and comment the 2nd
+#physics.producers.compressDigiMCs.surfaceStepTags : [ "MakeSS" ]
+physics.producers.MakeSS : { module_type : NullProducer }
