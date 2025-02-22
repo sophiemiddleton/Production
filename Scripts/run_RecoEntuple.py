@@ -7,6 +7,7 @@ import argparse
 from pathlib import Path
 import subprocess
 import textwrap
+import hashlib
 
 # ---------------------------------------------------
 # Configure Logging to stdout
@@ -24,10 +25,22 @@ logger.addHandler(handler)
 def parse_args():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description='Process digi files with specified MDC release')
-    parser.add_argument('--version_reco', required=True,
-                        help='Output reco version (e.g., an)')
-    parser.add_argument('--version_entpl', required=False, default="",
-                        help='Output evntuple version (e.g., v06_01_00)')
+    parser.add_argument('--stage-type', required=True,
+                        help='Stage type (e.g., dig, mcs, nts)')
+    parser.add_argument('--release', required=False,
+                        help='Output MDC2020 version (e.g., an)')
+    parser.add_argument('--ntuple', required=False,
+                        help='Ntuple version (e.g., a)')
+    parser.add_argument('--dbpurpose', required=False,
+                        help='db purpose (e.g., best, perfect)')
+    parser.add_argument('--dbversion', required=False,
+                        help='db version (e.g., v1_3)')
+    parser.add_argument('--digitype', required=False,
+                        help='OnSpill, OffSpill')
+    parser.add_argument('--fcl', required=True,
+                        help='fcl template')
+    parser.add_argument('--user', required=False, default="mu2e",
+                        help='i.e. mu2e')
     parser.add_argument('--nevents', type=int, default=-1,
                         help='Number of events to process (default: -1)')
     parser.add_argument('--location', type=str, default='tape',
@@ -36,69 +49,118 @@ def parse_args():
                         help='Print commands without actually running them')
     return parser.parse_args()
 
-def run_command(command: str) -> str:
-    """Run shell command and handle output"""
+def run_command(command: str) -> None:
     logging.info(f"Running: {command}")
-    result = subprocess.run(command, shell=True, check=False, capture_output=True, text=True)
-    if result.stdout:
-        logging.info(result.stdout)
-    if result.returncode != 0:
+    process = subprocess.Popen(
+        command,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True
+    )
+    
+    # Stream the output line-by-line
+    while True:
+        line = process.stdout.readline()
+        if not line:
+            break
+        logging.info(line.rstrip())
+    
+    process.stdout.close()
+    process.wait()
+    
+    if process.returncode != 0:
         logging.error(f"Error running command: {command}")
-        logging.error(result.stderr)
         sys.exit(1)
-    return result.stdout
 
-def process_filename(fname: str, version_reco: str, version_entpl: str) -> tuple[str, str, str]:
-    # Process input filename to extract purpose and version information.
-    out_fname = os.path.basename(fname)    
-    # Replace any MDC2020xx pattern with version_reco
-    pattern = r'(MDC2020[a-z]+)'
-    if version_entpl:
-        out_fname = re.sub(pattern, f"MDC2020{version_reco}_{version_entpl}", out_fname)
+
+def write_fcl_file(fname: str, args) -> tuple[str, list]:
+    """Write FCL configuration file"""
+
+    #start from the input name
+    out_fname = os.path.basename(fname)
+
+    if args.release:
+        # Replace the portion after "MDC2020" up to the underscore with the new release
+        out_fname = re.sub(r'(MDC2020)[^_.]+', rf'\1{args.release}', out_fname)
+    else:
+        print("No release value specified. Filename remains unchanged.")
+    
+    print(f"write_fcl_file working on {out_fname}")
+    
+    # Read the FCL tempate file content
+    with open(args.fcl, "r") as f:
+        fcl_content = f.read()
+
+    # Create random seed based on the input fname
+    hash_object = hashlib.md5(out_fname.encode())
+    hex_digest = hash_object.hexdigest()
+    hash_int = int(hex_digest, 16)
+    # Use modulo 2**63 to ensure the seed is in the valid range for a signed 64-bit integer.
+    hash_int = hash_int % (2**63)
+    
+    out_fname_list = []
+    if args.stage_type == "dig":
+
+        for arg in ("digitype", "dbpurpose", "dbversion"):
+            if not getattr(args, arg, None):
+                print(f"Error: --{arg} argument is required for dig stage type.", file=sys.stderr)
+                sys.exit(1)
+
+        # output file will use dig file family
+        out_fname = out_fname.replace("dts.", "dig.")
+        #Cosmic needs a spcial epilog
+        if "Cosmic" in out_fname:
+            fcl_content += '#include "Production/JobConfig/digitize/cosmic_epilog.fcl"\n'
+        parts = out_fname.split(".")
+        out_fname_triggered = ".".join(
+            [parts[0]] + [args.user] + [parts[2] + f"{args.digitype}Triggered", parts[3] + f"_{args.dbpurpose}_{args.dbversion}"] + parts[4:])
+        out_fname_triggerable = ".".join(
+            [parts[0]] + [args.user] + [parts[2] + f"{args.digitype}Triggerable", parts[3] + f"_{args.dbpurpose}_{args.dbversion}"] + parts[4:])
+        fcl_content += f'outputs.TriggeredOutput.fileName: "{out_fname_triggered}"\n'
+        fcl_content += f'outputs.TriggerableOutput.fileName: "{out_fname_triggerable}"\n'
+        fcl_content += f'services.SeedService.baseSeed: "{hash_int}"\n'
+        out_fname_list = [out_fname_triggered, out_fname_triggerable]
+    elif args.stage_type == "mcs":
+        # output file will use mcs file family
+        out_fname = out_fname.replace("dig.", "mcs.")
+        # Extract dbpurpose and dbversion
+        pattern = r"(MDC2020)\w+_(best|perfect)_(v\d+_\d+)"
+        match = re.search(pattern, fname)
+        if not match:
+            raise ValueError(f"Invalid filename format: {fname}")
+        
+        purpose = f"{match.group(1)}_{match.group(2)}"
+        version = f"{match.group(3)}"
+        # Use the same dbpurpose and dbversion as input dig file
+        fcl_content += f'services.DbService.purpose: {purpose}\n'
+        fcl_content += f'services.DbService.version: {version}\n'  
+        fcl_content += f'outputs.Output.fileName: "{out_fname}"\n'
+        out_fname_list = [out_fname]
+    elif args.stage_type == "nts":
+
+        if not getattr(args, "ntuple", None):
+            print("Error: --ntuple argument is required for nts stage type.", file=sys.stderr)
+            sys.exit(1)
+        
+        # output file will use nts file family and root extension 
         out_fname = out_fname.replace("mcs.", "nts.")
         out_fname = out_fname.replace(".art", ".root")
-    else:
-        out_fname = re.sub(pattern, f"MDC2020{version_reco}", out_fname)
-        out_fname = out_fname.replace("dig.", "mcs.")
-    
-    pattern = r"(MDC2020)\w+_(best|perfect)_(v\d+_\d+)"
-    match = re.search(pattern, fname)
-    if not match:
-        raise ValueError(f"Invalid filename format: {fname}")
-        
-    purpose = f"{match.group(1)}_{match.group(2)}"
-    version = f"{match.group(3)}"
-    return out_fname, purpose, version
 
-def write_fcl_file(out_fname: str, purpose: str, version: str) -> str:
-    """Write FCL configuration file"""
-    if "mcs" in out_fname:
-        fcl_content = f"""\
-        #include "Production/JobConfig/reco/Reco.fcl"
-        #include "Production/JobConfig/reco/MakeSurfaceSteps.fcl"
-        services.DbService.purpose: {purpose}
-        services.DbService.version: {version}
-        services.DbService.verbose : 2
-        outputs.Output.fileName: "{out_fname}"
-        """
-    elif "nts" in out_fname:
-        desc =  out_fname.split('.')[2]
-        fcl_content = f"""\
-        #include "EventNtuple/fcl/from_mcs-primary.fcl"
-        services.TFileService.fileName: "{out_fname}"
-        """
+        fields = out_fname.split('.')
+        fields[3] += f"_{args.ntuple}"  # Append _a to the 4th field (index 3)
+        out_fname = ".".join(fields)
+        
+        fcl_content += f'services.TFileService.fileName: "{out_fname}"\n'
+        out_fname_list = [out_fname]
     else:
+        print("Unknown stage type")
         sys.exit(1)
     
-        
-    # Remove leading indentation
-    fcl_content = textwrap.dedent(fcl_content)
-    
-    
     #Create fcl filename
-    split_name = out_fname.split('.')
-    split_name[0] = "cnf"         # Replace first field
-    split_name[-1] = "fcl"        # Replace last field
+    split_name = out_fname_list[0].split('.')
+    split_name[0] = "cnf"
+    split_name[-1] = "fcl"
     fcl_file = '.'.join(split_name)
 
     #Write to fcl file
@@ -106,57 +168,48 @@ def write_fcl_file(out_fname: str, purpose: str, version: str) -> str:
         f.write(fcl_content)
         logging.info("FCL file created successfully")
         logging.info(f"FCL content:\n{fcl_content}")
-    return str(fcl_file)
+    return str(fcl_file), out_fname_list
 
 def main():
-    try:
-        # Parse command line arguments
-        args = parse_args()
-        
-        # Get input filename
-        in_fname = os.getenv("fname")
-        if not in_fname:
-            raise ValueError("fname environment variable not set")
-        
-        logging.info(f"Using output MDC2020 version: {args.version_reco}")
-        
-        # Process filename
-        out_fname, purpose, version = process_filename(in_fname, args.version_reco, args.version_entpl)
-        logging.info(f"Processing {in_fname} -> {out_fname}")
-        
-        # Write fcl configuration
-        fcl_file = write_fcl_file(out_fname, purpose, version)
-        
-        # Run processing
-        nevents = args.nevents  # Number of events to process
-        run_command(f"loggedMu2e.sh -n {nevents} -s {in_fname} -c {fcl_file}")
-        
-        # Handle parent files
-        in_fname_base = os.path.basename(in_fname)
-        Path(f"parents_{in_fname_base}").write_text(in_fname_base)
+    # Parse command line arguments
+    args = parse_args()
+    
+    # Get input filename
+    in_fname = os.getenv("fname")
+    if not in_fname:
+        raise ValueError("fname environment variable not set")
+    
+    logging.info(f"Using output MDC2020 version: {args.stage_type}")
+    
+    # Write fcl configuration
+    fcl_file, out_fname_list = write_fcl_file(in_fname, args)
+    print("Filelist: %s"%out_fname_list)
+    
+    # Run processing
+    nevents = args.nevents  # Number of events to process
+    run_command(f"loggedMu2e.sh -n {nevents} -s {in_fname} -c {fcl_file}")
+    
+    # Handle parent files
+    in_fname_base = os.path.basename(in_fname)
+    Path(f"parents_{in_fname_base}").write_text(in_fname_base)
 
-        #Create tarbar filename
-        split_name = out_fname.split('.')
-        split_name[0] = "bck"         # Replace first field
-        split_name[-1] = "tbz"        # Replace last field
-        tbz_file = '.'.join(split_name)
+    #Create tarbar filename
+    split_name = out_fname_list[0].split('.')
+    split_name[0] = "bck"         # Replace first field
+    split_name[-1] = "tbz"        # Replace last field
+    tbz_file = '.'.join(split_name)
 
-        out_content = f"""\
-        {args.location} {out_fname} parents_{in_fname_base}
-        {args.location} {tbz_file} parents_{in_fname_base}
-        """
-        out_content = textwrap.dedent(out_content)        
-        Path("output.txt").write_text(out_content)
-                
-        # Push output
-        if args.dry_run:
-            logging.info(f"[DRY RUN] Would run: pushOutput output.txt")
-        else:
-            run_command("pushOutput output.txt")
-        
-    except Exception as e:
-        logging.error(f"Error: {e}")
-        sys.exit(1)
+    out_content = ""
+    for f in out_fname_list:
+        out_content += f'{args.location} {f} parents_{in_fname_base}\n'
+    out_content += f'{args.location} {tbz_file} parents_{in_fname_base}\n'
+    Path("output.txt").write_text(out_content)
+    
+    # Push output
+    if args.dry_run:
+        logging.info(f"[DRY RUN] Would run: pushOutput output.txt")
+    else:
+        run_command("pushOutput output.txt")
 
 if __name__ == "__main__":
     main()

@@ -14,17 +14,17 @@
     },
     
     {
-	"dsconf": "MDC2020test",	
+	"dsconf": "MDC2020aq",
 	"desc": "RMCFlatGammaResampling",
 	"fcl": "Production/JobConfig/primary/RMCFlatGammaResampling.fcl",
 	"resampler_name": "GammaConversionResampler",
 	"resampler_data": "sim.mu2e.RMCFlatGammaStops.MDC2020ap.art",	
 	"events": 100000,
-	"njobs": 100,
+	"njobs": 10,
 	"start_mom": 0,
 	"end_mom": 1000,
 	"run": 1202,
-	"simjob_setup": "/cvmfs/mu2e-development.opensciencegrid.org/museCIBuild/main/5e277911_d232e047_6318fda7/setup.sh"
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aq/setup.sh"
     },
     {
 	"dsconf": "MDC2020ap",	

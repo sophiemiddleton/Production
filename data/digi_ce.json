@@ -1,6 +1,8 @@
 {
-  "release_v_dts": ["r"],
-  "primary_name": ["CeEndpoint", "CePlusEndpoint"],
-  "db_purpose": ["perfect", "best"],
-  "digitype": ["OnSpill"]
+    "release_v_dts": ["r"],
+    "release_v_dig": ["ap"],
+    "release_v_rec": ["ap"],
+    "primary_name": ["CeEndpoint", "CePlusEndpoint"],
+    "db_purpose": ["perfect", "best"],
+    "digitype": ["OnSpill"]
 }
