@@ -1,3 +1,7 @@
+# override CaloMC Truth matching provenance for compression
+physics.producers.CaloHitTruthMatch.caloShowerSimCollection : "compressDigiMCs"
+physics.producers.CaloHitTruthMatch.primaryParticle : "compressDigiMCs"
+
 # patch CRV
 physics.producers.CrvCoincidenceClusterMatchMC.crvWaveformsModuleLabel : "compressDigiMCs"
 physics.producers.CrvCoincidenceClusterMCAssns.crvCoincidenceTags : [ "CrvCoincidenceClusterFinder" ]

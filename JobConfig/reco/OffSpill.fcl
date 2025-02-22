@@ -1,12 +1,13 @@
 #
-# Reconstruct from digis using straight line tracks
+# Reconstruct OffSpill events with both central and loop helices
 #
 #include "Production/JobConfig/reco/Reco.fcl"
-
-physics.CHPath : [ @sequence::Reconstruction.OffSpillCentralHelixRecoMCPath ]
-physics.LHPath : [ @sequence::Reconstruction.OffSpillLoopHelixRecoMCPath ]
+physics.CHPath : [ @sequence::Reconstruction.CentralHelixRecoMCPath ]
+physics.LHPath : [ @sequence::Reconstruction.LoopHelixRecoMCPath ]
 
 physics.trigger_paths : [ CHPath, LHPath ]
+physics.analyzers.LHCompressionCheck.SelectEvents : [ "LHPath" ]
+physics.analyzers.CHCompressionCheck.SelectEvents : [ "CHPath" ]
 
 outputs: {
   CentralHelixOutput : {
@@ -20,33 +21,8 @@ outputs: {
 }
 
 physics.EndPath : [ @sequence::Reconstruction.EndSequence, CentralHelixOutput, LoopHelixOutput]
-# adjustments for OffSpill timing
-physics.producers.makeSH.MinimumTime : 0.0
-physics.producers.makeSH.MaximumTime : 100.0e3
-# turn off all hit selections based on beam conditions
-physics.producers.makeSH.MinimumRadius : 0.0
-physics.producers.makeSH.MaximumRadius : 800.0
-physics.producers.makePH.MinimumTime : 0.0
-physics.producers.makePH.MaximumTime : 100.0e3
-# disable pileup hit filtering
-physics.producers.flagPH : { module_type : NullProducer }
-physics.producers.AgnosticHelixFinder.chCollLabel : "makePH"
-physics.producers.TZClusterFinder.chCollLabel : "makePH"
-physics.producers.TimeClusterFinderDe.ComboHitCollection : "makePH"
-physics.producers.TimeClusterFinderDmu.ComboHitCollection : "makePH"
-physics.producers.TimeClusterFinderUe.ComboHitCollection : "makePH"
-physics.producers.TimeClusterFinderUmu.ComboHitCollection : "makePH"
-physics.producers.HelixFinderDe.ComboHitCollection : "makePH"
-physics.producers.HelixFinderDmu.ComboHitCollection : "makePH"
-physics.producers.HelixFinderUe.ComboHitCollection : "makePH"
-physics.producers.HelixFinderUmu.ComboHitCollection : "makePH"
-physics.producers.MultiHelixFinderDe.ComboHitCollection : "makePH"
-physics.producers.MultiHelixFinderDmu.ComboHitCollection : "makePH"
-physics.producers.MultiHelixFinderUe.ComboHitCollection : "makePH"
-physics.producers.MultiHelixFinderUmu.ComboHitCollection : "makePH"
-
-# use all helix finders
-physics.producers.MHDe.HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderDe", "HelixFinderDe", "MultiHelixFinderDe:Positive", "MultiHelixFinderDe:Negative"]
-physics.producers.MHDmu.HelixFinders : [ "AgnosticHelixFinder" , "CalHelixFinderDmu", "HelixFinderDmu", "MultiHelixFinderDe:Positive", "MultiHelixFinderDmu:Negative" ]
-physics.producers.MHUe.HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderUe", "HelixFinderUe", "MultiHelixFinderDe:Positive", "MultiHelixFinderUe:Negative" ]
-physics.producers.MHUmu.HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderUmu", "HelixFinderUmu", "MultiHelixFinderDe:Positive", "MultiHelixFinderUmu:Negative" ]
+# final config
+#include "Production/JobConfig/reco/NoPileup_epilog.fcl"
+#include "Production/JobConfig/reco/OffSpillTiming_epilog.fcl"
+#include "Production/JobConfig/reco/epilog.fcl"
+#include "Production/JobConfig/common/epilog.fcl"

@@ -1,0 +1,5 @@
+# adjust hit producers to OffSpill timing
+physics.producers.makeSH.MinimumTime : 0.0
+physics.producers.makeSH.MaximumTime : 100.0e3
+physics.producers.makePH.MinimumTime : 0.0
+physics.producers.makePH.MaximumTime : 100.0e3

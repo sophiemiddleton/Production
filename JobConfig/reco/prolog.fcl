@@ -17,6 +17,12 @@
 #
 BEGIN_PROLOG
 Reconstruction : {
+# define the helix finders
+  HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderDe" ]
+}
+Reconstruction : {
+  @table::Reconstruction
+
   producers : {
     @table::TrkHitReco.producers
     @table::TrkPatRec.producers
@@ -35,19 +41,19 @@ Reconstruction : {
     # NB: positive here refers to helicity, not charge!
     MHDe : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderDe" ]
+      HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderDe", "HelixFinderDe" ]
     }
     MHDmu : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "AgnosticHelixFinder" , "CalHelixFinderDmu" ]
+      HelixFinders : [ "AgnosticHelixFinder" , "CalHelixFinderDmu", "HelixFinderDmu" ]
     }
     MHUe : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderUe" ]
+      HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderUe", "HelixFinderUe" ]
     }
     MHUmu : {
       @table::TrkReco.producers.MergeHelices
-      HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderUmu" ]
+      HelixFinders : [ "AgnosticHelixFinder", "CalHelixFinderUmu", "HelixFinderUmu" ]
     }
     # KinKal fits
 
@@ -55,15 +61,14 @@ Reconstruction : {
       @table::Mu2eKinKal.producers.KKDe
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDe.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
         HelixSeedCollections : [ "MHDe" ]
       }
     }
+
     KKUe : {
       @table::Mu2eKinKal.producers.KKUe
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDe.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
         HelixSeedCollections : [ "MHUe" ]
       }
     }
@@ -71,7 +76,6 @@ Reconstruction : {
       @table::Mu2eKinKal.producers.KKDmu
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDmu.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
         HelixSeedCollections : [ "MHDmu" ]
       }
     }
@@ -79,7 +83,6 @@ Reconstruction : {
       @table::Mu2eKinKal.producers.KKUmu
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKDmu.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
         HelixSeedCollections : [ "MHUmu" ]
       }
     }
@@ -87,15 +90,21 @@ Reconstruction : {
       @table::Mu2eKinKal.producers.KKLine
       ModuleSettings : {
         @table::Mu2eKinKal.producers.KKLine.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
         CosmicTrackSeedCollections : ["LineFinder"]
       }
     }
-    KKCentralHelix : {
-      @table::Mu2eKinKal.producers.KKCentralHelix
+    KKCHmuM : {
+      @table::Mu2eKinKal.producers.KKCHmuM
       ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKCentralHelix.ModuleSettings
-        @table::Mu2eKinKal.KKPrecursors
+        @table::Mu2eKinKal.producers.KKCHmuM.ModuleSettings
+        CosmicTrackSeedCollections : ["LineFinder"]
+      }
+    }
+
+    KKCHmuP : {
+      @table::Mu2eKinKal.producers.KKCHmuP
+      ModuleSettings : {
+        @table::Mu2eKinKal.producers.KKCHmuP.ModuleSettings
         CosmicTrackSeedCollections : ["LineFinder"]
       }
     }
@@ -119,12 +128,11 @@ Reconstruction : {
       CrvCoincidenceClusterCollections : [ "CrvCoincidenceClusterFinder" ]
       StrawDigiMCCollection : "compressDigiMCs"
       CrvDigiMCCollection : "compressDigiMCs"
-      KalSeedCollections  : [
+      KalSeedCollections  : [ # look for all KalSeeds: no problem if some are missing
             "KKDe", "KKDmu",
             "KKUe", "KKUmu",
-            "KKLine","KKCentralHelix"]
-      HelixSeedCollections  : ["MHDe", "MHDmu",
-            "MHUe", "MHUmu" ]
+            "KKLine", "KKCHmuM", "KKCHmuP"]
+      HelixSeedCollections  : ["MHDe", "MHDmu", "MHUe", "MHUmu" ]
       VDSPCollection : "compressDigiMCs:virtualdetector"
     }
     # Compresion
@@ -152,41 +160,45 @@ Reconstruction : {
   }
 
   filters : {
-    @table::CalPatRec.filters
-    # reco filter
-    RecoFilter : {
-      module_type   : RecoMomFilter
-      KalFinalTagRoot : ""
-      TrkTags : [ "KKDe", "KKUe", "KKDmu", "KKUmu", "KKLine", "KKCentralHelix" ]
-      # // set low cutoffs
-      MomentumCutoff : [ 60.0, 60.0, 60.0, 60.0, 60.0 , 60.0 ]
-    }
-    RecoFilterCH : {
-      module_type   : RecoMomFilter
-      KalFinalTagRoot : ""
-      TrkTags : [ "KKCentralHelix" ]
-      # // set low cutoffs
-      MomentumCutoff : [ 60.0 ]
-    }
-    RecoFilterLH : {
+    # these filters should be replaced with KalSeedFilter FIXME
+    LHFilter : {
       module_type   : RecoMomFilter
       KalFinalTagRoot : ""
       TrkTags : [ "KKDe", "KKUe", "KKDmu", "KKUmu" ]
       # // set low cutoffs
-      MomentumCutoff : [ 50.0, 50.0, 50.0, 50.0 ]
+      MomentumCutoff : [ 40.0, 40.0, 40.0, 40.0]
     }
-  }
+    CHFilter : {
+      module_type   : RecoMomFilter
+      KalFinalTagRoot : ""
+      TrkTags : [ "KKCHmuP", "KKCHmuM" ]
+      # // set low cutoffs
+      MomentumCutoff : [ 300.0, 300.0 ]
+    }
+# this filter is currently meaningless FIXME
+    KLFilter : {
+      module_type   : RecoMomFilter
+      KalFinalTagRoot : ""
+      TrkTags : [ "KKLine" ]
+      # // set low cutoffs
+      MomentumCutoff : [ 0.0 ]
+    }
 
-  analyzers : { # these are specific to MC
-    recoCompressionCheck : @local::RecoCompression.Check
+
   }
-  # reconstruct multiple types of tracks.  These are separate sequences to allow granular execution
+  analyzers : { # these are specific to MC
+    LHCompressionCheck : @local::RecoCompression.Check
+    CHCompressionCheck : @local::RecoCompression.Check
+  }
+}
+# now setup track finding sequences. These are separate sequences to allow granular execution
+Reconstruction : {
+  @table::Reconstruction
   # Downstream electron sequence (plus and minus), using merged helices
   DeReco : [
     TZClusterFinder, AgnosticHelixFinder,   # AgnosticPatRec
     CalTimePeakFinderDe, CalHelixFinderDe,  # CalPatRec
     TimeClusterFinderDe, HelixFinderDe,   # TrkPatRec
-    MultiHelixFinderDe,   # MPR
     MHDe, # helix merging
     KKDe  # KinKal drift fits
   ]
@@ -195,7 +207,6 @@ Reconstruction : {
     TZClusterFinder, AgnosticHelixFinder,   # AgnosticPatRec
     CalTimePeakFinderUe, CalHelixFinderUe,  # CalPatRec
     TimeClusterFinderUe, HelixFinderUe,   # TrkPatRec
-    MultiHelixFinderUe,   # MPR
     MHUe, # helix merging
     KKUe  # KinKal drift fits
   ]
@@ -204,7 +215,6 @@ Reconstruction : {
     TZClusterFinder, AgnosticHelixFinder,    # AgnosticPatRec
     CalTimePeakFinderDmu, CalHelixFinderDmu,  # CalPatRec
     TimeClusterFinderDmu, HelixFinderDmu,   # TrkPatRec
-    MultiHelixFinderDmu,   # MPR
     MHDmu, # helix merging
     KKDmu  # KinKal drift fits
   ]
@@ -213,7 +223,6 @@ Reconstruction : {
     TZClusterFinder, AgnosticHelixFinder,     # AgnosticPatRec
     CalTimePeakFinderUmu, CalHelixFinderUmu,  # CalPatRec
     TimeClusterFinderUmu, HelixFinderUmu,   # TrkPatRec
-    MultiHelixFinderUmu,   # MPR
     MHUmu, # helix merging
     KKUmu  # KinKal drift fits
   ]
@@ -224,13 +233,13 @@ Reconstruction : {
   ]
   # Central helix
   CentralHelixReco : [
-    SimpleTimeCluster, LineFinder, KKCentralHelix
+    SimpleTimeCluster, LineFinder, KKCHmuM, KKCHmuP
   ]
 
   # add protons for calibration TODO!
 
-  # Track reco sequence
-  TrkReco : [  @sequence::TrkHitReco.PrepareHits ] # Track hit
+  # Tracker reco sequence
+  TrkHitReco : [  @sequence::TrkHitReco.PrepareHits ] # Track hits
   # Calo reco
   CaloReco : [ @sequence::CaloReco.Reco, @sequence::CaloCluster.Reco ]
   # CRV reco
@@ -241,6 +250,7 @@ Reconstruction : {
 
   # define products to keep
   # First, high-level reco products, and associated sub-products
+  # SelectReco has both real data and MC flavors. We will need to rename the instances generically in the near future TODO
   HighRecoProducts : [
     "keep mu2e::KalSeeds_K*_*_*",
     "keep mu2e::CaloClusters_*_*_*",
@@ -283,77 +293,69 @@ Reconstruction : {
     @sequence::Digitize.GeneralMCProducts
   ]
 
-  EndSequence : [ recoCompressionCheck ]
+  EndSequence : [ LHCompressionCheck, CHCompressionCheck ]
 }
-Reconstruction.EndPath : [ @sequence::Reconstruction.EndSequence, Output  ]
 
-# override CaloMC Truth matching provenance for compression
-
-Reconstruction.producers.CaloHitTruthMatch.caloShowerSimCollection : "compressDigiMCs"
-Reconstruction.producers.CaloHitTruthMatch.primaryParticle : "compressDigiMCs"
-
-# LoopHelix tracks
-Reconstruction.LoopHelixReco : [
+# Combined track reconstruction
+Reconstruction.OnSpillTrkReco : [
   @sequence::Reconstruction.DeReco,
   @sequence::Reconstruction.UeReco,
   @sequence::Reconstruction.DmuReco,
-  @sequence::Reconstruction.UmuReco ]
-#
-# Full reconstruction Path
-Reconstruction.RecoPath : [
-  @sequence::Reconstruction.CaloReco,
-  @sequence::Reconstruction.TrkReco,
-  @sequence::Reconstruction.CrvReco,
-  @sequence::Reconstruction.LoopHelixReco
+  @sequence::Reconstruction.UmuReco
 ]
-# Full reco path with MC
-Reconstruction.RecoMCPath : [
-  @sequence::Reconstruction.RecoPath,
-  @sequence::Reconstruction.MCReco,
-  RecoFilter
+#
+# OffSpill track reconstruction includes CentralHelix (high-momentum muons)
+Reconstruction.OffSpillTrkReco : [
+  @sequence::Reconstruction.OnSpillTrkReco,
+  @sequence::Reconstruction.CentralHelixReco
+]
+#
+# reconstruction precursor Path
+Reconstruction.PreTrkReco : [
+  @sequence::Reconstruction.CaloReco,
+  @sequence::Reconstruction.TrkHitReco,
+  @sequence::Reconstruction.CrvReco
 ]
 # No Field reco path
-Reconstruction.LineRecoPath : [
-  @sequence::Reconstruction.CaloReco,
-  @sequence::Reconstruction.TrkReco,
-  @sequence::Reconstruction.CrvReco,
+Reconstruction.NoFieldPath : [
+  @sequence::Reconstruction.PreTrkReco,
   @sequence::Reconstruction.LineReco
 ]
 # No Field reco path with MC
-Reconstruction.LineRecoMCPath : [
-  @sequence::Reconstruction.LineRecoPath,
+Reconstruction.NoFieldMCPath : [
+  @sequence::Reconstruction.NoFieldPath,
   @sequence::Reconstruction.MCReco,
-  RecoFilter
+  KLFilter
 ]
-# OffSpill reco paths
-Reconstruction.OffSpillRecoPath : [
-  @sequence::Reconstruction.CaloReco,
-  @sequence::Reconstruction.TrkReco,
-  @sequence::Reconstruction.CrvReco,
-  @sequence::Reconstruction.CentralHelixReco,
-  @sequence::Reconstruction.LoopHelixReco
+
+# OffSpill paths
+Reconstruction.OffSpillPath : [
+  @sequence::Reconstruction.PreTrkReco,
+  @sequence::Reconstruction.OffSpillTrkReco
 ]
-# OffSpill reco path with MC
-Reconstruction.OffSpillRecoMCPath : [
-  @sequence::Reconstruction.OffSpillRecoPath,
+Reconstruction.CentralHelixRecoPath : [
+  @sequence::Reconstruction.OffSpillPath,
+  CHFilter
+]
+
+Reconstruction.CentralHelixRecoMCPath : [
+  @sequence::Reconstruction.CentralHelixRecoPath,
   @sequence::Reconstruction.MCReco
 ]
 
-Reconstruction.OffSpillCentralHelixRecoMCPath : [
-  @sequence::Reconstruction.OffSpillRecoMCPath,
-  RecoFilterCH
+Reconstruction.LoopHelixRecoPath : [
+  @sequence::Reconstruction.OffSpillPath,
+  LHFilter
 ]
-Reconstruction.OffSpillLoopHelixRecoMCPath : [
-  @sequence::Reconstruction.OffSpillRecoMCPath,
-  RecoFilterLH
-]
-Reconstruction.OffSpillCaloOnlyRecoMCPath : [
+
+Reconstruction.LoopHelixRecoMCPath : [
+  @sequence::Reconstruction.LoopHelixRecoPath,
+  @sequence::Reconstruction.MCReco
 ]
 
 # default output
 Reconstruction.Output : {
   module_type : RootOutput
-  SelectEvents : [ RecoPath ]
   fileName    : @nil
   #  outputCommands : [ "keep *_*_*_*" ]
   outputCommands : [ "drop *_*_*_*",
