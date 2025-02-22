@@ -105,9 +105,12 @@ outputs : {
   }
 }
 # fix MakeSS config (overwritten by digi, reco)
-physics.producers.MakeSS.VDStepPointMCs : "g4run:virtualdetector"
-physics.producers.MakeSS.AbsorberStepPointMCs : "g4run:protonabsorber"
-physics.producers.MakeSS.TargetStepPointMCs : "g4run:stoppingtarget"
+physics.producers.MakeSS : {
+  @table::CommonMC.MakeSS
+  VDStepPointMCs : "g4run:virtualdetector"
+  AbsorberStepPointMCs : "g4run:protonabsorber"
+  TargetStepPointMCs : "g4run:stoppingtarget"
+}
 
 #include "Production/JobConfig/primary/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"

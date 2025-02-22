@@ -8,5 +8,4 @@ physics.producers.MakeSS : {
   AbsorberStepPointMCs : "compressDetStepMCs:protonabsorber"
   TargetStepPointMCs : "compressDetStepMCs:stoppingtarget"
 }
-physics.DigitizePath : [ "MakeSS" , @sequence::physics.DigitizePath ]
 physics.producers.compressDigiMCs.surfaceStepTags : [ "MakeSS" ]
