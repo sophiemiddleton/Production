@@ -50,6 +50,7 @@ Digitize: {
       mean : 1
       halfWidth : 0
     }
+    MakeSS : { module_type : NullProducer } # temporary patch for older MDC2020 output
 # Trigger MC matching instances for each helix algorithm
     TTAprKSFMC : {
       @table::CommonMC.TTSelectRecoMC
@@ -66,12 +67,6 @@ Digitize: {
     TTCprDeKSFMC : {
       @table::CommonMC.TTSelectRecoMC
       KalSeedCollections  : [ "TTCalSeedFitDe" ]
-    }
-    MakeSS : {
-      @table::CommonMC.MakeSS
-      VDStepPointMCs : "compressDetStepMCs:virtualdetector"
-      AbsorberStepPointMCs : "compressDetStepMCs:protonabsorber"
-      TargetStepPointMCs : "compressDetStepMCs:stoppingtarget"
     }
   }
   filters : {
@@ -115,11 +110,11 @@ Digitize: {
 
   DigitizeSequence : [
     PBISim,
+    MakeSS,
     @sequence::CommonMC.DigiSim,
     @sequence::TrackerMC.DigiSim,
     @sequence::CaloMC.DigiSim,
     @sequence::CrvDAQPackage.CrvDAQSequence,
-    MakeSS,
     compressDigiMCs ]
 
   TriggerableSequence : [

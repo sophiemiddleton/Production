@@ -5,3 +5,8 @@
 #include "Production/JobConfig/primary/RMCGammaResampling.fcl"
 outputs.PrimaryOutput.fileName : "dts.owner.RMCFlatGammaConversions.version.sequencer.art"
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlatPhoton"
+
+# Filter low energy conversions out
+physics.filters.GenFilter.filterEnergy : true
+physics.filters.GenFilter.emin : 78.
+physics.filters.GenFilter.emax : 1000.

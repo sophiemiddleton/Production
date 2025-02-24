@@ -6,6 +6,6 @@ physics.filters.Triggerable : {
   prescaleFactor : 1
   prescaleOffset : 0
 }
-# turn off any filtering for Untriggered output stream
-outputs.UntriggeredOutput.RejectEvents : []
-outputs.UntriggeredOutput.SelectEvents : []
+# turn off any filtering for triggerable output stream
+outputs.TriggerableOutput.RejectEvents : []
+outputs.TriggerableOutput.SelectEvents : []

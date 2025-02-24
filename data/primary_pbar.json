@@ -1,7 +1,7 @@
 [
     {
+	"dsconf": "MDC2020ap",	
 	"desc": "PbarSTGun",
-	"dsconf": "MDC2020ap",
 	"fcl": "Production/JobConfig/primary/AntiprotonStop.fcl",
 	"resampler_name": "TargetStopResampler",
 	"resampler_data": "sim.mu2e.stoppedSimpleAntiprotons.MDC2020ap.art",
