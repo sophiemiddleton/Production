@@ -81,7 +81,7 @@ def write_fcl_file(fname: str, args) -> tuple[str, list]:
     out_fname = os.path.basename(fname)
 
     if args.release:
-        # Replace the portion after "MDC2020" up to the underscore with the new release
+        # Replace the portion after "MDC2020" up to the underscore or dot with the new release
         out_fname = re.sub(r'(MDC2020)[^_.]+', rf'\1{args.release}', out_fname)
     else:
         print("No release value specified. Filename remains unchanged.")
@@ -153,6 +153,13 @@ def write_fcl_file(fname: str, args) -> tuple[str, list]:
         
         fcl_content += f'services.TFileService.fileName: "{out_fname}"\n'
         out_fname_list = [out_fname]
+
+    elif args.stage_type == "dts":
+
+        fcl_content += f'outputs.CopyOutput.fileName : "{out_fname}"\n'
+        out_fname_list = [out_fname]
+
+
     else:
         print("Unknown stage type")
         sys.exit(1)
