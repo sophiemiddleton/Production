@@ -93,22 +93,13 @@ Reconstruction : {
         CosmicTrackSeedCollections : ["LineFinder"]
       }
     }
-    KKCHmuM : {
-      @table::Mu2eKinKal.producers.KKCHmuM
+    KKCHmu : {
+      @table::Mu2eKinKal.producers.KKCHmu
       ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKCHmuM.ModuleSettings
+        @table::Mu2eKinKal.producers.KKCHmu.ModuleSettings
         CosmicTrackSeedCollections : ["LineFinder"]
       }
     }
-
-    KKCHmuP : {
-      @table::Mu2eKinKal.producers.KKCHmuP
-      ModuleSettings : {
-        @table::Mu2eKinKal.producers.KKCHmuP.ModuleSettings
-        CosmicTrackSeedCollections : ["LineFinder"]
-      }
-    }
-
     # Implicit TrkPatRec config for Final Fits and upstream fits (no merging)
     #
     # Prune output so that only parts related to reconstructed objects are kept
@@ -131,7 +122,7 @@ Reconstruction : {
       KalSeedCollections  : [ # look for all KalSeeds: no problem if some are missing
             "KKDe", "KKDmu",
             "KKUe", "KKUmu",
-            "KKLine", "KKCHmuM", "KKCHmuP"]
+            "KKLine", "KKCHmu" ]
       HelixSeedCollections  : ["MHDe", "MHDmu", "MHUe", "MHUmu" ]
       VDSPCollection : "compressDigiMCs:virtualdetector"
     }
@@ -171,9 +162,9 @@ Reconstruction : {
     CHFilter : {
       module_type   : RecoMomFilter
       KalFinalTagRoot : ""
-      TrkTags : [ "KKCHmuP", "KKCHmuM" ]
+      TrkTags : [ "KKCHmu" ]
       # // set low cutoffs
-      MomentumCutoff : [ 300.0, 300.0 ]
+      MomentumCutoff : [ 300.0 ]
     }
 # this filter is currently meaningless FIXME
     KLFilter : {
@@ -232,9 +223,7 @@ Reconstruction : {
     SimpleTimeCluster, LineFinder, KKLine
   ]
   # Central helix
-  CentralHelixReco : [
-    SimpleTimeCluster, LineFinder, KKCHmuM, KKCHmuP
-  ]
+  CentralHelixReco : [ SimpleTimeCluster, LineFinder, KKCHmu ]
 
   # add protons for calibration TODO!
 
