@@ -151,31 +151,69 @@ Reconstruction : {
   }
 
   filters : {
-    # these filters should be replaced with KalSeedFilter FIXME
     LHFilter : {
-      module_type   : RecoMomFilter
-      KalFinalTagRoot : ""
-      TrkTags : [ "KKDe", "KKUe", "KKDmu", "KKUmu" ]
-      # // set low cutoffs
-      MomentumCutoff : [ 40.0, 40.0, 40.0, 40.0]
+      module_type   : KalSeedFilter
+      kalSeedCollections : ["KKDe", "KKUe", "KKUmu", "KKDmu" ]
+      noInfo : true # don't produce a TriggerInfo object
+      debugLevel : 3
+      KalSeedCuts : [ {
+        requireCaloCluster : false
+        minFitCons : -1.0
+        minNStrawHits : 15
+        minMomentum : 40.0
+        maxMomentum : 300.0
+        minTanDip : -2.0
+        maxTanDip : 2.0
+        maxChi2DOF : 1.0e6
+        maxMomErr : 1e6
+        minD0 : -800.0
+        maxD0 :  800.0
+        minNStereo : 5
+        minNPlanes : 10
+      } ]
     }
     CHFilter : {
-      module_type   : RecoMomFilter
-      KalFinalTagRoot : ""
-      TrkTags : [ "KKCHmu" ]
-      # // set low cutoffs
-      MomentumCutoff : [ 300.0 ]
+      module_type   : KalSeedFilter
+      kalSeedCollections : ["KKCHmu"]
+      noInfo : true # don't produce a TriggerInfo object
+      debugLevel : 0
+      KalSeedCuts : [ {
+        requireCaloCluster : false
+        minFitCons : 0.0
+        minNStrawHits : 15
+        minMomentum : 300.0
+        maxMomentum : 1e6
+        minTanDip : -1.0e6
+        maxTanDip : 1.0e6
+        maxChi2DOF : 1.0e6
+        maxMomErr : 1e6
+        minD0 : -800.0
+        maxD0 :  800.0
+        minNStereo : 2
+        minNPlanes : 2
+      } ]
     }
 # this filter is currently meaningless FIXME
     KLFilter : {
       module_type   : RecoMomFilter
-      KalFinalTagRoot : ""
-      TrkTags : [ "KKLine" ]
-      # // set low cutoffs
-      MomentumCutoff : [ 0.0 ]
+      kalSeedCollections : [ "KKLine" ]
+      noInfo : true
+      KalSeedCuts : [ {
+        requireCaloCluster : false
+        minFitCons : 0.0
+        minNStrawHits : 15
+        minMomentum : 300.0
+        maxMomentum : 1.0e6
+        minTanDip : -1.0e6
+        maxTanDip : 1.0e6
+        maxChi2DOF : 1.0e6
+        maxMomErr : 1e6
+        minD0 : -800.0
+        maxD0 :  800.0
+        minNStereo : 2
+        minNPlanes : 2
+      } ]
     }
-
-
   }
   analyzers : { # these are specific to MC
     LHCompressionCheck : @local::RecoCompression.Check
@@ -245,7 +283,7 @@ Reconstruction : {
     "keep mu2e::CaloClusters_*_*_*",
     "keep mu2e::CaloHits_*_*_*", # these are needed as CaloClusters reference CaloHits and are not compressed
     "keep mu2e::IndexMap_SelectRecoMC_*_*", # the SelectRecoMC products need to be explicit as that has MC products as well
-    "keep mu2e::RecoCount_SelectRecoMC_*_*", # that module needs to be refactored to fix this TODO
+    "keep mu2e::RecoCount_SelectRecoMC_*_*",
     "keep mu2e::StrawDigis_SelectRecoMC_*_*",
     "keep mu2e::StrawDigiADCWaveforms_SelectRecoMC_*_*",
     "keep mu2e::CaloDigis_SelectRecoMC_*_*",
