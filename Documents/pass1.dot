@@ -1,0 +1,296 @@
+digraph diagram {
+  label="Mu2e Offline Data Processing (Pass 1)";
+  fontname="Helvetica";
+  fontsize="36";
+  labelloc=t;
+  subgraph clusterLegend {
+    rankdir=TB;
+    color="black";
+    label="Legend";
+    fontsize="24";
+
+
+    process [shape=ellipse,color=black,
+            label=<<table border="0" cellborder="0" cellspacing="1">
+              <tr><td align="center"><b>Process</b></td></tr>
+              </table>>];
+    storage [shape=box,color=black,
+            label=<<table border="0" cellborder="0" cellspacing="1">
+              <tr><td align="center"><b>Data Storage</b></td></tr>
+              <tr><td align="left"><b><font color="fuchsia">ephemeral</font></b></td></tr>
+              <tr><td align="left"><font color="cyan">scratch</font></td></tr>
+              <tr><td align="left"><font color="blue">persistent</font></td></tr>
+              <tr><td align="left"><font color="black">tape</font></td></tr>
+              <tr><td align="left"><font color="green">other</font></td></tr>
+              </table>>];
+
+   subgraph clustertype {
+      label="Data Format ( multiple contours = >1 instance)";
+      fontsize=16;
+      raw [shape=parallelogram, label="Fragment" ];
+      digi [shape=pentagon, label="Digi" ];
+      reco [shape=box, label="Reco" ];
+      tuple [shape=hexagon, label="Historgrams/Tuples" ];
+      other [shape=trapezium, label="Other" ];
+//      raw -> digi -> reco -> tuple -> other [penwidth=0.0];
+      {rank=same raw digi reco tuple other};
+   }
+  }
+
+  DAQ [
+    label="DAQ",
+    shape= ellipse
+  ];
+  ConditionsDB [ label="Conditions Database",
+               shape=trapezium, color=green
+  ];
+
+  Catalog[ label="File Catalog",
+               shape=trapezium, color=green
+  ];
+
+  // primary inputs, from DAQ
+  OffSpillFragments [
+    label="OffSpill",
+    shape=parallelogram
+  ];
+  OnSpillFragments [
+    label="OnSpill",
+    shape=parallelogram
+  ]
+  // temporary on-disk samples
+  //  - ephemeral collections, e.g. salt
+  //  - accumulating collections, e.g. reconstructed signal-likes
+  OnSpillUnsalted [
+  label="Unsalted OnSpill Physics",
+  shape=box,
+  color="fuchsia"
+  ];
+  OffSpillPhysics [
+    label="OffSpill Physics",
+    shape=box,
+    color="black"
+  ];
+  SaltTracks [
+    label="Salt tracks",
+    shape=pentagon,
+    color="fuchsia"
+  ];
+  SaltEvents [
+    label="Salt events",
+    shape=box,
+    color="fuchsia"
+  ];
+  OffSpillDetectorCalib [
+    label="OffSpill Detector",
+    shape=box,
+    peripheries=3,
+    color="blue"
+  ];
+  OnSpillDetectorCalib [
+    label="OnSpill Detector",
+    shape=box,
+    peripheries=3,
+    color="blue"
+  ];
+  OnSpillNZS [
+    label="OnSpill NZS",
+    shape=pentagon,
+    color="cyan"
+  ];
+  OffSpillNZS [
+    label="OffSpill NZS",
+    shape=pentagon,
+    color="cyan"
+  ];
+  Other [
+    label="Other Physics"
+      shape=hexagon,
+    peripheries=3,
+    color=blue
+  ];
+
+  HighPNegative [
+    label="High-P e-",
+    shape=hexagon,
+    color=blue
+  ];
+  HighPPositive [
+    label="High-P e+",
+    shape=hexagon,
+    color=blue
+  ];
+//  MultiTrack [
+//    label="Multitrack",
+//    shape=hexagon,
+//    color=blue
+//  ];
+  OnSpillSalted [
+    label="Salted OnSpill Physics",
+    shape=box,
+    color=black
+  ];
+
+  // tape-backed storage
+  Pileup [
+    label="Pileup",
+    shape=pentagon
+  ];
+  DetCalib [
+    label="Detector Calib",
+    shape=hexagon,
+    peripheries=3,
+    color=cyan
+  ];
+
+  DetMonPlots [
+    label="Detector Monitor Plots",
+    shape=hexagon,
+    peripheries=3,
+    color=blue
+  ];
+
+  PhysMonPlots [
+    label="Physics Monitor Plots",
+    shape=hexagon,
+    peripheries=3,
+    color=blue
+  ];
+
+  DetDBTable [
+    label="Detector DB Tables",
+    shape=trapezium,
+    peripheries=3,
+    color=cyan
+  ];
+
+  NZSDBTable [
+    label="CRV NZS Tables",
+    peripheries=3,
+    shape=trapezium,
+    color=cyan
+  ];
+
+  // online high-level processing blocks
+  OffSpillReco [
+    label="OffSpill Reco"
+      shape=oval
+  ];
+  OnSpillReco [
+    label="OnSpill Reco"
+      shape=oval
+  ];
+
+  // offline high-level processing blocks
+  DetectorCalibSelect [
+    label="Detector Calib Select",
+    peripheries=3,
+    shape=oval
+  ];
+
+  DetectorCalibExtract [
+    label="Detector Calib Extract",
+    peripheries=3,
+    shape=oval
+  ];
+
+  NZSCalibExtract [
+    label="NZS Calib Extract",
+    shape=oval
+  ];
+
+  TableVerify [
+    label="Calib Table Verification",
+    shape=oval,
+    peripheries=3
+  ];
+
+  DetectorMonitoring [
+    label="Detector Monitoring",
+    shape=oval
+  ];
+
+
+  SaltOverlay [
+    label="Salt + Pileup Overlay + Reco",
+    shape=oval
+  ];
+  PhysicsMerging [
+    label="Physics Merge and Sort",
+    shape=oval
+  ];
+  PhysicsMonitoring [
+    label="Physics Monitoring",
+    shape=oval
+  ];
+
+
+  // dependencies
+
+  {rank=same ConditionsDB DAQ};
+  {rank=same OnSpillReco OffSpillReco TableVerify};
+  {rank=same OffSpillFragments OnSpillFragments Catalog};
+  {rank=same DetDBTable NZSDBTable}
+
+  ConditionsDB -> DAQ [constraint=false];
+  ConditionsDB -> OnSpillReco;
+  ConditionsDB -> OffSpillReco;
+  ConditionsDB -> SaltOverlay;
+  raw->DAQ [penwidth=0.0,arrowsize=0.0];
+  DAQ->OffSpillFragments;
+  DAQ->OnSpillFragments;
+  OffSpillFragments -> OffSpillReco;
+  OnSpillFragments  -> OnSpillReco;
+
+  // ejc: no offSpill ``physics'' sample here?
+  OffSpillReco -> OffSpillPhysics [label="Physics Selectors"];
+  OffSpillReco -> SaltTracks [label="Salt Selectors" ];
+  OffSpillReco -> OffSpillDetectorCalib [label="Detector Selectors"];
+  OffSpillReco -> OffSpillNZS [label="NZS Selector"];
+
+  OnSpillReco -> OnSpillUnsalted [label="Physics Selectors"];
+  OnSpillReco -> Pileup [label="Pileup Selector"];
+  OnSpillReco -> OnSpillDetectorCalib [label="Detector Selectors"];
+  OnSpillReco -> OnSpillNZS [label="NZS Selector"];
+
+  OffSpillDetectorCalib    -> DetectorCalibSelect;
+  OnSpillDetectorCalib     -> DetectorCalibSelect;
+
+  OffSpillDetectorCalib    -> DetectorMonitoring;
+  OnSpillDetectorCalib     -> DetectorMonitoring;
+
+  DetectorCalibSelect ->DetCalib;
+  DetCalib -> DetectorCalibExtract;
+  DetectorCalibExtract -> DetDBTable;
+
+  DetDBTable -> TableVerify;
+  TableVerify -> ConditionsDB;
+
+  DetectorCalibSelect -> DetMonPlots;
+  DetectorMonitoring -> DetMonPlots;
+
+  OffSpillNZS -> NZSCalibExtract;
+  OnSpillNZS -> NZSCalibExtract;
+  NZSCalibExtract -> NZSDBTable;
+  NZSCalibExtract -> DetMonPlots;
+  NZSDBTable -> TableVerify;
+
+  SaltTracks        -> SaltOverlay;
+  Pileup -> SaltOverlay;
+  SaltOverlay       -> SaltEvents;
+
+
+  OnSpillUnsalted       -> PhysicsMerging;
+  SaltEvents         -> PhysicsMerging;
+
+  PhysicsMerging -> OnSpillSalted;
+  PhysicsMerging -> HighPNegative;
+  PhysicsMerging -> HighPPositive;
+//  PhysicsMerging -> MultiTrack;
+  PhysicsMerging -> Other;
+
+  OffSpillPhysics -> PhysicsMonitoring;
+  OnSpillSalted -> PhysicsMonitoring;
+  PhysicsMonitoring -> PhysMonPlots;
+
+}

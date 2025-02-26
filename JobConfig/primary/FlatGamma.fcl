@@ -5,13 +5,13 @@
 #
 #include "Production/JobConfig/primary/TargetStopParticle.fcl"
 physics.producers.generate : {
-  module_type : FlatMuonDaughterGenerator
-  inputSimParticles: TargetStopResampler
+  module_type            : FlatMuonDaughterGenerator
+  inputSimParticles      : TargetStopResampler
   stoppingTargetMaterial : "Al"
-  pdgId : 22
-  startMom: 10
-  endMom: 100
-  verbosity : 0
+  pdgId                  : 22
+  startMom               : 80
+  endMom                 : 102
+  verbosity              : 0
 }
 
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlatPhoton"

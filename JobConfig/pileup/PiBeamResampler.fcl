@@ -40,9 +40,7 @@ outputs: {
   TargetPiStopOutput : {
     module_type: RootOutput
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Pileup.SimKeptProducts,
-      "keep *_TargetPiStopFilter_*_*",
-      "keep *_compressPVTargetPiStops_*_*"
+      @sequence::Pileup.SimKeptProducts
     ]
     SelectEvents: [targetStopPath]
     fileName : "sim.owner.PiTargetStops.version.sequencer.art"

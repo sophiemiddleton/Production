@@ -1,14 +1,13 @@
 #
 # run tracker and cal reco from a file of digis
 #
-#include "Offline/Mu2eKinKal/fcl/prolog.fcl"
 #include "Production/JobConfig/reco/Reco.fcl"
 # add KinKal fits
 #
 physics.producers : @local::Reconstruction.producers
 physics.filters : @local::Reconstruction.filters
 #
-# only run DeM and DeP
+# only run De
 #
 physics.RecoPath : [
   @sequence::Reconstruction.CaloReco,
@@ -18,10 +17,10 @@ physics.RecoPath : [
   @sequence::Reconstruction.MCReco,
   RecoFilter
 ]
-physics.producers.SelectRecoMC.KalSeedCollections : [ "KKDeM", "KKDeP"]
-physics.producers.SelectRecoMC.HelixSeedCollections  : ["MHDeM", "MHDeP" ]
-physics.filters.RecoFilter.TrkTags : [ "KKDeM", "KKDeP"]
-physics.filters.RecoFilter.MomentumCutoff : [ 60.0, 60.0 ]
+physics.producers.SelectRecoMC.KalSeedCollections : [ "KKDe"]
+physics.producers.SelectRecoMC.HelixSeedCollections  : ["MHDe" ]
+physics.filters.RecoFilter.TrkTags : [ "KKDe"]
+physics.filters.RecoFilter.MomentumCutoff : [ 60.0 ]
 
 #include "Production/JobConfig/reco/epilog.fcl"
 #include "Production/JobConfig/reco/drop_trigger.fcl"
@@ -50,12 +49,9 @@ outputs: {
       "keep mu2e::ProtonBunchTimeMC_*_*_*",
       "keep mu2e::EventWeight_*_*_*",
       "keep *_compressRecoMCs_*_*",
-      "drop *_*UeM_*_*",
-      "drop *_*UeP_*_*",
-      "drop *_*DmuP_*_*",
-      "drop *_*DmuM_*_*",
-      "drop *_*UmuP_*_*",
-      "drop *_*UmuM_*_*"
+      "drop *_*Ue_*_*",
+      "drop *_*Dmu_*_*",
+      "drop *_*Umu_*_*"
     ]
   }
 }

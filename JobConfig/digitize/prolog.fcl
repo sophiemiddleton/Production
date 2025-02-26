@@ -9,14 +9,10 @@
 #include "Offline/CRVResponse/fcl/prolog.fcl"
 #include "Offline/Filters/fcl/prolog.fcl"
 #include "Offline/Compression/fcl/prolog.fcl"
-#
-# core trigger
-#
+#include "Offline/CommonMC/fcl/prolog.fcl"
 #include "mu2e_trig_config/core/trigProducers.fcl"
 #include "mu2e_trig_config/core/trigFilters.fcl"
-#include "mu2e_trig_config/core/trigMCProductionSequences.fcl"
-#include "mu2e_trig_config/core/trigSequences.fcl"
-#
+#include "mu2e_trig_config/core/trigRecoSequences.fcl"
 BEGIN_PROLOG
 
 Digitize: {
@@ -30,12 +26,12 @@ Digitize: {
       module_type : CompressDigiMCs
       strawDigiMCTag : @local::DigiCompressionTags.commonStrawDigiMCTag
       crvDigiMCTag : @local::DigiCompressionTags.commonCrvDigiMCTag
-      simParticleTags : [ @local::DigiCompressionTags.primarySimParticleTag ]
-      mcTrajectoryTag : @local::DigiCompressionTags.primarySimParticleTag
-      extraStepPointMCTags : @local::DigiCompressionTags.commonExtraStepPointMCTags
-      caloShowerStepTags : @local::DigiCompressionTags.primaryCaloShowerStepTags
       caloShowerSimTag : @local::DigiCompressionTags.commonCaloShowerSimTag
       caloShowerROTag : @local::DigiCompressionTags.commonCaloShowerROTag
+      simParticleTags : ["compressDetStepMCs"]
+      caloShowerStepTags : ["compressDetStepMCs"]
+      extraStepPointMCTags : ["compressDetStepMCs:virtualdetector"]
+      mcTrajectoryTag : "compressDetStepMCs"
       surfaceStepTags : [ "compressDetStepMCs" ]
       primaryParticleTag : "FindMCPrimary"
       keepAllGenParticles : true
@@ -54,18 +50,35 @@ Digitize: {
       mean : 1
       halfWidth : 0
     }
+    MakeSS : { module_type : NullProducer } # temporary patch for older MDC2020 output
+# Trigger MC matching instances for each helix algorithm
+    TTAprKSFMC : {
+      @table::CommonMC.TTSelectRecoMC
+      KalSeedCollections  : [ "TTAprKSF" ]
+    }
+    TTTprDeKSFMC : {
+      @table::CommonMC.TTSelectRecoMC
+      KalSeedCollections  : [ "TTKSFDe" ]
+    }
+    TTMprDeKSFMC : {
+      @table::CommonMC.TTSelectRecoMC
+      KalSeedCollections  : [ "TTKSFMprDe" ]
+    }
+    TTCprDeKSFMC : {
+      @table::CommonMC.TTSelectRecoMC
+      KalSeedCollections  : [ "TTCalSeedFitDe" ]
+    }
   }
-
   filters : {
-    # filter for Triggerable stream.  These should be events that might have
-    # triggered.  The default setting is a particle with enough tracker digis
+# filter for Triggerable stream.  These should be events that might have
+# triggered.  The default setting is a particle with enough tracker digis
     # in the right momentum range to be reconstructable as a helix
     # This filter should be overriden as needed for other kinds of primaries (straight cosmics, calo signals, ...)
     Triggerable : {
       module_type : StrawDigiMCFilter
       MinNDigis : 15
       MinParticleMom : 75.0
-      MaxParticleMom : 300.0 # nominally particles that can form helices in the tracker
+      MaxParticleMom : 300.0 # nominally particles that can form Loophelices in the tracker
       StrawDigiMCCollection : compressDigiMCs
       particleTypes : [ 11,-11, 13, -13, 211, -211] # e+-, mu+-, pi+-
     }
@@ -73,6 +86,19 @@ Digitize: {
     TriggerablePrescale : {
       module_type : Prescaler
       prescaleFactor : 1 # by default, don't prescale
+      prescaleOffset : 0
+    }
+     TriggerableCH : {
+      module_type : StrawDigiMCFilter
+      MinNDigis : 15
+      MinParticleMom : 500.0
+      MaxParticleMom : 1e10
+      StrawDigiMCCollection : compressDigiMCs
+      particleTypes : [ 11,-11, 13, -13, 211, -211] # e+-, mu+-, pi+-
+    }
+    TriggerableCHPrescale : {
+      module_type : Prescaler
+      prescaleFactor : 100
       prescaleOffset : 0
     }
     @table::TrigFilters.filters
@@ -84,6 +110,7 @@ Digitize: {
 
   DigitizeSequence : [
     PBISim,
+    MakeSS,
     @sequence::CommonMC.DigiSim,
     @sequence::TrackerMC.DigiSim,
     @sequence::CaloMC.DigiSim,
@@ -92,21 +119,27 @@ Digitize: {
 
   TriggerableSequence : [
     TriggerablePrescale, Triggerable ]
+  TriggerableCHSequence : [ TriggerableCHPrescale, TriggerableCH ]
 
   TriggerProducts : [
     "keep art::TriggerResults_*_*_*",
-    "keep mu2e::KalSeeds_TT*_*_*",
     "keep mu2e::CaloClusters_*_*_*",
-    "keep mu2e::TriggerInfo_*_*_*"
+    "keep mu2e::TriggerInfo_*_*_*",
+    "keep mu2e::KalSeeds_TT*_*_*",
+    "keep mu2e::KalSeedMCs_TT*KSFMC_*_*",
+    "keep mu2e::KalSeedmu2e::KalSeedMCvoidart::Assns_TT*KSFMC_*_*",
+    "keep mu2e::RecoCount_TT*KSFMC_*_*"
   ]
+    #    "keep mu2e::SimParticlemv_compressDetStepMCs_*_*",
+    #"keep mu2e::GenParticles_compressDetStepMCs_*_*"
 
   GeneralProducts : [
     "keep mu2e::EventWindowMarker_*_*_*",
     "keep mu2e::ProtonBunchTime_*_*_*"
   ]
   DigiProducts : [
-    "keep mu2e::StrawDigis_*_*_*",
-    "keep mu2e::StrawDigiADCWaveforms_*_*_*",
+    "keep mu2e::StrawDigis_makeSD_*_*",
+    "keep mu2e::StrawDigiADCWaveforms_makeSD_*_*",
     "keep mu2e::CaloDigis_*_*_*",
     "keep mu2e::CrvDigis_*_*_*"
   ]
@@ -131,21 +164,18 @@ Digitize: {
   #
   TriggerableOutput : {
     module_type : RootOutput
-    SelectEvents : [ "TriggerablePath" ] # require events pass 'Triggerable' filter
     fileName    : @nil
   }
   #
   # trigger selections that can be used to finalize the triggerOutput selection, depending on digitization mode and source
   #
-  SignalTriggers : [ "tprDe_highP_stopTarg*", "cprDe_highP_stopTarg*" ]  # events with 'high' momentum tracks with good KinKal fits
+  SignalTriggers : [ "cpr*_highP*", "apr_highP*" ]  # active trigger lines selecting events with 'high' momentum tracks with KinKal fits
   TrkTriggers : [ "*_lowP_*","*_ipa_*", "cst*" ] # events useful only for tracker calibration
   CaloTriggers : [ "calo*" ] # events useful only for calo calibration
   DiagTriggers : [ "minBias_*" , "*Helix*M", "*Helix*P"] # events useful for trigger diagnostics
 
   EndSequence : [digiCompressionCheck]
 }
-# override the Trigger sequence to prepare digis
-TrigRecoSequences.artFragmentsGen : [ @sequence::CommonMC.DigiSim, @sequence::TrackerMC.DigiSim, @sequence::CaloMC.DigiSim ]
 
 Digitize.TriggeredOutput.outputCommands : [ "drop *_*_*_*",
   @sequence::Digitize.GeneralProducts,
@@ -167,8 +197,9 @@ Digitize.Outputs : {
   TriggeredOutput : @local::Digitize.TriggeredOutput
   TriggerableOutput : @local::Digitize.TriggerableOutput
 }
-# give paths specific numbers outside trigger path range
-Digitize.trigger_paths : ["0:DigitizePath", "1:TriggerablePath" ]
 Digitize.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, TriggerableOutput ]
-
+# override the trigger digitization sequence
+TrigRecoSequences.artFragmentsGen : @local::Digitize.DigitizeSequence
 END_PROLOG
+# Trigger Sequences have to come after
+#include "mu2e_trig_config/core/trigSequences.fcl"

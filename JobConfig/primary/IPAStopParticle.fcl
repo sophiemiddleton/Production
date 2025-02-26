@@ -8,6 +8,7 @@
 physics.filters.TrackerRadialGenFilter: {
   @table::GenFilter
   isNull: false
+  filterMaxR : true
   maxr_min: 350.0 # tracker acceptance begins at ~400 mm
 }
 

@@ -1,0 +1,31 @@
+#
+# RMC External photons, resampling events with a photon conversion
+#
+
+#include "Production/JobConfig/primary/RMC.fcl"
+physics.producers.generate : {
+    module_type       : GammaConversion
+    inputSimParticles : "GammaConversionResampler"
+    material          : 13 # Assume target conversions, but the spectrum does not strongly depend on this
+    verbosity         : 0
+}
+
+physics.PrimaryPath   : [ GammaConversionResampler, @sequence::Common.generateSequence, GenFilter, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
+physics.trigger_paths : [ PrimaryPath ]
+
+
+# Filter low energy conversions out
+physics.filters.GenFilter.filterEnergy : true
+physics.filters.GenFilter.emin : 84.
+physics.filters.GenFilter.emax : 1000.
+
+physics.producers.g4run.inputs.inputPhysVolumeMultiInfo: "GammaConversionResampler"
+physics.producers.g4run.inputs.updateEventLevelVolumeInfos: {
+  input: "GammaConversionResampler:eventlevel"
+  outInstance: "eventlevel"
+}
+
+physics.producers.g4run.inputs.simStageOverride: 3
+
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eExternalRMC"
+outputs.PrimaryOutput.fileName : "dts.owner.RMCGammaConversions.version.sequencer.art"

@@ -6,6 +6,7 @@
 #include "Offline/CRVResponse/fcl/prolog.fcl"
 #include "Offline/Filters/fcl/prolog.fcl"
 #include "Offline/Compression/fcl/prolog.fcl"
+#include "Production/JobConfig/beam/prolog.fcl"
 #
 BEGIN_PROLOG
 
@@ -309,16 +310,14 @@ Pileup: {
   # define products that need to be kept
   #
   SimKeptProducts : [
-    "keep art::EventIDs_*_*_*",
-    "keep mu2e::GenParticles_*_*_*",
-    "keep mu2e::GenEventCount_*_*_*",
-    "keep mu2e::StatusG4_*_*_*"
+    @sequence::Beam.SimKeptProducts
   ]
 
   DtsKeptProducts : [
     "keep art::EventIDs_*_*_*",
     "keep mu2e::GenEventCount_*_*_*",
     "keep mu2e::StatusG4_*_*_*",
+    "keep *_compressPV*_*_*",
     "keep mu2e::SimParticleart::Ptrdoublestd::map_*_*_*",
     "keep mu2e::StrawGasSteps_compressDetStepMCs_*_*",
     "keep mu2e::CaloShowerSteps_compressDetStepMCs_*_*",

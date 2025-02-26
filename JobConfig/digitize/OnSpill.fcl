@@ -1,15 +1,13 @@
-# configure OnSpill digitization
-# first, trigger filtesr and paths
-#include "mu2e_trig_config/gen/trig_physMenuPSConfig_OnSpill.fcl"
-#include "mu2e_trig_config/gen/trig_physMenu_OnSpill.fcl"
-# then generic digitization
-#include "Production/JobConfig/digitize/Digitize.fcl"
-# final overrides
-# set the event timing for OnSpill
+#include "Production/JobConfig/digitize/Spill.fcl"
+
+# set the spill type
 physics.producers.EWMProducer.SpillType : 1
-# add trigger filters
-physics.filters : { @table::physics.filters @table::Trig_physMenuPSConfig }
-# add the trigger paths
-physics.trigger_paths : [ @sequence::Digitize.trigger_paths, @sequence::Trig_physMenu.trigger_paths]
+# define paths
+physics.trigger_paths : [ "0:DigitizePath", "1:TriggerablePath" , @sequence::Trig_physMenu.trigger_paths]
 # configure 'Triggered' output to be signal
 outputs.TriggeredOutput.SelectEvents : @local::Digitize.SignalTriggers
+outputs.TriggerableOutput.SelectEvents : [ "TriggerablePath" ]
+# Final configuration
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/digitize/OnSpill_epilog.fcl"
+#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"

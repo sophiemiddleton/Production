@@ -9,7 +9,6 @@ SETUP_FILE=""
 DESC=""
 DS_CONF=""
 DS_OWNER=""
-PROD=false
 
 # Function: Print usage message
 usage() {
@@ -56,6 +55,9 @@ while getopts ":-:" options; do
           prod)
               PROD=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
               ;;
+	  dataset)
+              DATASET=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+              ;;
       esac;;
     :)                                    # If expected argument omitted:
       echo "Error: -${OPTARG} requires an argument."
@@ -66,6 +68,22 @@ while getopts ":-:" options; do
       ;;
   esac
 done
+
+
+# If dataset is provided, parse it to extract DESC, DS_CONF, DS_OWNER
+if [ -n "$DATASET" ]; then
+    # Expected format: mcs.mu2e.<DESC>.<DS_CONF>.art
+    IFS='.' read -r PREFIX OWNER DESC_EXTRACT DS_CONF_EXTRACT SUFFIX <<< "$DATASET"
+
+    # If the dataset follows the pattern:
+    # mcs.mu2e.CosmicCORSIKASignalAllOnSpillTriggered.MDC2020am_perfect_v1_3.art
+    # Then:
+    # DESC = CosmicCORSIKASignalAllOnSpillTriggered
+    # DS_CONF = MDC2020am_perfect_v1_3
+
+    [ -z "$DESC" ] && DESC="$DESC_EXTRACT"
+    [ -z "$DS_CONF" ] && DS_CONF="$DS_CONF_EXTRACT"
+fi
 
 
 # Run the merge command with the specified options
@@ -96,7 +114,8 @@ index_dataset=${parfile:4}
 # Remove .0.tar
 index_dataset=${index_dataset::-6}
 
-if [[ "$PROD" = true ]]; then
+if [[ "$PROD" == "true" ]]; then
+    echo "Prod is set. Executing gen_IndexDef.sh"
     source gen_IndexDef.sh
 fi
 

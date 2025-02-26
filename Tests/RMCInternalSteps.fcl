@@ -1,0 +1,5 @@
+#include "Production/JobConfig/primary/RMCInternal.fcl"
+#include "Production/Tests/MuonStopConfig.fcl"
+
+physics.producers.generate.decayProducts.spectrum.makeHistograms : true
+services.TFileService.fileName: "nts.owner.RMCInternal.version.sequencer.root"

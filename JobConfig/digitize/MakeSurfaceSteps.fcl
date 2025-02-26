@@ -9,7 +9,3 @@ physics.producers.MakeSS : {
   TargetStepPointMCs : "compressDetStepMCs:stoppingtarget"
 }
 physics.producers.compressDigiMCs.surfaceStepTags : [ "MakeSS" ]
-physics.DigitizePath : [ "MakeSS" , @sequence::physics.DigitizePath ]
-physics.TriggerablePath : [ "MakeSS" , @sequence::physics.TriggerablePath ]
-
-

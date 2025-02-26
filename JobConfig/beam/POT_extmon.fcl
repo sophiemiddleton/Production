@@ -45,9 +45,7 @@ outputs: {
     module_type: RootOutput
     SelectEvents: ["extmonBeamPath"]
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Beam.SimKeptProducts,
-      "keep *_extmonBeamFilter_*_*",
-      "keep *_compressPVextmonBeam_*_*"
+      @sequence::Beam.SimKeptProducts
     ]
     fileName : "sim.owner.extmonBeam.version.sequencer.art"
   }
@@ -55,9 +53,7 @@ outputs: {
     module_type: RootOutput
     SelectEvents: ["extmonRegionPath"]
     outputCommands:   [ "drop *_*_*_*",
-      @sequence::Beam.SimKeptProducts,
-      "keep *_extmonRegionFilter_*_*",
-      "keep *_compressPVextmonRegion_*_*"
+      @sequence::Beam.SimKeptProducts
     ]
     fileName : "sim.owner.extmonRegion.version.sequencer.art"
   }

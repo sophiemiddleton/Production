@@ -1,0 +1,55 @@
+[
+    {
+	"dsconf": "MDC2020ap",	
+	"desc": "RMCFlatGammaStops",
+	"fcl": "Production/JobConfig/primary/RMCFlatGammaStops.fcl",
+	"resampler_name": "TargetStopResampler",
+	"resampler_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+	"events": 1000000,
+	"njobs": 100,
+	"start_mom": 0,
+	"end_mom": 1000,
+	"run": 1202,
+	"simjob_setup": ""
+    },
+    
+    {
+	"dsconf": "MDC2020aq",
+	"desc": "RMCFlatGammaResampling",
+	"fcl": "Production/JobConfig/primary/RMCFlatGammaResampling.fcl",
+	"resampler_name": "GammaConversionResampler",
+	"resampler_data": "sim.mu2e.RMCFlatGammaStops.MDC2020ap.art",	
+	"events": 100000,
+	"njobs": 10,
+	"start_mom": 0,
+	"end_mom": 1000,
+	"run": 1202,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aq/setup.sh"
+    },
+    {
+	"dsconf": "MDC2020ap",	
+	"desc": "RMCIPAFlatGammaResampling",
+	"fcl": "Production/JobConfig/primary/RMCIPAFlatGammaResampling.fcl",
+	"resampler_name": "GammaConversionResampler",
+	"resampler_data": "sim.mu2e.RMCFlatIPAGammaStops.MDC2020ap.art",	
+	"events": 100000,
+	"njobs": 100,
+	"start_mom": 0,
+	"end_mom": 1000,
+	"run": 1202,
+	"simjob_setup": ""
+    },
+    {
+	"dsconf": "MDC2020ap",	
+	"desc": "RMCWireFlatGammaResampling",
+	"fcl": "Production/JobConfig/primary/RMCWireFlatGammaResampling.fcl",
+	"resampler_name": "GammaConversionResampler",
+	"resampler_data": "sim.mu2e.RMCFlatWireGammaStops.MDC2020ap.art",	
+	"events": 100000,
+	"njobs": 100,
+	"start_mom": 0,
+	"end_mom": 1000,
+	"run": 1202,
+	"simjob_setup": ""
+    }
+]

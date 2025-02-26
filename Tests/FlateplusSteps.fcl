@@ -1,0 +1,6 @@
+#include "Production/JobConfig/primary/FlatePlus.fcl"
+#include "Production/Tests/MuonStopConfig.fcl"
+
+physics.producers.generate.startMom : 80
+physics.producers.generate.endMom : 102
+physics.filters.TargetStopResampler.mu2e.MaxEventsToSkip: 0

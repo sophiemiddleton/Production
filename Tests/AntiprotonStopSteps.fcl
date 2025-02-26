@@ -1,0 +1,10 @@
+#include "Production/JobConfig/primary/AntiprotonStop.fcl"
+#include "Production/Tests/MuonStopConfig.fcl"
+
+# Test file generated with Production/JobConfig/beam/SimpleAntiprotons.fcl
+physics.filters.TargetStopResampler.fileNames : ["sim.owner.stoppedSimpleAntiprotons.version.sequencer.art"]
+
+# Add histograms and some extra output
+physics.producers.generate.makeHistograms : true
+physics.producers.generate.verbosity : 1
+services.TFileService.fileName: "nts.owner.AntiprotonStop.version.sequencer.root"

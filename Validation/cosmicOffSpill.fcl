@@ -1,4 +1,5 @@
 #include "Production/JobConfig/digitize/OffSpill.fcl"
+#include "Production/JobConfig/digitize/MakeSurfaceSteps.fcl"
 
 services.scheduler.wantSummary: true
 services.SeedService.baseSeed: 8
@@ -10,7 +11,3 @@ source.fileNames : [
 outputs.TriggeredOutput.fileName : "dig.owner.cosmicOffSpill.seq.art"
 outputs.TriggerableOutput.fileName : "/dev/null"
 #include "Production/Validation/database.fcl"
-#
-# temporary patch for processing MDC2020 data
-#
-#include "Production/JobConfig/digitize/MakeSurfaceSteps.fcl"

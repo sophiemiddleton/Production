@@ -86,7 +86,7 @@ let nskip=nevts/nfiles
 rm -f pifilter.fcl
 
 echo "#include \"Production/JobConfig/primary/TargetPiStopPreFilter.fcl\"" >> pifilter.fcl
-echo outputs.StopFilterOutput.fileName: \"sim.${OWNER}.PiMinusFilter.version.sequencer.art\"  >> pifilter.fcl
+echo outputs.StopFilterOutput.fileName: \"sim.${OWNER}.PiminusStopsFilt.version.sequencer.art\"  >> pifilter.fcl
 
 
 if [[ -n $SETUP ]]; then
@@ -99,7 +99,7 @@ if [[ "$PROD" = true ]]; then
     rm cnf.*.tar
 fi
 
-cmd="mu2ejobdef --embed pifilter.fcl --setup ${SETUP} --desc PiMinusFilter --dsconf ${PRIMARY_CAMPAIGN} --inputs=Stops.txt --merge-factor=1"
+cmd="mu2ejobdef --embed pifilter.fcl --setup ${SETUP} --desc PiminusStopsFilt --dsconf ${PRIMARY_CAMPAIGN} --inputs=Stops.txt --merge-factor=1"
 
 echo "Running: $cmd"
 $cmd
@@ -109,9 +109,11 @@ parfile=$(ls cnf.*.tar)
 index_dataset=${parfile:4}
 # Remove .0.tar
 index_dataset=${index_dataset::-6}
-idx_format=$(printf "%07d" ${JOBS})
+
+idx=$(mu2ejobquery --njobs cnf.*.tar)
+idx_format=$(printf "%07d" $idx)
+echo $idx
 
 if [[ "$PROD" = true ]]; then
     source gen_IndexDef.sh
 fi
-

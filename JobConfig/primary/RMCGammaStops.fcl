@@ -1,0 +1,154 @@
+#
+# RMC External photons, saving events with a photon conversion for resampling purposes
+#
+
+#include "Production/JobConfig/primary/RMC.fcl"
+
+# Add an output stream for the most relevant (non-exclusive) uses: Target/wire/IPA backgrounds, wire conversions, IPA conversions, and tracker conversions
+
+#------------------------------------------------------------------------
+# photon conversions within the stopping target/wires/IPA regions
+
+physics.producers.GammasFinder : {
+    module_type: StoppedParticlesFinder
+    particleInput: "g4run"
+    particleTypes: [ 22 ]
+    physVolInfoInput: "g4run:eventlevel"
+    useEventLevelVolumeInfo: true
+    vetoedMaterials : ["Polyethylene096"] # Veto the OPA
+    verbosityLevel: 1
+}
+
+physics.filters.GammasFilter : {
+    module_type: FilterG4Out
+    mainHitInputs: []
+    extraHitInputs: [ "g4run:virtualdetector" ]
+    mainSPPtrInputs: [ "GammasFinder" ]
+    vetoDaughters: [ "GammasFinder" ]
+}
+
+physics.producers.compressGammas : {
+    module_type: CompressPhysicalVolumes
+    volumesInput : "g4run"
+    hitInputs : []
+    particleInputs : [ "GammasFilter" ]
+}
+
+physics.TargetPath : [ TargetStopResampler, @sequence::Common.generateSequence, GenFilter, @sequence::Common.g4Sequence, GammaConversionFilter, GammasFinder, GammasFilter, compressGammas ]
+
+#------------------------------------------------------------------------
+# photon conversions within the stopping target wires
+
+physics.producers.WireGammasFinder : {
+    module_type: StoppedParticlesFinder
+    particleInput: "g4run"
+    particleTypes: [ 22 ]
+    physVolInfoInput: "g4run:eventlevel"
+    useEventLevelVolumeInfo: true
+    stoppingMaterial : "ST_Wires"
+    verbosityLevel: 1
+}
+
+physics.filters.WireGammasFilter : {
+    module_type: FilterG4Out
+    mainHitInputs: []
+    extraHitInputs: [ "g4run:virtualdetector" ]
+    mainSPPtrInputs: [ "WireGammasFinder" ]
+    vetoDaughters: [ "WireGammasFinder" ]
+}
+
+physics.producers.compressWireGammas : {
+    module_type: CompressPhysicalVolumes
+    volumesInput : "g4run"
+    hitInputs : []
+    particleInputs : [ "WireGammasFilter" ]
+}
+
+# No need for the GammaConversionFilter module since all conversions are on a given material
+physics.WirePath : [ TargetStopResampler, @sequence::Common.generateSequence, GenFilter, @sequence::Common.g4Sequence, WireGammasFinder, WireGammasFilter, compressWireGammas ]
+
+#------------------------------------------------------------------------
+# photon conversions within the IPA
+
+physics.producers.IPAGammasFinder : {
+    module_type: StoppedParticlesFinder
+    particleInput: "g4run"
+    particleTypes: [ 22 ]
+    physVolInfoInput: "g4run:eventlevel"
+    useEventLevelVolumeInfo: true
+    stoppingMaterial : "IPAPolyethylene"
+    verbosityLevel: 1
+}
+
+physics.filters.IPAGammasFilter : {
+    module_type: FilterG4Out
+    mainHitInputs: []
+    extraHitInputs: [ "g4run:virtualdetector" ]
+    mainSPPtrInputs: [ "IPAGammasFinder" ]
+    vetoDaughters: [ "IPAGammasFinder" ]
+}
+
+physics.producers.compressIPAGammas : {
+    module_type: CompressPhysicalVolumes
+    volumesInput : "g4run"
+    hitInputs : []
+    particleInputs : [ "IPAGammasFilter" ]
+}
+
+# No need for the GammaConversionFilter module since all conversions are on a given material
+physics.IPAPath : [ TargetStopResampler, @sequence::Common.generateSequence, GenFilter, @sequence::Common.g4Sequence, IPAGammasFinder, IPAGammasFilter, compressIPAGammas ]
+
+#------------------------------------------------------------------------
+# Define the trigger paths
+physics.trigger_paths : [ TargetPath, WirePath, IPAPath ]
+
+#------------------------------------------------------------------------
+# Define the outputs
+
+outputs.TargetOutput : {
+    module_type : RootOutput
+    SelectEvents : [ TargetPath ]
+    fileName    : "sim.owner.RMCGammaStops.version.sequencer.art"
+    outputCommands : ["drop *_*_*_*",
+		      "keep art::EventIDs_*_*_*",
+		      "keep mu2e::GenParticles_*_*_*",
+		      "keep mu2e::GenEventCount_*_*_*",
+		      "drop mu2e::StatusG4_*_*_*",
+		      "keep *_GammasFilter_*_*",
+		      "keep *_compressGammas_*_*"]
+}
+
+outputs.WireOutput : {
+    module_type : RootOutput
+    SelectEvents : [ WirePath ]
+    fileName    : "sim.owner.RMCWireGammaStops.version.sequencer.art"
+    outputCommands : ["drop *_*_*_*",
+		      "keep art::EventIDs_*_*_*",
+		      "keep mu2e::GenParticles_*_*_*",
+		      "keep mu2e::GenEventCount_*_*_*",
+		      "drop mu2e::StatusG4_*_*_*",
+		      "keep *_WireGammasFilter_*_*",
+		      "keep *_compressWireGammas_*_*"]
+}
+
+outputs.IPAOutput : {
+    module_type : RootOutput
+    SelectEvents : [ IPAPath ]
+    fileName    : "sim.owner.RMCIPAGammaStops.version.sequencer.art"
+    outputCommands : ["drop *_*_*_*",
+		      "keep art::EventIDs_*_*_*",
+		      "keep mu2e::GenParticles_*_*_*",
+		      "keep mu2e::GenEventCount_*_*_*",
+		      "drop mu2e::StatusG4_*_*_*",
+		      "keep *_IPAGammasFilter_*_*",
+		      "keep *_compressIPAGammas_*_*"]
+}
+
+physics.EndPath : [ @sequence::Primary.EndSequence, TargetOutput, WireOutput, IPAOutput ]
+physics.end_paths : [ EndPath ]
+
+#------------------------------------------------------------------------
+# Generation configuration
+
+physics.producers.generate.decayProducts.mode : "external"
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eExternalRMC"
