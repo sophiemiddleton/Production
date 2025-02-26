@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-##from normalizationsOld import *
 from normalizations import *
 
 def main(args):
@@ -15,13 +14,21 @@ def main(args):
     if(args.prc == "CORSIKA"):
       Yield = corsika_onspill_normalization(float(args.livetime), str(args.BB))
       print("CORSIKA=",Yield)
-    if(args.prc == "RPC" and int(args.internalrpc) == 1):
-      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internalrpc), str(args.rpcemin), str(args.BB))
+    if(args.prc == "RPC" and int(args.internal) == 1):
+      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internal), str(args.rpcemin), str(args.BB))
       print("InternalRPC=",Yield)
-    if(args.prc == "RPC" and int(args.internalrpc) == 0):
-      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internalrpc), str(args.rpcemin)), str(args.BB))
+    if(args.prc == "RPC" and int(args.internal) == 0):
+      Yield = rpc_normalization(float(args.livetime), str(args.tmin), str(args.internal), str(args.rpcemin), str(args.BB))
       print("ExternalRPC=",Yield)
-
+    if(args.prc == "RMC" and int(args.internal) == 1):
+      Yield = rmc_normalization(float(args.livetime),  str(args.internal))
+      print("InternalRMC=",Yield)
+    if(args.prc == "RMC" and int(args.internal) == 0):
+      Yield = rmc_normalization(float(args.livetime),  str(args.internal))
+      print("ExternalRMC=",Yield)
+    if(args.prc == "IPAMichel"):
+      Yield = ipaMichel_normalization(float(args.livetime), str(args.BB))
+      print("IPAMichel=",Yield)
     return (Yield)
     
 # for testing only
@@ -34,7 +41,8 @@ if __name__ == '__main__':
     parser.add_argument("--prc", help="process")
     parser.add_argument("--printpot", help="print pot", default="no")
     parser.add_argument("--tmin", help="tmin", default=0)
-    parser.add_argument("--internalrpc", help="internal rpc", default=1)
+    parser.add_argument("--rpcemin", help="rpcemin", default=0)
+    parser.add_argument("--internal", help="internal", default=1)
     args = parser.parse_args()
     (args) = parser.parse_args()
     main(args)

@@ -94,6 +94,7 @@ LIVETIME=$(awk '{sum += $1} END {print sum}' ${COSMICS}.livetime)
 # note new use of the cosmics as a whole, assuming everything is "onspill" and using the duty factor in POT only
 echo "onspilltime=" ${LIVETIME} >> ${TAG}.txt
 echo "BB=" ${BB} >> ${TAG}.txt
+
 calculateEvents.py --livetime ${LIVETIME} --BB ${BB} --printpot "print" >> ${TAG}.txt
 
 calculateEvents.py --livetime ${LIVETIME} --rue ${RMUE} --prc "CEMLL" --BB ${BB} --printpot "no">> ${TAG}.txt
@@ -102,6 +103,12 @@ calculateEvents.py --livetime ${LIVETIME}  --dem_emin ${DEM_EMIN} --prc "DIO" --
 
 calculateEvents.py --livetime ${LIVETIME} --prc "CORSIKA" --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internalrpc 1 --rpcemin 1 --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 1 --rpcemin 1 --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internalrpc 0  --rpcemin 1 --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 0  --rpcemin 1 --BB ${BB} --printpot "no" >> ${TAG}.txt
+
+calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 0  --BB ${BB} --printpot "no" >> ${TAG}.txt
+
+calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 1  --BB ${BB} --printpot "no" >> ${TAG}.txt
+
+calculateEvents.py --livetime ${LIVETIME} --prc "IPAMichel" --BB ${BB} --printpot "no" >> ${TAG}.txt

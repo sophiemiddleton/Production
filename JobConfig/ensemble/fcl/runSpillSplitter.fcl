@@ -1,0 +1,12 @@
+#
+# to select cosmics for MDS samples
+#
+#include "Offline/fcl/standardServices.fcl"
+#include "Production/JobConfig/cosmic/SpillSplitter.fcl"
+process_name: mdsplitter
+physics.filters.SignalFilter.MinimumPartMom : 95 //MeV/c
+physics.filters.SignalFilter.MaximumPartMom : 130 //MeV/c
+physics.trigger_paths : [ SignalPath ]
+physics.outpath: [ SignalOutput ]
+physics.end_paths: [outpath]
+outputs.SignalOutput.fileName : "dts.owner.MDSCosmics.version.sequencer.art"

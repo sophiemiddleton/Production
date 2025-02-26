@@ -259,10 +259,11 @@ def rmc_normalization(onspilltime, internal, emin = 85, kmax = 90.1, run_mode = 
   RMC_gt_57_per_capture = 1.43e-5 # from Phys. Rev. C 59, 2853 (1999).
   internal_per_RMC = 0.00690; # just copy RPC value
 
-  physics_events = POT * stopped_mu_per_POT * captures_per_stopped_muon * RMC_gt_57_per_capture
+  physics_events = POT * target_stopped_mu_per_POT * captures_per_stopped_muon * RMC_gt_57_per_capture
   physics_events *= cut_norm/total_norm
+  print("RMCfracSampled=",cut_norm/total_norm)
 
-  if internal:
+  if internal == 1:
     physics_events *= internal_per_RMC;
   return physics_events
 
@@ -272,25 +273,23 @@ The next set of code is for the IPA michel electron contribution. There are two 
 * calculate the amount of IPA Michel produced once stopped: factor in the energy sampled in the generator and the expected decay BR for the IPA material.
 
 """
-# get number of ipa muon stops:
-ipa_stopped_mu_per_POT = 1.0
-rate = 1.0
-lines= rr.split("\n")
-for line in lines:
-    words = line.split(",")
-    if words[0] == "IPAStopsCat" or words[0] == "MuBeamCat" :
-        #print(f"Including {words[0]} with rate {words[3]}")
-        rate = rate * float(words[3])
-        ipa_stopped_mu_per_POT = rate
-        #print("IPAStopMuonRate=", rate)
-#print(f"Final ipa stops rate {ipa_stopped_mu_per_POT}")
 
 # get IPA Michel normalization:
-def ipaMichel_normalization(onspilltime):
+def ipaMichel_normalization(onspilltime, run_mode = '1BB'):
+    # get number of ipa muon stops:
+    ipa_stopped_mu_per_POT = 1.0
+    rate = 1.0
+    lines= rr.split("\n")
+    for line in lines:
+        words = line.split(",")
+        if words[0] == "IPAStopsCat" or words[0] == "MuBeamCat" :
+            #print(f"Including {words[0]} with rate {words[3]}")
+            rate = rate * float(words[3])
+            ipa_stopped_mu_per_POT = rate
+            print("IPAStopMuonRate=", rate)
     POT = getPOT(onspilltime)
-    IPA_decays_per_stopped_muon = 0.86 # carbon....#TODO
+    IPA_decays_per_stopped_muon = 0.92990
     fraction_sampled = 1 #TODO
-    #print(f"Expected IPA Michel e- {POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon}")
     nIPA = POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon * fraction_sampled
     print("nIPAMichecl=",nIPA)
     return nIPA

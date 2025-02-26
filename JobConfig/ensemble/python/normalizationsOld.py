@@ -184,7 +184,7 @@ for line in lines:
 """
 
 
-def rpc_normalization(livetime, tmin, internal, run_mode = '1BB'):
+def rpc_normalization(livetime, tmin, internal, emin, run_mode = '1BB'):
   POT = livetime_to_pot(livetime, run_mode)
   # hack: --> will come from new table eventually
   npistops = 1287106
