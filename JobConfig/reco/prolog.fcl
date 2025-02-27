@@ -155,7 +155,7 @@ Reconstruction : {
       module_type   : KalSeedFilter
       kalSeedCollections : ["KKDe", "KKUe", "KKUmu", "KKDmu" ]
       noInfo : true # don't produce a TriggerInfo object
-      debugLevel : 3
+      debugLevel : 0
       KalSeedCuts : [ {
         requireCaloCluster : false
         minFitCons : -1.0
@@ -175,12 +175,14 @@ Reconstruction : {
     CHFilter : {
       module_type   : KalSeedFilter
       kalSeedCollections : ["KKCHmu"]
-      noInfo : true # don't produce a TriggerInfo object
+      noInfo : true
       debugLevel : 0
-      KalSeedCuts : [ {
+
+      KalSeedCuts : [
+      { # select 'normal' straight tracks that cut through multiple planes
         requireCaloCluster : false
         minFitCons : 0.0
-        minNStrawHits : 15
+        minNStrawHits : 20
         minMomentum : 300.0
         maxMomentum : 1e6
         minTanDip : -1.0e6
@@ -189,13 +191,28 @@ Reconstruction : {
         maxMomErr : 1e6
         minD0 : -800.0
         maxD0 :  800.0
-        minNStereo : 2
-        minNPlanes : 2
-      } ]
+        minNStereo : 5
+        minNPlanes : 10
+      },
+      { # also select vertical tracks; these need to have a lot of hits
+        requireCaloCluster : false
+        minFitCons : 0.0
+        minNStrawHits : 50
+        minMomentum : 300.0
+        maxMomentum : 1e6
+        minTanDip : -1.0e6
+        maxTanDip : 1.0e6
+        maxChi2DOF : 1.0e6
+        maxMomErr : 1e6
+        minD0 : -800.0
+        maxD0 :  800.0
+        minNStereo : 1
+        minNPlanes : 1
+      }
+      ]
     }
-# this filter is currently meaningless FIXME
     KLFilter : {
-      module_type   : RecoMomFilter
+      module_type   : KalSeedFilter
       kalSeedCollections : [ "KKLine" ]
       noInfo : true
       KalSeedCuts : [ {
