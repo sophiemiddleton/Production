@@ -67,13 +67,14 @@ outputs:
     outputCommands : [ "keep *_*_*_*" ,
                        "drop artdaq::*_*_*_*" ,
                        "drop mu2e::CrvDigis_*_NZS_*" ,
-                       "drop mu2e::CRVDataDecoders_*_*_*" ] #dictionary doesn't exist
+                       "drop mu2e::CRVDataDecoders_*_*_*" ]
   }
   outfileNZS :
   {
     module_type   :   RootOutput
     fileName      :   "crvDigiNZSWideband.art"
     outputCommands : [ "drop *_*_*_*" ,
+                       "keep mu2e::DAQerrors_*_*_*" ,
                        "keep mu2e::CrvDAQerrors_*_*_*" ,
                        "keep mu2e::CrvDigis_*_NZS_*" ]
   }
