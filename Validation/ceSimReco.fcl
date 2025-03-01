@@ -57,12 +57,13 @@ physics: {
   EndPath : [
     @sequence::Primary.EndSequence,
     @sequence::Digitize.EndSequence,
-    @sequence::Reconstruction.EndSequence,
+    @sequence::Reconstruction.OnSpillEndSequence,
     Output
   ]
   trigger_paths : [ TriggerPath ]
   end_paths : [ EndPath ]
 }
+physics.analyzers.LHCompressionCheck.SelectEvents : [ "TriggerPath" ]
 
 outputs : {
   Output : {
@@ -88,6 +89,8 @@ outputs : {
       "drop mu2e::StepPointMCs_*_CRV_*",
       "drop mu2e::SimParticleart::Ptrmu2e::MCTrajectorystd::map_*_*_*",
       "drop *_*DeP_*_*",
+      "drop *_*Ue*_*_*",
+      "drop *_*mu*_*_*",
       "drop *_compressDetStepMCs_*_*",
       "drop *_compressDigiMCs_*_*",
       "drop *_FindMCPrimary_*_*",
