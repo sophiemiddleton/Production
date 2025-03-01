@@ -141,7 +141,8 @@ elif [[ "${DIGITYPE}" == "OffSpill" ]]; then
     echo "outputs.LoopHelixOutput.fileName : \"mcs.${OWNER}.${PRIMARY}${CAT}${STREAM}-LH.version.sequencer.art\"" >> reco.fcl
 
 else
-  echo '#include "Production/JobConfig/reco/Reco.fcl"' > reco.fcl
+  echo '#include "Production/JobConfig/reco/OnSpill.fcl"' > reco.fcl
+  echo "outputs.LoopHelixOutput.fileName : \"mcs.${OWNER}.${PRIMARY}${CAT}${STREAM}.version.sequencer.art\"" >> reco.fcl
 fi
 
 if [[ -n $SETUP ]]; then

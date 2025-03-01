@@ -1,0 +1,22 @@
+#
+# Reconstruct OnSpill events. This only reconstructs LoopHelices
+#
+#include "Production/JobConfig/reco/Reco.fcl"
+physics.OnSpillPath : [ @sequence::Reconstruction.OnSpillMCPath ]
+
+physics.trigger_paths : [ OnSpillPath ]
+physics.analyzers.LHCompressionCheck.SelectEvents : [ "OnSpillPath" ]
+
+outputs: {
+  LoopHelixOutput : {
+    @table::Reconstruction.Output
+    SelectEvents : [ "OnSpillPath" ]
+  }
+}
+
+physics.EndPath : [ @sequence::Reconstruction.OnSpillEndSequence, LoopHelixOutput]
+physics.end_paths : [ EndPath ]
+
+# final config
+#include "Production/JobConfig/reco/epilog.fcl"
+#include "Production/JobConfig/common/epilog.fcl"

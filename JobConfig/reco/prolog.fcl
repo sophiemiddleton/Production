@@ -337,63 +337,82 @@ Reconstruction : {
     @sequence::Digitize.GeneralMCProducts
   ]
 
-  EndSequence : [ LHCompressionCheck, CHCompressionCheck ]
+  OnSpillEndSequence : [ LHCompressionCheck ]
+  OffSpillEndSequence : [ LHCompressionCheck, CHCompressionCheck ]
 }
 
-# Combined track reconstruction
-Reconstruction.OnSpillTrkReco : [
+# OnSpill track reconstruction sequence: LoopHelix electrons and muons, downstream and upstream
+Reconstruction.OnSpillTrk : [
   @sequence::Reconstruction.DeReco,
   @sequence::Reconstruction.UeReco,
   @sequence::Reconstruction.DmuReco,
   @sequence::Reconstruction.UmuReco
 ]
 #
-# OffSpill track reconstruction includes CentralHelix (high-momentum muons)
-Reconstruction.OffSpillTrkReco : [
-  @sequence::Reconstruction.OnSpillTrkReco,
+# OffSpill track reconstruction sequence includes CentralHelix (high-momentum muons)
+Reconstruction.OffSpillTrk : [
+  @sequence::Reconstruction.OnSpillTrk,
   @sequence::Reconstruction.CentralHelixReco
 ]
 #
-# reconstruction precursor Path
-Reconstruction.PreTrkReco : [
+# track reconstruction precursor sequence
+Reconstruction.PreTrk : [
   @sequence::Reconstruction.CaloReco,
   @sequence::Reconstruction.TrkHitReco,
   @sequence::Reconstruction.CrvReco
 ]
-# No Field reco path
+# No Field reco paths
 Reconstruction.NoFieldPath : [
-  @sequence::Reconstruction.PreTrkReco,
-  @sequence::Reconstruction.LineReco
-]
-# No Field reco path with MC
-Reconstruction.NoFieldMCPath : [
-  @sequence::Reconstruction.NoFieldPath,
-  @sequence::Reconstruction.MCReco,
+  @sequence::Reconstruction.PreTrk,
+  @sequence::Reconstruction.LineReco,
   KLFilter
 ]
 
-# OffSpill paths
-Reconstruction.OffSpillPath : [
-  @sequence::Reconstruction.PreTrkReco,
-  @sequence::Reconstruction.OffSpillTrkReco
+Reconstruction.NoFieldMCPath : [
+  @sequence::Reconstruction.NoFieldPath,
+  @sequence::Reconstruction.MCReco
 ]
-Reconstruction.CentralHelixRecoPath : [
+
+# OnSpill paths; only LoopHelix
+Reconstruction.OnSpillPath : [
+  @sequence::Reconstruction.PreTrk,
+  @sequence::Reconstruction.OnSpillTrk,
+  LHFilter
+]
+
+Reconstruction.OnSpillMCPath : [
+  @sequence::Reconstruction.OnSpillPath,
+  @sequence::Reconstruction.MCReco
+]
+
+# OffSpill paths. Separate by fit type
+Reconstruction.OffSpillPath : [
+  @sequence::Reconstruction.PreTrk,
+  @sequence::Reconstruction.OffSpillTrk
+]
+
+Reconstruction.OffSpillMCPath : [
+  @sequence::Reconstruction.OffSpillPath,
+  @sequence::Reconstruction.MCReco
+]
+
+Reconstruction.CentralHelixPath : [
   @sequence::Reconstruction.OffSpillPath,
   CHFilter
 ]
 
-Reconstruction.CentralHelixRecoMCPath : [
-  @sequence::Reconstruction.CentralHelixRecoPath,
+Reconstruction.CentralHelixMCPath : [
+  @sequence::Reconstruction.CentralHelixPath,
   @sequence::Reconstruction.MCReco
 ]
 
-Reconstruction.LoopHelixRecoPath : [
+Reconstruction.LoopHelixPath : [
   @sequence::Reconstruction.OffSpillPath,
   LHFilter
 ]
 
-Reconstruction.LoopHelixRecoMCPath : [
-  @sequence::Reconstruction.LoopHelixRecoPath,
+Reconstruction.LoopHelixMCPath : [
+  @sequence::Reconstruction.LoopHelixPath,
   @sequence::Reconstruction.MCReco
 ]
 

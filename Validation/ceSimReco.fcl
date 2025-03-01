@@ -52,12 +52,7 @@ physics: {
     @sequence::Common.g4Sequence,
     @sequence::Primary.PrimarySequence,
     @sequence::Digitize.DigitizeSequence,
-    @sequence::Reconstruction.CaloReco,
-    @sequence::Reconstruction.TrkReco,
-    @sequence::Reconstruction.CrvReco,
-    @sequence::Reconstruction.DeReco,
-    @sequence::Reconstruction.MCReco,
-    RecoFilter
+    @sequence::Reconstruction.OnSpillMCPath
   ]
   EndPath : [
     @sequence::Primary.EndSequence,
