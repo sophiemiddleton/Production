@@ -61,9 +61,12 @@ physics: {
     @sequence::Common.generateSequence,
     cosmicTimeOffset,
     @sequence::Common.g4Sequence,
-    @sequence::Primary.PrimarySequence,
-    @sequence::Digitize.DigitizeSequence,
-    @sequence::Reconstruction.NoFieldMCPath
+    @sequence::Primary.DetStepSequence, PrimaryFilter,
+    @sequence::CommonMC.DigiSim,
+    @sequence::TrackerMC.DigiSim,
+    @sequence::CaloMC.DigiSim,
+    @sequence::CrvDAQPackage.CrvDAQSequence,
+    @sequence::Reconstruction.CrvReco
   ]
   EndPath : [ @sequence::Primary.EndSequence,
     #    @sequence::Digitize.EndSequence,
@@ -73,7 +76,6 @@ physics: {
   trigger_paths : [ TriggerPath ]
   end_paths : [ EndPath ]
 }
-#physics.analyzers.KLCompressionCheck.SelectEvents : [ "TriggerPath" ]
 
 outputs : {
   Output : {
@@ -81,30 +83,12 @@ outputs : {
     SelectEvents : [ TriggerPath ]
     fileName    : @nil
     outputCommands : [
-      "drop *_*_*_*",
-      @sequence::Reconstruction.GeneralProducts,
-      @sequence::Reconstruction.GeneralMCProducts,
-      @sequence::Reconstruction.HighRecoProducts,
-      @sequence::Reconstruction.HighRecoMCProducts,
-      @sequence::Reconstruction.MidRecoProducts,
-      @sequence::Digitize.GeneralProducts,
-      @sequence::Digitize.GeneralMCProducts,
-      @sequence::Digitize.DigiProducts,
-      @sequence::Digitize.TriggerProducts,
-      @sequence::Digitize.MCDigiProducts,
-      @sequence::Primary.StepProducts,
-      "drop mu2e::Crv*_*_*_*",
-      "drop *_*_cosmicTimeMap_*",
+      "keep *_*_*_*",
+      "drop mu2e::CrvSiPMChargess_*_*_*",
+      "drop mu2e::SimParticlemv_g4run_*_*",
+      "drop mu2e::StepPointMCs_g4run_CRV_*",
       "drop *_g4run_*_*",
-      "drop mu2e::StepPointMCs_*_CRV_*",
       "drop mu2e::SimParticleart::Ptrmu2e::MCTrajectorystd::map_*_*_*",
-      "drop *_compressDetStepMCs_*_*",
-      "drop *_compressDigiMCs_*_*",
-      "drop *_FindMCPrimary_*_*",
-      "drop mu2e::CaloDigis_CaloDigiMaker_*_*",
-      "drop mu2e::StrawDigiADCWaveforms_makeSD_*_*",
-      "drop mu2e::StrawDigis_makeSD_*_*",
-      "keep mu2e::CaloShowerSteps_compressDigiMCs_*_*",
       "keep mu2e::StatusG4_*_*_*"
     ]
   }
@@ -121,11 +105,11 @@ physics.producers.MakeSS : {
 #include "Production/JobConfig/digitize/epilog.fcl"
 #include "Production/JobConfig/reco/epilog.fcl"
 physics.analyzers.digiCompressionCheck.SelectEvents : [ TriggerPath ]
-physics.analyzers.recoCompressionCheck.SelectEvents : [ TriggerPath ]
 physics.producers.FindMCPrimary.PrimaryGenIds: ["CosmicCRY"]
 
 # set the event timing for OffSpill
 physics.producers.EWMProducer.SpillType : 0
+# override the Untriggered filter to just prescale
 # nofield geometry
 services.GeometryService.bFieldFile : "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
 # print summaries
@@ -133,7 +117,7 @@ services.scheduler.wantSummary: true
 services.TimeTracker.printSummary: true
 
 # g4 config
-#physics.producers.g4run.TrajectoryControl: @local::mu2eg4NoTrajectories
+physics.producers.g4run.TrajectoryControl: @local::mu2eg4NoTrajectories
 physics.producers.g4run.inputs.primaryTag : cosmicTimeOffset
 physics.producers.g4run.Mu2eG4CommonCut: @local::Cosmic.Mu2eG4CommonCutCosmicNoField
 physics.producers.g4run.physics.minRangeCut : 1.0 // mm
@@ -151,6 +135,10 @@ physics.producers.CaloShowerROMaker.caloShowerStepCollection : [ "CaloShowerStep
 # turn off very verbose
 physics.producers.CrvCoincidence.verboseLevel : 0
 physics.producers.CrvCoincidenceClusterFinder.verboseLevel : 0
+
+# print summaries
+services.scheduler.wantSummary: true
+services.TimeTracker.printSummary: true
 
 # histogram file
 services.TFileService.fileName : "nts.owner.val-cosmicSimReco.dsconf.seq.root"
