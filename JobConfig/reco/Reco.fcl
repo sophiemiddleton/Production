@@ -1,5 +1,5 @@
 #
-# Reconstruct from digis, including MC information
+# Base for reconstruct from digis. Explicit scripts (OnSpill.fcl, Extracted.fcl, etc) make final conviguration
 # original author: David Brown (LBNL) 1 Feb 2020
 #
 #include "Offline/fcl/minimalMessageService.fcl"
@@ -15,23 +15,6 @@ physics :
   producers : @local::Reconstruction.producers
   filters : @local::Reconstruction.filters
   analyzers: @local::Reconstruction.analyzers
-  RecoPath : [ @sequence::Reconstruction.RecoMCPath ]
-  EndPath : @local::Reconstruction.EndPath
 }
-outputs : {
-  Output : {
-    @table::Reconstruction.Output
-    SelectEvents : [ "RecoPath" ]
-  }
-}
-# final config
-#include "Production/JobConfig/common/epilog.fcl"
-#include "Production/JobConfig/reco/epilog.fcl"
-physics.end_paths : [ EndPath ]
-physics.trigger_paths : [ RecoPath ]
 # the fileds below will get filled in by generate_fcl
-outputs.Output.fileName: "mcs.owner.description.version.sequencer.art"
-#
-#  Temporarily drop the trigger products: the embedded ComboHitCollections have incompatible schema
-#
-#include "Production/JobConfig/reco/drop_trigger.fcl"
+

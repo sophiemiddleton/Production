@@ -2,5 +2,27 @@
 # Reconstruct from digis using straight line tracks
 #
 #include "Production/JobConfig/reco/Reco.fcl"
+#
+physics.KLPath : [ @sequence::Reconstruction.NoFieldMCPath ]
 
-physics.RecoPath : [ @sequence::Reconstruction.LineRecoMCPath ]
+physics.trigger_paths : [ KLPath ]
+physics.analyzers.KLCompressionCheck.SelectEvents : [ "KLPath" ]
+
+outputs: {
+  KinematicLineOutput : {
+    @table::Reconstruction.Output
+    SelectEvents : [ "KLPath" ]
+    fileName: "mcs.owner.description.version.sequencer.art"
+  }
+}
+
+physics.RecoPath : [ @sequence::Reconstruction.NoFieldMCPath ]
+physics.EndPath : [ @sequence::Reconstruction.NoFieldEndSequence, KinematicLineOutput]
+physics.end_paths : [ EndPath ]
+services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
+
+# final config
+#include "Production/JobConfig/reco/NoPileup_epilog.fcl"
+#include "Production/JobConfig/reco/OffSpillTiming_epilog.fcl"
+#include "Production/JobConfig/reco/epilog.fcl"
+#include "Production/JobConfig/common/epilog.fcl"
