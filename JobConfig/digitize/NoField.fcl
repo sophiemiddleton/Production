@@ -1,7 +1,7 @@
 # configure NoField digitization
 # first, trigger filtesr and paths
-#include "mu2e_trig_config/gen/trig_extrPosMenuPSConfig.fcl"
-#include "mu2e_trig_config/gen/trig_extrPosMenu.fcl"
+#include "mu2e-trig-config/gen/trig_extrPosMenuPSConfig.fcl"
+#include "mu2e-trig-config/gen/trig_extrPosMenu.fcl"
 # then generic digitization
 #include "Production/JobConfig/digitize/Digitize.fcl"
 # add trigger filters
@@ -25,4 +25,4 @@ services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
 # allow infinite momemtum
 physics.filters.Triggerable.MaxParticleMom : 1e10
 physics.filters.TriggerablePrescale.prescaleFactor : 10 # only record 10% of triggerable tracks
-#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"
+#include "mu2e-trig-config/core/trigDigiInputsEpilog.fcl"

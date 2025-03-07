@@ -1,4 +1,4 @@
-#include "mu2e_trig_config/core/trigRecoSequences.fcl"
+#include "mu2e-trig-config/core/trigRecoSequences.fcl"
 # override digi making
 BEGIN_PROLOG
 TrigRecoSequences:{

@@ -3,8 +3,8 @@
 #
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/digitize/prolog.fcl"
-#include "mu2e_trig_config/gen/trig_physMenuPSConfig_OnSpill.fcl"
-#include "mu2e_trig_config/gen/trig_physMenu_OnSpill.fcl"
+#include "mu2e-trig-config/gen/trig_physMenuPSConfig_OnSpill.fcl"
+#include "mu2e-trig-config/gen/trig_physMenu_OnSpill.fcl"
 
 # name all processes the same, to mask any provenance in ensemble creation
 process_name: DTSFilter
@@ -42,4 +42,4 @@ physics.end_paths : [ EndPath ]
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
 
-#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"
+#include "mu2e-trig-config/core/trigDigiInputsEpilog.fcl"

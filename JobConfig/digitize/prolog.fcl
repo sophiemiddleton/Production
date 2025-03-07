@@ -10,9 +10,9 @@
 #include "Offline/Filters/fcl/prolog.fcl"
 #include "Offline/Compression/fcl/prolog.fcl"
 #include "Offline/CommonMC/fcl/prolog.fcl"
-#include "mu2e_trig_config/core/trigProducers.fcl"
-#include "mu2e_trig_config/core/trigFilters.fcl"
-#include "mu2e_trig_config/core/trigRecoSequences.fcl"
+#include "mu2e-trig-config/core/trigProducers.fcl"
+#include "mu2e-trig-config/core/trigFilters.fcl"
+#include "mu2e-trig-config/core/trigRecoSequences.fcl"
 BEGIN_PROLOG
 
 Digitize: {
@@ -202,4 +202,4 @@ Digitize.EndPath : [ @sequence::Digitize.EndSequence, TriggeredOutput, Triggerab
 TrigRecoSequences.artFragmentsGen : @local::Digitize.DigitizeSequence
 END_PROLOG
 # Trigger Sequences have to come after
-#include "mu2e_trig_config/core/trigSequences.fcl"
+#include "mu2e-trig-config/core/trigSequences.fcl"
