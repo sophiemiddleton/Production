@@ -29,5 +29,5 @@ physics.end_paths : [ EndPath ]
 #
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
-#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"
+#include "mu2e-trig-config/core/trigDigiInputsEpilog.fcl"
 

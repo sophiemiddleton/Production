@@ -2,7 +2,7 @@
 
 #contact: R. Ehrlich
 
-#include "mu2e_trig_config/core/trigProducers.fcl"
+#include "mu2e-trig-config/core/trigProducers.fcl"
 #include "Offline/fcl/standardProducers.fcl"
 #include "Offline/fcl/standardServices.fcl"
 #include "Offline/CRVResponse/fcl/prolog.fcl"
