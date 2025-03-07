@@ -235,6 +235,7 @@ Reconstruction : {
   analyzers : { # these are specific to MC
     LHCompressionCheck : @local::RecoCompression.Check
     CHCompressionCheck : @local::RecoCompression.Check
+    KLCompressionCheck : @local::RecoCompression.Check
   }
 }
 # now setup track finding sequences. These are separate sequences to allow granular execution
@@ -339,6 +340,7 @@ Reconstruction : {
 
   OnSpillEndSequence : [ LHCompressionCheck ]
   OffSpillEndSequence : [ LHCompressionCheck, CHCompressionCheck ]
+  NoFieldEndSequence : [ KLCompressionCheck ]
 }
 
 # OnSpill track reconstruction sequence: LoopHelix electrons and muons, downstream and upstream

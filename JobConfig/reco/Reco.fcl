@@ -16,7 +16,5 @@ physics :
   filters : @local::Reconstruction.filters
   analyzers: @local::Reconstruction.analyzers
 }
-physics.end_paths : [ EndPath ]
-physics.trigger_paths : [ RecoPath ]
 # the fileds below will get filled in by generate_fcl
-outputs.Output.fileName: "mcs.owner.description.version.sequencer.art"
+

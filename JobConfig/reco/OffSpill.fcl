@@ -13,10 +13,12 @@ outputs: {
   CentralHelixOutput : {
     @table::Reconstruction.Output
     SelectEvents : [ "CHPath" ]
-  }
+     fileName: "mcs.owner.description-CH.version.sequencer.art"
+ }
   LoopHelixOutput : {
     @table::Reconstruction.Output
     SelectEvents : [ "LHPath" ]
+    fileName: "mcs.owner.description-LH.version.sequencer.art"
   }
 }
 

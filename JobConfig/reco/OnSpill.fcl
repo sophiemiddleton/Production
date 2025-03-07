@@ -11,6 +11,7 @@ outputs: {
   LoopHelixOutput : {
     @table::Reconstruction.Output
     SelectEvents : [ "OnSpillPath" ]
+    fileName: "mcs.owner.description.version.sequencer.art"
   }
 }
 

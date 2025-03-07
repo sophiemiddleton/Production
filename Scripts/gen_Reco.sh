@@ -135,6 +135,7 @@ fi
 
 if [[ "${DIGITYPE}" == "Extracted" || "${DIGITYPE}" == "NoField" ]]; then
     echo "#include \"Production/JobConfig/reco/${DIGITYPE}.fcl\"" > reco.fcl
+    echo "outputs.KinematicLineOutput.fileName : \"mcs.${OWNER}.${PRIMARY}${CAT}${STREAM}.version.sequencer.art\"" >> reco.fcl
 elif [[ "${DIGITYPE}" == "OffSpill" ]]; then
     echo "#include \"Production/JobConfig/reco/${DIGITYPE}.fcl\"" > reco.fcl
     echo "outputs.CentralHelixOutput.fileName : \"mcs.${OWNER}.${PRIMARY}${CAT}${STREAM}-CH.version.sequencer.art\"" >> reco.fcl
