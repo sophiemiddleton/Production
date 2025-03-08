@@ -4,7 +4,7 @@
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/digitize/prolog.fcl"
 #include "Production/JobConfig/mixing/prolog.fcl"
-# the following MUST come after mixing, as that overrides artFragmentsGen sequence
+# the following MUST come after mixing, as that overrides dtcAndCFOEventsGen sequence
 #include "mu2e-trig-config/core/trigSequences.fcl"
 #include "mu2e-trig-config/gen/trig_valMenuPSConfig_OnSpill.fcl"
 #include "mu2e-trig-config/gen/trig_valMenu_OnSpill.fcl"
