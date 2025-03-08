@@ -3,15 +3,15 @@
 #
 #include "Production/JobConfig/reco/Reco.fcl"
 #
-physics.KLPath : [ @sequence::Reconstruction.NoFieldMCPath ]
+physics.RecoPath : [ @sequence::Reconstruction.NoFieldMCPath ]
 
-physics.trigger_paths : [ KLPath ]
-physics.analyzers.KLCompressionCheck.SelectEvents : [ "KLPath" ]
+physics.trigger_paths : [ RecoPath ]
+physics.analyzers.KLCompressionCheck.SelectEvents : [ "RecoPath" ]
 
 outputs: {
   KinematicLineOutput : {
     @table::Reconstruction.Output
-    SelectEvents : [ "KLPath" ]
+    SelectEvents : [ "RecoPath" ]
     fileName: "mcs.owner.description.version.sequencer.art"
   }
 }

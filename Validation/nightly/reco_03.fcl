@@ -1,4 +1,3 @@
 #include "Production/Validation/reco.fcl"
-#include "Production/JobConfig/reco/MakeSurfaceSteps.fcl"
 source.fileNames : ["root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/CeEndpointMix2BBSignal/MDC2020r_perfect_v1_0/art/58/68/dig.mu2e.CeEndpointMix2BBSignal.MDC2020r_perfect_v1_0.001210_00000003.art" ]
 outputs.Output.fileName: "reco_03.art"

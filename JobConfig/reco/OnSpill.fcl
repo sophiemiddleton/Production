@@ -2,15 +2,15 @@
 # Reconstruct OnSpill events. This only reconstructs LoopHelices
 #
 #include "Production/JobConfig/reco/Reco.fcl"
-physics.OnSpillPath : [ @sequence::Reconstruction.OnSpillMCPath ]
+physics.RecoPath : [ @sequence::Reconstruction.OnSpillMCPath ]
 
-physics.trigger_paths : [ OnSpillPath ]
-physics.analyzers.LHCompressionCheck.SelectEvents : [ "OnSpillPath" ]
+physics.trigger_paths : [ RecoPath ]
+physics.analyzers.LHCompressionCheck.SelectEvents : [ "RecoPath" ]
 
 outputs: {
   LoopHelixOutput : {
     @table::Reconstruction.Output
-    SelectEvents : [ "OnSpillPath" ]
+    SelectEvents : [ "RecoPath" ]
     fileName: "mcs.owner.description.version.sequencer.art"
   }
 }

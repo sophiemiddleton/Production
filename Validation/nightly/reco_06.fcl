@@ -1,5 +1,4 @@
 #include "Production/Validation/reco.fcl"
-#include "Production/JobConfig/reco/MakeSurfaceSteps.fcl"
 source.fileNames : [
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/FlateMinusMix1BBSignal/MDC2020r_best_v1_0/art/ff/01/dig.mu2e.FlateMinusMix1BBSignal.MDC2020r_best_v1_0.001210_00000000.art",
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/FlateMinusMix1BBSignal/MDC2020r_best_v1_0/art/8b/bc/dig.mu2e.FlateMinusMix1BBSignal.MDC2020r_best_v1_0.001210_00000001.art",
