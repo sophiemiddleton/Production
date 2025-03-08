@@ -1,37 +1,16 @@
 #
-# run tracker and cal reco from a file of digis
+#include "Production/JobConfig/reco/OnSpill.fcl"
+#include "Production/JobConfig/reco/MakeSurfaceSteps.fcl"
 #
-#include "Production/JobConfig/reco/Reco.fcl"
-# add KinKal fits
+# restrict path and output
 #
-physics.producers : @local::Reconstruction.producers
-physics.filters : @local::Reconstruction.filters
-#
-# only run De
-#
-physics.RecoPath : [
-  @sequence::Reconstruction.CaloReco,
-  @sequence::Reconstruction.TrkReco,
-  @sequence::Reconstruction.CrvReco,
-  @sequence::Reconstruction.DeReco,
-  @sequence::Reconstruction.MCReco,
-  RecoFilter
-]
 physics.producers.SelectRecoMC.KalSeedCollections : [ "KKDe"]
 physics.producers.SelectRecoMC.HelixSeedCollections  : ["MHDe" ]
 physics.filters.RecoFilter.TrkTags : [ "KKDe"]
-physics.filters.RecoFilter.MomentumCutoff : [ 60.0 ]
 
-#include "Production/JobConfig/reco/epilog.fcl"
 #include "Production/JobConfig/reco/drop_trigger.fcl"
-outputs: {
-  Output: {
-    SelectEvents: [
-      "RecoPath"
-    ]
-    fileName: "mcs.owner.val-reco.dsconf.seq.art"
-    module_type: "RootOutput"
-    outputCommands: [
+outputs.LoopHelixOutput.fileName: "mcs.owner.val-reco.dsconf.seq.art"
+outputs.LoopHelixOutput.outputCommands: [
       "drop *_*_*_*",
       "keep mu2e::TriggerInfo_*_*_*",
       "keep art::TriggerResults_*_*_*",
@@ -53,8 +32,6 @@ outputs: {
       "drop *_*Dmu_*_*",
       "drop *_*Umu_*_*"
     ]
-  }
-}
 
 # print summaries
 services.scheduler.wantSummary: true
@@ -62,9 +39,5 @@ services.TimeTracker.printSummary: true
 
 # histogram file
 services.TFileService.fileName : "nts.owner.val-reco.dsconf.seq.root"
-# art file
-outputs.Output.fileName : "mcs.owner.val-reco.dsconf.seq.art"
 
-# use the default standard geometry
-services.GeometryService.inputFile : "Production/JobConfig/common/geom_baseline.txt"
 #include "Production/Validation/database.fcl"
