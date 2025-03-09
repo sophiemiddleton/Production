@@ -3,4 +3,4 @@ source.fileNames : [
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/CeEndpointMix1BBSignal/MDC2020r_best_v1_0/art/2e/47/dig.mu2e.CeEndpointMix1BBSignal.MDC2020r_best_v1_0.001210_00000000.art",
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/CeEndpointMix1BBSignal/MDC2020r_best_v1_0/art/75/cc/dig.mu2e.CeEndpointMix1BBSignal.MDC2020r_best_v1_0.001210_00000001.art"
 ]
-outputs.Output.fileName: "reco_00.art"
+outputs.LoopHelixOutput.fileName: "reco_00.art"
