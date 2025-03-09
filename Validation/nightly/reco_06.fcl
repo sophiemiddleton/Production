@@ -11,4 +11,4 @@ source.fileNames : [
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/FlateMinusMix1BBSignal/MDC2020r_best_v1_0/art/a5/e7/dig.mu2e.FlateMinusMix1BBSignal.MDC2020r_best_v1_0.001210_00000008.art",
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/FlateMinusMix1BBSignal/MDC2020r_best_v1_0/art/67/77/dig.mu2e.FlateMinusMix1BBSignal.MDC2020r_best_v1_0.001210_00000009.art"
 ]
-outputs.Output.fileName: "reco_06.art"
+outputs.LoopHelixOutput.fileName: "reco_06.art"

@@ -1,3 +1,3 @@
 #include "Production/Validation/reco.fcl"
 source.fileNames : ["root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/CeEndpointMix2BBSignal/MDC2020r_perfect_v1_0/art/aa/26/dig.mu2e.CeEndpointMix2BBSignal.MDC2020r_perfect_v1_0.001210_00000002.art" ]
-outputs.Output.fileName: "reco_02.art"
+outputs.LoopHelixOutput.fileName: "reco_02.art"
