@@ -168,8 +168,8 @@ Reconstruction : {
         maxMomErr : 1e6
         minD0 : -800.0
         maxD0 :  800.0
-        minNStereo : 5
-        minNPlanes : 10
+        minNStereo : 3
+        minNPlanes : 8
       } ]
     }
     CHFilter : {
