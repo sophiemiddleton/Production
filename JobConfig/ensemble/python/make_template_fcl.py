@@ -41,8 +41,9 @@ def main(args):
           "CORSIKACosmic": corsika_onspill_normalization(livetime, args.BB),
           "RPCInternal": rpc_normalization(livetime, args.tmin, 1, args.rpcemin, args.BB),
           "RPCExternal": rpc_normalization(livetime, args.tmin, 0, args.rpcemin, args.BB),
-          "RMCInternal": rmc_normalization(livetime, 1, args.rpcemin, args.BB),
-          "RMCExternal": rmc_normalization(livetime, 0, args.rpcemin, args.BB)
+          "RMCInternal": rmc_normalization(livetime, 1, args.rmcemin, args.BB),
+          "RMCExternal": rmc_normalization(livetime, 0, args.rmcemin, args.BB),
+          "IPAMichel": ipa_normalization(livetime, 0, args.ipaemin, args.BB)
           }
 
   starting_event_num = {}
@@ -213,7 +214,10 @@ if __name__ == "__main__":
     parser.add_argument("--livetime", help="simulated livetime")
     parser.add_argument("--rue", help="signal branching rate")
     parser.add_argument("--tmin", help="arrival time cut")
-    parser.add_argument("--dioemin", help="min energy cut")
+    parser.add_argument("--dioemin", help="min energy cut dio")
+    parser.add_argument("--rpcemin", help="min energy cut rpc")
+    parser.add_argument("--ipaemin", help="min energy cut ipa")
+    parser.add_argument("--rmcemin", help="min energy cut rmc")
     parser.add_argument("--run", help="run number")
     parser.add_argument("--samplingseed", help="samplingseed")
     parser.add_argument("--tag", help="ouput file tag")
