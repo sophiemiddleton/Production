@@ -56,7 +56,7 @@ done
 NJOBS="" #to help calculate the number of events per job
 LIVETIME="" #seconds
 RUN=1201
-DEM_EMIN=""
+DIO_EMIN=""
 TMIN=350
 SAMPLINGSEED=1
 BB=""
@@ -67,13 +67,17 @@ OUTRELEASE="MDC2020"
 OUTVERSION="am"
 DIOVERSION="ai"
 GEN="CRY"
+RPC_EMIN=50
 while IFS='= ' read -r col1 col2
 do 
     if [[ "${col1}" == "njobs" ]] ; then
       NJOBS=${col2}
     fi
     if [[ "${col1}" == "DIO_emin" ]] ; then
-      DEM_EMIN=${col2}
+      DIO_EMIN=${col2}
+    fi
+    if [[ "${col1}" == "RPC_emin" ]] ; then
+      RPC_EMIN=${col2}
     fi
     if [[ "${col1}" == "livetime" ]] ; then
       LIVETIME=${col2}
@@ -86,7 +90,7 @@ do
     fi
 done <${CONFIG}
 echo "extracted config from Stage 1"
-echo ${LIVETIME} ${DEM_EMIN} ${BB} ${RMUE}
+echo ${LIVETIME} ${DIO_EMIN} ${BB} ${RMUE}
 
 rm filenames_${GEN}Cosmic
 rm filenames_DIO
@@ -96,12 +100,12 @@ rm *.tar
 
 echo "accessing files, making file lists"
 mu2eDatasetFileList "dts.mu2e.Cosmic${GEN}SignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_${GEN}Cosmic
-mu2eDatasetFileList "dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${DIOVERSION}.art"| head -${NJOBS} > filenames_DIO
+mu2eDatasetFileList "dts.mu2e.DIOtail_${DIO_EMIN}.${INRELEASE}${DIOVERSION}.art"| head -${NJOBS} > filenames_DIO
 mu2eDatasetFileList "dts.mu2e.RPCInternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RPCInternal
 mu2eDatasetFileList "dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RPCExternal
 
 echo "making template fcl"
-make_template_fcl.py --BB=${BB} --release=${OUTRELEASE}${OUTVERSION}  --tag=${TAG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dem_emin=${DEM_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "DIO" "${GEN}Cosmic" "RPCInternal" "RPCExternal"
+make_template_fcl.py --BB=${BB} --release=${OUTRELEASE}${OUTVERSION}  --tag=${TAG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dioemin=${DIO_EMIN} --rpcemin=${RPC_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "DIO" "${GEN}Cosmic" "RPCInternal" "RPCExternal"
 
 ##### Below is genEnsemble and Grid:
 echo "remove old files"
@@ -113,7 +117,7 @@ rm filenames_RPCExternal_${NJOBS}.txt
 
 echo "get NJOBS files and list"
 samweb list-files "dh.dataset=dts.mu2e.Cosmic${GEN}SignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_${GEN}Cosmic_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.DIOtail_${DEM_EMIN}.${INRELEASE}${DIOVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.DIOtail_${DIO_EMIN}.${INRELEASE}${DIOVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.RPCInternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCInternal_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCExternal_${NJOBS}.txt
 
