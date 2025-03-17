@@ -30,7 +30,7 @@ physics.producers.generate: {
           spectrumShape: "tabulated"
           spectrumVariable: "totalEnergy"
           spectrumFileName: "Offline/ConditionsService/data/heeck_finer_binning_2016_szafron-scaled-to-6C.tbl"
-          elow: 1.0
+          elow: 70.0
           ehi: 110.0
         }
       }
