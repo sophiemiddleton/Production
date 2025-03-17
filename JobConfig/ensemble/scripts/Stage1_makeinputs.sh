@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 usage() { echo "Usage: $0
-  e.g.  Stage1_makeinputs.sh --cosmics MDC2020ae --dem_emin 95 --rmue 1e-13 --BB 1BB --tag MDS1a --tmin 350
+  e.g.  Stage1_makeinputs.sh --cosmics MDC2020ae --dem_emin 95 --BB 1BB --tag MDS1a --tmin 350
 
 "
 }
@@ -10,17 +10,17 @@ exit_abnormal() {
   usage
   exit 1
 }
-COSMICS=""
+COSMICS="MDC2020ae"
 NJOBS=1
 LIVETIME="" #seconds
 DEM_EMIN=95
 BB=1BB
-RMUE=1e-13
-TMIN=0
-TAG="MDS1a_test"
+TMIN=350
+TAG="MDS2a_test"
 STOPS="MDC2020p"
 RELEASE="MDC2020"
-VERSION="am"
+VERSION="ar"
+GEN="CRY" #cosmic generator name CRY or CORSIKA only
 # Loop: Get the next option;
 while getopts ":-:" options; do
   case "${options}" in
@@ -41,9 +41,6 @@ while getopts ":-:" options; do
         BB)
           BB=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
-        rmue)
-          RMUE=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
-          ;;
         tmin)
           TMIN=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
@@ -58,6 +55,9 @@ while getopts ":-:" options; do
           ;;
         version)
           VERSION=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        gen)
+          GEN=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         *)
           echo "Unknown option " ${OPTARG}
@@ -78,15 +78,15 @@ rm ${TAG}.txt
 rm ${COSMICS}
 
 echo "accessing files, making file lists"
-mu2eDatasetFileList "dts.mu2e.CosmicCORSIKASignalAll.${COSMICS}.art" | head -${NJOBS} > ${COSMICS}
+mu2eDatasetFileList "dts.mu2e.Cosmic${GEN}SignalAll.${COSMICS}.art" | head -${NJOBS} > ${COSMICS}
 
 
 echo -n "njobs= " >> ${TAG}.txt
 wc -l ${COSMICS} | awk '{print $1}' >> ${TAG}.txt
-echo "cosmicjob=" ${COSMICS} >> ${TAG}.txt
+echo "CosmicJob=" ${COSMICS} >> ${TAG}.txt
+echo "CosmicGen=" ${GEN} >> ${TAG}.txt
 echo "primaries=" ${RELEASE}${VERSION} >> ${TAG}.txt
-echo "rmue=" ${RMUE} >> ${TAG}.txt
-echo "dem_emin=" ${DEM_EMIN} >> ${TAG}.txt
+#echo "DIO_emin=" ${DEM_EMIN} >> ${TAG}.txt
 echo "stops= " ${STOPS} >> ${TAG}.txt
 
 mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S ${COSMICS} | grep 'Livetime:' | awk -F: '{print $NF}' > ${COSMICS}.livetime
@@ -95,20 +95,20 @@ LIVETIME=$(awk '{sum += $1} END {print sum}' ${COSMICS}.livetime)
 echo "onspilltime=" ${LIVETIME} >> ${TAG}.txt
 echo "BB=" ${BB} >> ${TAG}.txt
 
+calculateEvents.py --livetime ${LIVETIME} --prc ${GEN} --BB ${BB} --printpot "no" >> ${TAG}.txt
+
 calculateEvents.py --livetime ${LIVETIME} --BB ${BB} --printpot "print" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --rue ${RMUE} --prc "CEMLL" --BB ${BB} --printpot "no">> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "IPAMichel" --BB ${BB} --ipaemin 70 --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME}  --dem_emin ${DEM_EMIN} --prc "DIO" --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME}  --dioemin ${DEM_EMIN} --prc "DIO" --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "CORSIKA" --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 1 --rpcemin 50 --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 1 --rpcemin 1 --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 0  --rpcemin 50 --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 0  --rpcemin 1 --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 1  --rmcemin 85 --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 0  --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 0  --rmcemin 85 --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 1  --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "IPAMichel" --BB ${BB} --printpot "no" >> ${TAG}.txt
