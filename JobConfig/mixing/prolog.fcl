@@ -84,7 +84,7 @@ Mixing : {
 Mixing.PileupMixSequence : [ PBISim, @sequence::Mixing.StepMixSequence, @sequence::Mixing.StepFilterSequence ]
 Mixing.MixSequence : [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
 # override the Trigger 'PrepareDigis' sequence; the mixers must preceed the digi making
-TrigRecoSequences.artFragmentsGen: [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
+TrigRecoSequences.dtcAndCFOEventsGen: [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
 #
 # The following is used to guarantee consistency when filtering pileup when mixing a primary that could also be part of pileup
 #

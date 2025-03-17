@@ -4,10 +4,10 @@
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/digitize/prolog.fcl"
 #include "Production/JobConfig/mixing/prolog.fcl"
-# the following MUST come after mixing, as that overrides artFragmentsGen sequence
-#include "mu2e_trig_config/core/trigSequences.fcl"
-#include "mu2e_trig_config/gen/trig_physMenuPSConfig.fcl"
-#include "mu2e_trig_config/gen/trig_physMenu.fcl"
+# the following MUST come after mixing, as that overrides dtcAndCFOEventsGen sequence
+#include "mu2e-trig-config/core/trigSequences.fcl"
+#include "mu2e-trig-config/gen/trig_physMenuPSConfig.fcl"
+#include "mu2e-trig-config/gen/trig_physMenu.fcl"
 process_name: Digitize
 source : { module_type : RootInput }
 services : @local::Services.SimAndReco # reco is needed for the trigger
@@ -37,6 +37,6 @@ outputs.TriggerableOutput.SelectEvents : [ "TriggerablePath" ]
 # Final configuration
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/OnSpill_epilog.fcl"
-#include "mu2e_trig_config/core/trigDigiInputsEpilog.fcl"
+#include "mu2e-trig-config/core/trigDigiInputsEpilog.fcl"
 #include "Production/JobConfig/mixing/epilog.fcl"
 

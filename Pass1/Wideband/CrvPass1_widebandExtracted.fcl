@@ -2,7 +2,7 @@
 
 #contact: R. Ehrlich
 
-#include "mu2e_trig_config/core/trigProducers.fcl"
+#include "mu2e-trig-config/core/trigProducers.fcl"
 #include "Offline/fcl/standardProducers.fcl"
 #include "Offline/fcl/standardServices.fcl"
 #include "Offline/CRVResponse/fcl/prolog.fcl"
@@ -28,17 +28,15 @@ physics :
   {
     genFrags :
     {
-       module_type  : ArtFragmentsFromDTCEvents
+       module_type  : ProcessDTCAndCFOEvents
        diagLevel    : 0
        makeCaloFrag : 0
        makeTrkFrag  : 0
        makeCRVFrag  : 1
-       makeSTMFrag  : 0
-
     }
     CrvDigi :
     {
-      module_type : CrvDigisFromFragments
+      module_type : CRVDigisFromDataDecoders
       crvTag      : "genFrags"
       diagLevel   : 0
     }
@@ -67,13 +65,14 @@ outputs:
     outputCommands : [ "keep *_*_*_*" ,
                        "drop artdaq::*_*_*_*" ,
                        "drop mu2e::CrvDigis_*_NZS_*" ,
-                       "drop mu2e::CRVDataDecoders_*_*_*" ] #dictionary doesn't exist
+                       "drop mu2e::CRVDataDecoders_*_*_*" ]
   }
   outfileNZS :
   {
     module_type   :   RootOutput
     fileName      :   "crvDigiNZSWideband.art"
     outputCommands : [ "drop *_*_*_*" ,
+                       "keep mu2e::DAQerrors_*_*_*" ,
                        "keep mu2e::CrvDAQerrors_*_*_*" ,
                        "keep mu2e::CrvDigis_*_NZS_*" ]
   }
@@ -128,8 +127,7 @@ services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_WidebandExtracted.
 services.ProditionsService.crvStatus.useDb: true
 services.ProditionsService.crvCalib.useDb: true
 services.DbService.textFile : ["Offline/CRVConditions/data/status_widebandExtracted.txt","Offline/CRVConditions/data/calib_widebandExtracted.txt"]
-services.DbService.verbose : 0
-#services.message.destinations.log.categories.ArtReport.reportEvery : 1
-#services.message.destinations.log.categories.ArtReport.limit : 1
-#services.message.destinations.log.categories.ArtReport.timespan : 300
-
+services.DbService.verbose : 2
+services.TimeTracker.printSummary: true
+services.scheduler.wantSummary: true
+services.message.destinations.log.outputStatistics : true

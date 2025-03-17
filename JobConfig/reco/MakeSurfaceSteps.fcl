@@ -10,5 +10,3 @@ physics.producers.MakeSS : {
 }
 physics.producers.compressRecoMCs.surfaceStepTags : [ "MakeSS" ]
 physics.RecoPath : [ "MakeSS" , @sequence::physics.RecoPath ]
-
-

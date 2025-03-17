@@ -1,7 +1,7 @@
 # configure On/OffSpill digitization
 # first, trigger filters and paths
-#include "mu2e_trig_config/gen/trig_physMenuPSConfig.fcl"
-#include "mu2e_trig_config/gen/trig_physMenu.fcl"
+#include "mu2e-trig-config/gen/trig_physMenuPSConfig.fcl"
+#include "mu2e-trig-config/gen/trig_physMenu.fcl"
 # then generic digitization
 #include "Production/JobConfig/digitize/Digitize.fcl"
 # add trigger filters

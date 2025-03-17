@@ -1006,11 +1006,11 @@ source.fileNames : [
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/persistent/datasets/phy-sim/dig/mu2e/CosmicCORSIKAExtractedNoFieldTrk/MDC2020r_perfect_v1_0/art/93/59/dig.mu2e.CosmicCORSIKAExtractedNoFieldTrk.MDC2020r_perfect_v1_0.3030.art",
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/persistent/datasets/phy-sim/dig/mu2e/CosmicCORSIKAExtractedNoFieldTrk/MDC2020r_perfect_v1_0/art/6c/65/dig.mu2e.CosmicCORSIKAExtractedNoFieldTrk.MDC2020r_perfect_v1_0.3031.art"
 ]
-outputs.Output.fileName : "mcs.MU2EGRIDDSOWNER.CosmicCORSIKAExtractedNoFieldTrk.MU2EGRIDDSCONF.2.art"
+outputs.KinematicLineOutput.fileName : "mcs.MU2EGRIDDSOWNER.CosmicCORSIKAExtractedNoFieldTrk.MU2EGRIDDSCONF.2.art"
 mu2emetadata.fcl.prologkeys: [  ]
 mu2emetadata.fcl.inkeys: [ "source.fileNames" ]
-mu2emetadata.fcl.outkeys: [ "outputs.Output.fileName" ]
+mu2emetadata.fcl.outkeys: [ "outputs.KinematicLineOutput.fileName" ]
 # End code added by generate_fcl:
 #----------------------------------------------------------------
-outputs.Output.fileName: "extracted_00.art"
+outputs.KinematicLineOutput.fileName: "extracted_00.art"
 source.maxEvents: 200000

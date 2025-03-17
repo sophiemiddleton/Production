@@ -1,5 +1,4 @@
 #include "Production/Validation/reco.fcl"
-#include "Production/JobConfig/reco/MakeSurfaceSteps.fcl"
 source.fileNames : [
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/FlatePlusMix1BBSignal/MDC2020r_best_v1_0/art/dd/38/dig.mu2e.FlatePlusMix1BBSignal.MDC2020r_best_v1_0.001210_00000000.art",
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/FlatePlusMix1BBSignal/MDC2020r_best_v1_0/art/56/e3/dig.mu2e.FlatePlusMix1BBSignal.MDC2020r_best_v1_0.001210_00000001.art",
@@ -12,4 +11,4 @@ source.fileNames : [
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/FlatePlusMix1BBSignal/MDC2020r_best_v1_0/art/36/c7/dig.mu2e.FlatePlusMix1BBSignal.MDC2020r_best_v1_0.001210_00000008.art",
 "root://fndcadoor.fnal.gov/pnfs/fnal.gov/usr/mu2e/tape/phy-sim/dig/mu2e/FlatePlusMix1BBSignal/MDC2020r_best_v1_0/art/a9/d9/dig.mu2e.FlatePlusMix1BBSignal.MDC2020r_best_v1_0.001210_00000009.art"
 ]
-outputs.Output.fileName: "reco_08.art"
+outputs.LoopHelixOutput.fileName: "reco_08.art"
