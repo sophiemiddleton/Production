@@ -4,8 +4,8 @@
 #include "Offline/fcl/standardServices.fcl"
 #include "Production/JobConfig/cosmic/SpillSplitter.fcl"
 process_name: mdsplitter
-physics.filters.SignalFilter.MinimumPartMom : 95 //MeV/c
-physics.filters.SignalFilter.MaximumPartMom : 130 //MeV/c
+physics.filters.SignalFilter.MinimumPartMom : 70 //MeV/c
+physics.filters.SignalFilter.MaximumPartMom : 150 //MeV/c
 physics.trigger_paths : [ SignalPath ]
 physics.outpath: [ SignalOutput ]
 physics.end_paths: [outpath]
