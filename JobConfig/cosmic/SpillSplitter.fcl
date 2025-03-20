@@ -15,8 +15,8 @@ physics: {
       # which pass an  triggers
       module_type : CosmicMixingFilter
       StrawGasSteps : "compressDetStepMCs"
-      MinimumPartMom : 70
-      MaximumPartMom : 150
+      MinimumPartMom : 30
+      MaximumPartMom : 250
       MinimumTrkSteps : 15
       MinimumTrkPlanes : 0
       MinimumTrkPlaneSpan : 16
