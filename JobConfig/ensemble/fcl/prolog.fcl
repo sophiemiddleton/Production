@@ -2,9 +2,9 @@ BEGIN_PROLOG
 
 Ensemble : {
 
-    InputCommands : [ "keep *",
+    InputCommands : [ "keep *", 
+          "keep mu2e::CosmicLivetime_*_*_*",
           "drop *_genCounter_*_*",
-          "drop mu2e::CosmicLivetime_*_*_*",
           "drop *_protonBunchIntensity_*_*"]
     OutputCommandsMC : [   "keep *_*_*_*"]
     OutputCommandsData : [   "drop *_*_*_*",

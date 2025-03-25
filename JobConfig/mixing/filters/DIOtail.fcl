@@ -3,6 +3,6 @@ physics.producers.MuStopPileupFilter.selection: {
   tool_type: ProcessVolumeDetectorStepAntiSelectionTool
   processes: [ "mu2eMuonDecayAtRest" ]
   volumes: [ @sequence::Mixing.StoppingTargetFoilVolumes ]
-  minimum_energy: 100.00
+  minimum_energy: 95.00
   maximum_energy: 104.97
 }

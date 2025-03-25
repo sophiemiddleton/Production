@@ -1,5 +1,6 @@
 #!/bin/bash
 usage() { echo "Usage: $0
+  to use make a dir and cp logs (called logs)
   e.g. validatelogs.sh --tag MDS1b --release MDC2020 --version ai
 "
 }
@@ -82,3 +83,9 @@ echo $temp >> intRPC.txt
 sed -i -e 's/ /\n/g' intRPC.txt
 temp2=$(awk '{s+=$1} END {print s}' intRPC.txt)
 echo "total internal RPC " ${temp2}
+
+temp=$(sed -r  's/.* RPCExternal ([^ ]+).*/\1/' gen.txt) 
+echo $temp >> extRPC.txt
+sed -i -e 's/ /\n/g' extRPC.txt
+temp2=$(awk '{s+=$1} END {print s}' extRPC.txt)
+echo "total external RPC " ${temp2}

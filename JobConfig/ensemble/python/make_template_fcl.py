@@ -11,7 +11,7 @@ import subprocess
 
 """
 How to use:
-python ../Production/JobConfig/ensemble/python/make_template_fcl.py --BB=1BB --verbose=1 --rue=1e-13 --livetime=60 --run=1201 --dem_emin=75 --tmin=450 --samplingseed=1  --prc "CE" "DIO"
+python ../Production/JobConfig/ensemble/python/make_template_fcl.py --BB=1BB --verbose=1 --rue=1e-13 --livetime=60 --run=1201 --dioemin=75 --tmin=450 --samplingseed=1  --prc "CE" "DIO"
 """
 
 def main(args):
@@ -22,7 +22,7 @@ def main(args):
   # r mue and rmup rates
   rue = float(args.rue)
 
-  dem_emin = float(args.dem_emin)
+  dioemin = float(args.dioemin)
   tmin = float(args.tmin)
   run = int(args.run)
   samplingseed = int(args.samplingseed)
@@ -34,13 +34,16 @@ def main(args):
 
   # extract normalization of each background/signal process:
   norms = {
-          "DIO": dio_normalization(livetime,dem_emin, args.BB),
+          "DIO": dio_normalization(livetime,dioemin, args.BB),
           "CE": ce_normalization(livetime,rue, args.BB),
           "CeMLL": ce_normalization(livetime,rue, args.BB),
           "CRYCosmic": cry_onspill_normalization(livetime, args.BB),
           "CORSIKACosmic": corsika_onspill_normalization(livetime, args.BB),
-          "RPCInternal": rpc_normalization(livetime, args.tmin, 1, args.BB),
-          "ExternalRPC": rpc_normalization(livetime, args.tmin, 0, args.BB)
+          "RPCInternal": rpc_normalization(livetime, args.tmin, 1, args.rpcemin, args.BB),
+          "RPCExternal": rpc_normalization(livetime, args.tmin, 0, args.rpcemin, args.BB),
+          "RMCInternal": rmc_normalization(livetime, 1, args.rmcemin, args.BB),
+          "RMCExternal": rmc_normalization(livetime, 0, args.rmcemin, args.BB),
+          "IPAMichel": ipa_normalization(livetime, 0, args.ipaemin, args.BB)
           }
 
   starting_event_num = {}
@@ -83,7 +86,6 @@ def main(args):
           fin = ROOT.TFile(fn)
           te = fin.Get("Events")
           if signal == "RPCInternal" or signal == "RPCExternal":
-                print("extracting weights")
                 bl = te.GetListOfBranches()
                 bn = ""
                 for i in range(bl.GetEntries()):
@@ -187,7 +189,7 @@ def main(args):
       d["subRun"] = subrun
       d["samplingSeed"] = samplingseed + subrun
       # put all the exact parameter values in the fcl file
-      d["comments"] = "#livetime: %f\n#rue: %f\n#dem_emin: %f\n#tmin: %f\n#run: %f\n#nevts: %d\n" % (livetime,rue,dem_emin,tmin,run,events_this_run)
+      d["comments"] = "#livetime: %f\n#rue: %f\n#dioemin: %f\n#tmin: %f\n#run: %f\n#nevts: %d\n" % (livetime,rue,dioemin,tmin,run,events_this_run)
 
       # make the .fcl file for this subrun (subrun # d)
       fout = open(os.path.join("SamplingInput_sr%d.fcl" % (subrun)),"w")
@@ -212,7 +214,10 @@ if __name__ == "__main__":
     parser.add_argument("--livetime", help="simulated livetime")
     parser.add_argument("--rue", help="signal branching rate")
     parser.add_argument("--tmin", help="arrival time cut")
-    parser.add_argument("--dem_emin", help="min energy cut")
+    parser.add_argument("--dioemin", help="min energy cut dio")
+    parser.add_argument("--rpcemin", help="min energy cut rpc")
+    parser.add_argument("--ipaemin", help="min energy cut ipa")
+    parser.add_argument("--rmcemin", help="min energy cut rmc")
     parser.add_argument("--run", help="run number")
     parser.add_argument("--samplingseed", help="samplingseed")
     parser.add_argument("--tag", help="ouput file tag")
