@@ -4,6 +4,7 @@
 
 #include "Production/JobConfig/primary/RMC.fcl"
 
+physics.filters.PrimaryFilter.MinimumPartMom : 80.
 physics.producers.generate.decayProducts.mode : "external"
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eExternalRMC"
 outputs.PrimaryOutput.fileName : "dts.owner.RMCExternal.version.sequencer.art"
