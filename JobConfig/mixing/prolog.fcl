@@ -49,6 +49,7 @@ Mixing : {
       SDF: @nil
       extendedMean: @nil
       cutMax:@nil
+      PrimaryParticle : "FindMCPrimary"
     }
     # inline filters to remove any double-counting of primaries
     MuStopPileupFilter: {
