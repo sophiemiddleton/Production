@@ -28,7 +28,7 @@ physics.producers.PBISim.SDF: 0.6
 physics.producers.PBISim.extendedMean: 1.0e5
 physics.producers.PBISim.cutMax: 2.0e5
 
-physics.producers.PBISim.debugLevel : 2
+#physics.producers.PBISim.debugLevel : 2
 outputs.TriggeredOutput.fileName: "dig.owner.ceMix.dsconf.seq.art"
 outputs.TriggerableOutput.fileName: "/dev/null"
 #include "Production/Validation/database.fcl"
