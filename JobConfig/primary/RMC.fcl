@@ -12,7 +12,7 @@ physics.producers.generate : {
   decayProducts : {
     tool_type : RMCGenerator
     spectrum : {
-      elow              : 85
+      elow              : 75
       ehi               : @local::RMCInfo.kmaxMeasured
       kMaxUserSet       : true
       kMaxUser          : @local::RMCInfo.kmaxMeasured

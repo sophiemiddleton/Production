@@ -20,7 +20,7 @@ TAG="MDS2a_test"
 STOPS="MDC2020p"
 RELEASE="MDC2020"
 VERSION="ar"
-GEN="CRY" #cosmic generator name CRY or CORSIKA only
+GEN="CRY" #cosmic generator name CRY or CORSIKA only Cat = "Signal"
 # Loop: Get the next option;
 while getopts ":-:" options; do
   case "${options}" in
@@ -78,7 +78,7 @@ rm ${TAG}.txt
 rm ${COSMICS}
 
 echo "accessing files, making file lists"
-mu2eDatasetFileList "dts.mu2e.Cosmic${GEN}SignalAll.${COSMICS}.art" | head -${NJOBS} > ${COSMICS}
+mu2eDatasetFileList "dts.mu2e.Cosmic${GEN}All.${COSMICS}.art" | head -${NJOBS} > ${COSMICS}
 
 
 echo -n "njobs= " >> ${TAG}.txt
