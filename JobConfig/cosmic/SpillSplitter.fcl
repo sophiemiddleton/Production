@@ -1,9 +1,9 @@
 #
 # select cosmic primarys for digitization.   (mixing) requires a signal
 #
+#include "Offline/fcl/standardServices.fcl"
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/primary/prolog.fcl"
-#include "Offline/fcl/standardServices.fcl"
 process_name: cosmicsplitter
 source: { module_type: RootInput }
 services : @local::Services.Sim
