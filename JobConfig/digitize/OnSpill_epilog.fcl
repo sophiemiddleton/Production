@@ -9,7 +9,7 @@ physics.producers.TTmakePH.StrawHitMask          : @local::TrkHitReco.makePH.Str
 physics.apr_highP : [@sequence::physics.apr_highP, TTAprKSFMC ]
 physics.apr_highP_stopTarg : [@sequence::physics.apr_highP_stopTarg, TTAprKSFMC ]
 physics.apr_lowP_stopTarg : [@sequence::physics.apr_lowP_stopTarg, TTAprKSFMC ]
-physics.apr_lowP_stopTarg_multiTrk : [@sequence::physics.apr_lowP_stopTarg_multiTrk, TTAprKSFMC ]
+physics.apr_highP_stopTarg_multiTrk : [@sequence::physics.apr_highP_stopTarg_multiTrk, TTAprKSFMC ]
 # tpr
 physics.tprDe_highP : [@sequence::physics.tprDe_highP, TTTprDeKSFMC ]
 physics.tprDe_highP_stopTarg : [@sequence::physics.tprDe_highP_stopTarg, TTTprDeKSFMC ]
