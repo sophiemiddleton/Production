@@ -1,16 +1,18 @@
-#
 # Re-sample StepPointMCs from VD101 to STM.
-#
-# original author: Yuri Oksuzian, 2019
+# Original author: Yuri Oksuzian, 2019
 # Updated for MDC2020 (DetectorSteps): D. Brown
 # Updated for STM studies: Pawel Plesniak
 
-#include "Offline/fcl/standardServices.fcl"
+# Offline includes
+#include "Offline/Analyses/fcl/prolog.fcl"
 #include "Offline/CommonMC/fcl/prolog.fcl"
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/STMMC/fcl/prolog.fcl"
+
+# Production includes
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/pileup/prolog.fcl"
-#include "Offline/Analyses/fcl/prolog.fcl"
-#include "Offline/STMMC/fcl/prolog.fcl"
+#include "Production/JobConfig/pileup/STM/prolog.fcl"
 
 process_name: STMResampler
 

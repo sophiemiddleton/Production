@@ -11,6 +11,7 @@
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/pileup/prolog.fcl"
 #include "Production/JobConfig/primary/prolog.fcl"
+#include "Production/JobConfig/pileup/STM/prolog.fcl"
 
 process_name: BeamToVD1809
 
