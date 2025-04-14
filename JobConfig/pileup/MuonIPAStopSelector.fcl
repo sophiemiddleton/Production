@@ -1,0 +1,44 @@
+#
+# filter Muminus and Muplus stops from combined stops and write them to a file
+#
+#include "Offline/fcl/minimalMessageService.fcl"
+
+process_name: MuStopSelector
+source: { module_type: RootInput }
+services: { message: @local::default_message }
+physics: {
+  filters : {
+    muminusSelector: {
+      module_type: ParticleCodeFilter
+      SimParticles : IPAStopFilter
+      ParticleCodes : [ [13, "uninitialized", "muMinusCaptureAtRest" ] ] # mu-, * , muMinusCaptureAtRest
+      PrintLevel : 0
+    }
+    muplusSelector: {
+      module_type: ParticleCodeFilter
+      SimParticles : IPAStopFilter
+      ParticleCodes : [ [-13, "uninitialized" , "uninitialized" ] ] # mu+, *, *
+      PrintLevel : 0
+    }
+  }
+  selectMuminus : [muminusSelector]
+  selectMuplus : [muplusSelector]
+  trigger_paths : [ selectMuminus, selectMuplus ]
+  outpath: [muminusout, muplusout ]
+  end_paths: [outpath]
+}
+outputs: {
+  muminusout: {
+    module_type: RootOutput
+    fileName : "sim.owner.IPAMuminusStopsCat.version.sequencer.art"
+    outputCommands:   [ "keep *_*_*_*" ]
+    SelectEvents: [selectMuminus]
+  }
+  muplusout: {
+    module_type: RootOutput
+    fileName : "sim.owner.IPAMuplusStopsCat.version.sequencer.art"
+    outputCommands:   [ "keep *_*_*_*" ]
+    SelectEvents: [selectMuplus]
+  }
+}
+
