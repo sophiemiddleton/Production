@@ -1,0 +1,3 @@
+#include "Production/JobConfig/reco/Reco.fcl"
+physics.RecoPath : [ @sequence::Reconstruction.RecoPath, RecoFilter ]
+physics.EndPath : [ Output ]

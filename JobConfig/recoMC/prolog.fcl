@@ -1,0 +1,124 @@
+#
+#  Prolog for production reconstruction jobs running on MC data
+#
+#include "Production/JobConfig/reco/prolog.fcl"
+#include "Offline/CommonMC/fcl/prolog.fcl"
+#include "Offline/CaloMC/fcl/prolog.fcl"
+#include "Offline/CRVResponse/fcl/prolog.fcl"
+#
+BEGIN_PROLOG
+# add MC-specific producers
+Reconstruction.producers : {
+  @table::Reconstruction.producers
+  @table::CaloMC.producers
+  @table::CrvResponsePackage.producers
+
+  # MC specific output pruning
+  SelectReco : {
+    @table::CommonMC.SelectRecoMC
+    CaloClusterMinE : 10.0
+    SaveEnergySteps : false
+    SaveUnusedDigiMCs : true
+    SaveAllUnusedDigiMCs : false
+    PrimaryParticle : "compressDigiMCs"
+    StrawDigiCollection : "makeSD"
+    ComboHitCollection : "makeSH"
+    CaloDigiCollection : "CaloDigiMaker"
+    CrvDigiCollection : "CrvDigi"
+    CaloClusterCollection : "CaloClusterMaker"
+    CrvCoincidenceClusterCollections : [ "CrvCoincidenceClusterFinder" ]
+    StrawDigiMCCollection : "compressDigiMCs"
+    CrvDigiMCCollection : "compressDigiMCs"
+    KalSeedCollections  : [ "KKDe", "KKDmu", "KKUe", "KKUmu", "KKLine", "KKCHmu" ]
+    HelixSeedCollections  : ["MHDe", "MHDmu", "MHUe", "MHUmu" ]
+    VDSPCollection : "compressDigiMCs:virtualdetector"
+  }
+  # Compresion
+  compressRecoMCs : {
+    module_type : CompressDigiMCs
+    strawDigiMCTag : "compressDigiMCs"
+    crvDigiMCTag : "compressDigiMCs"
+    simParticleTags : [ "compressDigiMCs" ]
+    extraStepPointMCTags : ["compressDigiMCs:virtualdetector" ]
+    surfaceStepTags : [ "compressDigiMCs" ]
+    caloShowerStepTags : [ ]
+    caloShowerSimTag : ""
+    caloShowerROTag : ""
+    caloClusterMCTag : "CaloClusterTruthMatch"
+    strawDigiMCIndexMapTag : "SelectReco:StrawDigiMap"
+    crvDigiMCIndexMapTag : "SelectReco:CrvDigiMap"
+    keepAllGenParticles : false
+    crvCoincClusterMCTags : [ "CrvCoincidenceClusterMatchMC" ]
+    primaryParticleTag : "compressDigiMCs"
+    mcTrajectoryTag : "compressDigiMCs"
+    rekeySimParticleCollection : false
+    noCompression : false
+    crvStepsToKeep : [ ]
+  }
+}
+# analyzers specific to MC
+Reconstruction.analyzers : {
+  @table::Reconstruction.analyzers
+  LHCompressionCheck : @local::RecoCompression.Check
+  CHCompressionCheck : @local::RecoCompression.Check
+  KLCompressionCheck : @local::RecoCompression.Check
+}
+# now setup track finding sequences. These are separate sequences to allow granular execution
+Reconstruction : {
+  @table::Reconstruction
+  # full MC sequence; form the Calo and CRV matching, and compress based on reco content
+  # temporary build surface steps from StepPointMCs; this is a patch
+  MCReco :  [@sequence::CaloMC.TruthMatch,  CrvCoincidenceClusterMatchMC, SelectReco, compressRecoMCs, CrvCoincidenceClusterMCAssns ]
+
+  # MC truth matched to reco
+  HighRecoMCProducts : [
+    "keep *_compressRecoMCs_*_*",
+    "keep *_CrvCoincidenceClusterMCAssns_*_*",
+    "keep *_SelectReco_*_*"
+  ]
+  GeneralMCProducts : [
+    @sequence::Digitize.GeneralMCProducts
+  ]
+
+  OnSpillEndSequence : [ LHCompressionCheck ]
+  OffSpillEndSequence : [ LHCompressionCheck, CHCompressionCheck ]
+  NoFieldEndSequence : [ KLCompressionCheck ]
+}
+
+# Override paths to inclulde MC sequences
+Reconstruction.NoFieldPath : [
+  @sequence::Reconstruction.NoFieldPath,
+  @sequence::Reconstruction.MCReco
+]
+
+Reconstruction.OnSpillPath : [
+  @sequence::Reconstruction.OnSpillPath,
+  @sequence::Reconstruction.MCReco
+]
+
+Reconstruction.OffSpillPath : [
+  @sequence::Reconstruction.OffSpillPath,
+  @sequence::Reconstruction.MCReco
+]
+
+Reconstruction.CentralHelixPath : [
+  @sequence::Reconstruction.CentralHelixPath,
+  @sequence::Reconstruction.MCReco
+]
+
+Reconstruction.LoopHelixPath : [
+  @sequence::Reconstruction.LoopHelixPath,
+  @sequence::Reconstruction.MCReco
+]
+
+# MC-specific output
+Reconstruction.Output : {
+  @table::Reconstruction.Output
+  outputCommands : [ "drop *_*_*_*",
+    @sequence::Reconstruction.GeneralProducts,
+    @sequence::Reconstruction.GeneralMCProducts,
+    @sequence::Reconstruction.HighRecoProducts,
+    @sequence::Reconstruction.HighRecoMCProducts
+  ]
+}
+END_PROLOG

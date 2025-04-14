@@ -1,12 +1,3 @@
-# override CaloMC Truth matching provenance for compression
-physics.producers.CaloHitTruthMatch.caloShowerSimCollection : "compressDigiMCs"
-physics.producers.CaloHitTruthMatch.primaryParticle : "compressDigiMCs"
-
-# patch CRV
-physics.producers.CrvCoincidenceClusterMatchMC.crvWaveformsModuleLabel : "compressDigiMCs"
-physics.producers.CrvCoincidenceClusterMCAssns.crvCoincidenceTags : [ "CrvCoincidenceClusterFinder" ]
-physics.producers.CrvCoincidenceClusterMCAssns.crvCoincidenceMCTags : [ "compressRecoMCs:CrvCoincidenceClusterMatchMC" ]
-
 # setup proditions; as new proditions are added to the database this file MUST be updated or reco won't see them
 services.ProditionsService.alignedTracker.useDb: true
 services.ProditionsService.alignedTracker.verbose: 0
