@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 import textwrap
 import glob
+import shutil
 
 # Function: Exit with error.
 def exit_abnormal():
@@ -50,7 +51,8 @@ def main():
     parser.add_argument("--copy_input_ifdh", action="store_true", help="Copy input files using ifhd")
     parser.add_argument('--dry-run', action='store_true', help='Print commands without actually running pushOutput')
     parser.add_argument('--test-run', action='store_true', help='Run 10 events only')
-    parser.add_argument('--save-root', action='store_true', help='Save root and art output files')        
+    parser.add_argument('--save-root', action='store_true', help='Save root and art output files')
+    parser.add_argument('--use-map', action='store_false', help='Save root and art output files')    
     parser.add_argument('--location', type=str, default='tape', help='Location identifier to include in output.txt (default: "tape")')    
     
     args = parser.parse_args()
@@ -67,8 +69,8 @@ def main():
     print(f"fname={fname}")
     print(f"pwd={os.getcwd()}")
     print("ls of default dir")
-    run_command("ls -al")
-
+    run_command("ls -al")        
+    
     CONDOR_DIR_INPUT = os.getenv("CONDOR_DIR_INPUT", ".")
     run_command(f"ls -ltr {CONDOR_DIR_INPUT}")
 
@@ -78,13 +80,40 @@ def main():
         print("Error: Unable to extract index from filename.")
         exit_abnormal()
 
-    TARF = run_command(f"ls {CONDOR_DIR_INPUT}/*.tar").strip()
+    if args.use_map:
+        mapfile = run_command(f"ls {CONDOR_DIR_INPUT}/merged*.txt").strip()
+        # Split the output into a list of lines.
+        with open(mapfile, 'r') as f:
+            maplines = f.read().splitlines()
+        
+        print("len(maplines): %d, IND: %d"%(len(maplines), IND))
+        
+        # Check that there are at least IND maplines.
+        if len(maplines) < IND:
+            raise ValueError(f"Expected at least {IND} maplines, but got only {len(maplines)}")
+    
+        # Get the IND-th line (adjusting for Python's 0-index).
+        mapline = maplines[IND]
+        print(f"The {IND}th line is: {mapline}")
+
+        # Split the line into fields (assuming whitespace-separated).
+        fields = mapline.split()
+        if len(fields) < 2:
+            raise ValueError(f"Expected at least 2 fields in the line, but got: {mapline}")
+
+        # Assign the fields to the appropriate variables.
+        TARF = fields[0]
+        IND = int(fields[1])  # update IND based on extracted value from the map
+        run_command(f"mdh copy-file -e 3 -o -v -s disk -l local {TARF}")
+    else:
+        TARF = run_command(f"ls {CONDOR_DIR_INPUT}/*.tar").strip()
+
     print(f"IND={IND} TARF={TARF}")
 
     FCL = os.path.basename(TARF)[:-6] + f".{IND}.fcl"
 
-    run_command(f"httokendecode -H")
-    run_command(f"LV=$(which voms-proxy-init); echo $LV; ldd $LV; rpm -q -a | egrep 'voms|ssl'; printenv PATH; printenv LD_LIBRARY_PATH")
+#    run_command(f"httokendecode -H")
+#    run_command(f"LV=$(which voms-proxy-init); echo $LV; ldd $LV; rpm -q -a | egrep 'voms|ssl'; printenv PATH; printenv LD_LIBRARY_PATH")
     #    run_command(f"voms-proxy-info -all")
 
     #unset BEARER_TOKEN
@@ -114,9 +143,9 @@ def main():
         print(f.read())
 
     if args.test_run:
-        run_command(f"loggedMu2e.sh -n 10 -c {FCL}")
+        run_command(f"mu2e -n 10 -c {FCL}")
     else:
-        run_command(f"loggedMu2e.sh -c {FCL}")
+        run_command(f"mu2e -c {FCL}")
 
     run_command(f"ls {fname}")
 
@@ -129,10 +158,21 @@ def main():
     parents = infiles.split() + [fname]  # Add {fname} to the list of files
     Path("parents_list.txt").write_text("\n".join(parents) + "\n")
 
-    tbz_file = replace_file_extensions(FCL, "bck", "tbz")
-    out_content = f"{args.location} {tbz_file} parents_list.txt\n"
+#    tbz_file = replace_file_extensions(FCL, "bck", "tbz")
+#    out_content = f"{args.location} {tbz_file} parents_list.txt\n"
+    out_content = ""
     for out_fname in out_fnames:
         out_content += f"{args.location} {out_fname} parents_list.txt\n"
+
+    # In production mode, copy the job submission log file from jsb_tmp to LOGFILE_LOC.
+    LOGFILE_LOC = replace_file_extensions(FCL, "log", "log")
+    if os.environ.get("PROD") == "true":
+        # Retrieve environment variables
+        jsb_tmp =  os.getenv("JSB_TMP")
+        JOBSUB_LOG_FILE = "JOBSUB_LOG_FILE"
+        shutil.copy(os.path.join(jsb_tmp, JOBSUB_LOG_FILE), LOGFILE_LOC)
+
+    out_content += f"disk {LOGFILE_LOC} parents_list.txt\n"
     Path("output.txt").write_text(out_content)
 
     # Push output
