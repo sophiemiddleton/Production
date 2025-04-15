@@ -109,7 +109,6 @@ if [[ -n "$JSON_FILE" ]]; then
   DATASET_JSON=$(jq -r ".[$JSON_INDEX].dataset" "$JSON_FILE")
   EMBED_FILE_JSON=$(jq -r ".[$JSON_INDEX].fcl" "$JSON_FILE")
   SETUP_FILE_JSON=$(jq -r ".[$JSON_INDEX].simjob_setup" "$JSON_FILE")
-#  MERGE_FACTOR_JSON=$(jq -r ".[$JSON_INDEX].merge-factor" "$JSON_FILE")
   MERGE_FACTOR_JSON=$(jq -r ".[$JSON_INDEX][\"merge-factor\"]" "$JSON_FILE")
 
   # Override if JSON values are non-empty
