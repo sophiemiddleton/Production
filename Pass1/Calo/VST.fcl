@@ -55,13 +55,9 @@ outputs:
   outfileReco :
   {
     module_type   :   RootOutput
-    fileName      :   "caloPass1_VST.art"
+    fileName      :   "rec.owner.calo_vst.config.sequencer.art"
     outputCommands : [ "keep *_*_*_*" ,
                        "drop artdaq::*_*_*_*" ]
-#                       "drop mu2e::CrvDigis_*_NZS_*" ,
-#                       "drop mu2e::CRVDataDecoders_*_*_*" ] #dictionary doesn't exist
   }
 }
 
-#services.TFileService.fileName : "crvRecoWideband.root"
-#services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_Wideband1module.txt"
