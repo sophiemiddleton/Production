@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Default values
-EMBED_FILE="$MUSE_WORK_DIR/Production/JobConfig/common/artcat.fcl"
+EMBED_FILE="Production/JobConfig/common/artcat.fcl"
 INPUTS_FILE="./inputs.txt"
 MERGE_FACTOR=10
 SETUP_FILE=""
@@ -106,21 +106,29 @@ if [[ -n "$JSON_FILE" ]]; then
   # Extract parameters from the JSON file
   DESC_JSON=$(jq -r ".[$JSON_INDEX].desc" "$JSON_FILE")
   DSCONF_JSON=$(jq -r ".[$JSON_INDEX].dsconf" "$JSON_FILE")
+  DATASET_JSON=$(jq -r ".[$JSON_INDEX].dataset" "$JSON_FILE")
   EMBED_FILE_JSON=$(jq -r ".[$JSON_INDEX].fcl" "$JSON_FILE")
   SETUP_FILE_JSON=$(jq -r ".[$JSON_INDEX].simjob_setup" "$JSON_FILE")
+#  MERGE_FACTOR_JSON=$(jq -r ".[$JSON_INDEX].merge-factor" "$JSON_FILE")
+  MERGE_FACTOR_JSON=$(jq -r ".[$JSON_INDEX][\"merge-factor\"]" "$JSON_FILE")
+
   # Override if JSON values are non-empty
   [[ -n "$DESC_JSON" && "$DESC_JSON" != "null" ]] && DESC="$DESC_JSON"
   [[ -n "$DSCONF_JSON" && "$DSCONF_JSON" != "null" ]] && DSCONF="$DSCONF_JSON"
+  [[ -n "$DATASET_JSON" && "$DATASET_JSON" != "null" ]] && DATASET="$DATASET_JSON"
   [[ -n "$EMBED_FILE_JSON" && "$EMBED_FILE_JSON" != "null" ]] && EMBED_FILE="$EMBED_FILE_JSON"
   [[ -n "$SETUP_FILE_JSON" && "$SETUP_FILE_JSON" != "null" ]] && SETUP_FILE="$SETUP_FILE_JSON"
+  [[ -n "$MERGE_FACTOR_JSON" && "$MERGE_FACTOR_JSON" != "null" ]] && MERGE_FACTOR="$MERGE_FACTOR_JSON"
 fi
 
 # If a dataset is provided, parse it to extract DESC, DSCONF, and OWNER (if not already set)
 if [[ -n "$DATASET" ]]; then
-  IFS='.' read -r DATATIER OWNER_EXTRACT DESC_EXTRACT DSCONF_EXTRACT SUFFIX <<< "$DATASET"
+  IFS='.' read -r DATATIER_EXTRACT OWNER_EXTRACT DESC_EXTRACT DSCONF_EXTRACT SUFFIX <<< "$DATASET"
   OWNER="${OWNER:-$OWNER_EXTRACT}"  # Use the parsed value only if OWNER is not set
   DESC="${DESC:-$DESC_EXTRACT}"
   DSCONF="${DSCONF:-$DSCONF_EXTRACT}"
+  DATATIER="${DATATIER:-$DATATIER_EXTRACT}"
+
   samweb list-definition-files "$DATASET" > "$INPUTS_FILE"
 fi
 
@@ -133,8 +141,8 @@ echo "  Setup file:          $SETUP_FILE"
 echo "  Job description:     $DESC"
 echo "  Dataset configuration: $DSCONF"
 echo "  Dataset owner:       $OWNER"
-echo "  Production mode:     $PROD"
 echo "  PushOutput enabled:  $PUSHOUT"
+echo "  Datatier:            $DATATIER"
 
 EMBED_FILE=$(eval echo "$EMBED_FILE")
 echo "Copying fcl file: $EMBED_FILE"

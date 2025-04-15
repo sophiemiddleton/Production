@@ -8,7 +8,7 @@
 	"events": 5000,
 	"njobs": 2000,
 	"start_mom": 95,
-        "end_mom": 1000,
+	"end_mom": 1000,
 	"run": 1202,
 	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
     }
