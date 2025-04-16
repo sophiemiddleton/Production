@@ -22,6 +22,7 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+
 def parse_args():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description='Process digi files with specified MDC release')
@@ -80,12 +81,17 @@ def write_fcl_file(fname: str, args) -> tuple[str, list]:
     #start from the input name
     out_fname = os.path.basename(fname)
 
+    #Change the output release
     if args.release:
         # Replace the portion after "MDC2020" up to the underscore or dot with the new release
         out_fname = re.sub(r'(MDC2020)[^_.]+', rf'\1{args.release}', out_fname)
     else:
         print("No release value specified. Filename remains unchanged.")
-    
+
+    #Change the file owner
+    parts = out_fname.split(".")
+    out_fname = ".".join([parts[0], args.user] + parts[2:])
+
     print(f"write_fcl_file working on {out_fname}")
     
     # Read the FCL tempate file content
@@ -107,21 +113,33 @@ def write_fcl_file(fname: str, args) -> tuple[str, list]:
                 print(f"Error: --{arg} argument is required for dig stage type.", file=sys.stderr)
                 sys.exit(1)
 
+        fcl_content += f'services.DbService.purpose: MDC2020_{args.dbpurpose}\n'
+        fcl_content += f'services.DbService.version: {args.dbversion}\n'
+        fcl_content += f'services.DbService.verbose : 2\n'
+
         # output file will use dig file family
         out_fname = out_fname.replace("dts.", "dig.")
         #Cosmic needs a spcial epilog
-        if "Cosmic" in out_fname:
+        if "Cosmic" in out_fname and "Extacted" not in out_fname:
             fcl_content += '#include "Production/JobConfig/digitize/cosmic_epilog.fcl"\n'
         parts = out_fname.split(".")
         out_fname_triggered = ".".join(
-            [parts[0]] + [args.user] + [parts[2] + f"{args.digitype}Triggered", parts[3] + f"_{args.dbpurpose}_{args.dbversion}"] + parts[4:])
+            parts[0:2] +
+            [parts[2] + f"{args.digitype}Triggered"] +
+            [parts[3] + f"_{args.dbpurpose}_{args.dbversion}"] +
+            parts[4:]
+            )
         out_fname_triggerable = ".".join(
-            [parts[0]] + [args.user] + [parts[2] + f"{args.digitype}Triggerable", parts[3] + f"_{args.dbpurpose}_{args.dbversion}"] + parts[4:])
+            parts[0:2] +
+            [parts[2] + f"{args.digitype}Triggerable"] +
+            [parts[3] + f"_{args.dbpurpose}_{args.dbversion}"] +
+            parts[4:]
+            )
         fcl_content += f'outputs.TriggeredOutput.fileName: "{out_fname_triggered}"\n'
         fcl_content += f'outputs.TriggerableOutput.fileName: "{out_fname_triggerable}"\n'
         fcl_content += f'services.SeedService.baseSeed: "{hash_int}"\n'
         out_fname_list = [out_fname_triggered, out_fname_triggerable]
-    elif args.stage_type == "mcs":
+    elif args.stage_type == "mcs":        
         # output file will use mcs file family
         out_fname = out_fname.replace("dig.", "mcs.")
         # Extract dbpurpose and dbversion
@@ -135,8 +153,21 @@ def write_fcl_file(fname: str, args) -> tuple[str, list]:
         # Use the same dbpurpose and dbversion as input dig file
         fcl_content += f'services.DbService.purpose: {purpose}\n'
         fcl_content += f'services.DbService.version: {version}\n'  
-        fcl_content += f'outputs.Output.fileName: "{out_fname}"\n'
-        out_fname_list = [out_fname]
+
+        if "OffSpill" in out_fname:
+            parts = out_fname.split(".")
+            prefix = ".".join(parts[:2])     # mcs.owner
+            desc = parts[2]                  # description (3rd field)
+            suffix = ".".join(parts[3:])     # version.sequencer.art
+
+            for tag, label in [("-CH", "CentralHelixOutput"), ("-LH", "LoopHelixOutput")]:
+                out_tagged = f"{prefix}.{desc}{tag}.{suffix}"
+                fcl_content += f'outputs.{label}.fileName: "{out_tagged}"\n'
+                out_fname_list.append(out_tagged)
+        else:
+            fcl_content += f'outputs.Output.fileName: "{out_fname}"\n'
+            out_fname_list = out_fname_list.append(out_fname)
+        
     elif args.stage_type == "nts":
 
         if not getattr(args, "ntuple", None):
@@ -157,6 +188,12 @@ def write_fcl_file(fname: str, args) -> tuple[str, list]:
     elif args.stage_type == "dts":
 
         fcl_content += f'outputs.CopyOutput.fileName : "{out_fname}"\n'
+        out_fname_list = [out_fname]
+
+
+    elif args.stage_type == "artcat":
+
+        fcl_content += f'outputs.out.fileName1 : "{out_fname}"\n'
         out_fname_list = [out_fname]
 
 
@@ -218,5 +255,8 @@ def main():
     else:
         run_command("pushOutput output.txt")
 
+    # Cleanup
+    run_command("rm *.root *.art *.txt")
+        
 if __name__ == "__main__":
     main()
