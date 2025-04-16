@@ -30,7 +30,6 @@ Reconstruction.producers : {
     StrawDigiMCCollection : "compressDigiMCs"
     CrvDigiMCCollection : "compressDigiMCs"
     KalSeedCollections  : [ "KKDe", "KKDmu", "KKUe", "KKUmu", "KKLine", "KKCHmu" ]
-    HelixSeedCollections  : ["MHDe", "MHDmu", "MHUe", "MHUmu" ]
     VDSPCollection : "compressDigiMCs:virtualdetector"
   }
   # Compresion

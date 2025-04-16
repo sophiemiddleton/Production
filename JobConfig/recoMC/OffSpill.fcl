@@ -1,9 +1,9 @@
 #
 # Reconstruct OffSpill events with both central and loop helices
 #
-#include "Production/JobConfig/reco/Reco.fcl"
-physics.CHPath : [ @sequence::Reconstruction.CentralHelixMCPath ]
-physics.LHPath : [ @sequence::Reconstruction.LoopHelixMCPath ]
+#include "Production/JobConfig/recoMC/Reco.fcl"
+physics.CHPath : [ @sequence::Reconstruction.CentralHelixPath ]
+physics.LHPath : [ @sequence::Reconstruction.LoopHelixPath ]
 
 physics.trigger_paths : [ CHPath, LHPath ]
 physics.analyzers.LHCompressionCheck.SelectEvents : [ "LHPath" ]
@@ -27,5 +27,5 @@ physics.end_paths : [ EndPath ]
 # final config
 #include "Production/JobConfig/reco/NoPileup_epilog.fcl"
 #include "Production/JobConfig/reco/OffSpillTiming_epilog.fcl"
-#include "Production/JobConfig/reco/epilog.fcl"
+#include "Production/JobConfig/recoMC/epilog.fcl"
 #include "Production/JobConfig/common/epilog.fcl"

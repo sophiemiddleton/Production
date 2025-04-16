@@ -104,15 +104,14 @@ Reconstruction : {
     SelectReco : {
       module_type : SelectReco
       CaloClusterMinE : 10.0
-      SaveNearbyDigs : false
+      SaveNearbyDigis : false
       StrawDigiCollection : "makeSD"
       ComboHitCollection : "makeSH"
       CaloDigiCollection : "CaloDigiMaker"
       CrvDigiCollection : "CrvDigi"
       CaloClusterCollection : "CaloClusterMaker"
-      CrvCoincidenceClusterCollections : [ "CrvCoincidenceClusterFinder" ]
+      CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
       KalSeedCollections  : [ "KKDe", "KKDmu", "KKUe", "KKUmu", "KKLine", "KKCHmu" ]
-      HelixSeedCollections  : ["MHDe", "MHDmu", "MHUe", "MHUmu" ]
     }
   }
 
@@ -252,9 +251,6 @@ Reconstruction : {
   CaloReco : [ @sequence::CaloReco.Reco, @sequence::CaloCluster.Reco ]
   # CRV reco
   CrvReco : [ @sequence::CrvRecoPackage.CrvRecoSequence ]
-  # full MC sequence; form the Calo and CRV matching, and compress based on reco content
-  # temporary build surface steps from StepPointMCs; this is a patch
-  MCReco :  [@sequence::CaloMC.TruthMatch,  CrvCoincidenceClusterMatchMC, SelectReco, compressRecoMCs, CrvCoincidenceClusterMCAssns ]
 
   # define products to keep
   # First, high-level reco products, and associated sub-products
@@ -313,30 +309,39 @@ Reconstruction.PreTrk : [
 Reconstruction.NoFieldPath : [
   @sequence::Reconstruction.PreTrk,
   @sequence::Reconstruction.LineReco,
-  KLFilter
+  KLFilter,
+  SelectReco
 ]
 
 # OnSpill paths; only LoopHelix
 Reconstruction.OnSpillPath : [
   @sequence::Reconstruction.PreTrk,
   @sequence::Reconstruction.OnSpillTrk,
-  LHFilter
+  LHFilter,
+  SelectReco
+
 ]
 
 # OffSpill paths. Separate by fit type
 Reconstruction.OffSpillPath : [
   @sequence::Reconstruction.PreTrk,
-  @sequence::Reconstruction.OffSpillTrk
+  @sequence::Reconstruction.OffSpillTrk,
+  SelectReco
+
 ]
 
 Reconstruction.CentralHelixPath : [
   @sequence::Reconstruction.OffSpillPath,
-  CHFilter
+  CHFilter,
+  SelectReco
+
 ]
 
 Reconstruction.LoopHelixPath : [
   @sequence::Reconstruction.OffSpillPath,
-  LHFilter
+  LHFilter,
+  SelectReco
+
 ]
 
 # default output
