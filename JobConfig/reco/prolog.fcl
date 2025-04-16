@@ -319,7 +319,6 @@ Reconstruction.OnSpillPath : [
   @sequence::Reconstruction.OnSpillTrk,
   LHFilter,
   SelectReco
-
 ]
 
 # OffSpill paths. Separate by fit type
@@ -327,21 +326,18 @@ Reconstruction.OffSpillPath : [
   @sequence::Reconstruction.PreTrk,
   @sequence::Reconstruction.OffSpillTrk,
   SelectReco
-
 ]
 
 Reconstruction.CentralHelixPath : [
   @sequence::Reconstruction.OffSpillPath,
   CHFilter,
   SelectReco
-
 ]
 
 Reconstruction.LoopHelixPath : [
   @sequence::Reconstruction.OffSpillPath,
   LHFilter,
   SelectReco
-
 ]
 
 # default output

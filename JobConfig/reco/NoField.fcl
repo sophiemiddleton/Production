@@ -3,11 +3,6 @@
 #
 #include "Production/JobConfig/reco/Reco.fcl"
 #
-physics.RecoPath : [ @sequence::Reconstruction.NoFieldMCPath ]
-
-physics.trigger_paths : [ RecoPath ]
-physics.analyzers.KLCompressionCheck.SelectEvents : [ "RecoPath" ]
-
 outputs: {
   KinematicLineOutput : {
     @table::Reconstruction.Output
@@ -16,9 +11,11 @@ outputs: {
   }
 }
 
-physics.RecoPath : [ @sequence::Reconstruction.NoFieldMCPath ]
-physics.EndPath : [ @sequence::Reconstruction.NoFieldEndSequence, KinematicLineOutput]
+physics.RecoPath : [ @sequence::Reconstruction.NoFieldPath ]
+physics.EndPath : [ KinematicLineOutput]
+physics.trigger_paths : [ RecoPath ]
 physics.end_paths : [ EndPath ]
+physics.analyzers.KLCompressionCheck.SelectEvents : [ "RecoPath" ]
 services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
 
 # final config

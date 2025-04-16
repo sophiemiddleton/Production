@@ -1,13 +1,8 @@
 #
 # Reconstruct from digis using straight line tracks
 #
-#include "Production/JobConfig/reco/Reco.fcl"
+#include "Production/JobConfig/recoMC/Reco.fcl"
 #
-physics.RecoPath : [ @sequence::Reconstruction.NoFieldMCPath ]
-
-physics.trigger_paths : [ RecoPath ]
-physics.analyzers.KLCompressionCheck.SelectEvents : [ "RecoPath" ]
-
 outputs: {
   KinematicLineOutput : {
     @table::Reconstruction.Output
@@ -16,13 +11,15 @@ outputs: {
   }
 }
 
-physics.RecoPath : [ @sequence::Reconstruction.NoFieldMCPath ]
+physics.RecoPath : [ @sequence::Reconstruction.NoFieldPath ]
 physics.EndPath : [ @sequence::Reconstruction.NoFieldEndSequence, KinematicLineOutput]
+physics.trigger_paths : [ RecoPath ]
 physics.end_paths : [ EndPath ]
+physics.analyzers.KLCompressionCheck.SelectEvents : [ "RecoPath" ]
 services.GeometryService.bFieldFile: "Offline/Mu2eG4/geom/bfgeom_no_field.txt"
 
 # final config
 #include "Production/JobConfig/reco/NoPileup_epilog.fcl"
 #include "Production/JobConfig/reco/OffSpillTiming_epilog.fcl"
-#include "Production/JobConfig/reco/epilog.fcl"
+#include "Production/JobConfig/recoMC/epilog.fcl"
 #include "Production/JobConfig/common/epilog.fcl"

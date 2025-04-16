@@ -11,7 +11,7 @@ BEGIN_PROLOG
 Reconstruction.producers : {
   @table::Reconstruction.producers
   @table::CaloMC.producers
-  @table::CrvResponsePackage.producers
+  @table::CrvRecoMCPackage.producers
 
   # MC specific output pruning
   SelectReco : {

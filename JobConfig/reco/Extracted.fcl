@@ -4,4 +4,4 @@
 #include "Production/JobConfig/reco/NoField.fcl"
 services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_common_extracted.txt"
 physics.producers.KKLine.ModuleSettings.SampleSurfaces : [ @sequence::physics.producers.KKLine.ModuleSettings.SampleSurfaces, "TCRV" ] #temporary until extrapolation is working
-#include "Offline/CRVResponse/fcl/epilog_extracted.fcl"
+#include "Offline/CRVReco/fcl/epilog_extracted.fcl"
