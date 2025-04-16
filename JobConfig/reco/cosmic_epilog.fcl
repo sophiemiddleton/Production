@@ -1,3 +1,0 @@
-# we want to keep all CrvSteps from the primary so that we can determine whether it was
-# a 'hi' or 'lo' energy deposit cosmic
-physics.producers.compressRecoMCs.crvStepsToKeep : [ "compressDigiMCs" ]
