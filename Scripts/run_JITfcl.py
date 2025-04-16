@@ -182,5 +182,7 @@ def main():
     else:
         run_command("pushOutput output.txt")
 
+    run_command("rm *.root *.art *.txt")
+
 if __name__ == "__main__":
     main()

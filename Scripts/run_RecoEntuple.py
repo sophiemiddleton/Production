@@ -113,6 +113,10 @@ def write_fcl_file(fname: str, args) -> tuple[str, list]:
                 print(f"Error: --{arg} argument is required for dig stage type.", file=sys.stderr)
                 sys.exit(1)
 
+        fcl_content += f'services.DbService.purpose: MDC2020_{args.dbpurpose}\n'
+        fcl_content += f'services.DbService.version: {args.dbversion}\n'
+        fcl_content += f'services.DbService.verbose : 2\n'
+
         # output file will use dig file family
         out_fname = out_fname.replace("dts.", "dig.")
         #Cosmic needs a spcial epilog
@@ -251,5 +255,8 @@ def main():
     else:
         run_command("pushOutput output.txt")
 
+    # Cleanup
+    run_command("rm *.root *.art *.txt")
+        
 if __name__ == "__main__":
     main()
