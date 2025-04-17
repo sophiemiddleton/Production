@@ -8,7 +8,7 @@
 #include "Production/JobConfig/common/prolog.fcl"
 #include "Production/JobConfig/primary/prolog.fcl"
 #include "Production/JobConfig/digitize/prolog.fcl"
-#include "Production/JobConfig/reco/prolog.fcl"
+#include "Production/JobConfig/recoMC/prolog.fcl"
 
 process_name : ceSimReco
 
@@ -52,7 +52,7 @@ physics: {
     @sequence::Common.g4Sequence,
     @sequence::Primary.PrimarySequence,
     @sequence::Digitize.DigitizeSequence,
-    @sequence::Reconstruction.OnSpillMCPath
+    @sequence::Reconstruction.OnSpillPath
   ]
   EndPath : [
     @sequence::Primary.EndSequence,
@@ -112,7 +112,7 @@ physics.producers.MakeSS : {
 
 #include "Production/JobConfig/primary/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
-#include "Production/JobConfig/reco/epilog.fcl"
+#include "Production/JobConfig/recoMC/epilog.fcl"
 physics.analyzers.digiCompressionCheck.SelectEvents : [ TriggerPath ]
 physics.analyzers.recoCompressionCheck.SelectEvents : [ TriggerPath ]
 #
