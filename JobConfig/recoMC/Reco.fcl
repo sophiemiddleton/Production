@@ -4,12 +4,13 @@
 #
 #include "Offline/fcl/minimalMessageService.fcl"
 #include "Offline/fcl/standardServices.fcl"
-#include "Production/JobConfig/reco/prolog.fcl"
+#include "Production/JobConfig/recoMC/prolog.fcl"
 #
 process_name: Reconstruct
 source : { module_type : RootInput }
 services : @local::Services.Reco
-physics : {
+physics :
+{
   producers : @local::Reconstruction.producers
   filters : @local::Reconstruction.filters
   analyzers: @local::Reconstruction.analyzers
