@@ -1,6 +1,6 @@
-#include "Production/JobConfig/reco/Extracted.fcl"
+#include "Production/JobConfig/recoMC/Extracted.fcl"
 #include "Production/Validation/database.fcl"
-#include "Production/JobConfig/reco/MakeSurfaceSteps.fcl"
+#include "Production/JobConfig/recoMC/MakeSurfaceSteps.fcl"
 
 #----------------------------------------------------------------
 # Code added by generate_fcl:
