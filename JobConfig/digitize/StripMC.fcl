@@ -15,7 +15,8 @@ outputs: {
     outputCommands : [ "drop *_*_*_*",
       @sequence::Digitize.GeneralProducts,
       @sequence::Digitize.DigiProducts,
-      @sequence::Digitize.TriggerProducts
+      @sequence::Digitize.TriggerProducts,
+      "drop *_TT*MC_*_*"
     ]
   }
 }

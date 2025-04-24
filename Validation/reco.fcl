@@ -1,6 +1,6 @@
 #
-#include "Production/JobConfig/reco/OnSpill.fcl"
-#include "Production/JobConfig/reco/MakeSurfaceSteps.fcl"
+#include "Production/JobConfig/recoMC/OnSpill.fcl"
+#include "Production/JobConfig/recoMC/MakeSurfaceSteps.fcl"
 #
 # restrict path and output
 #
@@ -8,7 +8,6 @@ physics.producers.SelectRecoMC.KalSeedCollections : [ "KKDe"]
 physics.producers.SelectRecoMC.HelixSeedCollections  : ["MHDe" ]
 physics.filters.RecoFilter.TrkTags : [ "KKDe"]
 
-#include "Production/JobConfig/reco/drop_trigger.fcl"
 outputs.LoopHelixOutput.fileName: "mcs.owner.val-reco.dsconf.seq.art"
 outputs.LoopHelixOutput.outputCommands: [
       "drop *_*_*_*",
@@ -20,7 +19,7 @@ outputs.LoopHelixOutput.outputCommands: [
       "keep mu2e::CaloClusters_CaloClusterMaker_*_*",
       "keep mu2e::EventWindowMarker_*_*_*",
       "keep mu2e::ProtonBunchTime_*_*_*",
-      "keep *_SelectRecoMC_*_*",
+      "keep *_SelectReco*_*_*",
       "keep *_genCounter_*_*",
       "keep mu2e::PrimaryParticle_*_*_*",
       "keep mu2e::StatusG4_*_*_*",

@@ -32,6 +32,7 @@ Mixing : {
         strawGasStepMixer: { mixingMap: [ [ "compressDetStepMCs", "" ] ] }
         caloShowerStepMixer: { mixingMap: [ [ "compressDetStepMCs", "" ] ] }
         crvStepMixer: { mixingMap: [ [ "compressDetStepMCs", "" ] ] }
+        surfaceStepMixer: { mixingMap: [ ] } # don't mix SurfaceSteps from pileup
       }
       MaxEventsToSkip: @nil
     }

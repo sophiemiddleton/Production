@@ -18,7 +18,6 @@ Pileup: {
       @table::CrvSteps
       stepPointsModuleLabels : ["g4run"]
     }
-
     compressDetStepMCs : {
       module_type : CompressDetStepMCs
       strawGasStepTag : "StrawGasStepMaker"
@@ -221,28 +220,6 @@ Pileup: {
         }
       }
     }
-    # TODO BEFORE NEXT CAMPAIGN - Review the changes below and test if they should be there or not.
-    stmResampler: {
-      module_type: ResamplingMixer
-      fileNames: @nil
-      readMode: "sequential"
-      wrapFiles: true
-      mu2e: {
-        writeEventIDs : true
-        MaxEventsToSkip: @nil
-        debugLevel : 1
-        products: {
-          genParticleMixer: { mixingMap: [ [ "compressDetStepMCsSTM", "" ] ] }
-          simParticleMixer: { mixingMap: [ [ "compressDetStepMCsSTM", "" ] ] }
-          stepPointMCMixer: { mixingMap: [ [ "compressDetStepMCsSTM:virtualdetector", ":" ] ] }
-          simTimeOffset : "protonTimeOffset"
-          volumeInfoMixer: {
-            srInput: "g4run" # ""
-            evtOutInstanceName: "eventlevel" # ""
-          }
-        }
-      }
-    }
   }
 
   Output : {
@@ -312,7 +289,6 @@ Pileup: {
   SimKeptProducts : [
     @sequence::Beam.SimKeptProducts
   ]
-
   DtsKeptProducts : [
     "keep art::EventIDs_*_*_*",
     "keep mu2e::GenEventCount_*_*_*",
@@ -327,7 +303,6 @@ Pileup: {
   # define some common sequences
   beamResamplerSequence : [genCounter, protonTimeOffset, beamResampler]
   neutralsResamplerSequence : [genCounter, protonTimeOffset, neutralsResampler]
-  stmResamplerSequence : [genCounter, protonTimeOffset, stmResampler]
   flashSequence : [ TargetMuonFinder, stoppedMuonDaughters, FlashFilter ]
   DetStepSequence : [
     @sequence::TrackerMC.StepSim,

@@ -1,0 +1,63 @@
+#pass1 for data from Clao VST at SiDet
+
+//#include "mu2e-trig-config/core/trigProducers.fcl"
+#include "Offline/fcl/standardProducers.fcl"
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/CRVResponse/fcl/prolog.fcl"
+
+process_name : CaloPass1
+
+services :
+{
+  @table::Services.Core
+  @table::Services.Reco
+}
+
+source :
+{
+  module_type : RootInput
+  fileNames   : @nil
+  maxEvents   : -1
+}
+
+physics :
+{
+  producers :
+   {
+
+      genFrags : {
+         module_type  : ProcessDTCAndCFOEvents
+         diagLevel    : 0
+         makeCaloFrag : 1
+         makeTrkFrag  : 0
+         makeCRVFrag  : 0
+      }
+
+      CaloDigi : {
+         module_type : CaloDigisFromDataDecoders
+         caloTag : "genFrags"
+         dataType : 1
+         diagLevel : 0
+      }
+
+   }
+
+   t1 : [ genFrags, CaloDigi ]
+   e1 : [ outfileReco ]
+
+   trigger_paths  : [t1]
+   end_paths      : [e1]
+
+}
+
+outputs:
+{
+  outfileReco :
+  {
+    module_type   :   RootOutput
+    fileName      :   "rec.owner.calo_vst.config.sequencer.art"
+    outputCommands : [ "keep *_*_*_*" ,
+                       "drop artdaq::*_*_*_*" ]
+  }
+}
+

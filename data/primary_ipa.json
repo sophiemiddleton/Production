@@ -1,0 +1,15 @@
+[
+    {
+	"dsconf": "MDC2020at",
+	"desc": "IPAMuminusMichel",
+	"fcl": "Production/JobConfig/primary/IPAMuminusMichel.fcl",
+	"resampler_name": "IPAMuminusStopResampler",
+	"resampler_data": "sim.mu2e.IPAMuminusStopsCat.MDC2020at.art",
+	"events": 5000,
+	"njobs": 2000,
+	"start_mom": 0,
+        "end_mom": 1000,
+	"run": 1202,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    }
+]

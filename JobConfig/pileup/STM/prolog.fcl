@@ -1,0 +1,55 @@
+#
+# Prolog to create pileup particle steps for mixing
+#
+#include "Offline/TrackerMC/fcl/prolog.fcl"
+#include "Offline/CaloMC/fcl/prolog.fcl"
+#include "Offline/CRVResponse/fcl/prolog.fcl"
+#include "Offline/Filters/fcl/prolog.fcl"
+#include "Offline/Compression/fcl/prolog.fcl"
+#
+BEGIN_PROLOG
+
+Pileup: {
+  producers : {
+    protonTimeOffset : @local::CommonMC.protonTimeOffset
+  }
+
+  filters : {
+    stmResampler: {
+      module_type: ResamplingMixer
+      fileNames: @nil
+      readMode: "sequential" # randomNoReplace
+      wrapFiles: true
+      mu2e: {
+        writeEventIDs : true
+        MaxEventsToSkip: @nil
+        debugLevel : 1
+        products: {
+          genParticleMixer: { mixingMap: [ [ "compressDetStepMCsSTM", "" ] ] }
+          simParticleMixer: { mixingMap: [ [ "compressDetStepMCsSTM", "" ] ] }
+          stepPointMCMixer: { mixingMap: [ [ "compressDetStepMCsSTM:", ":" ] ] } # virtualdetector
+          simTimeOffset : "protonTimeOffset"
+          volumeInfoMixer: {
+            srInput: "g4run"
+            evtOutInstanceName: "eventlevel"
+          }
+        }
+      }
+    }
+  }
+
+  BeamToVDKeptProducts : [
+    "keep art::EventIDs_*_*_*",
+    "keep mu2e::GenParticles_*_*_*",
+    "keep mu2e::GenEventCount_*_*_*", 
+    "keep mu2e::StepPointMCs_compressDetStepMCsSTM_*_*",
+    "keep mu2e::SimParticlemv_compressDetStepMCsSTM_*_*",
+    "keep mu2e::SimTimeOffset_*_*_*",
+    "keep mu2e::PhysicalVolumeInfomvs_g4run_*_*",
+    "keep mu2e::StatusG4_*_*_*"
+  ]
+  # define some common sequences
+  stmResamplerSequence : [genCounter, protonTimeOffset, stmResampler]
+}
+
+END_PROLOG

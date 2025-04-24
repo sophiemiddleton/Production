@@ -1,17 +1,15 @@
 #
-#  Prolog for production reconstruction jobs
+#  Prolog for production reconstruction jobs. This config covers only the parts that proces 'real' data products, not MC
 #
 #include "Production/JobConfig/digitize/prolog.fcl"
-#include "Offline/CommonMC/fcl/prolog.fcl"
 #include "Offline/TrkHitReco/fcl/prolog.fcl"
 #include "Offline/TrkReco/fcl/prolog.fcl"
 #include "Offline/TrkPatRec/fcl/prolog.fcl"
 #include "Offline/Mu2eKinKal/fcl/prolog.fcl"
 #include "Offline/CaloReco/fcl/prolog.fcl"
 #include "Offline/CaloCluster/fcl/prolog.fcl"
-#include "Offline/CaloMC/fcl/prolog.fcl"
 #include "Offline/CalPatRec/fcl/prolog.fcl"
-#include "Offline/CRVResponse/fcl/prolog.fcl"
+#include "Offline/CRVReco/fcl/prolog.fcl"
 #include "Offline/CosmicReco/fcl/prolog.fcl"
 #include "Offline/Filters/fcl/prolog.fcl"
 #
@@ -29,8 +27,7 @@ Reconstruction : {
     @table::CalPatRec.producers
     @table::CaloReco.producers
     @table::CaloCluster.producers
-    @table::CaloMC.producers
-    @table::CrvResponsePackage.producers
+    @table::CrvRecoPackage.producers
     @table::CosmicReco.producers
 
     # choose the hit flagger
@@ -104,49 +101,17 @@ Reconstruction : {
     #
     # Prune output so that only parts related to reconstructed objects are kept
     #
-    SelectRecoMC : {
-      @table::CommonMC.SelectRecoMC
+    SelectReco : {
+      module_type : SelectReco
       CaloClusterMinE : 10.0
-      SaveEnergySteps : false
-      SaveUnusedDigiMCs : true
-      SaveAllUnusedDigiMCs : false
-      PrimaryParticle : "compressDigiMCs"
+      SaveNearbyDigis : false
       StrawDigiCollection : "makeSD"
       ComboHitCollection : "makeSH"
       CaloDigiCollection : "CaloDigiMaker"
       CrvDigiCollection : "CrvDigi"
       CaloClusterCollection : "CaloClusterMaker"
-      CrvCoincidenceClusterCollections : [ "CrvCoincidenceClusterFinder" ]
-      StrawDigiMCCollection : "compressDigiMCs"
-      CrvDigiMCCollection : "compressDigiMCs"
-      KalSeedCollections  : [ # look for all KalSeeds: no problem if some are missing
-            "KKDe", "KKDmu",
-            "KKUe", "KKUmu",
-            "KKLine", "KKCHmu" ]
-      HelixSeedCollections  : ["MHDe", "MHDmu", "MHUe", "MHUmu" ]
-      VDSPCollection : "compressDigiMCs:virtualdetector"
-    }
-    # Compresion
-    compressRecoMCs : {
-      module_type : CompressDigiMCs
-      strawDigiMCTag : "compressDigiMCs"
-      crvDigiMCTag : "compressDigiMCs"
-      simParticleTags : [ "compressDigiMCs" ]
-      extraStepPointMCTags : ["compressDigiMCs:virtualdetector" ]
-      surfaceStepTags : [ "compressDigiMCs" ]
-      caloShowerStepTags : [ ]
-      caloShowerSimTag : ""
-      caloShowerROTag : ""
-      caloClusterMCTag : "CaloClusterTruthMatch"
-      strawDigiMCIndexMapTag : "SelectRecoMC:StrawDigiMap"
-      crvDigiMCIndexMapTag : "SelectRecoMC:CrvDigiMap"
-      keepAllGenParticles : false
-      crvCoincClusterMCTags : [ "CrvCoincidenceClusterMatchMC" ]
-      primaryParticleTag : "compressDigiMCs"
-      mcTrajectoryTag : "compressDigiMCs"
-      rekeySimParticleCollection : false
-      noCompression : false
-      crvStepsToKeep : [ ]
+      CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
+      KalSeedCollections  : [ "KKDe", "KKDmu", "KKUe", "KKUmu", "KKLine", "KKCHmu" ]
     }
   }
 
@@ -232,11 +197,8 @@ Reconstruction : {
       } ]
     }
   }
-  analyzers : { # these are specific to MC
-    LHCompressionCheck : @local::RecoCompression.Check
-    CHCompressionCheck : @local::RecoCompression.Check
-    KLCompressionCheck : @local::RecoCompression.Check
-  }
+
+  analyzers : {} # none yet
 }
 # now setup track finding sequences. These are separate sequences to allow granular execution
 Reconstruction : {
@@ -289,9 +251,6 @@ Reconstruction : {
   CaloReco : [ @sequence::CaloReco.Reco, @sequence::CaloCluster.Reco ]
   # CRV reco
   CrvReco : [ @sequence::CrvRecoPackage.CrvRecoSequence ]
-  # full MC sequence; form the Calo and CRV matching, and compress based on reco content
-  # temporary build surface steps from StepPointMCs; this is a patch
-  MCReco :  [@sequence::CaloMC.TruthMatch,  CrvCoincidenceClusterMatchMC, SelectRecoMC, compressRecoMCs, CrvCoincidenceClusterMCAssns ]
 
   # define products to keep
   # First, high-level reco products, and associated sub-products
@@ -300,14 +259,14 @@ Reconstruction : {
     "keep mu2e::KalSeeds_K*_*_*",
     "keep mu2e::CaloClusters_*_*_*",
     "keep mu2e::CaloHits_*_*_*", # these are needed as CaloClusters reference CaloHits and are not compressed
-    "keep mu2e::IndexMap_SelectRecoMC_*_*", # the SelectRecoMC products need to be explicit as that has MC products as well
-    "keep mu2e::RecoCount_SelectRecoMC_*_*",
-    "keep mu2e::StrawDigis_SelectRecoMC_*_*",
-    "keep mu2e::StrawDigiADCWaveforms_SelectRecoMC_*_*",
-    "keep mu2e::CaloDigis_SelectRecoMC_*_*",
-    "keep mu2e::CrvDigis_SelectRecoMC_*_*",
-    "keep mu2e::CrvCoincidenceClusters_SelectRecoMC_*_*",
-    "keep mu2e::CrvRecoPulses_SelectRecoMC_*_*"
+    "keep mu2e::IndexMap_SelectReco_*_*", # the SelectReco products need to be explicit as that has MC products as well
+    "keep mu2e::RecoCount_SelectReco_*_*",
+    "keep mu2e::StrawDigis_SelectReco_*_*",
+    "keep mu2e::StrawDigiADCWaveforms_SelectReco_*_*",
+    "keep mu2e::CaloDigis_SelectReco_*_*",
+    "keep mu2e::CrvDigis_SelectReco_*_*",
+    "keep mu2e::CrvCoincidenceClusters_SelectReco_*_*",
+    "keep mu2e::CrvRecoPulses_SelectReco_*_*"
   ]
   # Middle reco products, pat rec intermediate results
   MidRecoProducts : [
@@ -318,29 +277,12 @@ Reconstruction : {
   LowRecoProducts : [
     "keep mu2e::ComboHits_*_*_*"
   ]
-  # MC truth matched to reco
-  HighRecoMCProducts : [
-    "keep *_compressRecoMCs_*_*",
-    "keep *_CrvCoincidenceClusterMCAssns_*_*",
-    "keep *_SelectRecoMC_*_*"
-  ]
-  # Extra products for display
-  EventDisplayProducts : [
-    "keep mu2e::ComboHitCollection_flagPH_*_*"
-  ]
   GeneralProducts : [
     @sequence::Digitize.GeneralProducts,
     @sequence::Digitize.TriggerProducts # not sure we want to keep these
   ]
   # TODO: add products from reconstruction-level estimates of PBI from tracker and calorimeter
 
-  GeneralMCProducts : [
-    @sequence::Digitize.GeneralMCProducts
-  ]
-
-  OnSpillEndSequence : [ LHCompressionCheck ]
-  OffSpillEndSequence : [ LHCompressionCheck, CHCompressionCheck ]
-  NoFieldEndSequence : [ KLCompressionCheck ]
 }
 
 # OnSpill track reconstruction sequence: LoopHelix electrons and muons, downstream and upstream
@@ -367,67 +309,44 @@ Reconstruction.PreTrk : [
 Reconstruction.NoFieldPath : [
   @sequence::Reconstruction.PreTrk,
   @sequence::Reconstruction.LineReco,
-  KLFilter
-]
-
-Reconstruction.NoFieldMCPath : [
-  @sequence::Reconstruction.NoFieldPath,
-  @sequence::Reconstruction.MCReco
+  KLFilter,
+  SelectReco
 ]
 
 # OnSpill paths; only LoopHelix
 Reconstruction.OnSpillPath : [
   @sequence::Reconstruction.PreTrk,
   @sequence::Reconstruction.OnSpillTrk,
-  LHFilter
-]
-
-Reconstruction.OnSpillMCPath : [
-  @sequence::Reconstruction.OnSpillPath,
-  @sequence::Reconstruction.MCReco
+  LHFilter,
+  SelectReco
 ]
 
 # OffSpill paths. Separate by fit type
 Reconstruction.OffSpillPath : [
   @sequence::Reconstruction.PreTrk,
-  @sequence::Reconstruction.OffSpillTrk
-]
-
-Reconstruction.OffSpillMCPath : [
-  @sequence::Reconstruction.OffSpillPath,
-  @sequence::Reconstruction.MCReco
+  @sequence::Reconstruction.OffSpillTrk,
+  SelectReco
 ]
 
 Reconstruction.CentralHelixPath : [
   @sequence::Reconstruction.OffSpillPath,
-  CHFilter
-]
-
-Reconstruction.CentralHelixMCPath : [
-  @sequence::Reconstruction.CentralHelixPath,
-  @sequence::Reconstruction.MCReco
+  CHFilter,
+  SelectReco
 ]
 
 Reconstruction.LoopHelixPath : [
   @sequence::Reconstruction.OffSpillPath,
-  LHFilter
-]
-
-Reconstruction.LoopHelixMCPath : [
-  @sequence::Reconstruction.LoopHelixPath,
-  @sequence::Reconstruction.MCReco
+  LHFilter,
+  SelectReco
 ]
 
 # default output
 Reconstruction.Output : {
   module_type : RootOutput
   fileName    : @nil
-  #  outputCommands : [ "keep *_*_*_*" ]
   outputCommands : [ "drop *_*_*_*",
     @sequence::Reconstruction.GeneralProducts,
-    @sequence::Reconstruction.GeneralMCProducts,
-    @sequence::Reconstruction.HighRecoProducts,
-    @sequence::Reconstruction.HighRecoMCProducts
+    @sequence::Reconstruction.HighRecoProducts
   ]
 }
 END_PROLOG
