@@ -1,0 +1,7 @@
+#
+# Customization for validation
+#
+#include "Production/JobConfig/digitize/OnSpill.fcl"
+#include "Production/Validation/database.fcl"
+outputs.TriggerableOutput.fileName : "/dev/null"
+outputs.TriggeredOutput.fileName    : "dig.owner.Triggered.version.sequencer.art"
