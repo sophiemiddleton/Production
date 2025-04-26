@@ -7,7 +7,7 @@
 process_name: stripMC
 source: { module_type: RootInput }
 services: { message: @local::default_message }
-physics: { e1: [strip]  end_paths: [e1] }
+physics: { e1: [strip]  end_paths: [e1] trigger_paths: []}
 outputs: {
   strip: {
     module_type: RootOutput
@@ -19,4 +19,7 @@ outputs: {
     ]
   }
 }
+
+outputs.strip.fileName: "dig.desc-noMC.dsconf.art"
+outputs.strip.fastCloning: false
 
