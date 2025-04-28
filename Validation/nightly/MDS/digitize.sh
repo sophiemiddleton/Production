@@ -1,13 +1,16 @@
 #!/usr/bin/bash
 #
-# Script for creating MDS nightly digitization jobs
+# Script for creating nightly validation jobs
 # option to just create the fcl, or to submit them
 # Original author: Dave Brown (LBNL) April 2025
 #
 
 usage() { echo "Usage: $0
+  --dir : Directory under Production/Validation/nightly to find the script
+  --script: Script name in the above directory to process
+  --dataset : Dataset to process
   [ --submit / --nosubmit] : submit the jobs or just create the fcl
-  [ --Merge N ] : Merge N inputs to 1 output
+  [ --merge N ] : Merge N inputs to 1 output
   [ --help ] : Print this message"
 }
 
@@ -21,12 +24,23 @@ NJOBS=10
 MERGE=1
 SUBMIT=""
 NUMBERS='^[0-9]+$'
+SCRIPT=""
 DATASET="dts.mu2e.ensembleMDS1e.MDC2020ar.art"
 DATE=`date --iso-8601`
 while getopts ":-:h" LONGOPT; do
   case "${LONGOPT}" in
     -)
       case "${OPTARG}" in
+        dir)
+          VALDIR=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        script)
+          VALDIR=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        dataset)
+          DATASET=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          # add a test that the dataset exists TODO
+          ;;
         submit)
           SUBMIT="yes"
           ;;
@@ -65,6 +79,12 @@ while getopts ":-:h" LONGOPT; do
       ;;
   esac
 done
+FULLSCRIPT=Production/Validation/nightly/${DIR}/${SCRIPT}
+if [[ ! -f ${FULLSCRIPT} ]]; then
+  echo "Validation script ${FULLSCRIPT} does not exist!"
+  exit_abnormal()
+fi
+
 if [[ ! -d ${OUTDIR} ]]; then
   mkdir ${OUTDIR}
 fi
@@ -72,17 +92,22 @@ source /cvmfs/mu2e.opensciencegrid.org/setupmu2e-art.sh
 setup mu2efiletools
 setup mu2egrid
 muse setup /exp/mu2e/app/users/mu2epro/nightly2/current
-mu2eDatasetFileList --basename ${DATASET} > ${OUTDIR}/dts.mu2e.MDS.txt
+INPUTS=${OUTDIR}/dts.mu2e.MDS.txt
+if [[ -f ${INPUTS} ]]; then
+  rm -f ${INPUTS}
+fi
+mu2eDatasetFileList --basename ${DATASET} > ${INPUTS}
 JOBDEF="${OUTDIR}/cnf.${USER}.digitize.MDS.0.tar"
 if [[ -f ${JOBDEF} ]]; then
   rm -f ${JOBDEF}
 fi
-mu2ejobdef --code ${NIGHTLYDIR}/${DATE}.tgz --description digitize --dsconf MDS --dsowner ${USER} --inputs ${OUTDIR}/dts.mu2e.MDS.txt --merge-factor 1 --embed Production/Validation/nightly/MDS/digitize.fcl --outdir ${OUTDIR}
+
+mu2ejobdef --code ${NIGHTLYDIR}/${DATE}.tgz --description digitize --dsconf MDS --dsowner ${USER} --inputs ${INPUTS} --merge-factor ${MERGE} --embed ${FULLSCRIPT} --outdir ${OUTDIR}
 if [[ ${SUBMIT} == "yes" ]];  then
-  echo "Submitting ${NJOBS} Jobs to the grid"
+  echo "Submitting ${NJOBS} jobs to the grid using ${JOBDEF}"
   mu2ejobsub --jobdef ${JOBDEF} --default-protocol ifdh --default-location tape --firstjob 1 --njobs ${NJOBS} --role production --memory 2GB
 else
-  echo "Creating ${NJOBS} Job fcl with ${OUTDIR}/cnf.${USER}.digitize.MDS.0.tar"
+  echo "Creating ${NJOBS} job fcl using ${JOBDEF}"
   for IJOB in $(seq 1 ${NJOBS}); do
     JOBFILE=${OUTDIR}/digitize_${IJOB}.fcl
     if [[ -f  ${JOBFILE} ]]; then
