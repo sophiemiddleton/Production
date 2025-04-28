@@ -1,0 +1,6 @@
+#
+# Customization for validation
+#
+#include "Production/JobConfig/reco/OnSpill.fcl"
+#include "Production/Validation/database.fcl"
+outputs.LoopHelixOutput.fileName    : "mcs.owner.MDSValidation.version.sequencer.art"
