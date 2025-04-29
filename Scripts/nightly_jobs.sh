@@ -9,6 +9,7 @@ usage() { echo "Usage: $0
   --dir : Directory under Production/Validation/nightly to find the script
   --script: Script name in the above directory to process
   --dataset : Dataset to process
+  [ --location "location" ] : location to fine dataset (default tape)
   [ --submit / --nosubmit] : submit the jobs or just create the fcl (default nosubmit)
   [ --jobs N ] : Number of jobs to run (default 10)
   [ --merge N ] : Merge N inputs to 1 output (default 1)
@@ -24,11 +25,13 @@ NIGHTLYBUILD="/pnfs/mu2e/resilient/users/mu2epro/nightly2"
 NJOBS=10
 MERGE=1
 SUBMIT=""
-NUMBERS='^[0-9]+$'
 SCRIPT=""
 DATASET=""
 DATE=`date --iso-8601`
+LOC="tape"
 NIGHTLY="/exp/mu2e/app/users/mu2epro/nightly2/current"
+NUMBERS='^[0-9]+$'
+declare -a LOCATIONS=("tape" "disk")
 
 while getopts ":-:h" LONGOPT; do
   case "${LONGOPT}" in
@@ -43,6 +46,9 @@ while getopts ":-:h" LONGOPT; do
         dataset)
           DATASET=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           # add a test that the dataset exists TODO
+          ;;
+        location)
+          LOC=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         submit)
           SUBMIT="yes"
@@ -91,16 +97,30 @@ while getopts ":-:h" LONGOPT; do
       ;;
   esac
 done
+# Test inputs
 FULLSCRIPT=Production/Validation/nightly/${VDIR}/${SCRIPT}.fcl
 if [[ ! -f ${FULLSCRIPT} ]]; then
   echo "Validation script ${FULLSCRIPT} does not exist!"
   exit_abnormal
 fi
-
 if [[ ${DATASET} == "" ]]; then
   echo "Dataset unset"
   exit_abnormal
 fi
+goodloc="no"
+for loc in ${LOCATIONS[@]}; do
+  if [[ ${loc} == ${LOC} ]]; then
+    goodloc="yes"
+  fi
+done
+if [[ ${goodloc} == "no" ]]; then
+  echo "Bad dataset location ${LOC}; should be one of"
+  for loc in ${LOCATIONS[@]}; do
+    echo ${loc}
+  done
+  exit_abnormal
+fi
+
 # test setup and expand as needed
 if [ -z ${OFFLINE_INC+x} ]; then
   echo "Setting up to use nightly build"
@@ -135,7 +155,7 @@ fi
 mu2ejobdef --code ${NIGHTLYBUILD}/${DATE}.tgz --description ${VDIR} --dsconf ${SCRIPT} --dsowner ${USER} --inputs ${INPUTS} --merge-factor ${MERGE} --embed ${FULLSCRIPT} --outdir ${OUTDIR}
 if [[ ${SUBMIT} == "yes" ]];  then
   echo "Submitting ${NJOBS} jobs to the grid using ${JOBDEF}"
-  mu2ejobsub --jobdef ${JOBDEF} --default-protocol ifdh --default-location tape --firstjob 0 --njobs ${NJOBS} --role production --memory 2GB
+  mu2ejobsub --jobdef ${JOBDEF} --default-protocol ifdh --default-location ${LOC} --firstjob 0 --njobs ${NJOBS} --role production --memory 2GB
 else
   echo "Creating ${NJOBS} job fcl using ${JOBDEF}"
   for IJOB in $(seq 0 $((${NJOBS}-1))) ; do
@@ -143,6 +163,6 @@ else
     if [[ -f  ${JOBFILE} ]]; then
       rm -f ${JOBFILE}
     fi
-    mu2ejobfcl --jobdef ${JOBDEF} --default-protocol file --default-location tape --index ${IJOB} > ${JOBFILE}
+    mu2ejobfcl --jobdef ${JOBDEF} --default-protocol file --default-location ${LOC} --index ${IJOB} > ${JOBFILE}
   done
 fi
