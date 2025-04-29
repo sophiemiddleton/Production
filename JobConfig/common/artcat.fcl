@@ -23,6 +23,7 @@
 process_name: artcat
 source: { module_type: RootInput }
 services: { message: @local::default_message }
-physics: { e1: [out]  end_paths: [e1] }
+physics: { e1: [out]  end_paths: [e1] trigger_paths: []}
 outputs: { out: { module_type: RootOutput fileName: @nil } }
-
+outputs.out.fastCloning: false
+outputs.out.fileName: "sim.OWNER.DESC.DSCONF.SEQ.art"
