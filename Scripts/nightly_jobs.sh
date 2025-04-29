@@ -91,7 +91,6 @@ while getopts ":-:h" LONGOPT; do
       ;;
   esac
 done
-
 FULLSCRIPT=Production/Validation/nightly/${VDIR}/${SCRIPT}.fcl
 if [[ ! -f ${FULLSCRIPT} ]]; then
   echo "Validation script ${FULLSCRIPT} does not exist!"
@@ -136,10 +135,10 @@ fi
 mu2ejobdef --code ${NIGHTLYBUILD}/${DATE}.tgz --description ${VDIR} --dsconf ${SCRIPT} --dsowner ${USER} --inputs ${INPUTS} --merge-factor ${MERGE} --embed ${FULLSCRIPT} --outdir ${OUTDIR}
 if [[ ${SUBMIT} == "yes" ]];  then
   echo "Submitting ${NJOBS} jobs to the grid using ${JOBDEF}"
-  mu2ejobsub --jobdef ${JOBDEF} --default-protocol ifdh --default-location tape --firstjob 1 --njobs ${NJOBS} --role production --memory 2GB
+  mu2ejobsub --jobdef ${JOBDEF} --default-protocol ifdh --default-location tape --firstjob 0 --njobs ${NJOBS} --role production --memory 2GB
 else
   echo "Creating ${NJOBS} job fcl using ${JOBDEF}"
-  for IJOB in $(seq 1 ${NJOBS}); do
+  for IJOB in $(seq 0 $((${NJOBS}-1))) ; do
     JOBFILE=${OUTDIR}/${SCRIPT}_${IJOB}.fcl
     if [[ -f  ${JOBFILE} ]]; then
       rm -f ${JOBFILE}
