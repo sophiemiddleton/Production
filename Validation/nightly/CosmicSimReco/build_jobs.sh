@@ -3,7 +3,7 @@
 #
 # S1 validation
 # S2 validation
-#Production/Scripts/nightly_jobs.sh --dir CosmicSimReco --script S2 --dataset sim.mu2e.CosmicDSStopsCORSIKA.MDC2020ab.art
+Production/Scripts/nightly_jobs.sh --dir CosmicSimReco --script S2 --run 1202 --events 10000 --type resample --resample CosmicResampler --dataset sim.mu2e.CosmicDSStopsCORSIKA.MDC2020ab.art
 # dts -> dig validation
 Production/Scripts/nightly_jobs.sh --dir CosmicSimReco --script digitizeOnSpill --dataset dts.mu2e.CosmicCRYSignalAll.MDC2020ar.art
 Production/Scripts/nightly_jobs.sh --dir CosmicSimReco --script digitizeOffSpill --dataset dts.mu2e.CosmicCORSIKASignalAll.MDC2020ar.art
