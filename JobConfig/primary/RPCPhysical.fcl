@@ -1,0 +1,15 @@
+##
+# RPC photon spectrum, based on on Bistrilich spectrum
+# Use accept-reject method to produce a physical pion time distribution
+#
+
+#include "Production/JobConfig/primary/RPC.fcl"
+
+physics.producers.RPCAcceptReject : @erase
+physics.filters.RPCAcceptReject : {
+    module_type : WeightSamplingFilter
+    EventWeightModule   : generate
+    WeightScalingFactor : 10000. # Maximum time weight is e^-0 = 1, but (essentially) all RPC events have p(evt) < 1e-4, so increase sampling efficiency
+    debugLevel          : 1
+    makeHistograms      : true
+}
