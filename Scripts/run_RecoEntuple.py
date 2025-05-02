@@ -8,9 +8,10 @@ from pathlib import Path
 import subprocess
 import textwrap
 import hashlib
+import shutil
 
 # ---------------------------------------------------
-# Configure Logging to stdout
+# Configure Logging to stdout (no timestamp or level)
 # ---------------------------------------------------
 logger = logging.getLogger()
 logger.handlers = []
@@ -18,7 +19,8 @@ logger.setLevel(logging.INFO)
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+# Only print the message itself
+formatter = logging.Formatter('%(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -26,20 +28,12 @@ logger.addHandler(handler)
 def parse_args():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description='Process digi files with specified MDC release')
-    parser.add_argument('--stage-type', required=True,
-                        help='Stage type (e.g., dig, mcs, nts)')
     parser.add_argument('--release', required=False,
                         help='Output MDC2020 version (e.g., an)')
-    parser.add_argument('--ntuple', required=False,
-                        help='Ntuple version (e.g., a)')
     parser.add_argument('--dbpurpose', required=False,
                         help='db purpose (e.g., best, perfect)')
     parser.add_argument('--dbversion', required=False,
                         help='db version (e.g., v1_3)')
-    parser.add_argument('--digitype', required=False,
-                        help='OnSpill, OffSpill')
-    parser.add_argument('--fcl', required=True,
-                        help='fcl template')
     parser.add_argument('--user', required=False, default="mu2e",
                         help='i.e. mu2e')
     parser.add_argument('--nevents', type=int, default=-1,
@@ -47,7 +41,11 @@ def parse_args():
     parser.add_argument('--location', type=str, default='tape',
                         help='Location identifier to include in output.txt (default: "tape")')
     parser.add_argument('--dry-run', action='store_true',
-                        help='Print commands without actually running them')
+                            help='Print commands without actually running them')
+    parser.add_argument('--template-fcl', metavar='PATH', required=True,
+                            help='Path to fcl template'
+    )
+
     return parser.parse_args()
 
 def run_command(command: str) -> None:
@@ -74,145 +72,95 @@ def run_command(command: str) -> None:
         logging.error(f"Error running command: {command}")
         sys.exit(1)
 
-
-def write_fcl_file(fname: str, args) -> tuple[str, list]:
-    """Write FCL configuration file"""
-
-    #start from the input name
-    out_fname = os.path.basename(fname)
-
-    #Change the output release
-    if args.release:
-        # Replace the portion after "MDC2020" up to the underscore or dot with the new release
-        out_fname = re.sub(r'(MDC2020)[^_.]+', rf'\1{args.release}', out_fname)
-    else:
-        print("No release value specified. Filename remains unchanged.")
-
-    #Change the file owner
-    parts = out_fname.split(".")
-    out_fname = ".".join([parts[0], args.user] + parts[2:])
-
-    print(f"write_fcl_file working on {out_fname}")
-    
-    # Read the FCL tempate file content
-    with open(args.fcl, "r") as f:
-        fcl_content = f.read()
-
-    # Create random seed based on the input fname
-    hash_object = hashlib.md5(out_fname.encode())
-    hex_digest = hash_object.hexdigest()
-    hash_int = int(hex_digest, 16)
-    # Use modulo 2**63 to ensure the seed is in the valid range for a signed 64-bit integer.
-    hash_int = hash_int % (2**63)
-    
-    out_fname_list = []
-    if args.stage_type == "dig":
-
-        for arg in ("digitype", "dbpurpose", "dbversion"):
-            if not getattr(args, arg, None):
-                print(f"Error: --{arg} argument is required for dig stage type.", file=sys.stderr)
-                sys.exit(1)
-
-        fcl_content += f'services.DbService.purpose: MDC2020_{args.dbpurpose}\n'
-        fcl_content += f'services.DbService.version: {args.dbversion}\n'
-        fcl_content += f'services.DbService.verbose : 2\n'
-
-        # output file will use dig file family
-        out_fname = out_fname.replace("dts.", "dig.")
-        #Cosmic needs a spcial epilog
-        if "Cosmic" in out_fname and "Extacted" not in out_fname:
-            fcl_content += '#include "Production/JobConfig/digitize/cosmic_epilog.fcl"\n'
-        parts = out_fname.split(".")
-        out_fname_triggered = ".".join(
-            parts[0:2] +
-            [parts[2] + f"{args.digitype}Triggered"] +
-            [parts[3] + f"_{args.dbpurpose}_{args.dbversion}"] +
-            parts[4:]
-            )
-        out_fname_triggerable = ".".join(
-            parts[0:2] +
-            [parts[2] + f"{args.digitype}Triggerable"] +
-            [parts[3] + f"_{args.dbpurpose}_{args.dbversion}"] +
-            parts[4:]
-            )
-        fcl_content += f'outputs.TriggeredOutput.fileName: "{out_fname_triggered}"\n'
-        fcl_content += f'outputs.TriggerableOutput.fileName: "{out_fname_triggerable}"\n'
-        fcl_content += f'services.SeedService.baseSeed: "{hash_int}"\n'
-        out_fname_list = [out_fname_triggered, out_fname_triggerable]
-    elif args.stage_type == "mcs":        
-        # output file will use mcs file family
-        out_fname = out_fname.replace("dig.", "mcs.")
-        # Extract dbpurpose and dbversion
-        pattern = r"(MDC2020)\w+_(best|perfect)_(v\d+_\d+)"
-        match = re.search(pattern, fname)
-        if not match:
-            raise ValueError(f"Invalid filename format: {fname}")
-        
-        purpose = f"{match.group(1)}_{match.group(2)}"
-        version = f"{match.group(3)}"
-        # Use the same dbpurpose and dbversion as input dig file
-        fcl_content += f'services.DbService.purpose: {purpose}\n'
-        fcl_content += f'services.DbService.version: {version}\n'  
-
-        if "OffSpill" in out_fname:
-            parts = out_fname.split(".")
-            prefix = ".".join(parts[:2])     # mcs.owner
-            desc = parts[2]                  # description (3rd field)
-            suffix = ".".join(parts[3:])     # version.sequencer.art
-
-            for tag, label in [("-CH", "CentralHelixOutput"), ("-LH", "LoopHelixOutput")]:
-                out_tagged = f"{prefix}.{desc}{tag}.{suffix}"
-                fcl_content += f'outputs.{label}.fileName: "{out_tagged}"\n'
-                out_fname_list.append(out_tagged)
-        else:
-            fcl_content += f'outputs.Output.fileName: "{out_fname}"\n'
-            out_fname_list = out_fname_list.append(out_fname)
-        
-    elif args.stage_type == "nts":
-
-        if not getattr(args, "ntuple", None):
-            print("Error: --ntuple argument is required for nts stage type.", file=sys.stderr)
-            sys.exit(1)
-        
-        # output file will use nts file family and root extension 
-        out_fname = out_fname.replace("mcs.", "nts.")
-        out_fname = out_fname.replace(".art", ".root")
-
-        fields = out_fname.split('.')
-        fields[3] += f"_{args.ntuple}"  # Append _a to the 4th field (index 3)
-        out_fname = ".".join(fields)
-        
-        fcl_content += f'services.TFileService.fileName: "{out_fname}"\n'
-        out_fname_list = [out_fname]
-
-    elif args.stage_type == "dts":
-
-        fcl_content += f'outputs.CopyOutput.fileName : "{out_fname}"\n'
-        out_fname_list = [out_fname]
-
-
-    elif args.stage_type == "artcat":
-
-        fcl_content += f'outputs.out.fileName1 : "{out_fname}"\n'
-        out_fname_list = [out_fname]
-
-
-    else:
-        print("Unknown stage type")
+def load_templates(template_path: str) -> list[str]:
+    path = Path(template_path)
+    if not path.is_file():
+        logging.error(f"Template file not found: {path}")
         sys.exit(1)
-    
-    #Create fcl filename
-    split_name = out_fname_list[0].split('.')
-    split_name[0] = "cnf"
-    split_name[-1] = "fcl"
-    fcl_file = '.'.join(split_name)
+    lines = [line.strip() for line in path.read_text().splitlines()]
+    templates = [l for l in lines if l]
+    if not templates:
+        logging.error("No valid templates found in template-file")
+        sys.exit(1)
+    return templates
 
-    #Write to fcl file
-    with Path(fcl_file).open("w") as f:
-        f.write(fcl_content)
-        logging.info("FCL file created successfully")
-        logging.info(f"FCL content:\n{fcl_content}")
-    return str(fcl_file), out_fname_list
+def write_fcl_file(input_fname: str, args) -> tuple[str, list[str]]:
+    fcl_content = ""
+    base_name = Path(input_fname).stem
+    parts = base_name.split('.')
+    if len(parts) < 5:
+        logging.error(f"Filename '{base_name}' does not contain expected fields (desc, dsconf, sequence)")
+        sys.exit(1)
+    desc = parts[2]
+    dsconf = parts[3]
+    sequence = parts[4]
+
+    #Extract dbpurpose and dbversion if available in filename
+    m = re.search(r"\.MDC2020(?P<release>\w+)_(?P<dbpurpose>[^_]+)_(?P<dbversion>v\d+_\d+)\.",base_name)
+    if m:
+        dbpurpose = m.group("dbpurpose")  # 'best'
+        dbversion = m.group("dbversion")  # 'v1_3'
+        print("Extracted dbpurpose: %s, and dbversion: %s from a file"%(dbpurpose, dbversion))
+
+    # Build formatting context
+    ctx = {
+        'user': args.user,
+        'release': args.release,
+        'desc': desc,
+        'dsconf': dsconf,
+        'sequence': sequence,
+        'dbpurpose': dbpurpose or args.dbpurpose,
+        'dbversion': dbversion or args.dbversion,
+    }
+
+    # Deterministic seed based on input filename
+    hash_hex = hashlib.md5(input_fname.encode()).hexdigest()
+    seed = int(hash_hex, 16) % (2**63)
+    ctx['seed'] = seed
+
+    templates = load_templates(args.template_fcl)
+    out_files = []
+
+    # Apply each template line
+    for tpl in templates:
+        try:
+            line = tpl.format(**ctx)
+            print(line)
+        except KeyError as e:
+            logging.error(f"Missing placeholder in template: {e}")
+            sys.exit(1)
+        fcl_content += line + "\n"
+        # extract filename between quotes
+        quote_match = re.search(r'"([^"]+)"', line)
+        if quote_match:
+            out_fname = quote_match.group(1)
+            fields = out_fname.split('.')
+            if len(fields) == 6: # Output must be in mu2e format: 6 fields
+                out_files.append(fname)
+
+    if not out_files:
+        logging.error("No output filenames found in templates")
+        sys.exit(1)
+
+    # Derive FCL filename from first output
+    first = out_files[0]
+    print("first: %s", first)
+    print("first: %s", out_files[1])
+    cfg_name = Path(first).stem
+    fcl_name = f"cnf.{cfg_name}.fcl"
+    Path(fcl_name).write_text(fcl_content)
+    logging.info(f"Written FCL: {fcl_name}")
+    return fcl_name, out_files
+
+def replace_file_fields(filename: str, first_field: str, last_field: str) -> str:
+    parts = filename.split('.')
+    if len(parts) < 4:
+        raise ValueError(f"Expected at least 4 dot-separated fields, got {len(parts)}: {filename!r}")
+    parts[3] = f"{parts[3]}-{parts[0]}"
+    parts[0] = first_field
+    parts[-1] = last_field
+
+    return '.'.join(parts)
 
 def main():
     # Parse command line arguments
@@ -223,30 +171,36 @@ def main():
     if not in_fname:
         raise ValueError("fname environment variable not set")
     
-    logging.info(f"Using output MDC2020 version: {args.stage_type}")
+    logging.info(f"Using output MDC2020 version")
     
     # Write fcl configuration
     fcl_file, out_fname_list = write_fcl_file(in_fname, args)
-    print("Filelist: %s"%out_fname_list)
+    print("Filelist: %s" % out_fname_list)
     
     # Run processing
     nevents = args.nevents  # Number of events to process
-    run_command(f"loggedMu2e.sh -n {nevents} -s {in_fname} -c {fcl_file}")
+    run_command(f"mu2e -n {nevents} -s {in_fname} -c {fcl_file}")
     
     # Handle parent files
     in_fname_base = os.path.basename(in_fname)
     Path(f"parents_{in_fname_base}").write_text(in_fname_base)
 
-    #Create tarbar filename
-    split_name = out_fname_list[0].split('.')
-    split_name[0] = "bck"         # Replace first field
-    split_name[-1] = "tbz"        # Replace last field
-    tbz_file = '.'.join(split_name)
-
     out_content = ""
     for f in out_fname_list:
         out_content += f'{args.location} {f} parents_{in_fname_base}\n'
-    out_content += f'{args.location} {tbz_file} parents_{in_fname_base}\n'
+
+    # In production mode, copy the job submission log file from jsb_tmp to LOGFILE_LOC.
+    LOGFILE_LOC = replace_file_fields(fcl_file, first_field="log", last_field="log")
+
+    # Copy the jobsub log if JSB_TMP is defined
+    jsb_tmp = os.getenv("JSB_TMP")
+    if jsb_tmp:
+        jobsub_log = "JOBSUB_LOG_FILE"
+        src = os.path.join(jsb_tmp, jobsub_log)
+        print(f"Copying jobsub log from {src} to {LOGFILE_LOC}")
+        shutil.copy(src, LOGFILE_LOC)
+
+    out_content += f"disk {LOGFILE_LOC} parents_{in_fname_base}\n"
     Path("output.txt").write_text(out_content)
     
     # Push output
@@ -256,7 +210,7 @@ def main():
         run_command("pushOutput output.txt")
 
     # Cleanup
-    run_command("rm *.root *.art *.txt")
+    run_command("rm -f *.root *.art *.txt")
         
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 {
-    "release_v_dts": ["r"],
-    "primary_name": ["CeEndpoint", "CePlusEndpoint"],
-    "db_purpose": ["perfect", "best"],
-    "digitype": ["Mix1BB", "Mix2BB"]
+    "mver": ["p"],
+    "over": ["au"],
+    "primary_dataset": ["dts.mu2e.NoPrimary.MDC2020ar.art", "dts.mu2e.PbarSTGun.MDC2020ar.art", "dts.mu2e.RMCFlatGammaResampling.MDC2020ar.art"],
+    "dbpurpose": ["perfect", "best"],
+    "pbeam": ["Mix1BB", "Mix2BB"]
 }
