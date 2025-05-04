@@ -5,7 +5,12 @@
 # edited for pions by : Sophie Middleton
 #include "Production/JobConfig/primary/StopParticle.fcl"
 
-physics.PrimaryPath : [ TargetPiStopResampler, @sequence::Common.generateSequence, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
+# Only filter if creating a physical spectrum
+physics.producers.RPCAcceptReject : {
+    module_type : NullProducer
+    nEngines : 1
+}
+physics.PrimaryPath : [ TargetPiStopResampler, @sequence::Common.generateSequence, RPCAcceptReject, @sequence::Common.g4Sequence, @sequence::Primary.PrimarySequence ]
 physics.trigger_paths : [ PrimaryPath ]
 outputs : { PrimaryOutput : @local::Primary.PrimaryOutput }
 physics.EndPath : [ @sequence::Primary.EndSequence, PrimaryOutput ]

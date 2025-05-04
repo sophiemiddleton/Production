@@ -1,0 +1,9 @@
+#
+# RPC Internal, physical pion time distribution
+#
+
+#include "Production/JobConfig/primary/RPCPhysical.fcl"
+
+physics.producers.generate.RPCType : "mu2eInternalRPC"
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eInternalRPC"
+outputs.PrimaryOutput.fileName: "dts.owner.RPCInternalPhysical.version.sequencer.art"
