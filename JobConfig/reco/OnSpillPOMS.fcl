@@ -1,0 +1,7 @@
+// Template for helix fitting and merging
+#include "Production/JobConfig/reco/OnSpill.fcl"
+services.DbService.purpose: "MDC2020_{dbpurpose}"
+services.DbService.version: "{dbversion}"
+services.DbService.verbose: 2
+outputs.CentralHelixOutput.fileName: "mcs.mu2e.{desc}-CH.{dsconf}.{sequence}.art"
+outputs.LoopHelixOutput.fileName:    "mcs.mu2e.{desc}-LH.{dsconf}.{sequence}.art"

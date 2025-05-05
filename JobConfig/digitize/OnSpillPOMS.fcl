@@ -1,0 +1,8 @@
+//Template for OnSpill digitization
+#include "Production/JobConfig/digitize/OnSpill.fcl"
+services.DbService.purpose: "MDC2020_{dbpurpose}"
+services.DbService.version: "{dbversion}"
+services.DbService.verbose: 2
+services.SeedService.baseSeed: "{seed}"
+outputs.TriggeredOutput.fileName:   "dig.mu2e.{desc}OnSpillTriggered.MDC2020{release}_{dbpurpose}_{dbversion}.{sequence}.art"
+outputs.TriggerableOutput.fileName: "dig.mu2e.{desc}OnSpillTriggerable.MDC2020{release}_{dbpurpose}_{dbversion}.{sequence}.art"

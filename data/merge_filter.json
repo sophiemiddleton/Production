@@ -1,0 +1,48 @@
+[
+    {
+	"dsconf": "MDC2020at",
+	"desc": "MuonIPAStopSelector",
+	"fcl": "Production/JobConfig/pileup/MuonIPAStopSelector.fcl",
+	"dataset": "sim.mu2e.IPAStopsCat.MDC2020p.art",
+	"merge-factor": 1,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+	"dsconf": "MDC2020at",
+	"dataset": "dts.mu2e.RMCExternal.MDC2020at.art",
+	"merge-factor": 8,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+	"dsconf": "MDC2020au_best_v1_3",
+	"desc": "OffSpillTriggered-noMC",
+	"append": ["physics.trigger_paths: []", "outputs.strip.fileName: \"dig.owner.dsdesc.dsconf.seq.art\""],
+	"extra_opts": "--override-output-description",
+	"fcl": "Production/JobConfig/digitize/StripMC.fcl",
+	"dataset": "dig.mu2e.OffSpillTriggered.MDC2020ar_best_v1_3.art",
+	"merge-factor": 3,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020au/setup.sh"
+    },
+    {
+	"dsconf": "MDC2020au_best_v1_3",
+	"desc": "CosmicCRYExtractedCatTriggered-noMC",
+	"append": ["physics.trigger_paths: []", "outputs.strip.fileName: \"dig.owner.dsdesc.dsconf.seq.art\""],
+	"extra_opts": "--override-output-description",
+	"fcl": "Production/JobConfig/digitize/StripMC.fcl",
+	"dataset": "dig.mu2e.CosmicCRYExtractedCatTriggered.MDC2020ae_best_v1_3.art",
+	"merge-factor": 6,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020au/setup.sh"
+    },
+    {
+	"desc": "ensembleMDS1eOnSpillTriggered-noMC",	
+	"dsconf": "MDC2020au_best_v1_3",
+	"append": ["physics.trigger_paths: []", "outputs.strip.fileName: \"dig.owner.dsdesc.dsconf.seq.art\""],
+	"extra_opts": "--override-output-description",
+	"fcl": "Production/JobConfig/digitize/StripMC.fcl",
+	"dataset": "dig.mu2e.ensembleMDS1eOnSpillTriggered.MDC2020aq_best_v1_3.art",
+	"merge-factor": 1,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020au/setup.sh"
+    }
+    
+    
+]
