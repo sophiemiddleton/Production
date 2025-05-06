@@ -2,12 +2,12 @@
 
 # Generate S1 job definitions for Mu2e from a JSON array
 # Usage:
-#   bash Scripts/gen_S1.sh --json data/stage1_cosmic.json --json_index 1 [--pushout]
+#   bash Scripts/gen_S1.sh --json data/stage1_cosmic.json --desc ExtractedCRY [--pushout]
 
 # Defaults
 OWNER="mu2e"
 JSON_FILE=""
-JSON_INDEX=""
+JOB_DESC=""
 PUSHOUT=false
 
 # Function: Usage message
@@ -17,7 +17,7 @@ Usage: $0 [options]
 
   --owner          NAME   Data owner (default: mu2e)
   --json           FILE   JSON file with an array of job definitions (required)
-  --json_index     INT    Zero-based index into JSON array (required)
+  --desc           NAME   Job description to select entry from JSON (required)
   --pushout              Enable pushOutput of results (default: disabled)
   --help                  Print this message
 EOF
@@ -26,10 +26,10 @@ EOF
 # Parse command-line
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --owner)        OWNER="$2";        shift 2;;
-    --json)         JSON_FILE="$2";    shift 2;;
-    --json_index)   JSON_INDEX="$2";   shift 2;;
-    --pushout)      PUSHOUT=true;       shift;;
+    --owner)        OWNER="$2";    shift 2;;
+    --json)         JSON_FILE="$2";shift 2;;
+    --desc)         JOB_DESC="$2"; shift 2;;
+    --pushout)      PUSHOUT=true;   shift;;
     --help)         usage; exit 0;;
     *) echo "Unknown option: $1" >&2; usage; exit 1;;
   esac
@@ -38,13 +38,20 @@ done
 # Clean old output
 rm -f cnf.*.tar
 
-# Extract parameters
-DSCONF=$(jq -r ".[$JSON_INDEX].dsconf" "$JSON_FILE")
-DESC=$(jq -r ".[$JSON_INDEX].desc" "$JSON_FILE")
-FCL=$(jq -r ".[$JSON_INDEX].fcl" "$JSON_FILE")
-EVENTS=$(jq -r ".[$JSON_INDEX].events" "$JSON_FILE")
-RUN=$(jq -r ".[$JSON_INDEX].run" "$JSON_FILE")
-SIMJOB_SETUP=$(jq -r ".[$JSON_INDEX].simjob_setup" "$JSON_FILE")
+# Guard: ensure unique desc entries
+count=$(jq --arg d "$JOB_DESC" 'map(select(.desc == $d)) | length' "$JSON_FILE")
+if (( count != 1 )); then
+  echo "Error: found $count entries with desc=\"$JOB_DESC\"; needs to be unique." >&2
+  exit 1
+fi
+
+# Extract parameters by matching desc
+DSCONF=$(jq -r --arg d "$JOB_DESC" 'map(select(.desc == $d))[0].dsconf'        "$JSON_FILE")
+DESC=$(jq -r --arg d "$JOB_DESC" 'map(select(.desc == $d))[0].desc'            "$JSON_FILE")
+FCL=$(jq -r --arg d "$JOB_DESC" 'map(select(.desc == $d))[0].fcl'              "$JSON_FILE")
+EVENTS=$(jq -r --arg d "$JOB_DESC" 'map(select(.desc == $d))[0].events'         "$JSON_FILE")
+RUN=$(jq -r --arg d "$JOB_DESC" 'map(select(.desc == $d))[0].run'               "$JSON_FILE")
+SIMJOB_SETUP=$(jq -r --arg d "$JOB_DESC" 'map(select(.desc == $d))[0].simjob_setup'  "$JSON_FILE")
 
 # Build and echo mu2ejobdef command as an array
 CMD=(
@@ -72,7 +79,7 @@ mu2ejobfcl --jobdef "$parfile" --index 0 --default-proto root --default-loc tape
 cat "$test_fcl"
 echo "disk $parfile none" > outputs.txt
 
-# PushOutput
+# PushOutput logic
 if [[ "$PUSHOUT" != true ]]; then
   echo "PushOutput disabled."
 elif samweb locate-file "$parfile" &>/dev/null; then
