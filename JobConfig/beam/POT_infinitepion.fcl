@@ -1,8 +1,10 @@
 # Sophie Middleton 2021
 # Script to shoot beam protons onto the production target.  Daughter particles are filtered and collected. Only charged pions at the entrance to the DS at the beamline are stored since this is an unphysical stream with pions having an infinite lifetime. Due to this being unphyiscal we do not bother getting the Neutral or other beam element streams. These can be obtained using the general (muon/electron) path, and combined later for mixed analyzes.
+# Yuri Oksuzian 2025: Improved performance
 
 #include "Production/JobConfig/beam/POT.fcl"
 process_name :  POTinfinitepion
+source.firstRun : 1201
 
 physics.filters.PionFilter : @local::Beam.filters.PionSelector
 physics.BeamPath : [ @sequence::Common.generateSequence, @sequence::Common.g4Sequence, BeamFilter, compressPVBeam, PionFilter ]
@@ -13,3 +15,23 @@ physics.end_paths: [OutputPath, LogPath ]
 
 outputs.BeamOutput.fileName : "sim.owner.PiBeam.version.sequencer.art"
 physics.producers.g4run.physics.noDecay     : [ 211, -211 ] # Added for Pion Infinite Lifetime for both charges
+
+killSoftParticles:{
+  # Kill lower momentum particles
+  type: intersection
+  pars:
+  [
+    { type: intersection pars: [
+        { type: kineticEnergy cut: 140.0 },
+        { type: pdgId pars: [ 22, 11, -11, 13, -13, 2112, 2212 ] }]}
+  ]
+}
+
+# setup Mu2eG4 selection
+physics.producers.g4run.Mu2eG4CommonCut: {
+  type: union
+  pars: [
+    @local::killSoftParticles,
+    @local::Beam.DetectorRegionCuts # defines Beam and Neutrals regions
+  ]
+}

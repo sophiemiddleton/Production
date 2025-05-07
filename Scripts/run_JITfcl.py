@@ -23,7 +23,7 @@ def usage():
 # Function to run a shell command and return the output while streaming
 def run_command(command):
     print(f"Running: {command}")
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     output = []  # Collect the command output
     for line in process.stdout:
         print(line, end="")  # Print each line in real-time
@@ -58,6 +58,9 @@ def main():
     args = parser.parse_args()
     copy_input_mdh = args.copy_input_mdh
     copy_input_ifdh = args.copy_input_ifdh
+
+    #check token before proceeding
+    run_command(f"httokendecode -H")
     
     fname = os.getenv("fname")
     if not fname:
@@ -112,7 +115,6 @@ def main():
 
     FCL = os.path.basename(TARF)[:-6] + f".{IND}.fcl"
 
-#    run_command(f"httokendecode -H")
 #    run_command(f"LV=$(which voms-proxy-init); echo $LV; ldd $LV; rpm -q -a | egrep 'voms|ssl'; printenv PATH; printenv LD_LIBRARY_PATH")
     #    run_command(f"voms-proxy-info -all")
 
@@ -166,11 +168,14 @@ def main():
 
     # In production mode, copy the job submission log file from jsb_tmp to LOGFILE_LOC.
     LOGFILE_LOC = replace_file_extensions(FCL, "log", "log")
-    if os.environ.get("PROD") == "true":
-        # Retrieve environment variables
-        jsb_tmp =  os.getenv("JSB_TMP")
-        JOBSUB_LOG_FILE = "JOBSUB_LOG_FILE"
-        shutil.copy(os.path.join(jsb_tmp, JOBSUB_LOG_FILE), LOGFILE_LOC)
+
+    # Copy the jobsub log if JSB_TMP is defined
+    jsb_tmp = os.getenv("JSB_TMP")
+    if jsb_tmp:
+        jobsub_log = "JOBSUB_LOG_FILE"
+        src = os.path.join(jsb_tmp, jobsub_log)
+        print(f"Copying jobsub log from {src} to {LOGFILE_LOC}")
+        shutil.copy(src, LOGFILE_LOC)
 
     out_content += f"disk {LOGFILE_LOC} parents_list.txt\n"
     Path("output.txt").write_text(out_content)
@@ -182,7 +187,7 @@ def main():
     else:
         run_command("pushOutput output.txt")
 
-    run_command("rm *.root *.art *.txt")
+    run_command("rm -f *.root *.art *.txt")
 
 if __name__ == "__main__":
     main()

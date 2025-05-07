@@ -15,6 +15,15 @@
 	"njobs": 2000,
 	"events": 250000,
 	"run": 103001,
-	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aq/setup.sh"
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ap/setup.sh"
+    },
+    {
+	"dsconf": "MDC2020av",
+	"desc": "PiBeam",
+	"fcl": "Production/JobConfig/beam/POT_infinitepion.fcl",
+	"njobs": 10000,
+	"events": 100000,
+	"run": 1201,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020av/setup.sh"
     }
 ]

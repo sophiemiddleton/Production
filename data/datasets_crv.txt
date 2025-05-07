@@ -1,2 +1,0 @@
-CRVWB-000
-rec.mu2e.CRV_wideband_cosmics-noadc.CRVWB-000-008-000.root
