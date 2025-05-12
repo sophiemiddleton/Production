@@ -13,6 +13,12 @@ outputs: {
   }
 }
 
+# Disable LH filtering
+physics.filters.LHFilter : {
+  module_type : FixedFilter
+  ReturnValue : true
+}
+
 physics.EndPath : [ LoopHelixOutput]
 physics.end_paths : [ EndPath ]
 
