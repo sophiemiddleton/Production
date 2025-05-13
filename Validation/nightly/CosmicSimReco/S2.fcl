@@ -1,0 +1,9 @@
+#
+# Customization for validation
+#
+#include "Production/JobConfig/cosmic/S2Resampler.fcl"
+
+outputs.PrimaryOutput.fileName    : "dts.owner.CosmicValidation.version.sequencer.art"
+outputs.PrimaryOutput.outputCommands    : [
+  @sequence::outputs.PrimaryOutput.outputCommands
+]
