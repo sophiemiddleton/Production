@@ -21,7 +21,7 @@ def usage():
     print("e.g. run_JITfcl.py --copy_input_mdh")
 
 # Function to run a shell command and return the output while streaming
-def run_command(command):
+def run_command(command, hard_fail=True):
     print(f"Running: {command}")
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     output = []  # Collect the command output
@@ -34,7 +34,8 @@ def run_command(command):
         print(f"Error running command: {command}")
         for line in process.stderr:
             print(line, end="")
-        exit_abnormal()
+        if hard_fail:
+            exit_abnormal()
 
     return "\n".join(output)  # Return the full output as a string
 
@@ -49,18 +50,18 @@ def main():
     parser = argparse.ArgumentParser(description="Process some inputs.")
     parser.add_argument("--copy_input_mdh", action="store_true", help="Copy input files using mdh")
     parser.add_argument("--copy_input_ifdh", action="store_true", help="Copy input files using ifhd")
-    parser.add_argument('--dry-run', action='store_true', help='Print commands without actually running pushOutput')
-    parser.add_argument('--test-run', action='store_true', help='Run 10 events only')
-    parser.add_argument('--save-root', action='store_true', help='Save root and art output files')
-    parser.add_argument('--use-map', action='store_false', help='Save root and art output files')    
-    parser.add_argument('--location', type=str, default='tape', help='Location identifier to include in output.txt (default: "tape")')    
+    parser.add_argument('--dry_run', action='store_true', help='Print commands without actually running pushOutput')
+    parser.add_argument('--test_run', action='store_true', help='Run 10 events only')
+    parser.add_argument('--save_root', action='store_true', help='Save root and art output files')
+    parser.add_argument('--inloc', type=str, default='tape', help='Location of input files (default: "tape")')
+    parser.add_argument('--outloc', type=str, default='tape', help='Location identifier to include in output.txt (default: "tape")')
     
     args = parser.parse_args()
     copy_input_mdh = args.copy_input_mdh
     copy_input_ifdh = args.copy_input_ifdh
 
     #check token before proceeding
-    run_command(f"httokendecode -H")
+    run_command(f"httokendecode -H", hard_fail=False)
     
     fname = os.getenv("fname")
     if not fname:
@@ -83,40 +84,34 @@ def main():
         print("Error: Unable to extract index from filename.")
         exit_abnormal()
 
-    if args.use_map:
-        mapfile = run_command(f"ls {CONDOR_DIR_INPUT}/merged*.txt").strip()
-        # Split the output into a list of lines.
-        with open(mapfile, 'r') as f:
-            maplines = f.read().splitlines()
+    mapfile = run_command(f"ls {CONDOR_DIR_INPUT}/merged*.txt").strip()
+    # Split the output into a list of lines.
+    with open(mapfile, 'r') as f:
+        maplines = f.read().splitlines()
         
-        print("len(maplines): %d, IND: %d"%(len(maplines), IND))
+    print("len(maplines): %d, IND: %d"%(len(maplines), IND))
         
-        # Check that there are at least IND maplines.
-        if len(maplines) < IND:
-            raise ValueError(f"Expected at least {IND} maplines, but got only {len(maplines)}")
+    # Check that there are at least IND maplines.
+    if len(maplines) < IND:
+        raise ValueError(f"Expected at least {IND} maplines, but got only {len(maplines)}")
     
-        # Get the IND-th line (adjusting for Python's 0-index).
-        mapline = maplines[IND]
-        print(f"The {IND}th line is: {mapline}")
+    # Get the IND-th line (adjusting for Python's 0-index).
+    mapline = maplines[IND]
+    print(f"The {IND}th line is: {mapline}")
 
-        # Split the line into fields (assuming whitespace-separated).
-        fields = mapline.split()
-        if len(fields) < 2:
-            raise ValueError(f"Expected at least 2 fields in the line, but got: {mapline}")
+    # Split the line into fields (assuming whitespace-separated).
+    fields = mapline.split()
+    if len(fields) < 2:
+        raise ValueError(f"Expected at least 2 fields in the line, but got: {mapline}")
 
-        # Assign the fields to the appropriate variables.
-        TARF = fields[0]
-        IND = int(fields[1])  # update IND based on extracted value from the map
-        run_command(f"mdh copy-file -e 3 -o -v -s disk -l local {TARF}")
-    else:
-        TARF = run_command(f"ls {CONDOR_DIR_INPUT}/*.tar").strip()
+    # Assign the fields to the appropriate variables.
+    TARF = fields[0]
+    IND = int(fields[1])  # update IND based on extracted value from the map
+    run_command(f"mdh copy-file -e 3 -o -v -s disk -l local {TARF}")
 
     print(f"IND={IND} TARF={TARF}")
 
     FCL = os.path.basename(TARF)[:-6] + f".{IND}.fcl"
-
-#    run_command(f"LV=$(which voms-proxy-init); echo $LV; ldd $LV; rpm -q -a | egrep 'voms|ssl'; printenv PATH; printenv LD_LIBRARY_PATH")
-    #    run_command(f"voms-proxy-info -all")
 
     #unset BEARER_TOKEN
     print(f"BEARER_TOKEN before unset: {os.environ.get('BEARER_TOKEN')}")
@@ -128,7 +123,7 @@ def main():
     if copy_input_mdh:
         run_command(f"mu2ejobfcl --jobdef {TARF} --index {IND} --default-proto file --default-loc dir:{os.getcwd()}/indir > {FCL}")
         print("infiles: %s"%infiles)
-        run_command(f"mdh copy-file -e 3 -o -v -s tape -l local {infiles}")
+        run_command(f"mdh copy-file -e 3 -o -v -s {args.inloc} -l local {infiles}")
         run_command(f"mkdir indir; mv *.art indir/")
     elif copy_input_ifdh:
         run_command(f"mu2ejobfcl --jobdef {TARF} --index {IND} --default-proto file --default-loc dir:{os.getcwd()}/indir > {FCL}")
@@ -138,7 +133,7 @@ def main():
             run_command(f"ifdh cp {f} .")
         run_command(f"mkdir indir; mv *.art indir/")
     else:
-        run_command(f"mu2ejobfcl --jobdef {TARF} --index {IND} --default-proto root --default-loc tape > {FCL}")
+        run_command(f"mu2ejobfcl --jobdef {TARF} --index {IND} --default-proto root --default-loc {args.inloc} > {FCL}")
 
     print(f"{datetime.now()} submit_fclless {FCL} content")
     with open(FCL, 'r') as f:
@@ -160,11 +155,9 @@ def main():
     parents = infiles.split() + [fname]  # Add {fname} to the list of files
     Path("parents_list.txt").write_text("\n".join(parents) + "\n")
 
-#    tbz_file = replace_file_extensions(FCL, "bck", "tbz")
-#    out_content = f"{args.location} {tbz_file} parents_list.txt\n"
     out_content = ""
     for out_fname in out_fnames:
-        out_content += f"{args.location} {out_fname} parents_list.txt\n"
+        out_content += f"{args.outloc} {out_fname} parents_list.txt\n"
 
     # In production mode, copy the job submission log file from jsb_tmp to LOGFILE_LOC.
     LOGFILE_LOC = replace_file_extensions(FCL, "log", "log")
@@ -187,7 +180,7 @@ def main():
     else:
         run_command("pushOutput output.txt")
 
-    run_command("rm -f *.root *.art *.txt")
+#    run_command("rm -f *.root *.art *.txt")
 
 if __name__ == "__main__":
     main()
