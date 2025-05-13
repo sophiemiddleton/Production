@@ -15,6 +15,12 @@ outputs: {
   }
 }
 
+# Disable LH filtering
+physics.filters.LHFilter : {
+  module_type : FixedFilter
+  ReturnValue : true
+}
+
 physics.EndPath : [ @sequence::Reconstruction.OnSpillEndSequence, LoopHelixOutput]
 physics.end_paths : [ EndPath ]
 
