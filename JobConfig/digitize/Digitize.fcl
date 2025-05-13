@@ -30,4 +30,5 @@ physics.end_paths : [ EndPath ]
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/digitize/epilog.fcl"
 #include "mu2e-trig-config/core/trigDigiInputsEpilog.fcl"
-
+# the following is a default placeholder
+#include "Production/Validation/database.fcl"
