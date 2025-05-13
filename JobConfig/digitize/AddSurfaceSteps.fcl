@@ -12,7 +12,7 @@ outputs : {
     outputCommands : [ "keep *_*_*_*",
     "drop  mu2e::StepPointMCs_*_protonabsorber_*",
     "drop  mu2e::StepPointMCs_*_stoppingtarget_*" ]
-    fileName : "dts.mu2e.AddSurfaceSteps.Test.0.art"
+    fileName : "dig.mu2e.AddSurfaceSteps.Test.0.art"
   }
 }
 

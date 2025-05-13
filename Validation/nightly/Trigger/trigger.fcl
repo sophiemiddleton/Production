@@ -1,0 +1,74 @@
+#include "Production/JobConfig/digitize/prolog.fcl"
+#include "Offline/fcl/standardServices.fcl"
+#include "mu2e-trig-config/core/trigProducers.fcl"
+#include "mu2e-trig-config/core/trigFilters.fcl"
+#include "mu2e-trig-config/core/trigRecoSequences.fcl"
+#include "mu2e-trig-config/core/trigSequences.fcl"
+#include "mu2e-trig-config/gen/trig_valMenuPSConfig_OnSpill.fcl"
+#include "mu2e-trig-config/gen/trig_valMenu_OnSpill.fcl"
+process_name : OnSpillTrigger
+services : @local::Services.Reco
+#include "Production/Validation/database.fcl"
+
+source : { module_type : RootInput }
+physics : {
+   @table::TrigSequences
+   producers : { @table::TrigProducers.producers }
+   filters :  {
+      @table::TrigFilters.filters
+      @table::Trig_valMenuPSConfig
+   }
+}
+
+outputs : {
+  Output : {
+    module_type : RootOutput
+    SelectEvents : [ "*_highP_*" ]
+    outputCommands : [ "drop *_*_*_*",
+      @sequence::Digitize.TriggerProducts
+    ]
+    fileName: "dig.owner.val-trigger.dsconf.seq.art"
+  }
+}
+physics.Outpath : [ Output ]
+physics.end_paths : [ Outpath ]
+
+outputs.Output.fileName : "dig.owner.val-trigger.dsconf.seq.art"
+
+
+physics.trigger_paths : [@sequence::Trig_valMenu.trigger_paths]
+#include "mu2e-trig-config/core/trigDigiInputsEpilog.fcl"
+
+physics.producers.EWMProducer.SpillType : 1
+#include "Production/JobConfig/common/epilog.fcl"
+#include "Production/JobConfig/reco/drop_trigger.fcl"
+
+
+physics.producers.aprHelixTriggerInfoMerger.doDeepCopy                : 1
+physics.producers.aprHighPStopTargTriggerInfoMerger.doDeepCopy        : 1
+physics.producers.aprHighPTriggerInfoMerger.doDeepCopy                : 1
+physics.producers.aprLowPStopTargMultiTrkTriggerInfoMerger.doDeepCopy : 1
+physics.producers.aprLowPStopTargTriggerInfoMerger.doDeepCopy         : 1
+physics.producers.aprHelixTriggerInfoMerger.doDeepCopy                : 1
+
+physics.producers.cprDeHighPStopTargTriggerInfoMerger.doDeepCopy : 1
+physics.producers.cprDeHighPTriggerInfoMerger.doDeepCopy         : 1
+physics.producers.cprDeLowPStopTargTriggerInfoMerger.doDeepCopy  : 1
+physics.producers.cprHelixDeTriggerInfoMerger.doDeepCopy         : 1
+physics.producers.cprHelixUeTriggerInfoMerger.doDeepCopy         : 1
+
+physics.producers.tprDeHighPStopTargTriggerInfoMerger.doDeepCopy       : 1
+physics.producers.tprDeHighPTriggerInfoMerger.doDeepCopy               : 1
+physics.producers.tprDeLowPStopTargTriggerInfoMerger.doDeepCopy        : 1
+physics.producers.tprHelixDeTriggerInfoMerger.doDeepCopy               : 1
+physics.producers.tprHelixUeTriggerInfoMerger.doDeepCopy               : 1
+physics.producers.tprHelixDeIPATriggerInfoMerger.doDeepCopy            : 1
+physics.producers.tprHelixDeIPAPhisScaledTriggerInfoMerger.doDeepCopy  : 1
+
+physics.producers.caloFastPhotonTriggerInfoMerger.doDeepCopy           : 1
+physics.producers.caloFastMVANNCETriggerInfoMerger.doDeepCopy          : 1
+physics.producers.caloFastCosmicTriggerInfoMerger.doDeepCopy           : 1
+physics.producers.caloFastRMCTriggerInfoMerger.doDeepCopy              : 1
+
+physics.producers.cstCosmicTrackSeedTriggerInfoMerger.doDeepCopy       : 1
+

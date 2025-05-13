@@ -1,0 +1,11 @@
+#
+# Customization for validation
+#
+#include "Production/JobConfig/digitize/OnSpill.fcl"
+#include "Production/Validation/database.fcl"
+outputs.TriggerableOutput.fileName : "/dev/null"
+outputs.TriggeredOutput.fileName    : "dig.owner.MDSValidation.version.sequencer.art"
+outputs.TriggeredOutput.outputCommands    : [
+  @sequence::outputs.TriggeredOutput.outputCommands,
+  "drop *_*_*_Cosmic*"
+]

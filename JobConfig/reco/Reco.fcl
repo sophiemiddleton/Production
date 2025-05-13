@@ -14,3 +14,5 @@ physics : {
   filters : @local::Reconstruction.filters
   analyzers: @local::Reconstruction.analyzers
 }
+# the following is a placeholder
+#include "Production/Validation/database.fcl"

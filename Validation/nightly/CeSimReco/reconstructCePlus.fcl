@@ -1,0 +1,12 @@
+#
+# Customization for validation
+#
+#include "Production/JobConfig/recoMC/OnSpill.fcl"
+#include "Production/Validation/database.fcl"
+outputs.LoopHelixOutput.fileName    : "mcs.owner.CePlusSimRecoValidation.version.sequencer.art"
+outputs.LoopHelixOutput.outputCommands    : [
+  @sequence::outputs.LoopHelixOutput.outputCommands,
+  "drop mu2e::TriggerInfo_*_*_*",
+  "drop *_*_*_Primary",
+  "drop *_*_*_Digitize"
+]
