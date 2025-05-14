@@ -32,8 +32,6 @@ def run_command(command, hard_fail=True):
 
     if process.returncode != 0:
         print(f"Error running command: {command}")
-        for line in process.stderr:
-            print(line, end="")
         if hard_fail:
             exit_abnormal()
 
