@@ -172,7 +172,7 @@ def main():
     Path("output.txt").write_text(out_content)
 
     # Push output
-    run_command(f"httokendecode -H")
+    run_command(f"httokendecode -H", hard_fail=False)
     if args.dry_run:
         print("[DRY RUN] Would run: pushOutput output.txt")
     else:
