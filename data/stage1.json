@@ -25,7 +25,7 @@
     },
     {
 	"desc": "PiBeam",
-	"dsconf": "MDC2020av",
+	"dsconf": "MDC2020aw",
 	"fcl": "Production/JobConfig/beam/POT_infinitepion.fcl",
 	"fcl_overrides": {
 	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
@@ -33,7 +33,7 @@
 	"njobs": 5000,
 	"events": 200000,
 	"run": 1201,
-	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020av/setup.sh"
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aw/setup.sh"
     },
     {
 	"desc": "POT",
