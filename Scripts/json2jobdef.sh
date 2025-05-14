@@ -9,6 +9,7 @@ OWNER=${USER/#mu2epro/mu2e}
 JSON_FILE=""
 JOB_DESC=""
 PUSHOUT=false
+INLOC="tape"
 
 usage() {
   cat <<EOF
@@ -29,6 +30,7 @@ while [[ $# -gt 0 ]]; do
     --json)       JSON_FILE="$2"; shift 2;;
     --desc)       JOB_DESC="$2"; shift 2;;
     --owner)      OWNER="$2";    shift 2;;
+    --inloc)      inloc="$2";    shift 2;;
     --pushout)    PUSHOUT=true;    shift;;
     --help)       usage;;
     *) echo "Unknown option: $1" >&2; usage;;
@@ -56,6 +58,7 @@ FCL=$(jq -r '.fcl // empty' <<<"$entry")
 SIMJOB_SETUP=$(jq -r '.simjob_setup // empty' <<<"$entry")
 INPUT_DATA=$(jq -r '.input_data // empty' <<<"$entry")
 MERGE_FACTOR=$(jq -r '.merge_factor // empty' <<<"$entry")
+MERGE_FACTOR_RESAMPLER=$(jq -r '.merge_factor_resampler // 1' <<<"$entry")
 RUN=$(jq -r '.run // empty' <<<"$entry")
 EVENTS=$(jq -r '.events // empty' <<<"$entry")
 RESAMPLER_NAME=$(jq -r '.resampler_name // empty' <<<"$entry")
@@ -81,7 +84,7 @@ if [[ -n "$RESAMPLER_NAME" ]]; then
   nevts=$(samCountEvents.sh "$INPUT_DATA")
   skip=$((nevts / nfiles))
   echo "physics.filters.${RESAMPLER_NAME}.mu2e.MaxEventsToSkip: $skip" >> template.fcl
-  CMD+=( --auxinput "1:physics.filters.${RESAMPLER_NAME}.fileNames:inputs.txt" )
+  CMD+=( --auxinput "${MERGE_FACTOR_RESAMPLER}:physics.filters.${RESAMPLER_NAME}.fileNames:inputs.txt" )
 elif [[ -n "$MERGE_FACTOR" ]]; then
   echo "Merge job: $DESC, factor=$MERGE_FACTOR"
   CMD+=( --inputs inputs.txt --merge-factor "$MERGE_FACTOR" )
@@ -115,5 +118,5 @@ fi
 
 # Generate test FCL
 test_fcl="${parfile%.tar}.fcl"
-mu2ejobfcl --jobdef "$parfile" --index 0 --default-proto root --default-loc tape > "$test_fcl"
+mu2ejobfcl --jobdef "$parfile" --index 0 --default-proto root --default-loc "$inloc" > "$test_fcl"
 cat "$test_fcl"

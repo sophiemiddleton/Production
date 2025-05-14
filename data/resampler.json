@@ -272,6 +272,21 @@
         "events": 10000,
         "run": 1202,
         "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020av/setup.sh"
+    },
+    {
+        "desc": "PiTargetStops",
+        "dsconf": "MDC2020aw",
+        "fcl": "Production/JobConfig/pileup/PiBeamResampler.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},
+        "resampler_name": "beamResampler",
+        "input_data": "sim.mu2e.PiBeam.MDC2020aw.art",
+        "merge_factor_resampler": 100,
+        "njobs": 500,
+        "events": 100000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aw/setup.sh"
     }
 
 ]

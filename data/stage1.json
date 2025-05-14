@@ -1,15 +1,15 @@
 [
     {
 	"desc": "ExtractedCRY",
-	"dsconf": "MDC2020aq",
+	"dsconf": "MDC2020av",
 	"fcl": "Production/JobConfig/cosmic/ExtractedCRY.fcl",
 	"fcl_overrides": {
 	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
 	},
-	"njobs": 50000,
-	"events": 200000,
+	"njobs": 20000,
+	"events": 500000,
 	"run": 1205,
-	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aq/setup.sh"
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020av/setup.sh"
     },
     {
 	"desc": "WidebandCRV",
@@ -25,15 +25,15 @@
     },
     {
 	"desc": "PiBeam",
-	"dsconf": "MDC2020av",
+	"dsconf": "MDC2020aw",
 	"fcl": "Production/JobConfig/beam/POT_infinitepion.fcl",
 	"fcl_overrides": {
 	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
 	},
-	"njobs": 10000,
-	"events": 100000,
+	"njobs": 5000,
+	"events": 200000,
 	"run": 1201,
-	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020av/setup.sh"
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aw/setup.sh"
     },
     {
 	"desc": "POT",
