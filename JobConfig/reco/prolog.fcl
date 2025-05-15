@@ -194,7 +194,23 @@ Reconstruction : {
         maxD0 :  800.0
         minNStereo : 2
         minNPlanes : 2
-      } ]
+      },
+      { # also select vertical tracks; these need to have a lot of hits
+        requireCaloCluster : false
+        minFitCons : 0.0
+        minNStrawHits : 30
+        minMomentum : 300.0
+        maxMomentum : 1e6
+        minTanDip : -1.0e6
+        maxTanDip : 1.0e6
+        maxChi2DOF : 1.0e6
+        maxMomErr : 1e6
+        minD0 : -800.0
+        maxD0 :  800.0
+        minNStereo : 1
+        minNPlanes : 1
+      }
+      ]
     }
   }
 
