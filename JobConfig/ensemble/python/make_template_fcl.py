@@ -20,7 +20,7 @@ def main(args):
   livetime = float(args.livetime)
 
   # r mue and rmup rates
-  rue = float(args.rue)
+  #rue = float(args.rue)
 
   dioemin = float(args.dioemin)
   tmin = float(args.tmin)
@@ -35,15 +35,15 @@ def main(args):
   # extract normalization of each background/signal process:
   norms = {
           "DIO": dio_normalization(livetime,dioemin, args.BB),
-          "CE": ce_normalization(livetime,rue, args.BB),
-          "CeMLL": ce_normalization(livetime,rue, args.BB),
+          #"CE": ce_normalization(livetime,rue, args.BB),
+          #"CeMLL": ce_normalization(livetime,rue, args.BB),
           "CRYCosmic": cry_onspill_normalization(livetime, args.BB),
           "CORSIKACosmic": corsika_onspill_normalization(livetime, args.BB),
           "RPCInternal": rpc_normalization(livetime, args.tmin, 1, args.rpcemin, args.BB),
           "RPCExternal": rpc_normalization(livetime, args.tmin, 0, args.rpcemin, args.BB),
-          "RMCInternal": rmc_normalization(livetime, 1, args.rmcemin, args.BB),
-          "RMCExternal": rmc_normalization(livetime, 0, args.rmcemin, args.BB),
-          "IPAMichel": ipa_normalization(livetime, 0, args.ipaemin, args.BB)
+          "RMCInternal": rmc_normalization(livetime, 1, args.rmcemin, args.rmckmax, args.BB),
+          "RMCExternal": rmc_normalization(livetime, 0, args.rmcemin, args.rmckmax, args.BB),
+          "IPAMichel": ipaMichel_normalization(livetime, args.ipaemin, args.BB)
           }
 
   starting_event_num = {}
@@ -98,7 +98,7 @@ def main(args):
             # determine total number of events surviving all cuts
             reco_events += te.GetEntries()
           if int(args.verbose) == 2:
-            print(" reco events ", te.GetEntries())
+            print(" reco events ", reco_events)
         
           # determine total number of events generated
           t = fin.Get("SubRuns")
@@ -127,7 +127,7 @@ def main(args):
                   gen_events += getattr(t,bn).product().count()
           
           if signal == "RPCInternal" or signal == "RPCExternal":
-            gen_events *= 1148/1287106 # to factor in lifetime - FIXME - automate this!!!!
+            gen_events *= float(args.surv) # survival probability
           
           if int(args.verbose) == 2:
             print("total gen events ",gen_events)
@@ -189,7 +189,7 @@ def main(args):
       d["subRun"] = subrun
       d["samplingSeed"] = samplingseed + subrun
       # put all the exact parameter values in the fcl file
-      d["comments"] = "#livetime: %f\n#rue: %f\n#dioemin: %f\n#tmin: %f\n#run: %f\n#nevts: %d\n" % (livetime,rue,dioemin,tmin,run,events_this_run)
+      d["comments"] = "#livetime: %f\n#dioemin: %f\n#tmin: %f\n#run: %f\n#nevts: %d\n" % (livetime,dioemin,tmin,run,events_this_run)
 
       # make the .fcl file for this subrun (subrun # d)
       fout = open(os.path.join("SamplingInput_sr%d.fcl" % (subrun)),"w")
@@ -212,15 +212,17 @@ if __name__ == "__main__":
     parser.add_argument("--BB", help="BB mode e.g. 1BB")
     parser.add_argument("--release", help="e.g. MDC2020ad")
     parser.add_argument("--livetime", help="simulated livetime")
-    parser.add_argument("--rue", help="signal branching rate")
+    #parser.add_argument("--rue", help="signal branching rate")
     parser.add_argument("--tmin", help="arrival time cut")
     parser.add_argument("--dioemin", help="min energy cut dio")
     parser.add_argument("--rpcemin", help="min energy cut rpc")
     parser.add_argument("--ipaemin", help="min energy cut ipa")
     parser.add_argument("--rmcemin", help="min energy cut rmc")
+    parser.add_argument("--rmckmax", help="kmax theory value")
     parser.add_argument("--run", help="run number")
     parser.add_argument("--samplingseed", help="samplingseed")
     parser.add_argument("--tag", help="ouput file tag")
+    parser.add_argument("--surv", help="pion surv prob")
     parser.add_argument("--prc", help="list of signals e.g CE DIO Cosmic", nargs='+')
     args = parser.parse_args()
     (args) = parser.parse_args()

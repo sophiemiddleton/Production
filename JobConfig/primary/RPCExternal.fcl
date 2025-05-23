@@ -4,6 +4,7 @@
 
 #include "Production/JobConfig/primary/RPC.fcl"
 
+physics.filters.PrimaryFilter.MinimumPartMom : 80.
 physics.producers.generate.RPCType : "mu2eExternalRPC"
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eExternalRPC"
 outputs.PrimaryOutput.fileName: "dts.owner.RPCExternal.version.sequencer.art"

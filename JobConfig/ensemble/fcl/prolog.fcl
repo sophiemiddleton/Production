@@ -6,7 +6,7 @@ Ensemble : {
           "keep mu2e::CosmicLivetime_*_*_*",
           "drop *_genCounter_*_*",
           "drop *_protonBunchIntensity_*_*"]
-    OutputCommandsMC : [   "keep *_*_*_*"]
+    OutputCommandsMC : [   "keep *_*_*_*","keep mu2e::SurfaceSteps_*_*_*"]
     OutputCommandsData : [   "drop *_*_*_*",
           "keep mu2e::KalSeeds_*_*_*",
           "keep mu2e::TimeClusters_*_*_*",

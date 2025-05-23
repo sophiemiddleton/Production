@@ -12,7 +12,7 @@ exit_abnormal() {
 }
 
 RELEASE=MDC2020
-VERSION=ai
+VERSION=at
 TAG="" # MDS1a
 CONFIG=""
 # Loop: Get the next option;
@@ -55,7 +55,7 @@ ls logs/* &> logs.txt
 
 while IFS='= ' read -r col1
 do
-  temp=$(sed -n '/Dataset          Counts /, /Dataset Counts/ p' ${col1})
+  temp=$(sed -n '/Dataset        Counts /, /Dataset Counts/ p' ${col1})
   echo $temp >> gen.txt
 done < logs.txt
 
@@ -65,14 +65,7 @@ sed -i -e 's/ /\n/g' DIO.txt
 temp2=$(awk '{s+=$1} END {print s}' DIO.txt)
 echo "total DIO " ${temp2}
 
-
-temp=$(sed -r  's/.* CeMLL ([^ ]+).*/\1/' gen.txt) 
-echo $temp >> CeMLL.txt
-sed -i -e 's/ /\n/g' CeMLL.txt
-temp2=$(awk '{s+=$1} END {print s}' CeMLL.txt)
-echo "total CeMLL " ${temp2}
-
-temp=$(sed -r  's/.* CORSIKACosmic ([^ ]+).*/\1/' gen.txt) 
+temp=$(sed -r  's/.* CRYCosmic ([^ ]+).*/\1/' gen.txt) 
 echo $temp >> cosmic.txt
 sed -i -e 's/ /\n/g' cosmic.txt
 temp2=$(awk '{s+=$1} END {print s}' cosmic.txt)
@@ -89,3 +82,21 @@ echo $temp >> extRPC.txt
 sed -i -e 's/ /\n/g' extRPC.txt
 temp2=$(awk '{s+=$1} END {print s}' extRPC.txt)
 echo "total external RPC " ${temp2}
+
+temp=$(sed -r  's/.* RMCInternal ([^ ]+).*/\1/' gen.txt) 
+echo $temp >> intRMC.txt
+sed -i -e 's/ /\n/g' intRMC.txt
+temp2=$(awk '{s+=$1} END {print s}' intRMC.txt)
+echo "total internal RMC " ${temp2}
+
+temp=$(sed -r  's/.* RMCExternal ([^ ]+).*/\1/' gen.txt) 
+echo $temp >> extRMC.txt
+sed -i -e 's/ /\n/g' extRMC.txt
+temp2=$(awk '{s+=$1} END {print s}' extRMC.txt)
+echo "total external RMC " ${temp2}
+
+temp=$(sed -r  's/.* IPAMichel ([^ ]+).*/\1/' gen.txt) 
+echo $temp >> ipa.txt
+sed -i -e 's/ /\n/g' ipa.txt
+temp2=$(awk '{s+=$1} END {print s}' ipa.txt)
+echo "total ipa " ${temp2}

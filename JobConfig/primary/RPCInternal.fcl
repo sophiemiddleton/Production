@@ -4,6 +4,10 @@
 
 #include "Production/JobConfig/primary/RPC.fcl"
 
+# Filter low energy internal conversions out
+physics.filters.GenFilter.filterEnergy : true
+physics.filters.GenFilter.emin : 84.
+physics.filters.GenFilter.emax : 1000.
 physics.producers.generate.RPCType : "mu2eInternalRPC"
 physics.producers.FindMCPrimary.PrimaryProcess : "mu2eInternalRPC"
 outputs.PrimaryOutput.fileName: "dts.owner.RPCInternal.version.sequencer.art"

@@ -11,10 +11,10 @@ exit_abnormal() {
 }
 OWNER="mu2e"
 INRELEASE=MDC2020
-INVERSION=ar
+INVERSION=at
 TAG=""
 VERBOSE=1
-SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ar/setup.sh
+SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh
 
 
 # Loop: Get the next option;
@@ -52,20 +52,19 @@ done
 NJOBS="" #to help calculate the number of events per job
 LIVETIME="" #seconds
 RUN=1201
-DIO_EMIN=""
+DIO_EMIN=95
 RPC_EMIN=""
 RMC_EMIN=""
 IPA_EMIN=""
 TMIN=""
 BB=""
-RMUE=""
 SAMPLINGSEED=1
-COSMICTAG=""
+COSMICTAG="MDC2020ar"
 GEN=""
 CONFIG=${TAG}.txt
 OUTRELEASE="MDC2020"
-OUTVERSION="ar"
-
+OUTVERSION="at"
+SURV=0.000891923
 
 while IFS='= ' read -r col1 col2
 do 
@@ -84,6 +83,9 @@ do
     if [[ "${col1}" == "RMC_emin" ]] ; then
       RMC_EMIN=${col2}
     fi
+    if [[ "${col1}" == "RMC_kmax" ]] ; then
+      RMC_kmax=${col2}
+    fi
     if [[ "${col1}" == "IPA_emin" ]] ; then
       IPA_EMIN=${col2}
     fi
@@ -99,9 +101,13 @@ do
     if [[ "${col1}" == "CosmicTag" ]] ; then
       COSMICTAG=${col2}
     fi
+    if [[ "${col1}" == "pisurv" ]] ; then
+      SURV=${col2}
+    fi
+    
 done <${CONFIG}
 echo "extracted config from Stage 1"
-echo ${LIVETIME} ${DIO_EMIN} ${BB} ${RMUE}
+echo ${LIVETIME} ${DIO_EMIN} ${BB}
 
 rm filenames_${GEN}Cosmic
 rm filenames_DIO
@@ -114,15 +120,15 @@ rm *.tar
 
 echo "accessing files, making file lists"
 mu2eDatasetFileList "dts.mu2e.Cosmic${GEN}SignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_${GEN}Cosmic
-mu2eDatasetFileList "dts.mu2e.DIOtail_${DIO_EMIN}.${INRELEASE}${INVERSION}.art"| head -${NJOBS} > filenames_DIO
-mu2eDatasetFileList "dts.mu2e.RPCInternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RPCInternal
-mu2eDatasetFileList "dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RPCExternal
+mu2eDatasetFileList "dts.mu2e.DIOtail95.${INRELEASE}${INVERSION}.art"| head -${NJOBS} > filenames_DIO
+mu2eDatasetFileList "dts.mu2e.RPCInternal.${INRELEASE}as.art" | head -${NJOBS} > filenames_RPCInternal
+mu2eDatasetFileList "dts.mu2e.RPCExternal.${INRELEASE}as.art" | head -${NJOBS} > filenames_RPCExternal
 mu2eDatasetFileList "dts.mu2e.RMCInternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RMCInternal
-mu2eDatasetFileList "dts.mu2e.RMCExternal.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RMCExternal
-mu2eDatasetFileList "dts.mu2e.IPAMichel.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_IPAMichel
+mu2eDatasetFileList "dts.mu2e.RMCExternalCat.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_RMCExternal
+mu2eDatasetFileList "dts.mu2e.IPAMuminusMichel.${INRELEASE}${INVERSION}.art" | head -${NJOBS} > filenames_IPAMichel
 
 echo "making template fcl"
-make_template_fcl.py --BB=${BB} --release=${OUTRELEASE}${OUTVERSION}  --tag=${TAG} --verbose=${VERBOSE} --rue=${RMUE} --livetime=${LIVETIME} --run=${RUN} --dioemin=${DIO_EMIN} --rpcemin=${RPC_EMIN} --rmcemin=${RMC_EMIN} --ipaemin=${IPA_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "DIO" "${GEN}Cosmic" "RPCInternal" "RPCExternal" "RMCInternal" "RMCExternal" "IPAMichel"
+make_template_fcl.py --BB=${BB} --release=${OUTRELEASE}${OUTVERSION}  --tag=${TAG} --verbose=${VERBOSE} --livetime=${LIVETIME} --run=${RUN} --dioemin=${DIO_EMIN} --rpcemin=${RPC_EMIN} --rmcemin=${RMC_EMIN} --rmckmax=${RMC_kmax} --ipaemin=${IPA_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --surv ${SURV} --prc "DIO" "${GEN}Cosmic" "RPCInternal" "RPCExternal" "RMCInternal" "RMCExternal" "IPAMichel"
 
 ##### Below is genEnsemble and Grid:
 echo "remove old files"
@@ -137,18 +143,18 @@ rm filenames_IPAMichel_${NJOBS}.txt
 
 echo "get NJOBS files and list"
 samweb list-files "dh.dataset=dts.mu2e.Cosmic${GEN}SignalAll.${COSMICTAG}.art" | head -${NJOBS} > filenames_${GEN}Cosmic_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.DIOtail_${DIO_EMIN}.${INRELEASE}${INVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.RPCInternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCInternal_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.RPCExternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCExternal_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.DIOtail95.${INRELEASE}${INVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.RPCInternal.${INRELEASE}as.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCInternal_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.RPCExternal.${INRELEASE}as.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCExternal_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.RMCInternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RMCInternal_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.RMCExternal.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RMCExternal_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.IPAMichel.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_IPAMichel_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.RMCExternalCat.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RMCExternal_${NJOBS}.txt
+samweb list-files "dh.dataset=dts.mu2e.IPAMuminusMichel.${INRELEASE}${INVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_IPAMichel_${NJOBS}.txt
 
 
 DSCONF=${OUTRELEASE}${OUTVERSION}
 # note change setup to code to use a custom tarball
 echo "run mu2e jobdef"
-cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:${GEN}Cosmic:filenames_${GEN}Cosmic_${NJOBS}.txt --sampling=1:RPCInternal:filenames_RPCInternal_${NJOBS}.txt  --embed SamplingInput_sr0.fcl  --sampling=1:RPCExternal:filenames_RPCExternal_${NJOBS}.txt --sampling=1:RMCInternal:filenames_RMCInternal_${NJOBS}.txt --sampling=1:IPAMichel:filenames_IPAMichel_${NJOBS}.txt--verb "
+cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:${GEN}Cosmic:filenames_${GEN}Cosmic_${NJOBS}.txt --sampling=1:RPCInternal:filenames_RPCInternal_${NJOBS}.txt  --embed SamplingInput_sr0.fcl  --sampling=1:RPCExternal:filenames_RPCExternal_${NJOBS}.txt --sampling=1:RMCInternal:filenames_RMCInternal_${NJOBS}.txt --sampling=1:RMCExternal:filenames_RMCExternal_${NJOBS}.txt --sampling=1:IPAMichel:filenames_IPAMichel_${NJOBS}.txt --verb "
 echo "Running: $cmd"
 $cmd
 parfile=$(ls cnf.*.tar)

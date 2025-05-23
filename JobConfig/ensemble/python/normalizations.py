@@ -48,7 +48,7 @@ def getPOT(onspilltime, run_mode = '1BB',printout=False, frac=1): #livetime in s
       # assume some fraction of 1BB
       mean_PBI_low = 1.6e7*frac
       Tcycle = 1.33 #s
-      POT_per_cycle = 4e12*frac
+      POT_per_cycle = 4e12*(1-frac)
       dutyfactor = get_duty_factor(run_mode)#TODO: how to?
       Ncycles = onspilltime/Tcycle
       NPOT = Ncycles * POT_per_cycle 
@@ -174,13 +174,14 @@ for line in lines:
 def rpc_normalization(onspilltime, tmin, internal, emin, run_mode = '1BB'):
   POT = getPOT(onspilltime, run_mode)
   # hack: --> will come from new table eventually
-  npistops = 1287106 # from above
-  target_stopped_pi_per_POT =  0.01337 * 0.1670 # from above
-  time_eff = 83146/npistops # from above
-  
-  total_sum_of_weights = 1148 # from filter - TODO
-  selected_sum_of_weights = 0.178864 # from filter - TODO
+  npistops = 41798702 ## from above (MDC2020aw)
+  target_stopped_pi_per_POT =  0.003924801 * 0.522483775 # from above (MDC2020ak)
+  npifilter = 4378518 # from above (MDC2020aw)
+  time_eff = npifilter/npistops  
+  total_sum_of_weights =  37468# from filter
+  selected_sum_of_weights =  5.7055#from filter
 
+  gen_factor = 50 # from Michael (for the new sampling factors)
   spec = open(os.path.join(os.environ["MUSE_WORK_DIR"],"Production/JobConfig/ensemble/rpcspectrum.tbl")) #Bistrilich
   energy = []
   val = []
@@ -225,9 +226,9 @@ def rmc_normalization(onspilltime, internal, emin, kmax = 90.1, run_mode = '1BB'
   energy = []
   val = []
   # closure approximation as implemented in MuonCaptureSpectrum.cc
-  for i in range(int((kmax-57.05)/0.1)):
+  for i in range(int((float(kmax)-57.05)/0.1)):
     temp_e = 57.05 + i*0.1
-    xFit = temp_e/kmax
+    xFit = temp_e/float(kmax)
     energy.append(temp_e)
     val.append((1 - 2*xFit +2*xFit*xFit)*xFit*(1-xFit)*(1-xFit))
   bin_width = energy[1]-energy[0];
@@ -236,7 +237,7 @@ def rmc_normalization(onspilltime, internal, emin, kmax = 90.1, run_mode = '1BB'
   cut_norm = 0
   for i in range(len(val)):
     total_norm += val[i]
-    if (energy[i]-bin_width/2. >= emin):
+    if (float(energy[i])-float(bin_width)/2. >= float(emin)):
       cut_norm += val[i]
 
   captures_per_stopped_muon = 0.609 # from AL capture studies
@@ -248,6 +249,7 @@ def rmc_normalization(onspilltime, internal, emin, kmax = 90.1, run_mode = '1BB'
   
   if int(internal) == 1:
     print("RMC_emin=",emin)
+    print("RMC_kmax=",kmax)
     print("RMC_fraction_sampled=",cut_norm/total_norm)
     physics_events *= internal_per_RMC;
   return physics_events
