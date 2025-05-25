@@ -103,12 +103,10 @@ calculateEvents.py --livetime ${LIVETIME} --prc "IPAMichel" --BB ${BB} --ipaemin
 
 calculateEvents.py --livetime ${LIVETIME}  --dioemin ${DEM_EMIN} --prc "DIO" --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 1 --rpcemin 85 --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 1 --rpcemin 50 --BB ${BB} --printpot "no" >> ${TAG}.txt
 
-calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 0  --rpcemin 85 --BB ${BB} --printpot "no" >> ${TAG}.txt
+calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 0  --rpcemin 50 --BB ${BB} --printpot "no" >> ${TAG}.txt
 
 calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 1  --rmcemin 85 --BB ${BB} --printpot "no" >> ${TAG}.txt
 
 calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 0  --rmcemin 85 --BB ${BB} --printpot "no" >> ${TAG}.txt
-
-

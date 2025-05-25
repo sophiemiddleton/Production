@@ -157,14 +157,14 @@ Digitize: {
   #
   TriggeredOutput : {
     module_type : RootOutput
-    fileName    : @nil
+    fileName    : "dig.owner.Triggered.version.sequencer.art"
   }
   #
   # Output stream for MC-truth selected events
   #
   TriggerableOutput : {
     module_type : RootOutput
-    fileName    : @nil
+    fileName    : "dig.owner.Triggerable.version.sequencer.art"
   }
   #
   # trigger selections that can be used to finalize the triggerOutput selection, depending on digitization mode and source

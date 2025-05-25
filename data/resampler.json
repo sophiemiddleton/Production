@@ -1,0 +1,292 @@
+[
+    {
+        "desc": "RMCFlatGammaStops",
+        "dsconf": "MDC2020ap",
+        "fcl": "Production/JobConfig/primary/RMCFlatGammaStops.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 1000000,
+        "njobs": 100,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ap/setup.sh"
+    },
+    {
+        "desc": "RMCFlatGammaResampling",
+        "dsconf": "MDC2020aq",
+        "fcl": "Production/JobConfig/primary/RMCFlatGammaResampling.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},
+        "resampler_name": "GammaConversionResampler",
+        "input_data": "sim.mu2e.RMCFlatGammaStops.MDC2020ap.art",
+        "events": 100000,
+        "njobs": 10,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aq/setup.sh"
+    },
+    {
+        "desc": "RMCIPAFlatGammaResampling",
+        "dsconf": "MDC2020ap",
+        "fcl": "Production/JobConfig/primary/RMCIPAFlatGammaResampling.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},
+        "resampler_name": "GammaConversionResampler",
+        "input_data": "sim.mu2e.RMCFlatIPAGammaStops.MDC2020ap.art",
+        "events": 100000,
+        "njobs": 100,
+        "run": 1202,
+        "simjob_setup": ""
+    },
+    {
+        "desc": "RMCWireFlatGammaResampling",
+        "dsconf": "MDC2020ap",
+        "fcl": "Production/JobConfig/primary/RMCWireFlatGammaResampling.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},
+        "resampler_name": "GammaConversionResampler",
+        "input_data": "sim.mu2e.RMCFlatWireGammaStops.MDC2020ap.art",
+        "events": 100000,
+        "njobs": 100,
+        "run": 1202,
+        "simjob_setup": ""
+    },
+    {
+        "desc": "RMCInternalEndpoint",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/RMCInternalEndpoint.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 70000,
+        "njobs": 2000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "RMCExternalEndpoint",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/RMCExternalEndpoint.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 500000,
+        "njobs": 8000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "RMCInternal",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/RMCInternal.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 250000,
+        "njobs": 2000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "RMCExternal",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/RMCExternal.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 500000,
+        "njobs": 8000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "DIOtail95",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/DIOtail.fcl",
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 5000,
+        "njobs": 2000,
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\"",
+	    "physics.producers.generate.decayProducts.spectrum.elow": 95,
+	    "physics.producers.generate.decayProducts.spectrum.ehi": 1000,
+	    "physics.filters.GenFilter.maxr_min": 320,
+	    "physics.filters.GenFilter.maxr_max": 500
+	},
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "IPAMuminusMichel",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/IPAMuminusMichel.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "IPAMuminusStopResampler",
+        "input_data": "sim.mu2e.IPAMuminusStopsCat.MDC2020at.art",
+        "events": 5000,
+        "njobs": 2000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "CePlusEndpoint",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/CePlusEndpoint.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 5000,
+        "njobs": 2000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "CeEndpoint",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/CeEndpoint.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 5000,
+        "njobs": 2000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "CePLeadingLog",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/CePLeadingLog.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 5000,
+        "njobs": 2000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "CeMLeadingLog",
+        "dsconf": "MDC2020at",
+        "fcl": "Production/JobConfig/primary/CeMLeadingLog.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "events": 5000,
+        "njobs": 2000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+        "desc": "RPCInternal",
+        "dsconf": "MDC2020as",
+        "fcl": "Production/JobConfig/primary/RPCInternal.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "TargetPiStopResampler",
+        "input_data": "sim.mu2e.PiminusStopsFilt.MDC2020ak.art",
+        "njobs": 2000,
+        "events": 20000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020as/setup.sh"
+    },
+    {
+        "desc": "RPCExternal",
+        "dsconf": "MDC2020as",
+        "fcl": "Production/JobConfig/primary/RPCExternal.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "TargetPiStopResampler",
+        "input_data": "sim.mu2e.PiminusStopsFilt.MDC2020ak.art",
+        "njobs": 2000,
+        "events": 1000000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020as/setup.sh"
+    },
+    {
+        "desc": "PbarSTGun",
+        "dsconf": "MDC2020ap",
+        "fcl": "Production/JobConfig/primary/AntiprotonStop.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},	
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.stoppedSimpleAntiprotons.MDC2020ap.art",
+        "njobs": 100,
+        "events": 10000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020ap/setup.sh"
+    },
+    {
+        "desc": "FlateMinus",
+        "dsconf": "MDC2020av",
+        "fcl": "Production/JobConfig/primary/FlateMinus.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\"",
+	    "physics.producers.generate.startMom": 90,
+	    "physics.producers.generate.endMom": 110
+	},
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "njobs": 100,
+        "events": 10000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020av/setup.sh"
+    },
+    {
+        "desc": "FlatePlus",
+        "dsconf": "MDC2020av",
+        "fcl": "Production/JobConfig/primary/FlatePlus.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\"",
+	    "physics.producers.generate.startMom": 90,
+	    "physics.producers.generate.endMom": 110
+	},
+        "resampler_name": "TargetStopResampler",
+        "input_data": "sim.mu2e.MuminusStopsCat.MDC2020p.art",
+        "njobs": 100,
+        "events": 10000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020av/setup.sh"
+    },
+    {
+        "desc": "PiTargetStops",
+        "dsconf": "MDC2020aw",
+        "fcl": "Production/JobConfig/pileup/PiBeamResampler.fcl",
+	"fcl_overrides": {
+	    "services.GeometryService.bFieldFile": "\"Offline/Mu2eG4/geom/bfgeom_no_tsu_ps_v01.txt\""
+	},
+        "resampler_name": "beamResampler",
+        "input_data": "sim.mu2e.PiBeam.MDC2020aw.art",
+        "merge_factor_resampler": 100,
+        "njobs": 500,
+        "events": 100000,
+        "run": 1202,
+        "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020aw/setup.sh"
+    }
+
+]

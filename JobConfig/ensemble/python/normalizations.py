@@ -285,8 +285,13 @@ def ipaMichel_normalization(onspilltime, ipa_demin, run_mode = '1BB'):
         print("IPA_fraction_sampled=", fraction_sampled)
         nIPA = POT * ipa_stopped_mu_per_POT * IPA_decays_per_stopped_muon * fraction_sampled
         return nIPA
-    
 
+# work from signal to rmue  
+def get_ce_rmue(onspilltime, nsig, run_mode = '1BB'):
+    POT = getPOT(onspilltime, run_mode)
+    captures_per_stopped_muon = 0.609 # for Al
+    rmue = nsig/(POT * target_stopped_mu_per_POT * captures_per_stopped_muon)
+    return  rmue
 
 if __name__ == '__main__':
   tst_1BB = getPOT(9.52e6)

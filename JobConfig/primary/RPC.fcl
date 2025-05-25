@@ -13,7 +13,7 @@ physics.producers.generate : {
   RPCType : @nil
   spectrum : {
     spectrumShape : Bistirlich
-    elow : 85.0
+    elow : 50.0
     ehi : 139.5
     spectrumResolution : 0.1 #MeV
   }

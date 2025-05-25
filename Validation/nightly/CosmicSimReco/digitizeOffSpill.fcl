@@ -1,0 +1,12 @@
+#
+# Customization for validation
+#
+#include "Production/JobConfig/digitize/OffSpill.fcl"
+#include "Production/Validation/database.fcl"
+outputs.TriggerableOutput.fileName : "/dev/null"
+outputs.TriggeredOutput.fileName    : "dig.owner.CosmicOffSpillValidation.version.sequencer.art"
+outputs.TriggeredOutput.outputCommands    : [
+  @sequence::outputs.TriggeredOutput.outputCommands,
+  "drop *_*_*_Cosmic*",
+  "drop mu2e::TriggerInfo_*_*_*"
+]

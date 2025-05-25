@@ -1,0 +1,55 @@
+[
+    {
+	"desc": "MuonIPAStopSelector",
+	"dsconf": "MDC2020at",
+	"fcl": "Production/JobConfig/pileup/MuonIPAStopSelector.fcl",
+	"input_data": "sim.mu2e.IPAStopsCat.MDC2020p.art",
+	"merge_factor": 1,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+	"dsconf": "MDC2020at",
+	"input_data": "dts.mu2e.RMCExternal.MDC2020at.art",
+	"merge_factor": 8,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020at/setup.sh"
+    },
+    {
+	"desc": "OffSpillTriggered-noMC",
+	"dsconf": "MDC2020au_best_v1_3",
+	"fcl_overrides": {
+	    "physics.trigger_paths": [],
+	    "outputs.strip.fileName": "dig.owner.dsdesc.dsconf.seq.art"
+	},
+	"extra_opts": "--override-output-description",
+	"fcl": "Production/JobConfig/digitize/StripMC.fcl",
+	"input_data": "dig.mu2e.OffSpillTriggered.MDC2020ar_best_v1_3.art",
+	"merge_factor": 3,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020au/setup.sh"
+    },
+    {
+	"desc": "CosmicCRYExtractedCatTriggered-noMC",
+	"dsconf": "MDC2020au_best_v1_3",
+	"fcl_overrides": {
+	    "physics.trigger_paths": [],
+	    "outputs.strip.fileName": "dig.owner.dsdesc.dsconf.seq.art"
+	},
+	"extra_opts": "--override-output-description",
+	"fcl": "Production/JobConfig/digitize/StripMC.fcl",
+	"input_data": "dig.mu2e.CosmicCRYExtractedCatTriggered.MDC2020ae_best_v1_3.art",
+	"merge_factor": 6,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020au/setup.sh"
+    },
+    {
+	"desc": "ensembleMDS1eOnSpillTriggered-noMC",
+	"dsconf": "MDC2020au_best_v1_3",
+	"fcl_overrides": {
+	    "physics.trigger_paths": [],
+	    "outputs.strip.fileName": "\"dig.owner.dsdesc.dsconf.seq.art\""
+	},
+	"extra_opts": "--override-output-description",
+	"fcl": "Production/JobConfig/digitize/StripMC.fcl",
+	"input_data": "dig.mu2e.ensembleMDS1eOnSpillTriggered.MDC2020aq_best_v1_3.art",
+	"merge_factor": 1,
+	"simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/MDC2020au/setup.sh"
+    }
+]

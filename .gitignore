@@ -36,5 +36,9 @@
 *.app
 # spack
 spack-*
+<<<<<<< HEAD
 *pyc
 
+=======
+build-*
+>>>>>>> 567bc12ca38e0b34feb65fdc5155b0496e01b928

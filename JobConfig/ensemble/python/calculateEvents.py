@@ -5,9 +5,12 @@ def main(args):
     Yield = 0
     if (str(args.printpot) == "print"):
       getPOT(float(args.livetime), str(args.BB),True)
-    if(args.prc == "CEMLL"):
+    if(args.prc == "CeMLeadingLog"):
       Yield = ce_normalization(float(args.livetime), float(args.rue), str(args.BB))
-      print("CEMLL_yield=",Yield)
+      print(Yield)
+    if(args.prc == "GetRMUE"):
+      Yield = get_ce_rmue(float(args.livetime), float(args.nsig), str(args.BB))
+      print(Yield)
     if(args.prc == "DIO"):
       Yield = dio_normalization(float(args.livetime), float(args.dioemin), str(args.BB))
       print("DIO_yield=",Yield)
@@ -48,6 +51,7 @@ if __name__ == '__main__':
     parser.add_argument("--printpot", help="print pot", default="no")
     parser.add_argument("--tmin", help="tmin", default=0)
     parser.add_argument("--internal", help="internal", default=1)
+    parser.add_argument("--nsig", help="internal")
     args = parser.parse_args()
     (args) = parser.parse_args()
     main(args)
