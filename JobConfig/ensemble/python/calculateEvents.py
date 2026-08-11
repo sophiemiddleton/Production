@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+import argparse
 from normalizations import *
 
 def main(args):
@@ -43,6 +44,30 @@ def main(args):
     if(args.prc == "RMC" and int(args.internal) == 0):
       Yield = rmc_normalization(float(args.livetime),  str(args.internal), float(args.rmcemin))
       print("ExternalRMC_yield=",Yield)
+    if(args.prc == "RMCN0External"):
+      Yield = rmc_0n_normalization(float(args.livetime), float(args.rmcn0emin), internal=0, run_mode=str(args.BB))
+      print("ExternalRMCN0_yield=",Yield)
+    if(args.prc == "RMCN0Internal"):
+      Yield = rmc_0n_normalization(float(args.livetime), float(args.rmcn0emin), internal=1, run_mode=str(args.BB))
+      print("InternalRMCN0_yield=",Yield)
+    if(args.prc == "RMCPhaseSpace0NExternal"):
+      Yield = rmc_0n_normalization(float(args.livetime), float(args.rmcn0emin), internal=0, run_mode=str(args.BB))
+      print("ExternalRMCPhaseSpace0N_yield=",Yield)
+    if(args.prc == "RMCPhaseSpace0NInternal"):
+      Yield = rmc_0n_normalization(float(args.livetime), float(args.rmcn0emin), internal=1, run_mode=str(args.BB))
+      print("InternalRMCPhaseSpace0N_yield=",Yield)
+    if(args.prc == "RMCN1External"):
+      Yield = rmc_1n_normalization(float(args.livetime), float(args.rmcn1emin), internal=0, run_mode=str(args.BB))
+      print("ExternalRMCN1_yield=",Yield)
+    if(args.prc == "RMCN1Internal"):
+      Yield = rmc_1n_normalization(float(args.livetime), float(args.rmcn1emin), internal=1, run_mode=str(args.BB))
+      print("InternalRMCN1_yield=",Yield)
+    if(args.prc == "RMCPhaseSpace1NExternal"):
+      Yield = rmc_1n_normalization(float(args.livetime), float(args.rmcn1emin), internal=0, run_mode=str(args.BB))
+      print("ExternalRMCPhaseSpace1N_yield=",Yield)
+    if(args.prc == "RMCPhaseSpace1NInternal"):
+      Yield = rmc_1n_normalization(float(args.livetime), float(args.rmcn1emin), internal=1, run_mode=str(args.BB))
+      print("InternalRMCPhaseSpace1N_yield=",Yield)
     if(args.prc == "IPAMichel"):
       Yield = ipaMichel_normalization(float(args.livetime), float(args.ipaemin), str(args.BB))
       print("IPAMichel_yield=",Yield)
@@ -58,6 +83,8 @@ if __name__ == '__main__':
     parser.add_argument("--ipaemin", help="min energy cut dio ipa")
     parser.add_argument("--rpcemin", help="rpcemin", default=0)
     parser.add_argument("--rmcemin", help="min energy cut rmc")
+    parser.add_argument("--rmcn0emin", help="min energy cut rmc 0N")
+    parser.add_argument("--rmcn1emin", help="min energy cut rmc 1N")
     parser.add_argument("--prc", help="process")
     parser.add_argument("--printpot", help="print pot", default="no")
     parser.add_argument("--tmin", help="tmin", default=0)

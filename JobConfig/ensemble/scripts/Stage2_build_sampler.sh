@@ -11,12 +11,13 @@ exit_abnormal() {
 }
 OWNER="mu2e"
 RELEASE=MDC2025
-CURRENT="af"
+CURRENT="au"
 TAG=""
 VERBOSE=1
 
 DIOVERSION=af
-RMCVERSION=af
+RMCVERSIONINT=au
+RMCVERSIONEXT=at
 RPCVERSION=af
 IPAVERSION=af
 
@@ -64,8 +65,11 @@ while getopts ":-:" options; do
         dioversion)
           DIOVERSION=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
-        rmcversion)
-          RMCVERSION=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+        rmcversionext)
+          RMCVERSIONEXT=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        rmcversionint)
+          RMCVERSIONINT=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         rpcversion)
           RPCVERSION=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
@@ -109,8 +113,11 @@ fi
 if [[ ! -z ${RPC_emin} ]]; then
   RPC_EMIN=${RPC_emin}
 fi
-if [[ ! -z ${RMC_emin} ]]; then
-  RMC_EMIN=${RMC_emin}
+if [[ ! -z ${RMC_N0_emin} ]]; then
+  RMC_N0_EMIN=${RMC_N0_emin}
+fi
+if [[ ! -z ${RMC_N1_emin} ]]; then
+  RMC_N1_EMIN=${RMC_N1_emin}
 fi
 if [[ ! -z ${RMC_kmax} ]]; then
   kmax=${RMC_kmax}
@@ -128,15 +135,18 @@ echo "     • CosmicGen: ${CosmicGen}"
 echo "     • CosmicJob: ${CosmicJob}"
 echo "     • DIO_EMIN: ${DEM_emin}"
 echo "     • RPC_EMIN: ${RPC_emin}"
-echo "     • RMC_EMIN: ${RMC_emin}"
+echo "     • RMC_N0_EMIN: ${RMC_N0_emin}"
+echo "     • RMC_N1_EMIN: ${RMC_N1_emin}"
 echo "     • IPA_EMIN: ${IPA_emin}"
 echo ""
 echo "   Event Yields from Config:"
 echo "     • DIO: ${dio_events:-N/A}"
 echo "     • RPC Internal: ${rpc_internal_events:-N/A}"
 echo "     • RPC External: ${rpc_external_events:-N/A}"
-echo "     • RMC Internal: ${rmc_internal_events:-N/A}"
-echo "     • RMC External: ${rmc_external_events:-N/A}"
+echo "     • RMC 0N Internal: ${rmc_n0_internal_events:-N/A}"
+echo "     • RMC 0N External: ${rmc_n0_external_events:-N/A}"
+echo "     • RMC 1N Internal: ${rmc_n1_internal_events:-N/A}"
+echo "     • RMC 1N External: ${rmc_n1_external_events:-N/A}"
 echo "     • IPA Michel: ${ipa_events:-N/A}"
 echo ""
 
@@ -162,12 +172,20 @@ VALIDATION_FAILED=0
 # Define datasets to check with their corresponding yield variables
 declare -a DATASETS=(
   "dts.mu2e.DIOtail${DIO_EMIN}.${RELEASE}${DIOVERSION}.art:DIO:dio_events"
-  "dts.mu2e.RMCInternal.${RELEASE}${RMCVERSION}.art:RMCInternal:rmc_internal_events"
-  "dts.mu2e.RMCExternal.${RELEASE}${RMCVERSION}.art:RMCExternal:rmc_external_events"
   "dts.mu2e.RPCInternalPhysical.${RELEASE}${RPCVERSION}.art:RPCInternal:rpc_internal_events"
   "dts.mu2e.RPCExternalPhysical.${RELEASE}${RPCVERSION}.art:RPCExternal:rpc_external_events"
   "dts.mu2e.IPAMuminusMichel.${RELEASE}${IPAVERSION}.art:IPAMichel:ipa_events"
 )
+
+# Add conditional RMCPhaseSpace checks based on config
+if [[ ! -z ${RMC_N0_emin} ]]; then
+  DATASETS+=("dts.mu2e.RMCPhaseSpace0NInternal.${RELEASE}${RMCVERSIONINT}.art:RMCPhaseSpace0NInternal:rmc_n0_internal_events")
+  DATASETS+=("dts.mu2e.RMCPhaseSpace0NExternal.${RELEASE}${RMCVERSIONEXT}.art:RMCPhaseSpace0NExternal:rmc_n0_external_events")
+fi
+if [[ ! -z ${RMC_N1_emin} ]]; then
+  DATASETS+=("dts.mu2e.RMCPhaseSpace1NInternal.${RELEASE}${RMCVERSIONINT}.art:RMCPhaseSpace1NInternal:rmc_n1_internal_events")
+  DATASETS+=("dts.mu2e.RMCPhaseSpace1NExternal.${RELEASE}${RMCVERSIONEXT}.art:RMCPhaseSpace1NExternal:rmc_n1_external_events")
+fi
 
 # Also check CRYCosmic for files only (no yield check needed)
 echo "   Checking CRYCosmic files (${NJOBS} files needed)..."
@@ -193,7 +211,7 @@ for dataset_pair in "${DATASETS[@]}"; do
   IFS=':' read -r dataset_name dataset_label yield_var <<< "$dataset_pair"
   
   # Check file count
-  file_count=$(mu2eDatasetFileList "$dataset_name" 2>/dev/null | wc -l)
+  file_count=$(mu2eDatasetFileList "$dataset_name" --disk 2>/dev/null | wc -l)
   file_count=$((file_count + 0))  # Ensure it's a number
   if [[ -z "$file_count" ]] || [[ $file_count -lt $NJOBS ]]; then
     echo "   ❌ ${dataset_label}: Only ${file_count} files available (need ${NJOBS})"
@@ -243,19 +261,60 @@ fi
 echo "   ✓ All datasets validated"
 echo ""
 
+# Function: Check if filename lists are empty
+check_file_lists() {
+  local filelist_check_failed=0
+  for file in "$@"; do
+    if [[ ! -f "$file" ]] || [[ ! -s "$file" ]]; then
+      echo "   ⚠️  WARNING: File list is empty or missing: $file"
+      filelist_check_failed=1
+    fi
+  done
+  return $filelist_check_failed
+}
+
 echo "🔨 [3/6] Building file lists (${NJOBS} files per process)..."
 mu2eDatasetFileList "dts.mu2e.CosmicSignal.${COSMICTAG}.art" | head -${NJOBS} > filenames_CRYCosmic
 mu2eDatasetFileList "dts.mu2e.DIOtail${DIO_EMIN}.${RELEASE}${DIOVERSION}.art"| head -${NJOBS} > filenames_DIO
-mu2eDatasetFileList "dts.mu2e.RMCInternal.${RELEASE}${RMCVERSION}.art" | head -${NJOBS} > filenames_RMCInternal
-mu2eDatasetFileList "dts.mu2e.RMCExternal.${RELEASE}${RMCVERSION}.art" | head -${NJOBS} > filenames_RMCExternal
-mu2eDatasetFileList "dts.mu2e.RPCInternalPhysical.${RELEASE}${RPCVERSION}.art" | head -${NJOBS} > filenames_RPCInternal
+if [[ ! -z ${RMC_N0_emin} ]]; then
+  mu2eDatasetFileList "dts.mu2e.RMCPhaseSpace0NInternal.${RELEASE}${RMCVERSIONINT}.art" | head -${NJOBS} > filenames_RMCPhaseSpace0NInternal
+  mu2eDatasetFileList "dts.mu2e.RMCPhaseSpace0NExternal.${RELEASE}${RMCVERSIONEXT}.art" | head -${NJOBS} > filenames_RMCPhaseSpace0NExternal
+fi
+if [[ ! -z ${RMC_N1_emin} ]]; then
+  mu2eDatasetFileList "dts.mu2e.RMCPhaseSpace1NInternal.${RELEASE}${RMCVERSIONINT}.art" | head -${NJOBS} > filenames_RMCPhaseSpace1NInternal
+  mu2eDatasetFileList "dts.mu2e.RMCPhaseSpace1NExternal.${RELEASE}${RMCVERSIONEXT}.art" | head -${NJOBS} > filenames_RMCPhaseSpace1NExternal
+fi
+mu2eDatasetFileList "dts.mu2e.RPCInternalPhysical.${RELEASE}${RPCVERSION}.art" --tape | head -${NJOBS} > filenames_RPCInternal
 mu2eDatasetFileList "dts.mu2e.RPCExternalPhysical.${RELEASE}${RPCVERSION}.art" | head -${NJOBS} > filenames_RPCExternal
 mu2eDatasetFileList "dts.mu2e.IPAMuminusMichel.${RELEASE}${IPAVERSION}.art" | head -${NJOBS} > filenames_IPAMichel
 echo "   ✓ File lists created"
 echo ""
 
+echo "🔍 Validating file list contents..."
+FILES_TO_CHECK="filenames_CRYCosmic filenames_DIO filenames_RPCInternal filenames_RPCExternal filenames_IPAMichel"
+if [[ ! -z ${RMC_N0_emin} ]]; then
+  FILES_TO_CHECK="${FILES_TO_CHECK} filenames_RMCPhaseSpace0NInternal filenames_RMCPhaseSpace0NExternal"
+fi
+if [[ ! -z ${RMC_N1_emin} ]]; then
+  FILES_TO_CHECK="${FILES_TO_CHECK} filenames_RMCPhaseSpace1NInternal filenames_RMCPhaseSpace1NExternal"
+fi
+if check_file_lists ${FILES_TO_CHECK}; then
+  echo "   ✓ All file lists populated"
+else
+  echo "   ⚠️  WARNING: Some file lists may be empty or incomplete"
+fi
+echo ""
+
 echo "📝 [4/6] Generating template FCL files..."
-make_template_fcl.py --BB=${BB} --release=${RELEASE}${CURRENT}  --tag=${TAG} --verbose=${VERBOSE} --livetime=${LIVETIME} --run=${RUN} --dioemin=${DIO_EMIN} --rpcemin=${RPC_EMIN} --rmcemin=${RMC_EMIN} --rmckmax=${RMC_kmax} --ipaemin=${IPA_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc "DIO" "CRYCosmic" "RPCInternal" "RPCExternal" "RMCInternal" "RMCExternal" "IPAMichel"
+# Build process list dynamically
+PRC_LIST="DIO CRYCosmic RPCInternal RPCExternal IPAMichel"
+if [[ ! -z ${RMC_N0_emin} ]]; then
+  PRC_LIST="${PRC_LIST} RMCPhaseSpace0NInternal RMCPhaseSpace0NExternal"
+fi
+if [[ ! -z ${RMC_N1_emin} ]]; then
+  PRC_LIST="${PRC_LIST} RMCPhaseSpace1NInternal RMCPhaseSpace1NExternal"
+fi
+make_template_fcl.py --BB=${BB} --release=${RELEASE}${CURRENT}  --tag=${TAG} --verbose=${VERBOSE} --livetime=${LIVETIME} --run=${RUN} --dioemin=${DIO_EMIN} --rpcemin=${RPC_EMIN} --rmcn0emin=${RMC_N0_EMIN} --rmcn1emin=${RMC_N1_EMIN} --rmckmax=${RMC_kmax} --ipaemin=${IPA_EMIN} --tmin=${TMIN} --samplingseed=${SAMPLINGSEED} --prc ${PRC_LIST}
 echo "   ✓ Template FCL files generated"
 echo ""
 
@@ -266,26 +325,62 @@ rm -f filenames_CRYCosmic_${NJOBS}.txt
 rm -f filenames_DIO_${NJOBS}.txt
 rm -f filenames_RPCInternal_${NJOBS}.txt
 rm -f filenames_RPCExternal_${NJOBS}.txt
-rm -f filenames_RMCInternal_${NJOBS}.txt
-rm -f filenames_RMCExternal_${NJOBS}.txt
+if [[ ! -z ${RMC_N0_emin} ]]; then
+  rm -f filenames_RMCPhaseSpace0NInternal_${NJOBS}.txt
+  rm -f filenames_RMCPhaseSpace0NExternal_${NJOBS}.txt
+fi
+if [[ ! -z ${RMC_N1_emin} ]]; then
+  rm -f filenames_RMCPhaseSpace1NInternal_${NJOBS}.txt
+  rm -f filenames_RMCPhaseSpace1NExternal_${NJOBS}.txt
+fi
 rm -f filenames_IPAMichel_${NJOBS}.txt
 
 echo "   Creating SAM file lists..."
 samweb list-files "dh.dataset=dts.mu2e.CosmicSignal.${COSMICTAG}.art" | head -${NJOBS} > filenames_CRYCosmic_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.DIOtail${DIO_EMIN}.${RELEASE}${DIOVERSION}.art"  | head -${NJOBS} > filenames_DIO_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.RMCInternal.${RELEASE}${RMCVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RMCInternal_${NJOBS}.txt
-samweb list-files "dh.dataset=dts.mu2e.RMCExternal.${RELEASE}${RMCVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RMCExternal_${NJOBS}.txt
+if [[ ! -z ${RMC_N0_emin} ]]; then
+  samweb list-files "dh.dataset=dts.mu2e.RMCPhaseSpace0NInternal.${RELEASE}${RMCVERSIONINT}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RMCPhaseSpace0NInternal_${NJOBS}.txt
+  samweb list-files "dh.dataset=dts.mu2e.RMCPhaseSpace0NExternal.${RELEASE}${RMCVERSIONEXT}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RMCPhaseSpace0NExternal_${NJOBS}.txt
+fi
+if [[ ! -z ${RMC_N1_emin} ]]; then
+  samweb list-files "dh.dataset=dts.mu2e.RMCPhaseSpace1NInternal.${RELEASE}${RMCVERSIONINT}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RMCPhaseSpace1NInternal_${NJOBS}.txt
+  samweb list-files "dh.dataset=dts.mu2e.RMCPhaseSpace1NExternal.${RELEASE}${RMCVERSIONEXT}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RMCPhaseSpace1NExternal_${NJOBS}.txt
+fi
 samweb list-files "dh.dataset=dts.mu2e.RPCInternalPhysical.${RELEASE}${RPCVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCInternal_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.RPCExternalPhysical.${RELEASE}${RPCVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_RPCExternal_${NJOBS}.txt
 samweb list-files "dh.dataset=dts.mu2e.IPAMuminusMichel.${RELEASE}${IPAVERSION}.art  and availability:anylocation"  | head -${NJOBS}  >  filenames_IPAMichel_${NJOBS}.txt
 echo "   ✓ SAM file lists ready"
 echo ""
 
+echo "🔍 Validating SAM file list contents..."
+SAM_FILES_TO_CHECK="filenames_CRYCosmic_${NJOBS}.txt filenames_DIO_${NJOBS}.txt filenames_RPCInternal_${NJOBS}.txt filenames_RPCExternal_${NJOBS}.txt filenames_IPAMichel_${NJOBS}.txt"
+if [[ ! -z ${RMC_N0_emin} ]]; then
+  SAM_FILES_TO_CHECK="${SAM_FILES_TO_CHECK} filenames_RMCPhaseSpace0NInternal_${NJOBS}.txt filenames_RMCPhaseSpace0NExternal_${NJOBS}.txt"
+fi
+if [[ ! -z ${RMC_N1_emin} ]]; then
+  SAM_FILES_TO_CHECK="${SAM_FILES_TO_CHECK} filenames_RMCPhaseSpace1NInternal_${NJOBS}.txt filenames_RMCPhaseSpace1NExternal_${NJOBS}.txt"
+fi
+if check_file_lists ${SAM_FILES_TO_CHECK}; then
+  echo "   ✓ All SAM file lists populated"
+else
+  echo "   ⚠️  WARNING: Some SAM file lists may be empty or incomplete"
+fi
+echo ""
+
 echo "🚀 [6/6] Submitting ensemble jobs..."
 DSCONF=${RELEASE}${CURRENT}
 # note change setup to code to use a custom tarball
 echo "   Running mu2ejobdef..."
-cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} --sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CRYCosmic:filenames_CRYCosmic_${NJOBS}.txt --sampling=1:RPCInternal:filenames_RPCInternal_${NJOBS}.txt  --embed SamplingInput_sr0.fcl  --sampling=1:RPCExternal:filenames_RPCExternal_${NJOBS}.txt --sampling=1:RMCInternal:filenames_RMCInternal_${NJOBS}.txt --sampling=1:RMCExternal:filenames_RMCExternal_${NJOBS}.txt --sampling=1:IPAMichel:filenames_IPAMichel_${NJOBS}.txt --verb "
+# Build sampling options dynamically
+SAMPLING_OPTS="--sampling=1:DIO:filenames_DIO_${NJOBS}.txt --sampling=1:CRYCosmic:filenames_CRYCosmic_${NJOBS}.txt --sampling=1:RPCInternal:filenames_RPCInternal_${NJOBS}.txt --sampling=1:RPCExternal:filenames_RPCExternal_${NJOBS}.txt"
+if [[ ! -z ${RMC_N0_emin} ]]; then
+  SAMPLING_OPTS="${SAMPLING_OPTS} --sampling=1:RMCPhaseSpace0NInternal:filenames_RMCPhaseSpace0NInternal_${NJOBS}.txt --sampling=1:RMCPhaseSpace0NExternal:filenames_RMCPhaseSpace0NExternal_${NJOBS}.txt"
+fi
+if [[ ! -z ${RMC_N1_emin} ]]; then
+  SAMPLING_OPTS="${SAMPLING_OPTS} --sampling=1:RMCPhaseSpace1NInternal:filenames_RMCPhaseSpace1NInternal_${NJOBS}.txt --sampling=1:RMCPhaseSpace1NExternal:filenames_RMCPhaseSpace1NExternal_${NJOBS}.txt"
+fi
+SAMPLING_OPTS="${SAMPLING_OPTS} --sampling=1:IPAMichel:filenames_IPAMichel_${NJOBS}.txt"
+cmd="mu2ejobdef --desc=ensemble${TAG} --dsconf=${DSCONF} --run=${RUN} --setup ${SETUP} ${SAMPLING_OPTS} --embed SamplingInput_sr0.fcl --verb "
 
 $cmd
 parfile=$(ls cnf.*.tar)

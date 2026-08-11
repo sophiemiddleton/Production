@@ -138,7 +138,10 @@ if [[ ${#PARTS[@]} -ge 3 ]]; then
   RELEASE="${PARTS[0]}"
   DBPURPOSE="${PARTS[1]}"
   # Everything after PURPOSE is VERSION (in case it has multiple underscores like v1_3)
-  DBVERSION=$(IFS='_'; echo "${PARTS[@]:2}")
+  DBVERSION="${PARTS[2]}"
+  for ((j=3; j<${#PARTS[@]}; j++)); do
+    DBVERSION+="_${PARTS[$j]}"
+  done
 else
   echo "ERROR: Could not parse RELEASE, DBPURPOSE, and DBVERSION from dataset name"
   echo "Expected format: mcs.mu2e.NAME.RELEASE_PURPOSE_VERSION.art"

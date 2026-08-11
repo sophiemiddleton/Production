@@ -32,17 +32,48 @@ def main(args):
 
   ROOT.gRandom.SetSeed(0)
 
-  # extract normalization of each background/signal process:
-  norms = {
-          "CRYCosmic": cry_onspill_normalization(livetime, args.BB),
-          "CORSIKACosmic": corsika_onspill_normalization(livetime, args.BB),
-          "DIO": dio_normalization(livetime, dioemin, args.BB),
-          "RPCInternal": rpc_normalization(livetime, args.tmin, 1, args.rpcemin, args.BB),
-          "RPCExternal": rpc_normalization(livetime, args.tmin, 0, args.rpcemin, args.BB),
-          "RMCInternal": rmc_normalization(livetime, 1, args.rmcemin, args.rmckmax, args.BB),
-          "RMCExternal": rmc_normalization(livetime, 0, args.rmcemin, args.rmckmax, args.BB),
-          "IPAMichel": ipaMichel_normalization(livetime, args.ipaemin, args.BB)
-          }
+  # Convert args.prc into a set for fast lookup
+  requested_processes = set(args.prc)
+  
+  # Initialize an empty dictionary
+  norms = {}
+
+  # Only call functions and define keys if they are in the requested processes
+  if "CRYCosmic" in requested_processes:
+      norms["CRYCosmic"] = cry_onspill_normalization(livetime, args.BB)
+      
+  if "CORSIKACosmic" in requested_processes:
+      norms["CORSIKACosmic"] = corsika_onspill_normalization(livetime, args.BB)
+      
+  if "DIO" in requested_processes:
+      norms["DIO"] = dio_normalization(livetime, dioemin, args.BB)
+      
+  if "RPCInternal" in requested_processes:
+      norms["RPCInternal"] = rpc_normalization(livetime, tmin, 1, args.rpcemin, args.BB)
+      
+  if "RPCExternal" in requested_processes:
+      norms["RPCExternal"] = rpc_normalization(livetime, tmin, 0, args.rpcemin, args.BB)
+      
+  if "RMCInternal" in requested_processes:
+      norms["RMCInternal"] = rmc_normalization(livetime, 1, args.rmcemin, args.rmckmax, args.BB)
+      
+  if "RMCExternal" in requested_processes:
+      norms["RMCExternal"] = rmc_normalization(livetime, 0, args.rmcemin, args.rmckmax, args.BB)
+      
+  if "RMCN0External" in requested_processes or "RMCPhaseSpace0NExternal" in requested_processes:
+      norms["RMCN0External"] = norms["RMCPhaseSpace0NExternal"] = rmc_0n_normalization(livetime, args.rmcn0emin, internal=0, run_mode=args.BB)
+      
+  if "RMCN0Internal" in requested_processes or "RMCPhaseSpace0NInternal" in requested_processes:
+      norms["RMCN0Internal"] = norms["RMCPhaseSpace0NInternal"] = rmc_0n_normalization(livetime, args.rmcn0emin, internal=1, run_mode=args.BB)
+      
+  if "RMCN1External" in requested_processes or "RMCPhaseSpace1NExternal" in requested_processes:
+      norms["RMCN1External"] = norms["RMCPhaseSpace1NExternal"] = rmc_1n_normalization(livetime, args.rmcn1emin, internal=0, run_mode=args.BB)
+      
+  if "RMCN1Internal" in requested_processes or "RMCPhaseSpace1NInternal" in requested_processes:
+      norms["RMCN1Internal"] = norms["RMCPhaseSpace1NInternal"] = rmc_1n_normalization(livetime, args.rmcn1emin, internal=1, run_mode=args.BB)
+      
+  if "IPAMichel" in requested_processes:
+      norms["IPAMichel"] = ipaMichel_normalization(livetime, args.ipaemin, args.BB)
 
   starting_event_num = {}
   max_possible_events = {}
@@ -210,6 +241,8 @@ if __name__ == "__main__":
     parser.add_argument("--rpcemin", help="min energy cut rpc")
     parser.add_argument("--ipaemin", help="min energy cut ipa")
     parser.add_argument("--rmcemin", help="min energy cut rmc")
+    parser.add_argument("--rmcn0emin", help="min energy cut rmc 0N")
+    parser.add_argument("--rmcn1emin", help="min energy cut rmc 1N")
     parser.add_argument("--rmckmax", help="kmax theory value")
     parser.add_argument("--run", help="run number")
     parser.add_argument("--samplingseed", help="samplingseed")

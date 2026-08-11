@@ -25,8 +25,8 @@ class TestNormalizations(unittest.TestCase):
             os.environ['MUSE_WORK_DIR'] = '/exp/mu2e/app/users/sophie/newOffline'
 
         # Test livetimes from MDS3 (cosmic livetime)
-        cls.on_spill_time_1BB = 4.4e6  # seconds
-        cls.on_spill_time_2BB = 4.4e6  # seconds
+        cls.on_spill_time_1BB = 4.4e6 * (88/496) # seconds
+        cls.on_spill_time_2BB = 4.4e6 * (88/496)  # seconds
         
         cls.tst_1BB_cycle = normalizations.get_pot(cls.on_spill_time_1BB, run_mode='1BB',printout=False,method='cycle')
         cls.tst_2BB_cycle = normalizations.get_pot(cls.on_spill_time_2BB, run_mode='2BB',printout=False,method='cycle')
@@ -201,6 +201,78 @@ class TestNormalizations(unittest.TestCase):
         self.assertGreater(rmc_yield_1bb, 0)
         self.assertGreater(rmc_yield_2bb, 0)
 
+    def test_rmc_0n_external_yields(self):
+        """Calculate RMC 0-nucleon knockout (external) yields for both 1BB and 2BB POT values."""
+        e_min = 80  # MeV
+        
+        rmc_0n_yield_1bb = normalizations.rmc_0n_normalization(
+            self.on_spill_time_1BB, e_min, internal=0, run_mode='1BB'
+        )
+        rmc_0n_yield_2bb = normalizations.rmc_0n_normalization(
+            self.on_spill_time_2BB, e_min, internal=0, run_mode='2BB'
+        )
+        
+        print(f"\nRMC 0N External Yields (above {e_min} MeV):")
+        print(f"  1BB: {rmc_0n_yield_1bb:.2e}")
+        print(f"  2BB: {rmc_0n_yield_2bb:.2e}")
+        
+        self.assertGreater(rmc_0n_yield_1bb, 0)
+        self.assertGreater(rmc_0n_yield_2bb, 0)
+
+    def test_rmc_0n_internal_yields(self):
+        """Calculate RMC 0-nucleon knockout (internal conversion) yields for both 1BB and 2BB POT values."""
+        e_min = 80  # MeV
+        
+        rmc_0n_yield_1bb = normalizations.rmc_0n_normalization(
+            self.on_spill_time_1BB, e_min, internal=1, run_mode='1BB'
+        )
+        rmc_0n_yield_2bb = normalizations.rmc_0n_normalization(
+            self.on_spill_time_2BB, e_min, internal=1, run_mode='2BB'
+        )
+        
+        print(f"\nRMC 0N Internal Yields (above {e_min} MeV):")
+        print(f"  1BB: {rmc_0n_yield_1bb:.2e}")
+        print(f"  2BB: {rmc_0n_yield_2bb:.2e}")
+        
+        self.assertGreater(rmc_0n_yield_1bb, 0)
+        self.assertGreater(rmc_0n_yield_2bb, 0)
+
+    def test_rmc_1n_external_yields(self):
+        """Calculate RMC 1-nucleon knockout (external) yields for both 1BB and 2BB POT values."""
+        e_min = 80  # MeV
+        
+        rmc_1n_yield_1bb = normalizations.rmc_1n_normalization(
+            self.on_spill_time_1BB, e_min, internal=0, run_mode='1BB'
+        )
+        rmc_1n_yield_2bb = normalizations.rmc_1n_normalization(
+            self.on_spill_time_2BB, e_min, internal=0, run_mode='2BB'
+        )
+        
+        print(f"\nRMC 1N External Yields (above {e_min} MeV):")
+        print(f"  1BB: {rmc_1n_yield_1bb:.2e}")
+        print(f"  2BB: {rmc_1n_yield_2bb:.2e}")
+        
+        self.assertGreater(rmc_1n_yield_1bb, 0)
+        self.assertGreater(rmc_1n_yield_2bb, 0)
+
+    def test_rmc_1n_internal_yields(self):
+        """Calculate RMC 1-nucleon knockout (internal conversion) yields for both 1BB and 2BB POT values."""
+        e_min = 80  # MeV
+        
+        rmc_1n_yield_1bb = normalizations.rmc_1n_normalization(
+            self.on_spill_time_1BB, e_min, internal=1, run_mode='1BB'
+        )
+        rmc_1n_yield_2bb = normalizations.rmc_1n_normalization(
+            self.on_spill_time_2BB, e_min, internal=1, run_mode='2BB'
+        )
+        
+        print(f"\nRMC 1N Internal Yields (above {e_min} MeV):")
+        print(f"  1BB: {rmc_1n_yield_1bb:.2e}")
+        print(f"  2BB: {rmc_1n_yield_2bb:.2e}")
+        
+        self.assertGreater(rmc_1n_yield_1bb, 0)
+        self.assertGreater(rmc_1n_yield_2bb, 0)
+
     def test_ipa_michel_normalization_yields(self):
         """Calculate IPA Michel yields for both 1BB and 2BB POT values."""
         ipa_de_min = 50.0  # MeV
@@ -236,16 +308,24 @@ class TestNormalizations(unittest.TestCase):
         rpc_int_1bb = normalizations.rpc_normalization(self.on_spill_time_1BB, 350, 1, 50.0, run_mode='1BB')
         rmc_ext_1bb = normalizations.rmc_normalization(self.on_spill_time_1BB, 0, 85, run_mode='1BB')
         rmc_int_1bb = normalizations.rmc_normalization(self.on_spill_time_1BB, 1, 85, run_mode='1BB')
+        rmc_0n_ext_1bb = normalizations.rmc_0n_normalization(self.on_spill_time_1BB, 80, internal=0, run_mode='1BB')
+        rmc_0n_int_1bb = normalizations.rmc_0n_normalization(self.on_spill_time_1BB, 80, internal=1, run_mode='1BB')
+        rmc_1n_ext_1bb = normalizations.rmc_1n_normalization(self.on_spill_time_1BB, 80, internal=0, run_mode='1BB')
+        rmc_1n_int_1bb = normalizations.rmc_1n_normalization(self.on_spill_time_1BB, 80, internal=1, run_mode='1BB')
         ipa_1bb = normalizations.ipaMichel_normalization(self.on_spill_time_1BB, 50.0, run_mode='1BB')
         
         print(f"\n  Process Yields:")
-        print(f"    CE (RUE=1e-13):            {ce_1bb:.3e}")
-        print(f"    DIO (E>95 MeV):            {dio_1bb:.3e}")
-        print(f"    RPC External (E>50 MeV):   {rpc_ext_1bb:.3e}")
-        print(f"    RPC Internal (E>50 MeV):   {rpc_int_1bb:.3e}")
-        print(f"    RMC External (E>85 MeV):   {rmc_ext_1bb:.3e}")
-        print(f"    RMC Internal (E>85 MeV):   {rmc_int_1bb:.3e}")
-        print(f"    IPA Michel (E>50 MeV):     {ipa_1bb:.3e}")
+        print(f"    CE (RUE=1e-13):                  {ce_1bb:.3e}")
+        print(f"    DIO (E>95 MeV):                  {dio_1bb:.3e}")
+        print(f"    RPC External (E>50 MeV):        {rpc_ext_1bb:.3e}")
+        print(f"    RPC Internal (E>50 MeV):        {rpc_int_1bb:.3e}")
+        print(f"    RMC External (E>85 MeV):        {rmc_ext_1bb:.3e}")
+        print(f"    RMC Internal (E>85 MeV):        {rmc_int_1bb:.3e}")
+        print(f"    RMC 0N External (E>80 MeV):     {rmc_0n_ext_1bb:.3e}")
+        print(f"    RMC 0N Internal (E>80 MeV):     {rmc_0n_int_1bb:.3e}")
+        print(f"    RMC 1N External (E>80 MeV):     {rmc_1n_ext_1bb:.3e}")
+        print(f"    RMC 1N Internal (E>80 MeV):     {rmc_1n_int_1bb:.3e}")
+        print(f"    IPA Michel (E>50 MeV):          {ipa_1bb:.3e}")
         
         # 2BB mode
         print(f"\n2BB Mode (POT: {self.tst_2BB_spill:.3e}):")
@@ -258,16 +338,24 @@ class TestNormalizations(unittest.TestCase):
         rpc_int_2bb = normalizations.rpc_normalization(self.on_spill_time_2BB, 350, 1, 50.0, run_mode='2BB')
         rmc_ext_2bb = normalizations.rmc_normalization(self.on_spill_time_2BB, 0, 85, run_mode='2BB')
         rmc_int_2bb = normalizations.rmc_normalization(self.on_spill_time_2BB, 1, 85, run_mode='2BB')
+        rmc_0n_ext_2bb = normalizations.rmc_0n_normalization(self.on_spill_time_2BB, 80, internal=0, run_mode='2BB')
+        rmc_0n_int_2bb = normalizations.rmc_0n_normalization(self.on_spill_time_2BB, 80, internal=1, run_mode='2BB')
+        rmc_1n_ext_2bb = normalizations.rmc_1n_normalization(self.on_spill_time_2BB, 80, internal=0, run_mode='2BB')
+        rmc_1n_int_2bb = normalizations.rmc_1n_normalization(self.on_spill_time_2BB, 80, internal=1, run_mode='2BB')
         ipa_2bb = normalizations.ipaMichel_normalization(self.on_spill_time_2BB, 50.0, run_mode='2BB')
         
         print(f"\n  Process Yields:")
-        print(f"    CE (RUE=1e-13):            {ce_2bb:.3e}")
-        print(f"    DIO (E>95 MeV):            {dio_2bb:.3e}")
-        print(f"    RPC External (E>50 MeV):   {rpc_ext_2bb:.3e}")
-        print(f"    RPC Internal (E>50 MeV):   {rpc_int_2bb:.3e}")
-        print(f"    RMC External (E>85 MeV):   {rmc_ext_2bb:.3e}")
-        print(f"    RMC Internal (E>85 MeV):   {rmc_int_2bb:.3e}")
-        print(f"    IPA Michel (E>50 MeV):     {ipa_2bb:.3e}")
+        print(f"    CE (RUE=1e-13):                  {ce_2bb:.3e}")
+        print(f"    DIO (E>95 MeV):                  {dio_2bb:.3e}")
+        print(f"    RPC External (E>50 MeV):        {rpc_ext_2bb:.3e}")
+        print(f"    RPC Internal (E>50 MeV):        {rpc_int_2bb:.3e}")
+        print(f"    RMC External (E>85 MeV):        {rmc_ext_2bb:.3e}")
+        print(f"    RMC Internal (E>85 MeV):        {rmc_int_2bb:.3e}")
+        print(f"    RMC 0N External (E>80 MeV):     {rmc_0n_ext_2bb:.3e}")
+        print(f"    RMC 0N Internal (E>80 MeV):     {rmc_0n_int_2bb:.3e}")
+        print(f"    RMC 1N External (E>80 MeV):     {rmc_1n_ext_2bb:.3e}")
+        print(f"    RMC 1N Internal (E>80 MeV):     {rmc_1n_int_2bb:.3e}")
+        print(f"    IPA Michel (E>50 MeV):          {ipa_2bb:.3e}")
         
         print(f"\n{'='*70}\n")
 

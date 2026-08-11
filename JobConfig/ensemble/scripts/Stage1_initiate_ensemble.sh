@@ -21,6 +21,8 @@ STOPS="MDC2025ac"
 RELEASE="MDC2025"
 VERSION="ac"
 GEN="Signal" #cosmic generator name CRY or CORSIKA only Cat = "Signal"
+INCLUDE_RMCN0=1 # Include RMC 0N processes (default: no)
+INCLUDE_RMCN1=1 # Include RMC 1N processes (default: no)
 # Loop: Get the next option;
 while getopts ":-:" options; do
   case "${options}" in
@@ -58,6 +60,12 @@ while getopts ":-:" options; do
           ;;
         gen)
           GEN=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        rmcn0)
+          INCLUDE_RMCN0=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        rmcn1)
+          INCLUDE_RMCN1=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         *)
           echo "Unknown option " ${OPTARG}
@@ -114,7 +122,8 @@ BEAM_NMOT=$(echo "${BEAM_INFO}" | grep "^NMOT=" | awk '{print $NF}')
 echo "      • POT: ${BEAM_POT}"
 # Energy cut parameters (hardcoded for now)
 RPC_EMIN=50
-RMC_EMIN=85
+RMC_N0_EMIN=80
+RMC_N1_EMIN=80
 RMC_kmax=90.1
 IPA_EMIN=70
 # Extract just the numeric values from event yields (remove labels and spaces)
@@ -126,10 +135,18 @@ echo "      • Calculating RPC Internal events (emin=${RPC_EMIN})..."
 RPC_INTERNAL_EVENTS=$(calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 1 --rpcemin ${RPC_EMIN} --BB ${BB} --printpot "no" --verbose false 2>/dev/null | tail -1 | awk '{print $NF}')
 echo "      • Calculating RPC External events (emin=${RPC_EMIN})..."
 RPC_EXTERNAL_EVENTS=$(calculateEvents.py --livetime ${LIVETIME} --prc "RPC" --tmin ${TMIN} --internal 0 --rpcemin ${RPC_EMIN} --BB ${BB} --printpot "no" --verbose false 2>/dev/null | tail -1 | awk '{print $NF}')
-echo "      • Calculating RMC Internal events (emin=${RMC_EMIN})..."
-RMC_INTERNAL_EVENTS=$(calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 1 --rmcemin ${RMC_EMIN} --BB ${BB} --printpot "no" --verbose false 2>/dev/null | tail -1 | awk '{print $NF}')
-echo "      • Calculating RMC External events (emin=${RMC_EMIN})..."
-RMC_EXTERNAL_EVENTS=$(calculateEvents.py --livetime ${LIVETIME} --prc "RMC" --tmin ${TMIN} --internal 0 --rmcemin ${RMC_EMIN} --BB ${BB} --printpot "no" --verbose false 2>/dev/null | tail -1 | awk '{print $NF}')
+if [[ ${INCLUDE_RMCN0} -eq 1 ]]; then
+  echo "      • Calculating RMC 0N External events (emin=${RMC_N0_EMIN})..."
+  RMC_N0_EXTERNAL_EVENTS=$(calculateEvents.py --livetime ${LIVETIME} --prc "RMCPhaseSpace0NExternal" --internal 0 --rmcn0emin ${RMC_N0_EMIN} --BB ${BB} --printpot "no" --verbose false 2>/dev/null | tail -1 | awk '{print $NF}')
+  echo "      • Calculating RMC 0N Internal events (emin=${RMC_N0_EMIN})..."
+  RMC_N0_INTERNAL_EVENTS=$(calculateEvents.py --livetime ${LIVETIME} --prc "RMCPhaseSpace0NInternal" --internal 1 --rmcn0emin ${RMC_N0_EMIN} --BB ${BB} --printpot "no" --verbose false 2>/dev/null | tail -1 | awk '{print $NF}')
+fi
+if [[ ${INCLUDE_RMCN1} -eq 1 ]]; then
+  echo "      • Calculating RMC 1N External events (emin=${RMC_N1_EMIN})..."
+  RMC_N1_EXTERNAL_EVENTS=$(calculateEvents.py --livetime ${LIVETIME} --prc "RMCPhaseSpace1NExternal" --internal 0 --rmcn1emin ${RMC_N1_EMIN} --BB ${BB} --printpot "no" --verbose false 2>/dev/null | tail -1 | awk '{print $NF}')
+  echo "      • Calculating RMC 1N Internal events (emin=${RMC_N1_EMIN})..."
+  RMC_N1_INTERNAL_EVENTS=$(calculateEvents.py --livetime ${LIVETIME} --prc "RMCPhaseSpace1NInternal" --internal 1 --rmcn1emin ${RMC_N1_EMIN} --BB ${BB} --printpot "no" --verbose false 2>/dev/null | tail -1 | awk '{print $NF}')
+fi
 echo "   ✓ All event yields calculated"
 echo ""
 echo "💾 [4/4] Writing configuration file..."
@@ -149,7 +166,12 @@ echo "   Output: ${TAG}.txt"
   echo "DEM_emin=\"${DEM_EMIN}\""
   echo "RPC_TMIN=\"${TMIN}\""
   echo "RPC_emin=\"${RPC_EMIN}\""
-  echo "RMC_emin=\"${RMC_EMIN}\""
+  if [[ ${INCLUDE_RMCN0} -eq 1 ]]; then
+    echo "RMC_N0_emin=\"${RMC_N0_EMIN}\""
+  fi
+  if [[ ${INCLUDE_RMCN1} -eq 1 ]]; then
+    echo "RMC_N1_emin=\"${RMC_N1_EMIN}\""
+  fi
   echo "RMC_kmax=\"${RMC_kmax}\""
   echo "IPA_emin=\"${IPA_EMIN}\"" 
   echo ""
@@ -165,8 +187,14 @@ echo "   Output: ${TAG}.txt"
   echo "ipa_events=\"${IPA_EVENTS}\""
   echo "rpc_internal_events=\"${RPC_INTERNAL_EVENTS}\""
   echo "rpc_external_events=\"${RPC_EXTERNAL_EVENTS}\""
-  echo "rmc_internal_events=\"${RMC_INTERNAL_EVENTS}\""
-  echo "rmc_external_events=\"${RMC_EXTERNAL_EVENTS}\""
+  if [[ ${INCLUDE_RMCN0} -eq 1 ]]; then
+    echo "rmc_n0_internal_events=\"${RMC_N0_INTERNAL_EVENTS}\""
+    echo "rmc_n0_external_events=\"${RMC_N0_EXTERNAL_EVENTS}\""
+  fi
+  if [[ ${INCLUDE_RMCN1} -eq 1 ]]; then
+    echo "rmc_n1_internal_events=\"${RMC_N1_INTERNAL_EVENTS}\""
+    echo "rmc_n1_external_events=\"${RMC_N1_EXTERNAL_EVENTS}\""
+  fi
 } > ${TAG}.txt
 
 echo "   ✓ Configuration file written successfully"

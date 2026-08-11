@@ -16,7 +16,7 @@ exit_abnormal() {
 # Default values
 TAG=""
 RELEASE="MDC2025"
-VERSION="ai"
+VERSION="au"
 OWNER="mu2e"
 APPEND=0
 
@@ -228,7 +228,7 @@ echo "   Tape location: ${TAPE_PNFS}"
 echo ""
 
 echo "   Adding file location to SAM..."
-samweb add-file-location cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.tar ${TAPE_PATH}
+samweb add-file-location cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.0.tar ${TAPE_PATH}
 if [[ $? -ne 0 ]]; then
   echo "   ✗ Error: Failed to add file location"
   exit 1
@@ -281,5 +281,7 @@ echo "   TAR file: cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.tar"
 echo "   TAR metadata: cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.tar.json (declared and uploaded)"
 echo "   Tape path: ${TAPE_PATH}"
 echo "   Campaign: ${CAMPAIGN_JSON_FILE} (pending declaration)"
+echo "   For ensemble generation enter mu2epro and launch: e.g. mkidxdef --jobdefs /exp/mu2e/app/users/mu2epro/production_manager/poms_map/MDC2025-MDS3b.json --prod"
+echo "   For digi/mix/reco/ntuple enter mu2epro and launch: e.g. json2jobdef --json digi.json --dsconf MDC2025af_best_v1_3 --desc ensembleMDS3aOnSpill --jobdefs /exp/mu2e/app/users/mu2epro/production_manager/poms_map/MDC2025-002.json --prod"
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
