@@ -124,7 +124,7 @@ if [[ ${APPEND} -eq 1 ]]; then
     },
     "inloc": "tape",
     "outloc": {"*.root": "disk"},
-    "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/AnalysisMDC2025/v01_01_03/setup.sh"
+    "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/AnalysisMDC2025/v02_00_00/setup.sh"
   }
 ]
 CAMPAIGN_EOF
@@ -236,6 +236,71 @@ fi
 echo "   ✓ File location registered"
 echo ""
 
+echo "📋 [3b/4] Processing tag information file..."
+TAG_INFO_FILE="cnf.mu2e.${TAG}-info.${RELEASE}${VERSION}.0.txt"
+TAG_INFO_JSON_FILE="${TAG_INFO_FILE}.json"
+
+echo "   Renaming config file to tag-info..."
+mv ${CONFIG_FILE} ${TAG_INFO_FILE}
+if [[ ! -f ${TAG_INFO_FILE} ]]; then
+  echo "   ✗ Error: Failed to rename config file to ${TAG_INFO_FILE}"
+  exit 1
+fi
+echo "   ✓ Renamed to ${TAG_INFO_FILE}"
+echo ""
+
+echo "   Generating tag-info metadata JSON..."
+printJson --no-parents ${TAG_INFO_FILE} > ${TAG_INFO_JSON_FILE}
+
+if [[ ! -f "${TAG_INFO_JSON_FILE}" ]] || [[ ! -s "${TAG_INFO_JSON_FILE}" ]]; then
+  echo "   ✗ Error: Failed to generate tag-info JSON file"
+  exit 1
+fi
+echo "   ✓ Generated ${TAG_INFO_JSON_FILE}"
+echo ""
+
+echo "   Declaring tag-info JSON file to SAM..."
+ls ${TAG_INFO_JSON_FILE} | mu2eFileDeclare
+if [[ $? -ne 0 ]]; then
+  echo "   ✗ Error: Failed to declare tag-info file"
+  exit 1
+fi
+echo "   ✓ Tag-info file declared"
+echo ""
+
+echo "   Uploading tag-info file to tape..."
+UPLOAD_TAG_OUTPUT=$(ls ${TAG_INFO_FILE} | mu2eFileUpload --disk 2>&1)
+if [[ ${PIPESTATUS[1]} -ne 0 ]]; then
+  echo "   ✗ Error: Failed to upload tag-info file"
+  exit 1
+fi
+
+# Extract tape path from upload output
+TAG_TAPE_FILE=$(echo "${UPLOAD_TAG_OUTPUT}" | sed -n 's/.*to \(\/pnfs[^ ]*\).*/\1/p')
+
+if [[ -z ${TAG_TAPE_FILE} ]]; then
+  echo "   ✗ Error: Could not extract tape path from upload output"
+  echo "   Output was: ${UPLOAD_TAG_OUTPUT}"
+  exit 1
+fi
+
+# Get directory path (remove filename)
+TAG_TAPE_PNFS=$(dirname "${TAG_TAPE_FILE}")
+TAG_TAPE_PATH="enstore:${TAG_TAPE_PNFS}"
+
+echo "   ✓ Tag-info file uploaded"
+echo "   Tape location: ${TAG_TAPE_PNFS}"
+echo ""
+
+echo "   Adding tag-info file location to SAM..."
+samweb add-file-location ${TAG_INFO_FILE} ${TAG_TAPE_PATH}
+if [[ $? -ne 0 ]]; then
+  echo "   ✗ Error: Failed to add tag-info file location"
+  exit 1
+fi
+echo "   ✓ Tag-info file location registered"
+echo ""
+
 echo "📋 [4/4] Generating campaign JSON (multipart stages)..."
 # Create JSON for the campaign with all stages
 cat > ${CAMPAIGN_JSON_FILE} << EOF
@@ -279,7 +344,10 @@ echo "════════════════════════�
 echo "✅ Stage 3 Complete!"
 echo "   TAR file: cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.tar"
 echo "   TAR metadata: cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.tar.json (declared and uploaded)"
-echo "   Tape path: ${TAPE_PATH}"
+echo "   Tag-info file: cnf.mu2e.tag-info.0.txt (declared and uploaded)"
+echo "   Tag-info metadata: cnf.mu2e.tag-info.0.txt.json (declared and uploaded)"
+echo "   Tape path (TAR): ${TAPE_PATH}"
+echo "   Tape path (Tag-info): ${TAG_TAPE_PATH}"
 echo "   Campaign: ${CAMPAIGN_JSON_FILE} (pending declaration)"
 echo "   For ensemble generation enter mu2epro and launch: e.g. mkidxdef --jobdefs /exp/mu2e/app/users/mu2epro/production_manager/poms_map/MDC2025-MDS3b.json --prod"
 echo "   For digi/mix/reco/ntuple enter mu2epro and launch: e.g. json2jobdef --json digi.json --dsconf MDC2025af_best_v1_3 --desc ensembleMDS3aOnSpill --jobdefs /exp/mu2e/app/users/mu2epro/production_manager/poms_map/MDC2025-002.json --prod"
