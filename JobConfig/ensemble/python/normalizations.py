@@ -63,10 +63,25 @@ RMC_BR_MUON_CAPTURE = 0.609
 RMC_RATE_GT_57 = 1.41e-5  # RMC rate above 57 MeV, relative to OMC
 RMC_BR_0N_FRAC_GT_57 = 0.099  # BR(0 knockout | E > 57) / BR(RMC | E > 57)
 RMC_BR_1N_FRAC_GT_57 = 0.901  # BR(1 knockout | E > 57) / BR(RMC | E > 57)
-RMC_SPECTRUM_FRAC_0N_57 = 0.22887  # R(0 knockout | E > 57) / R(0 knockout)
-RMC_SPECTRUM_FRAC_1N_57 = 0.061620  # R(1 knockout | E > 57) / R(1 knockout)
-RMC_SPECTRUM_FRAC_0N_80 = 0.03319  # R(0 knockout | E > 80) / R(0 knockout)
-RMC_SPECTRUM_FRAC_1N_80 = 0.0013175  # R(1 knockout | E > 80) / R(1 knockout)
+
+# RMC K_max values: Energy endpoints for each knockout mode on Al-27
+RMC_KMAX_0N = 101.8667  # MeV, 0-nucleon knockout endpoint on Al-27
+RMC_KMAX_1N = 95.4489   # MeV, 1-nucleon knockout endpoint on Al-27
+
+# RMC Spectrum Fractions - from experimental/theoretical physics literature
+# These represent: R(* knockout | E > threshold) / R(* knockout) 
+# i.e., the fraction of the full spectrum above the given energy threshold
+# Used to scale branching ratios as a function of energy cut:
+#   BR(* knockout | E > E_min) = BR(muon capture) * RMC_RATE_GT_57 * BR(* frac | E > 57) * (R_*_E_min / R_*_57)
+# Note: These are the RAW spectrum fractions (not pre-multiplied by RMC_BR_MUON_CAPTURE)
+RMC_SPECTRUM_FRAC_0N_57 = 0.22887  # Fraction of 0-knockout spectrum above 57 MeV
+RMC_SPECTRUM_FRAC_1N_57 = 0.061620  # Fraction of 1-knockout spectrum above 57 MeV
+RMC_SPECTRUM_FRAC_0N_80 = 0.03319  # Fraction of 0-knockout spectrum above 80 MeV
+RMC_SPECTRUM_FRAC_1N_80 = 0.0013175  # Fraction of 1-knockout spectrum above 80 MeV
+
+# Internal/external conversion ratio for RMC
+# rho = BR(internal) / BR(external)
+# Note: Should ideally use Plestid-Hill or Kroll-Wada-Joseph integrals for precision
 RMC_INTERNAL_EXTERNAL_RATIO = 0.0069  # rho = BR(internal) / BR(external)
 
 #-------------------------------------------------------------------------------------#
@@ -129,6 +144,110 @@ for line in lines:
         ipa_stopping_rate = ipa_stopping_rate * float(words[3])
         ipa_stopped_mu_per_POT = ipa_stopping_rate
 #print("IPAStopMuonRate=", ipa_stopped_mu_per_POT)
+
+#-------------------------------------------------------------------------------------#
+# Plestid spectrum functions for RMC 0N and 1N
+
+def plestid_integral(K_1, K_2, KMax, knockout):
+    """
+    Calculates the integral of the Plestid phase-space approximation spectrum
+    between two energy points K_1 and K_2.
+    
+    This implements the Plestid spectrum shape for RMC with different knockout modes.
+    
+    Args:
+        K_1 (float): Lower energy bound for integration (MeV).
+        K_2 (float): Upper energy bound for integration (MeV).
+        KMax (float): Maximum possible RMC energy (MeV).
+        knockout (int): Knockout mode (0 for 0N knockout, 1 for 1N knockout).
+    
+    Returns:
+        float: The integral of the spectrum between K_1 and K_2.
+    """
+    if KMax <= 0.0:
+        return 0.0
+    if knockout < 0:
+        return 0.0
+    
+    K_1 = max(0.0, min(KMax, K_1))
+    K_2 = max(0.0, min(KMax, K_2))
+    
+    if K_1 >= K_2:
+        return 0.0
+    
+    power = 2.0 + 1.5 * knockout
+    x_1 = K_1 / KMax
+    x_2 = K_2 / KMax
+    
+    val_1 = (x_1 - 1.0) * pow(1.0 - x_1, power) * (power * x_1 + x_1 + 1.0)
+    val_2 = (x_2 - 1.0) * pow(1.0 - x_2, power) * (power * x_2 + x_2 + 1.0)
+    
+    integral = val_2 - val_1
+    return integral
+
+
+def plestid_spectrum(energy, kmax, knockout):
+    """
+    Calculates the Plestid phase-space approximation spectrum value at a given energy.
+    
+    Args:
+        energy (float): Energy point to evaluate the spectrum (MeV).
+        kmax (float): Maximum possible RMC energy (MeV).
+        knockout (int): Knockout mode (0 for 0N knockout, 1 for 1N knockout).
+    
+    Returns:
+        float: The spectrum value at the given energy.
+    """
+    if energy <= 0.0 or energy >= kmax:
+        return 0.0
+    
+    power = 2.0 + 1.5 * knockout
+    norm = (power + 1.0) * (power + 2.0) / kmax
+    x = energy / kmax
+    p = norm * x * pow(1.0 - x, power)
+    
+    return p
+
+
+def compute_rmc_spectrum_fractions():
+    """
+    Compute RMC spectrum fractions dynamically using plestid_integral.
+    
+    Uses the correct K_max values for each knockout mode:
+    - kmax_0n = 101.8667 MeV (0-nucleon knockout endpoint on Al-27)
+    - kmax_1n = 95.4489 MeV (1-nucleon knockout endpoint on Al-27)
+    
+    These fractions represent: R(* knockout | E > threshold) / R(* knockout)
+    """
+    global RMC_SPECTRUM_FRAC_0N_57, RMC_SPECTRUM_FRAC_1N_57
+    global RMC_SPECTRUM_FRAC_0N_80, RMC_SPECTRUM_FRAC_1N_80
+    
+    # Compute integrals for each knockout mode using its own K_max
+    frac_0_0n  = plestid_integral(0.0, RMC_KMAX_0N, RMC_KMAX_0N, 0)
+    frac_0_1n  = plestid_integral(0.0, RMC_KMAX_1N, RMC_KMAX_1N, 1)
+    frac_57_0n = plestid_integral(57.0, RMC_KMAX_0N, RMC_KMAX_0N, 0)
+    frac_57_1n = plestid_integral(57.0, RMC_KMAX_1N, RMC_KMAX_1N, 1)
+    frac_80_0n = plestid_integral(80.0, RMC_KMAX_0N, RMC_KMAX_0N, 0)
+    frac_80_1n = plestid_integral(80.0, RMC_KMAX_1N, RMC_KMAX_1N, 1)
+    
+    # Compute ratios: integral above threshold / integral from 0 to K_max
+    RMC_SPECTRUM_FRAC_0N_57 = frac_57_0n / frac_0_0n if frac_0_0n != 0 else 0.0
+    RMC_SPECTRUM_FRAC_1N_57 = frac_57_1n / frac_0_1n if frac_0_1n != 0 else 0.0
+    RMC_SPECTRUM_FRAC_0N_80 = frac_80_0n / frac_0_0n if frac_0_0n != 0 else 0.0
+    RMC_SPECTRUM_FRAC_1N_80 = frac_80_1n / frac_0_1n if frac_0_1n != 0 else 0.0
+    
+    if VERBOSE:
+        print(f"RMC Spectrum Fractions (computed via Plestid integral):")
+        print(f"  RMC_SPECTRUM_FRAC_0N_57 = {RMC_SPECTRUM_FRAC_0N_57:.6f}")
+        print(f"  RMC_SPECTRUM_FRAC_1N_57 = {RMC_SPECTRUM_FRAC_1N_57:.6f}")
+        print(f"  RMC_SPECTRUM_FRAC_0N_80 = {RMC_SPECTRUM_FRAC_0N_80:.6f}")
+        print(f"  RMC_SPECTRUM_FRAC_1N_80 = {RMC_SPECTRUM_FRAC_1N_80:.6f}")
+    
+    return (RMC_SPECTRUM_FRAC_0N_57, RMC_SPECTRUM_FRAC_1N_57, 
+            RMC_SPECTRUM_FRAC_0N_80, RMC_SPECTRUM_FRAC_1N_80)
+
+# Compute RMC spectrum fractions from Plestid integral using correct K_max values
+compute_rmc_spectrum_fractions()
     
 #-------------------------------------------------------------------------------------#    
 def get_duty_factor(run_mode='1BB'):
@@ -510,69 +629,6 @@ def rmc_normalization(on_spill_time, internal, e_min, k_max=90.1, run_mode='1BB'
         base_physics_events *= INTERNAL_PER_RMC
         
     return base_physics_events
-
-#-------------------------------------------------------------------------------------#
-# Plestid spectrum functions for RMC 0N and 1N
-
-def plestid_integral(K_1, K_2, KMax, knockout):
-    """
-    Calculates the integral of the Plestid phase-space approximation spectrum
-    between two energy points K_1 and K_2.
-    
-    This implements the Plestid spectrum shape for RMC with different knockout modes.
-    
-    Args:
-        K_1 (float): Lower energy bound for integration (MeV).
-        K_2 (float): Upper energy bound for integration (MeV).
-        KMax (float): Maximum possible RMC energy (MeV).
-        knockout (int): Knockout mode (0 for 0N knockout, 1 for 1N knockout).
-    
-    Returns:
-        float: The integral of the spectrum between K_1 and K_2.
-    """
-    if KMax <= 0.0:
-        return 0.0
-    if knockout < 0:
-        return 0.0
-    
-    K_1 = max(0.0, min(KMax, K_1))
-    K_2 = max(0.0, min(KMax, K_2))
-    
-    if K_1 >= K_2:
-        return 0.0
-    
-    power = 2.0 + 1.5 * knockout
-    x_1 = K_1 / KMax
-    x_2 = K_2 / KMax
-    
-    val_1 = (x_1 - 1.0) * pow(1.0 - x_1, power) * (power * x_1 + x_1 + 1.0)
-    val_2 = (x_2 - 1.0) * pow(1.0 - x_2, power) * (power * x_2 + x_2 + 1.0)
-    
-    integral = val_2 - val_1
-    return integral
-
-
-def plestid_spectrum(energy, kmax, knockout):
-    """
-    Calculates the Plestid phase-space approximation spectrum value at a given energy.
-    
-    Args:
-        energy (float): Energy point to evaluate the spectrum (MeV).
-        kmax (float): Maximum possible RMC energy (MeV).
-        knockout (int): Knockout mode (0 for 0N knockout, 1 for 1N knockout).
-    
-    Returns:
-        float: The spectrum value at the given energy.
-    """
-    if energy <= 0.0 or energy >= kmax:
-        return 0.0
-    
-    power = 2.0 + 1.5 * knockout
-    norm = (power + 1.0) * (power + 2.0) / kmax
-    x = energy / kmax
-    p = norm * x * pow(1.0 - x, power)
-    
-    return p
 
 
 def rmc_0n_normalization(on_spill_time, e_min, internal=1, run_mode='1BB'):
