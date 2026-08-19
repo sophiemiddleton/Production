@@ -658,7 +658,7 @@ def rmc_0n_normalization(on_spill_time, e_min, internal=1, run_mode='1BB'):
     
     # If threshold is higher, use interpolated fraction
     # For E > 80 MeV: use the E > 80 spectrum fraction
-    if float(e_min) > 75.0:
+    if float(e_min) >80.0:
         R_spectrum = RMC_SPECTRUM_FRAC_0N_80 / RMC_SPECTRUM_FRAC_0N_57
     
     # 3. Calculate the branching ratio for 0N events above the energy threshold
@@ -718,7 +718,7 @@ def rmc_1n_normalization(on_spill_time, e_min, internal=1, run_mode='1BB'):
     
     # If threshold is higher, use interpolated fraction
     # For E > 80 MeV: use the E > 80 spectrum fraction
-    if float(e_min) > 75.0:
+    if float(e_min) >80.0:
         R_spectrum = RMC_SPECTRUM_FRAC_1N_80 / RMC_SPECTRUM_FRAC_1N_57
     
     # 3. Calculate the branching ratio for 1N events above the energy threshold
