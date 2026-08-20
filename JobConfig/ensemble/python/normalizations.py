@@ -246,6 +246,16 @@ def compute_rmc_spectrum_fractions():
     return (RMC_SPECTRUM_FRAC_0N_57, RMC_SPECTRUM_FRAC_1N_57, 
             RMC_SPECTRUM_FRAC_0N_80, RMC_SPECTRUM_FRAC_1N_80)
 
+
+def rmc_spectrum_fraction(e_min, k_max, knockout):
+    """Return the RMC spectrum fraction above ``e_min`` relative to E > 57 MeV."""
+    reference_fraction = plestid_integral(57.0, k_max, k_max, knockout)
+    requested_fraction = plestid_integral(float(e_min), k_max, k_max, knockout)
+
+    if reference_fraction == 0.0:
+        return 0.0
+    return requested_fraction / reference_fraction
+
 # Compute RMC spectrum fractions from Plestid integral using correct K_max values
 compute_rmc_spectrum_fractions()
     
@@ -631,7 +641,7 @@ def rmc_normalization(on_spill_time, internal, e_min, k_max=90.1, run_mode='1BB'
     return base_physics_events
 
 
-def rmc_0n_normalization(on_spill_time, e_min, internal=1, run_mode='1BB'):
+def rmc_0n_normalization(on_spill_time, e_min=80.0, internal=1, run_mode='1BB'):
     """
     Calculates the expected number of RMC 0-nucleon knockout (0N) events
     above a given energy threshold.
@@ -651,15 +661,8 @@ def rmc_0n_normalization(on_spill_time, e_min, internal=1, run_mode='1BB'):
     # 1. Calculate total Protons on Target (POT)
     total_pot = get_pot(on_spill_time, run_mode)
     
-    # 2. Determine the spectrum fraction to use based on energy threshold
-    # Default: fraction from E > 57 MeV
-    e_threshold = 57.0
-    R_spectrum = RMC_SPECTRUM_FRAC_0N_57
-    
-    # If threshold is higher, use interpolated fraction
-    # For E > 80 MeV: use the E > 80 spectrum fraction
-    if float(e_min) >80.0:
-        R_spectrum = RMC_SPECTRUM_FRAC_0N_80 / RMC_SPECTRUM_FRAC_0N_57
+    # 2. Determine the spectrum fraction above the requested threshold.
+    R_spectrum = rmc_spectrum_fraction(e_min, RMC_KMAX_0N, knockout=0)
     
     # 3. Calculate the branching ratio for 0N events above the energy threshold
     br_0n_above_emin = (
@@ -691,7 +694,7 @@ def rmc_0n_normalization(on_spill_time, e_min, internal=1, run_mode='1BB'):
     return base_physics_events
 
 
-def rmc_1n_normalization(on_spill_time, e_min, internal=1, run_mode='1BB'):
+def rmc_1n_normalization(on_spill_time, e_min=80.0, internal=1, run_mode='1BB'):
     """
     Calculates the expected number of RMC 1-nucleon knockout (1N) events
     above a given energy threshold.
@@ -711,15 +714,8 @@ def rmc_1n_normalization(on_spill_time, e_min, internal=1, run_mode='1BB'):
     # 1. Calculate total Protons on Target (POT)
     total_pot = get_pot(on_spill_time, run_mode)
     
-    # 2. Determine the spectrum fraction to use based on energy threshold
-    # Default: fraction from E > 57 MeV
-    e_threshold = 57.0
-    R_spectrum = RMC_SPECTRUM_FRAC_1N_57
-    
-    # If threshold is higher, use interpolated fraction
-    # For E > 80 MeV: use the E > 80 spectrum fraction
-    if float(e_min) >80.0:
-        R_spectrum = RMC_SPECTRUM_FRAC_1N_80 / RMC_SPECTRUM_FRAC_1N_57
+    # 2. Determine the spectrum fraction above the requested threshold.
+    R_spectrum = rmc_spectrum_fraction(e_min, RMC_KMAX_1N, knockout=1)
     
     # 3. Calculate the branching ratio for 1N events above the energy threshold
     br_1n_above_emin = (
