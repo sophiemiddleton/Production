@@ -538,7 +538,6 @@ def rpc_normalization(on_spill_time, t_min, internal, e_min, run_mode='1BB'):
     base_physics_events = (
         total_pot *
         target_stopped_pions_per_pot *
-        filter_efficiency *
         survival_probability_weight *
         RPC_PER_STOPPED_PION *
         rpc_e_sample_frac
