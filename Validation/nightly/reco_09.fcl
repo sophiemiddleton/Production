@@ -1,11 +1,7 @@
 #include "Production/Validation/reco.fcl"
 source.fileNames : [
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/6b/81/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000016.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/a4/d2/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000017.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/aa/29/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000018.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/e5/2c/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000019.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/0e/99/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000020.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/57/14/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000021.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/9e/94/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000022.art"
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CeMLeadingLogMix1BB/MDC2025au_best_v1_3/art/28/7a/dig.mu2e.CeMLeadingLogMix1BB.MDC2025au_best_v1_3.001430_00000285.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CeMLeadingLogMix1BB/MDC2025au_best_v1_3/art/20/34/dig.mu2e.CeMLeadingLogMix1BB.MDC2025au_best_v1_3.001430_00001776.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointOnSpill/MDC2025an_best_v1_1/art/c9/3b/dig.mu2e.CePlusEndpointOnSpill.MDC2025an_best_v1_1.001430_00001467.art"
 ]
 outputs.LoopHelixOutput.fileName: "reco_09.art"

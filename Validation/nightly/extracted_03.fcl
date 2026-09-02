@@ -4,15 +4,17 @@
 #----------------------------------------------------------------
 # Code added by generate_fcl:
 source.fileNames : [
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/99/b3/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00012811.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/22/60/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00012219.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/62/54/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00012159.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/d3/95/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00012709.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/2b/c5/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00012131.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/d1/25/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00012142.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/1d/66/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00013557.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/0b/27/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00012719.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/4b/53/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00012907.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtractedTriggered/MDC2025ae_best_v1_3/art/1f/87/dig.mu2e.CosmicCRYExtractedTriggered.MDC2025ae_best_v1_3.001400_00013013.art"
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/7e/4a/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00001587.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/00/0d/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00001459.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/56/1b/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00001449.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/61/ef/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00002354.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/55/c6/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00002471.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/09/54/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00001999.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/69/48/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00001937.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/29/20/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00006105.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/03/28/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00001618.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/7b/9a/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00006138.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/03/7f/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00001891.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CosmicCRYExtracted/MDC2025au_best_v1_5/art/59/b0/dig.mu2e.CosmicCRYExtracted.MDC2025au_best_v1_5.001400_00002445.art"
 ]
 outputs.KinematicLineOutput.fileName: "extracted_03.art"
