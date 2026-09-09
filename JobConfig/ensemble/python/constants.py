@@ -35,6 +35,27 @@ TWOBB_POT_PER_CYCLE=8e12 # protons per 1.4 s cycle in two-bunch mode
 ONEBB_CYCLE = 1.33 # seconds per cycle in one-bunch mode
 TWOBB_CYCLE = 1.4 # seconds per cycle in two-bunch mode
 
+# One booster batch at a reduced intensity of 1500 W, as used by the
+# Run1B campaigns. Matches JobConfig/mixing/OneBB1500W.fcl. Same
+# accelerator mode as 1BB, so it takes ONEBB_DF and ONEBB_CYCLE; only
+# the intensity differs.
+#
+# Protons per spill follow from POT per cycle divided by the number of
+# 1695 ns spills that fit in the onspill fraction of a cycle:
+#
+#   mode     | power    | POT/cycle / (DF x cycle / SPILL)     = protons/spill
+#   ---------|----------|--------------------------------------|--------------
+#   1BB1500W | 1.500 kW | 1.556e12 / (0.323 x 1.33 / 1.695e-6) = 6.141e6
+#   1BB      | 3.855 kW |    4e12 / (0.323 x 1.33 / 1.695e-6)  = 1.578e7
+#   2BB      | 7.324 kW |    8e12 / (0.246 x 1.40 / 1.695e-6)  = 3.937e7
+#
+# Power is POT_PER_CYCLE * 8 GeV / CYCLE, so it depends on the cycle
+# time, not on the duty factor. Note 2BB delivers double the protons in
+# a shorter spill (0.344 s against 0.430 s), which is why 1BB and 2BB
+# are not a factor of two apart in protons per spill.
+ONEBB1500W_POT_PER_CYCLE = 1.556e12 # protons per 1.33 s cycle at 1500 W
+ONEBB1500W_PROTONS_PER_SPILL = 6.14e6 # protons per 1695 ns spill at 1500 W
+
 # --- RMC (Radiative Muon Capture) Physics Constants ---
 # Branching ratio for muon capture on nucleus
 RMC_BR_MUON_CAPTURE = 0.609
