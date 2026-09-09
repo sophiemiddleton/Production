@@ -27,7 +27,18 @@ from constants import (
     TWOBB_POT_PER_CYCLE,
     TWOBB_PROTONS_PER_SPILL,
     TWOBB_CYCLE,
-    SPILL
+    SPILL,
+    RMC_BR_MUON_CAPTURE,
+    RMC_RATE_GT_57,
+    RMC_BR_0N_FRAC_GT_57,
+    RMC_BR_1N_FRAC_GT_57,
+    RMC_KMAX_0N,
+    RMC_KMAX_1N,
+    RMC_SPECTRUM_FRAC_0N_57,
+    RMC_SPECTRUM_FRAC_1N_57,
+    RMC_SPECTRUM_FRAC_0N_80,
+    RMC_SPECTRUM_FRAC_1N_80,
+    RMC_INTERNAL_EXTERNAL_RATIO
 )
 
 # --- Configuration Placeholders (Mutable Variables) ---
@@ -57,32 +68,6 @@ selected_sum_of_weights = 0.0
 rate = 1.0
 dutyfactor = 1.0
 total_pot = 0.
-
-# RMC 0N and 1N Physics Constants
-RMC_BR_MUON_CAPTURE = 0.609
-RMC_RATE_GT_57 = 1.41e-5  # RMC rate above 57 MeV, relative to OMC
-RMC_BR_0N_FRAC_GT_57 = 0.099  # BR(0 knockout | E > 57) / BR(RMC | E > 57)
-RMC_BR_1N_FRAC_GT_57 = 0.901  # BR(1 knockout | E > 57) / BR(RMC | E > 57)
-
-# RMC K_max values: Energy endpoints for each knockout mode on Al-27
-RMC_KMAX_0N = 101.8667  # MeV, 0-nucleon knockout endpoint on Al-27
-RMC_KMAX_1N = 95.4489   # MeV, 1-nucleon knockout endpoint on Al-27
-
-# RMC Spectrum Fractions - from experimental/theoretical physics literature
-# These represent: R(* knockout | E > threshold) / R(* knockout) 
-# i.e., the fraction of the full spectrum above the given energy threshold
-# Used to scale branching ratios as a function of energy cut:
-#   BR(* knockout | E > E_min) = BR(muon capture) * RMC_RATE_GT_57 * BR(* frac | E > 57) * (R_*_E_min / R_*_57)
-# Note: These are the RAW spectrum fractions (not pre-multiplied by RMC_BR_MUON_CAPTURE)
-RMC_SPECTRUM_FRAC_0N_57 = 0.22887  # Fraction of 0-knockout spectrum above 57 MeV
-RMC_SPECTRUM_FRAC_1N_57 = 0.061620  # Fraction of 1-knockout spectrum above 57 MeV
-RMC_SPECTRUM_FRAC_0N_80 = 0.03319  # Fraction of 0-knockout spectrum above 80 MeV
-RMC_SPECTRUM_FRAC_1N_80 = 0.0013175  # Fraction of 1-knockout spectrum above 80 MeV
-
-# Internal/external conversion ratio for RMC
-# rho = BR(internal) / BR(external)
-# Note: Should ideally use Plestid-Hill or Kroll-Wada-Joseph integrals for precision
-RMC_INTERNAL_EXTERNAL_RATIO = 0.0069  # rho = BR(internal) / BR(external)
 
 #-------------------------------------------------------------------------------------#
 
