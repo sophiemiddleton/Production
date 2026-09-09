@@ -112,6 +112,7 @@ Reconstruction : {
       CaloClusterCollection : "CaloClusterMaker"
       CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
       KalSeedCollections  : [ "KKDe", "KKDmu", "KKUe", "KKUmu", "KKLine", "KKCHmu" ]
+      TimeClusterCollections : [ ]
     }
     # regrow
     RegrowSH : {
@@ -134,7 +135,6 @@ Reconstruction : {
         AddHits : false
       }
       ExtrapolationSettings : @local::Mu2eKinKal.LHDRIFTXTRAP
-      MaterialSettings : @local::Mu2eKinKal.MAT
       Extend: true
       debug : 0
     }
@@ -319,14 +319,13 @@ Reconstruction : {
   ]
   # Low reco products, useful for debugging and event display
   LowRecoProducts : [
-    "keep mu2e::ComboHits_*_*_*"
+    "keep mu2e::ComboHitCollection_*_*_*"
   ]
   GeneralProducts : [
     @sequence::Digitize.GeneralProducts,
     @sequence::Digitize.TriggerProducts # not sure we want to keep these
   ]
   # TODO: add products from reconstruction-level estimates of PBI from tracker and calorimeter
-
 }
 
 # OnSpill track reconstruction sequence: LoopHelix electrons and muons, downstream and upstream
@@ -365,21 +364,16 @@ Reconstruction.OnSpillPath : [
   SelectReco
 ]
 
-# OffSpill paths. Separate by fit type
-Reconstruction.OffSpillPath : [
+Reconstruction.CentralHelixPath : [
   @sequence::Reconstruction.PreTrk,
   @sequence::Reconstruction.OffSpillTrk,
-  SelectReco
-]
-
-Reconstruction.CentralHelixPath : [
-  @sequence::Reconstruction.OffSpillPath,
   CHFilter,
   SelectReco
 ]
 
 Reconstruction.LoopHelixPath : [
-  @sequence::Reconstruction.OffSpillPath,
+  @sequence::Reconstruction.PreTrk,
+  @sequence::Reconstruction.OffSpillTrk,
   LHFilter,
   SelectReco
 ]
@@ -394,19 +388,26 @@ Reconstruction.Output : {
     @sequence::Reconstruction.MidRecoProducts
   ]
 }
-
+# detailed output
+Reconstruction.DetailedOutput : {
+  @table::Reconstruction.Output
+  outputCommands: [
+  @sequence::Reconstruction.Output.outputCommands,
+  @sequence::Reconstruction.LowRecoProducts
+  ]
+}
+# customize for KalSeed regrow
 Reconstruction.RegrowOutput : {
   module_type : RootOutput
   fileName    : @nil
   outputCommands : [
+    "drop *_*_*_*",
     @sequence::Reconstruction.GeneralProducts,
     @sequence::Reconstruction.HighRecoProducts,
     @sequence::Reconstruction.MidRecoProducts,
-    "drop *_*_*_Digitize",
-    "drop *_*_*_Mix",
+    "drop *_*_*_Reconstruct",
     "keep *_EWMProducer_*_*",
     "keep *_PBISim_*_*",
-    "drop *_*_*_Reconstruct",
     "keep mu2e::Calo*_*_*_Reconstruct",
     "keep mu2e::Crv*_*_*_Reconstruct",
     "keep mu2e::KalSeed*_SelectReco_*_*",

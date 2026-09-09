@@ -1,8 +1,13 @@
 #
-# Extracted = NoField with shifted geometry
+# Run1B reconstruction with no solenoid field: straight-line tracking with
+# the extracted-position CRV configuration.
+#
+# The geometry below is the Run1B production geometry.  Every production
+# caller overrides services.GeometryService.inputFile explicitly, so this
+# default applies to bare running only.
 #
 #include "Production/JobConfig/recoMC/NoField.fcl"
-services.GeometryService.inputFile  : "Offline/Mu2eG4/geom/geom_run1_b_v01.txt"
+services.GeometryService.inputFile  : "Offline/Mu2eG4/geom/geom_run1_b_v40.txt"
 physics.producers.KKLine.ModuleSettings.SampleSurfaces : [ @sequence::physics.producers.KKLine.ModuleSettings.SampleSurfaces, "TCRV" ] #temporary until extrapolation is working
 #include "Offline/CRVReco/fcl/epilog_extracted.fcl"
 
@@ -44,15 +49,58 @@ physics.producers.CalTimeClusterFinder : {
   CaloClusterCollectionLabel : "CaloClusterMaker"
 }
 
+# Only produce clusters associated with calo clusters
+physics.producers.TZClusterFinder.requireCCs : true
+
 # physics.producers.LineFinder.TimeClusterCollection : "TimeAndPhiClusterFinder"
 physics.producers.LineFinder.TimeClusterCollection : "CalTimeClusterFinder"
 physics.producers.LineFinder.ComboHitCollection: "makePH"
 
+# Add proton reco
+physics.producers.ProtonCalTimeClusterFinder : {
+  @table::physics.producers.CalTimeClusterFinder
+  StrawEDepMin               : 0.002 # proton-like
+  StrawEDepMax               : 0.005
+}
+physics.producers.ProtonLineFinder : {
+  @table::physics.producers.LineFinder
+  TimeClusterCollection: "ProtonCalTimeClusterFinder"
+}
+physics.producers.ProtonKKLine : {
+  @table::physics.producers.KKLine
+}
+physics.producers.ProtonKKLine.ModuleSettings.CosmicTrackSeedCollections : [ "ProtonLineFinder" ]
+physics.producers.ProtonKKLine.ModuleSettings.FitParticle: 2212
+physics.producers.ProtonKKLine.ModuleSettings.SeedMomentum  : 400. # ~80 MeV KE
+physics.producers.SelectReco.KalSeedCollections : [ @sequence::physics.producers.SelectReco.KalSeedCollections, "ProtonKKLine" ]
+
+# Add cosmic muon reco
+physics.producers.CosmicLineFinder : {
+  @table::physics.producers.LineFinder
+  TimeClusterCollection: "TZClusterFinder"
+}
+physics.producers.CosmicKKLine : {
+  @table::physics.producers.KKLine
+}
+physics.producers.CosmicKKLine.ModuleSettings.CosmicTrackSeedCollections : [ "CosmicLineFinder" ]
+physics.producers.CosmicKKLine.ModuleSettings.FitParticle: 13
+physics.producers.CosmicKKLine.ModuleSettings.SeedMomentum  : 200.
+physics.producers.SelectReco.KalSeedCollections : [ @sequence::physics.producers.SelectReco.KalSeedCollections, "CosmicKKLine" ]
+
+# Final config
 outputs.KinematicLineOutput.outputCommands: [
    @sequence::outputs.KinematicLineOutput.outputCommands,
    "keep mu2e::CosmicTrackSeeds_*_*_*",
-   "keep mu2e::TimeClusters_*_*_*"
+   "keep mu2e::TimeClusters_*_*_*",
+   "keep mu2e::KalSeeds_ProtonKKLine_*_*",
+   "keep mu2e::KalSeeds_CosmicKKLine_*_*"
    ]
+
+physics.producers.SelectReco.TimeClusterCollections : [
+  "CalTimeClusterFinder",
+  "ProtonCalTimeClusterFinder",
+  "TZClusterFinder"
+]
 
 physics.RecoPath: [
       "CaloRecoDigiMaker",
@@ -67,9 +115,15 @@ physics.RecoPath: [
       "CrvRecoPulses",
       "CrvCoincidenceClusterFinder",
       "CalTimeClusterFinder",
+      "ProtonCalTimeClusterFinder",
       "TimeAndPhiClusterFinder",
+      "TZClusterFinder",
       "LineFinder",
       "KKLine",
+      "ProtonLineFinder",
+      "ProtonKKLine",
+      "CosmicLineFinder",
+      "CosmicKKLine",
       "SelectReco",
       "CaloHitTruthMatch",
       "CaloClusterTruthMatch",

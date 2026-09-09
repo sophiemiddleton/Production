@@ -1,0 +1,7 @@
+#include "Production/JobConfig/recoMC/NoFieldRun1B.fcl"
+
+services.GeometryService.inputFile: "Offline/Mu2eG4/geom/geom_run1_b_v40.txt"
+services.DbService.nearestMatch: true
+services.DbService.purpose: "Sim_best"
+services.DbService.version: "v1_5"
+services.DbService.verbose : 2

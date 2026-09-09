@@ -1,0 +1,26 @@
+#
+# Generate high KE muon capture neutrons
+#
+# Original author: Michael MacKenzie, 2026
+#
+#include "Production/JobConfig/primary/TargetStopParticle.fcl"
+
+physics.producers.generate : {
+  module_type : SingleProcessGenerator
+  inputSimParticles: TargetStopResampler
+  stoppingTargetMaterial : "Al"
+  decayProducts :
+  {
+    tool_type : MuCapNeutronGenerator
+    spectrumVariable : kineticEnergy
+    spectrum : {
+      spectrumShape: tabulated
+      spectrumFileName: "Offline/EventGenerator/data/SchroederNeutronSpectrum.txt"
+      elow : 60.
+    }
+  }
+  verbosity : 0
+}
+
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eMuonCaptureAtRest"
+outputs.PrimaryOutput.fileName: "dts.owner.MuCapNeutronTail.version.sequencer.art"

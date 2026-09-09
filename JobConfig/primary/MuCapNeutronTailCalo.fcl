@@ -1,0 +1,10 @@
+#
+# Generate high energy muon capture neutrons, aimed at the calorimeter
+#
+# Original author: Michael MacKenzie, 2026
+#
+#include "Production/JobConfig/primary/MuCapNeutronTail.fcl"
+
+physics.producers.generate.decayProducts.czmin : 0.99
+physics.producers.generate.decayProducts.czmax : 1.
+outputs.PrimaryOutput.fileName: "dts.owner.MuCapNeutronTailCalo.version.sequencer.art"

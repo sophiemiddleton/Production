@@ -54,3 +54,7 @@ physics.producers.CrvSteps.removeNeutralParticles : false
 #include "Production/JobConfig/common/epilog.fcl"
 #include "Production/JobConfig/primary/epilog.fcl"
 #include "Production/JobConfig/cosmic/resampling_epilog.fcl"
+
+# lower the threshold for saving MC Trajectories to cover reflections. These need to come after the epilog to override the Mu2eG4 default
+physics.producers.g4run.TrajectoryControl.mcTrajectoryMomentumCut : 40 # MeV/c
+physics.producers.g4run.TrajectoryControl.saveTrajectoryMomentumCut : 40 # MeV/c

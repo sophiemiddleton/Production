@@ -1,11 +1,6 @@
 #include "Production/Validation/reco.fcl"
 source.fileNames : [
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/0f/f1/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000008.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/25/ac/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000009.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/d5/03/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000010.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/19/4b/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000011.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/e6/18/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000012.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/36/ad/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000013.art",
-"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointMix1BBTriggered/MDC2025af_best_v1_1/art/e7/cc/dig.mu2e.CePlusEndpointMix1BBTriggered.MDC2025af_best_v1_1.001430_00000015.art"
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CeMLeadingLogMix1BB/MDC2025au_best_v1_3/art/d0/5b/dig.mu2e.CeMLeadingLogMix1BB.MDC2025au_best_v1_3.001430_00000667.art",
+"root://fndcadoor.fnal.gov:1094/mu2e/tape/phy-sim/dig/mu2e/CePlusEndpointOnSpill/MDC2025an_best_v1_1/art/bd/21/dig.mu2e.CePlusEndpointOnSpill.MDC2025an_best_v1_1.001430_00000687.art"
 ]
 outputs.LoopHelixOutput.fileName: "reco_08.art"

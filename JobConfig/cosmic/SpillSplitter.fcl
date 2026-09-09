@@ -22,6 +22,11 @@ physics: {
       MinimumTrkPlaneSpan : 16
       MaxImpact : 1000
     }
+    CaloFilter : { # select events with high energy deposits in the calo
+      @table::Primary.filters.PrimaryFilter # Take the normal primary selection defaults
+      StrawGasSteps : [  ] # No tracker selection
+      CaloShowerSteps : [ "compressDetStepMCs" ] # Update the steps label
+    }
     CalibFilter : { # select events interesting for calibration: reflecting cosmics, etc
       module_type : CosmicMixingFilter
       StrawGasSteps : "compressDetStepMCs"
@@ -38,9 +43,10 @@ physics: {
     }
   }
   SignalPath : [ SignalFilter ]
+  CaloPath : [ CaloFilter ]
   CalibPath : [ PrescaleFilter, CalibFilter ]
-  trigger_paths : [ CalibPath,  SignalPath ]
-  outpath: [ CalibOutput, SignalOutput ]
+  trigger_paths : [ CalibPath,  SignalPath, CaloPath ]
+  outpath: [ CalibOutput, SignalOutput, CaloOutput ]
   end_paths: [outpath]
 }
 outputs: {
@@ -49,6 +55,12 @@ outputs: {
     fileName : "dts.owner.CosmicSignal.version.sequencer.art"
     outputCommands:   [ "keep *_*_*_*" ]
     SelectEvents: [SignalPath]
+  }
+  CaloOutput: {
+    module_type: RootOutput
+    fileName : "dts.owner.CosmicCalo.version.sequencer.art"
+    outputCommands:   [ "keep *_*_*_*" ]
+    SelectEvents: [CaloPath]
   }
   CalibOutput: {
     module_type: RootOutput

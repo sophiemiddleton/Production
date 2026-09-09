@@ -24,14 +24,12 @@ physics : {
       KalSeedCollection : KKLine
       ComboHitCollection : RegrowSH
       StrawDigiIndexMap : "SelectReco:StrawDigiMap"
-      KalSeedMCAssns : "SelectReco"
       RefitSettings : {
         @table::Mu2eKinKal.REGROW
         BFieldCorrection : false
       }
       KKFitSettings : @local::Mu2eKinKal.KLDriftFit.KKFitSettings
       ExtrapolationSettings : @local::Mu2eKinKal.LHDRIFTXTRAP
-      MaterialSettings : @local::Mu2eKinKal.MAT
       debug : 0
     }
   }

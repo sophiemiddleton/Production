@@ -1,0 +1,26 @@
+#
+# Detector configuration for MDC2020: geometry and CRV, set together.
+#
+# Include this LAST, after the job's own epilogs, so that it wins:
+#
+#   #include "Production/JobConfig/common/MDC2020.fcl"
+#
+# In prodtools that is the '#include_first' slot, which write_fcl_template
+# emits after the whole base FCL -- so it lands after digitize/epilog.fcl and
+# reco/epilog.fcl, and beats the Run1A CRV values those pull in. Included any
+# earlier it is silently overwritten by Run1A's two-sector config and the job
+# still exits 0.
+#
+# Geometry and CRV are ONE decision. geom_common_MDC2020 resolves to
+# geom_2021_PhaseI_v03, which carries crv_counters_v09 and its 25 CRV
+# sectors; the current geometry carries crv_counters_v10 and 23. Changing one
+# without the other gives a job that runs and is wrong.
+#
+# Unlike Run1B.fcl this sets NO bFieldFile. No MDC2020 stage overrides the
+# field, so each takes it from its own base FCL's epilog. Adding a field key
+# here would silently move all of them. Do not add one for symmetry.
+#
+services.GeometryService.inputFile : "Offline/Mu2eG4/geom/geom_common_MDC2020.txt"
+
+#include "Offline/CRVResponse/fcl/epilog_MDC2020_v01.fcl"
+#include "Offline/CRVReco/fcl/epilog_MDC2020_v01.fcl"

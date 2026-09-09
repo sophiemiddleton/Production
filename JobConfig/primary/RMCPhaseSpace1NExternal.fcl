@@ -1,0 +1,9 @@
+#
+# RMC External, phase-space model with 1 knockout
+#
+
+#include "Production/JobConfig/primary/RMCPhaseSpace0NExternal.fcl"
+
+physics.producers.generate.decayProducts.spectrum.nKnockout : 1
+
+outputs.PrimaryOutput.fileName : "dts.owner.RMCPhaseSpace1NExternal.version.sequencer.art"

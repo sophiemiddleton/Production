@@ -1,0 +1,13 @@
+#
+# generate and produce Detector Steps from flat photon spectrum using mu- COL5 poly stops, aimed at the calorimeter
+#
+# original author: M. MacKenzie
+#
+#include "Production/JobConfig/primary/PolyFlatGamma.fcl"
+physics.producers.generate.czMin    : 0.99
+physics.producers.generate.czMax    : 1.
+physics.producers.generate.startMom : 50
+physics.producers.generate.endMom   : 110
+
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlatPhoton"
+outputs.PrimaryOutput.fileName: "dts.owner.PolyFlatGammaCalo.version.sequencer.art"

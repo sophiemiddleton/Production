@@ -5,12 +5,11 @@
 #
 outputs: {
   KinematicLineOutput : {
-    @table::Reconstruction.Output
+    @table::Reconstruction.DetailedOutput
     SelectEvents : [ "RecoPath" ]
     fileName: "rec.owner.description.version.sequencer.art"
   }
 }
-
 physics.RecoPath : [ @sequence::Reconstruction.NoFieldPath ]
 physics.EndPath : [ KinematicLineOutput]
 physics.trigger_paths : [ RecoPath ]

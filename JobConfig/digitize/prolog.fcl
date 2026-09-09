@@ -67,26 +67,31 @@ Digitize: {
       @table::CommonMC.TTSelectRecoMC
       ComboHitCollection : "TrigFlagPH"
       KalSeedCollections  : [ "TrigAprKSF" ]
+      TimeClusterCollections : [ ]
     }
     TrigAprUeKSFMC : {
       @table::CommonMC.TTSelectRecoMC
       ComboHitCollection : "TrigFlagPH"
       KalSeedCollections  : [ "TrigAprUeKSF" ]
+      TimeClusterCollections : [ ]
     }
     TrigTprDeKSFMC : {
       @table::CommonMC.TTSelectRecoMC
       ComboHitCollection : "TrigFlagPH"
       KalSeedCollections  : [ "TrigKSFDe" ]
+      TimeClusterCollections : [ ]
     }
     TrigMprDeKSFMC : {
       @table::CommonMC.TTSelectRecoMC
       ComboHitCollection : "TrigFlagPH"
       KalSeedCollections  : [ "TrigKSFMprDe" ]
+      TimeClusterCollections : [ ]
     }
     TrigCprDeKSFMC : {
       @table::CommonMC.TTSelectRecoMC
       ComboHitCollection : "TrigFlagPH"
       KalSeedCollections  : [ "TrigCalSeedFitDe" ]
+      TimeClusterCollections : [ ]
     }
   }
   filters : {
@@ -139,10 +144,10 @@ Digitize: {
     # Triggerable calo events
     TriggerableCalo : {
       module_type : CaloShowerSimFilter
-      MinParticleEnergy : 75.0
+      MinParticleEnergy : 68.0
       MinTotalEnergy    : 1e6
       CaloShowerSimCollection : "compressDigiMCs"
-      particleTypes : [11, -11, 13, -13, 211, -211, 22]
+      particleTypes : [11, -11, 13, -13, 211, -211, 22, 2212, 2112]
     }
     TriggerableCaloPrescale : {
       module_type : Prescaler
@@ -186,6 +191,7 @@ Digitize: {
     "keep mu2e::IntensityInfo*_CaloHitMakerFast_*_*",
     "keep mu2e::IntensityInfo*_Trig*_*_*",
     "keep mu2e::IntensityInfo*_TT*_*_*",
+    "keep mu2e::IntensityInfo*_LumiBuffer_*_*",
     "keep mu2e::*FilterFraction_*_*_*"
   ]
     #    "keep mu2e::SimParticlemv_compressDetStepMCs_*_*",

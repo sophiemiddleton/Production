@@ -1,11 +1,11 @@
 #
-# configuration for NoPrimary: in this case, Untriggered selection should be wide open (null prescaler)
+# configuration for NoPrimary: in this case, Untriggered selection should be wide open (null prescaler) except for digitization success
 #
 physics.filters.Triggerable : {
   module_type : Prescaler
   prescaleFactor : 1
   prescaleOffset : 0
 }
-# turn off any filtering for triggerable output stream
-outputs.Output.RejectEvents : []
-outputs.Output.SelectEvents : []
+# turn off any filtering for triggerable output stream, other than successful digitization
+outputs.Output.RejectEvents : [ ]
+outputs.Output.SelectEvents : [ DigitizePath ] # Don't save events that fail digitization

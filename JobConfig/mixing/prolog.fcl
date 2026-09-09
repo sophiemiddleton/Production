@@ -81,13 +81,26 @@ Mixing : {
       ReturnValue : true
     }
 
+    CaloDtsClusterFilter : {
+      module_type : CaloDtsClusterFilter
+      CaloShowerSteps        : ["compressDetStepMCs", "MuStopPileupMixer", "EleBeamFlashMixer", "MuBeamFlashMixer", "NeutralsFlashMixer"]
+      MinimumStepEnergy      : 0.   # MeV
+      MinimumStepTime        : 400. # ns
+      MaximumStepTime        : 1.e6 # ns, can't do fmod(time, 1695) accurately at high times
+      MinimumClusterEnergy   : 50.  # MeV
+      TimeWindow             : 100. # ns
+      SpaceWindow            : 80.  # mm
+      Enabled                : false # Default to off
+      DiagLevel              : 0
+    }
+
   }
   StepMixSequence : [  MuStopPileupMixer, EleBeamFlashMixer, MuBeamFlashMixer, NeutralsFlashMixer ]
   StepFilterSequence : [ MuStopPileupFilter, EleBeamFlashFilter, MuBeamFlashFilter, NeutralsFlashFilter ]
   # when mixing early events the intensity must be scaled down
   EarlyReductionFactor : 1.0e-2
 }
-Mixing.PileupMixSequence : [ PBISim, DTSFilter, @sequence::Mixing.StepMixSequence, @sequence::Mixing.StepFilterSequence ]
+Mixing.PileupMixSequence : [ PBISim, DTSFilter, @sequence::Mixing.StepMixSequence, @sequence::Mixing.StepFilterSequence, CaloDtsClusterFilter ]
 Mixing.MixSequence : [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
 # override the Trigger 'PrepareDigis' sequence; the mixers must preceed the digi making
 TrigRecoSequences.cfoDataGen: [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence, ProcessCFOData ]

@@ -5,7 +5,7 @@
 #
 outputs: {
   KinematicLineOutput : {
-    @table::Reconstruction.Output
+    @table::Reconstruction.DetailedOutput
     SelectEvents : [ "RecoPath" ]
     fileName: "mcs.owner.description.version.sequencer.art"
   }

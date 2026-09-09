@@ -12,7 +12,6 @@ physics.producers.generate : {
   decayProducts :
   {
     tool_type : MuCap1809keVGammaGenerator
-    fireAll   : true # Insert a photon into every event
   }
   verbosity : 0
 }

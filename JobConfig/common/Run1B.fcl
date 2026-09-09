@@ -1,0 +1,15 @@
+#
+# Detector configuration for Run 1B: geometry and field, set together.
+#
+# Include LAST, after the job's own epilogs, so that it wins:
+#
+#   #include "Production/JobConfig/common/Run1B.fcl"
+#
+# bfgeom_DSOff is the detector solenoid off with the PS and TS maps still
+# present and unscaled. It is not bfgeom_no_field, which is zero everywhere.
+#
+services.GeometryService.inputFile  : "Offline/Mu2eG4/geom/geom_run1_b_v40.txt"
+services.GeometryService.bFieldFile : "Offline/Mu2eG4/geom/bfgeom_DSOff.txt"
+
+# DS-on Run 1B uses geom_run1_b_ds_on_v40.txt with the normal field.
+# Trigger menu and digitizationEnd stay in digitize/OnSpill_run1b_epilog.fcl.

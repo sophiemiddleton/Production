@@ -1,14 +1,14 @@
 #
 # This script will regrow a KalSeed collection back into full KKTrack objects.
 # The seeds must have been created and stored using the standard Production reconstruction
-# sequence, including SelectRecoMC selection of the reduced digis, MC truth matching (KKSeedMC) and compression.
+# sequence, including SelectReco selection of the reduced digis, MC truth matching (KKSeedMC) and compression.
 # All calibrated and aligned quantities will be re-computed from digis, so that the new seeds will correspond to
 # the database conditions specified in the job, regardless of what was used in the original processing.
 # To be functional, database purpose and version must be appended to this script.
 # The KalSeeds produced by RegrowLH are functionally equivalent to the originals. Note that, if the original
-# track was marginal (poor fit, small # of DOFs, the regrown track fit can fail.
+# track was marginal (poor fit, small # of DOFs, etc) the regrown track fit can fail.
 # The schedule specified here is the minimal possible, providing a digitially identical (exactly the same
-# hits and straws) fit. The schedule can however be expanded to add processing steps (hit/straw updating),
+# hits and straws) fit and extrapolation. The schedule can however be expanded to add processing steps (hit/straw updating),
 # including re-extension (adding hits and straws and clusters), etc. Note however that only the hits/straws
 # saved in the reduced digi collection can be added.
 # Currently the calorimeter clusters are taken directly from the original reco output. It is in principle
@@ -31,26 +31,12 @@ physics : {
       StrawDigiCollectionTag  : "SelectReco"
       StrawDigiADCWaveformCollectionTag : "SelectReco"
     }
+  }
+  filters : {
     RegrowLH : {
-      module_type : RegrowLoopHelix
+      @table::Mu2eKinKal.RegrowLH
       KalSeedCollection : KKDe
       ComboHitCollection : RegrowSH
-      StrawDigiIndexMap : "SelectReco:StrawDigiMap"
-      CaloClusterCollection : "CaloClusterMaker"
-      KalSeedMCAssns : "SelectReco"
-      RefitSettings : {
-        @table::Mu2eKinKal.REGROW
-        BFieldCorrection : true
-      }
-      KKFitSettings: {
-        @table::Mu2eKinKal.producers.KKDe.KKFitSettings
-        SampleSurfaces : ["ST_Outer","ST_Front","ST_Back"]
-        AddHits : false
-      }
-      ExtrapolationSettings : @local::Mu2eKinKal.LHDRIFTXTRAP
-      MaterialSettings : @local::Mu2eKinKal.producers.KKDe.MaterialSettings
-      Extend: false
-      debug : 0
     }
   }
   RegrowPath : [ RegrowSH, RegrowLH ]

@@ -21,3 +21,6 @@ physics.filters.LumiStreamPS.eventModeConfig[0].prescale : 1
 
 # Configure the output to be signal triggers + MC triggerable
 outputs.Output.SelectEvents : [@sequence::physics.NoFieldTriggers, @sequence::physics.TriggerablePaths ]
+
+# Remove hit flagging for lumi stream
+physics.producers.TrigTZClusterFinder.chCollLabel : "TrigFlagPH"

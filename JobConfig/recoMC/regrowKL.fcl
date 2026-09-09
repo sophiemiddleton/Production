@@ -3,4 +3,4 @@
 #
 #include "Production/JobConfig/reco/regrowKL.fcl"
 Reconstruction.producers.RegrowKL.KalSeedMCAssns : "SelectReco"
-outputs.RegrowOutout.fileName: "mcs.owner.RegrowKL.version.sequencer.art"
+outputs.RegrowOutput.fileName: "mcs.owner.RegrowKL.version.sequencer.art"

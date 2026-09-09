@@ -1,0 +1,28 @@
+#
+# generate and produce Detector Steps from flat spectrum using mu- COL5 poly stops
+#
+# original author: M. MacKenzie
+#
+#include "Production/JobConfig/primary/TargetStopParticle.fcl"
+physics.producers.generate : {
+  module_type            : FlatGeneratorFromStoppedMuon
+  inputSimParticles      : TargetStopResampler
+  stoppingTargetMaterial : "C"
+  pdgId                  : 22
+  startMom               : 50
+  endMom                 : 110
+  verbosity              : 0
+}
+physics.filters.TargetStopResampler.mu2e.products : {
+  genParticleMixer: { mixingMap: [ [ "beamResampler", "" ] ] }
+  simParticleMixer: { mixingMap: [ [ "PolyStopFilter", "" ] ] }
+  stepPointMCMixer: { mixingMap: [ [ "PolyStopFilter:virtualdetector", ":" ] ] }
+  volumeInfoMixer: {
+    srInput: "compressPVPolyStops"
+    evtOutInstanceName: "eventlevel"
+  }
+
+}
+
+physics.producers.FindMCPrimary.PrimaryProcess : "mu2eFlatPhoton"
+outputs.PrimaryOutput.fileName: "dts.owner.PolyFlatGamma.version.sequencer.art"

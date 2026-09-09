@@ -1,0 +1,13 @@
+#
+# configuration for NoPrimary with a calo dts clustering filter and Online calo cluster trigger selection
+#
+physics.filters.Triggerable : {
+  module_type : Prescaler
+  prescaleFactor : 1
+  prescaleOffset : 0
+}
+# Filter events at the dts stage if there isn't enough calo energy in a space/time box
+physics.filters.CaloDtsClusterFilter.Enabled : true
+# Filter on the calo cluster information to speed mixing and reduce output dataset size
+outputs.Output.RejectEvents : [ ]
+outputs.Output.SelectEvents : [ calo_cluster_50 ] # Don't save events that fail digitization -> calo cluster trigger path

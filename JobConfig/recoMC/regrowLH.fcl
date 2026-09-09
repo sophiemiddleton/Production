@@ -2,5 +2,6 @@
 # MC version of regrowLH
 #
 #include "Production/JobConfig/reco/regrowLH.fcl"
-Reconstruction.producers.RegrowLH.KalSeedMCAssns : "SelectReco"
-outputs.RegrowOutout.fileName: "mcs.owner.RegrowLH.version.sequencer.art"
+physics.filters.RegrowLH.KalSeedMCAssns : "SelectReco"
+physics.filters.RegrowLH.CopyKalSeedMCs : false
+outputs.RegrowOutput.fileName: "mcs.owner.RegrowLH.version.sequencer.art"

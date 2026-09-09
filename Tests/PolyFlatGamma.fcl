@@ -1,0 +1,9 @@
+#include "Production/JobConfig/primary/PolyFlatGammaCalo.fcl"
+#include "Production/Tests/MuonStopConfig.fcl"
+
+services.SeedService.baseSeed : @local::Common.BaseSeed
+services.TFileService.fileName: "nts.owner.PolyFlatGamma.version.sequencer.root"
+
+physics.filters.TargetStopResampler.fileNames : [
+  "sim.owner.MuminusPolyStopsCat.version.sequencer.art"
+]

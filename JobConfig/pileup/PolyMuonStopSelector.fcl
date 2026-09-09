@@ -1,0 +1,8 @@
+# Filter Muminus and Muplus COL5 poly stops from combined stops and write them to a file
+
+#include "Production/JobConfig/pileup/MuonStopSelector.fcl"
+
+physics.filters.muminusSelector.SimParticles : "PolyStopFilter"
+physics.filters.muplusSelector.SimParticles  : "PolyStopFilter"
+outputs.muminusout.fileName : "sim.owner.MuminusPolyStopsCat.version.sequencer.art"
+outputs.muplusout.fileName  : "sim.owner.MuplusPolyStopsCat.version.sequencer.art"

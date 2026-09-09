@@ -1,0 +1,11 @@
+#
+# One booster batch at reduced intensity: 1500 W.
+#
+# 1.5565e12 POT per 1.33 s cycle, which is 0.389 of a full 4e12 batch,
+# spread over the 253445 microbunches of the 0.4296 s spill (1BB duty
+# factor 0.323).  Accelerator parameters are those in
+# JobConfig/ensemble/python/constants.py.
+#
+#include "Production/JobConfig/mixing/OneBB.fcl"
+physics.producers.PBISim.extendedMean: 6.14e6 # 1500 W
+physics.producers.PBISim.cutMax: 36.8e6  # truncate the tail at 6 times the mean

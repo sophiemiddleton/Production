@@ -44,6 +44,15 @@ Pileup: {
       stoppingMaterial: "StoppingTarget_Al"
       verbosityLevel: 1
     }
+    PolyMuonFinder: {
+      module_type: "StoppedParticlesFinder"
+      particleInput: "g4run"
+      particleTypes: [ 13, -13 ]
+      physVolInfoInput: "g4run:eventlevel"
+      useEventLevelVolumeInfo: true
+      stoppingMaterial: "COL5Poly"
+      verbosityLevel: 1
+    }
     WireGammaFinder: {
       module_type: "StoppedParticlesFinder"
       particleInput: "g4run"
@@ -74,9 +83,26 @@ Pileup: {
       verbosityLevel: 1
     }
 
+    IPAEndRingMuonFinder : {
+      module_type : StoppedParticlesFinder
+      particleInput : "g4run"
+      useEventLevelVolumeInfo: true
+      physVolInfoInput: "g4run:eventlevel"
+      stoppingMaterial : "IPAPolystyrene"
+      particleTypes : [ 13, -13 ]
+      verbosityLevel: 1
+    }
+
     stoppedMuonDaughters: {
       module_type: SimParticleDaughterSelector
       particleInput: "TargetMuonFinder"
+      # EMCascade should not be vetoed because we do not re-simulate it
+      processes: [ "DIO", "NuclearCapture" ] //TODO
+    }
+
+    stoppedPolyMuonDaughters: {
+      module_type: SimParticleDaughterSelector
+      particleInput: "PolyMuonFinder"
       # EMCascade should not be vetoed because we do not re-simulate it
       processes: [ "DIO", "NuclearCapture" ] //TODO
     }
@@ -86,6 +112,12 @@ Pileup: {
       volumesInput : "g4run"
       hitInputs : []
       particleInputs : [ "TargetStopFilter" ]
+    }
+    compressPVPolyStops: {
+      module_type: CompressPhysicalVolumes
+      volumesInput : "g4run"
+      hitInputs : []
+      particleInputs : [ "PolyStopFilter" ]
     }
     compressPVWireStops: {
       module_type: CompressPhysicalVolumes
@@ -100,12 +132,18 @@ Pileup: {
       particleInputs : [ "TargetPiStopFilter" ]
     }
 
-
     compressPVIPAStops: {
       module_type: CompressPhysicalVolumes
       volumesInput : "g4run"
       hitInputs : []
       particleInputs : [ "IPAStopFilter" ]
+    }
+
+    compressPVIPAEndRingStops: {
+      module_type: CompressPhysicalVolumes
+      volumesInput : "g4run"
+      hitInputs : []
+      particleInputs : [ "IPAEndRingStopFilter" ]
     }
 
     protonTimeOffset : @local::CommonMC.protonTimeOffset
@@ -135,6 +173,12 @@ Pileup: {
       extraHitInputs: [ "g4run:virtualdetector" ]
       mainSPPtrInputs: [ "TargetMuonFinder" ]
     }
+    PolyStopFilter: {
+      module_type: FilterG4Out
+      mainHitInputs: []
+      extraHitInputs: [ "g4run:virtualdetector" ]
+      mainSPPtrInputs: [ "PolyMuonFinder" ]
+    }
     WireStopFilter: {
       module_type: FilterG4Out
       mainHitInputs: []
@@ -149,12 +193,18 @@ Pileup: {
       mainSPPtrInputs: [ "TargetPionFinder" ]
     }
 
-
     IPAStopFilter: {
       module_type: FilterG4Out
       mainHitInputs: []
       extraHitInputs: [ "g4run:virtualdetector" ]
       mainSPPtrInputs: [ "IPAMuonFinder" ]
+    }
+
+    IPAEndRingStopFilter: {
+      module_type: FilterG4Out
+      mainHitInputs: []
+      extraHitInputs: [ "g4run:virtualdetector" ]
+      mainSPPtrInputs: [ "IPAEndRingMuonFinder" ]
     }
 
     FlashFilter: {
@@ -164,6 +214,9 @@ Pileup: {
     }
 
     TargetStopPrescaleFilter : {
+      module_type : RandomPrescaleFilter
+    }
+    PolyStopPrescaleFilter : {
       module_type : RandomPrescaleFilter
     }
     EarlyPrescaleFilter : {
@@ -266,6 +319,7 @@ Pileup: {
     spectrum: {
       spectrumShape: tabulated
       spectrumFileName: "Offline/EventGenerator/data/neutronSpectrum.txt"
+      BinCenter : true
     }
   }
 
@@ -333,6 +387,7 @@ Pileup: {
   EarlyMuBeamFlashPrescale : 30
   EarlyNeutralsFlashPrescale : 20
   MuminusTargetStopPrescale : 1000
+  PolyStopPrescale : 1000
 }
 # DetctorStepFilter instance to select DetSteps outside the flash
 Pileup.filters.DetStepFilter : {

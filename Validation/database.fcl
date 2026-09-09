@@ -2,5 +2,5 @@
 # Database configuration for validation and CI jobs
 #
 services.DbService.purpose: Sim_best
-services.DbService.version: v1_4
+services.DbService.version: v1_5
 services.DbService.verbose : 2

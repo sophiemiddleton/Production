@@ -1,0 +1,32 @@
+#
+# generate and produce Detector Steps from generic muon poly stops
+# Uses the Pileup 'generator' from A. Gaponenko
+# Assumes proton, neutron, and RMC distributions/rates per capture are similar to Al
+#
+#include "Production/JobConfig/pileup/MuStopPileup.fcl"
+
+process_name: MuPolyStopPileup
+physics.producers.generate : {
+  module_type: Pileup
+  inputSimParticles: TargetStopResampler
+  stoppingTargetMaterial : "C" # Assume carbon stops
+  verbosity: 1
+  captureProducts: [
+    @local::Pileup.muonCaptureProtonGenTool,
+    @local::Pileup.muonCaptureDeuteronGenTool,
+    @local::Pileup.muonCaptureNeutronGenTool,
+    @local::Pileup.muonCaptureRMCGenTool
+  ]
+  decayProducts: [
+    @local::Pileup.dioGenTool
+  ]
+}
+outputs.Output.fileName: "dts.owner.MuPolyStopPileup.version.sequencer.art"
+
+# Change to DIO on Carbon
+physics.producers.generate.decayProducts[0].spectrum.spectrumShape   : "tabulated"
+physics.producers.generate.decayProducts[0].spectrum.spectrumVariable: "totalEnergy"
+physics.producers.generate.decayProducts[0].spectrum.spectrumFileName: "Offline/EventGenerator/data/heeck_finer_binning_2016_szafron-scaled-to-6C.tbl"
+physics.producers.generate.decayProducts[0].spectrum.elow: 1.0
+physics.producers.generate.decayProducts[0].spectrum.ehi : 105.1
+

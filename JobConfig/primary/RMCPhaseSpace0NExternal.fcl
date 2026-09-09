@@ -1,0 +1,13 @@
+#
+# RMC External, phase-space model with 0 knockout
+#
+
+#include "Production/JobConfig/primary/RMCExternal.fcl"
+
+physics.producers.generate.decayProducts.spectrum.phaseSpaceShape : true
+physics.producers.generate.decayProducts.spectrum.nKnockout : 0
+physics.producers.generate.decayProducts.spectrum.elow : 80.
+physics.producers.generate.decayProducts.spectrum.ehi  : 105.
+
+
+outputs.PrimaryOutput.fileName : "dts.owner.RMCPhaseSpace0NExternal.version.sequencer.art"
