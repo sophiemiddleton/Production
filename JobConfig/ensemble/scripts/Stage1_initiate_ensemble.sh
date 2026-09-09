@@ -134,9 +134,9 @@ echo "   ✓ Retrieved ${NUM_JOBS} file(s)"
 echo ""
 
 echo "⏱️  [2/4] Calculating livetime from cosmic ray events...this may take some time depending on the number of files and their size..."
-#mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S ${COSMICS} | grep 'Livetime:' | awk -F: '{print $NF}' > ${COSMICS}.livetime
-LIVETIME=5.72e6 #$(awk '{sum += $1} END {print sum}' ${COSMICS}.livetime) # 720575 FIXME this is hardcoded due to now reprocessing
-echo "NOTE: using hardcoded 5.72e6s value due to MDC2025 bug "
+mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S ${COSMICS} | grep 'Livetime:' | awk -F: '{print $NF}' > ${COSMICS}.livetime
+LIVETIME=$(awk '{sum += $1} END {print sum}' ${COSMICS}.livetime) # 5.72e6 # FIXME this is hardcoded due to now reprocessing
+echo "FIXME: please hard code the livetime to the value shown here: https://mu2ewiki.fnal.gov/wiki/MDC2025#Cosmics "
 echo "   ✓ Total livetime: ${LIVETIME} seconds"
 echo ""
 
