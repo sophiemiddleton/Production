@@ -4,6 +4,7 @@ usage() { echo "Usage: $0
        Stage3_configure_ensemble_campaign.sh --tag MDS3c --release MDC2025 --version af --append
   
   --append: Skip TAR operations and just append stages to campaign JSON
+  --anaversion: Analysis Musings version (default: v02_00_00)
 "
 }
 
@@ -18,6 +19,7 @@ TAG=""
 RELEASE="MDC2025"
 VERSION="aw"
 OWNER="mu2e"
+ANAVERSION="v02_00_00"
 APPEND=0
 
 # Loop: Get the next option
@@ -36,6 +38,9 @@ while getopts ":-:" options; do
           ;;
         owner)
           OWNER=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
+          ;;
+        anaversion)
+          ANAVERSION=${!OPTIND} OPTIND=$(( $OPTIND + 1 ))
           ;;
         append)
           APPEND=1
@@ -124,7 +129,7 @@ if [[ ${APPEND} -eq 1 ]]; then
     },
     "inloc": "tape",
     "outloc": {"*.root": "disk"},
-    "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/AnalysisMDC2025/v02_00_00/setup.sh"
+    "simjob_setup": "/cvmfs/mu2e.opensciencegrid.org/Musings/AnalysisMDC2025/${ANAVERSION}/setup.sh"
   }
 ]
 CAMPAIGN_EOF
