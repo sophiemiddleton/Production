@@ -11,17 +11,38 @@ exit_abnormal() {
 }
 OWNER="mu2e"
 RELEASE=MDC2025
-CURRENT="au"
+CURRENT="aw"
 TAG=""
 VERBOSE=1
 
-DIOVERSION=af
-RMCVERSIONINT=au
-RMCVERSIONEXT=at
-RPCVERSION=af
-IPAVERSION=af
+# Default versions (will be overridden by Stage0 discovery)
+DIOVERSION=""
+RMCVERSIONINT=""
+RMCVERSIONEXT=""
+RPCVERSION=""
+IPAVERSION=""
 
 SETUP=/cvmfs/mu2e.opensciencegrid.org/Musings/SimJob/${RELEASE}${CURRENT}/setup.sh
+
+# Function: Discover dataset version using Stage0
+discover_version() {
+  local defname_pattern=$1
+  local stage0_script="$(dirname "$0")/Stage0_find_latest_sample.sh"
+  
+  if [[ ! -f "${stage0_script}" ]]; then
+    echo "   ✗ Error: Stage0 script not found at ${stage0_script}"
+    return 1
+  fi
+  
+  local version=$("${stage0_script}" --defname "${defname_pattern}" --release "${RELEASE}" 2>/dev/null)
+  
+  if [[ -z "${version}" ]]; then
+    return 1
+  fi
+  
+  echo "${version}"
+  return 0
+}
 
 echo ""
 echo "═══════════════════════════════════════════════════════════════"
@@ -92,7 +113,7 @@ while getopts ":-:" options; do
     esac
 done
 
-# Extract config file from disk - MUCH SIMPLER WITH SOURCING
+# Extract config file from disk - MUST LOAD FIRST to get emin values for dataset discovery
 CONFIG=${TAG}.txt
 
 if [[ ! -f ${CONFIG} ]]; then
@@ -100,7 +121,7 @@ if [[ ! -f ${CONFIG} ]]; then
   exit 1
 fi
 
-echo "🔍 [1/6] Loading configuration from ${CONFIG}..."
+echo "🔍 [0/7] Loading configuration from ${CONFIG}..."
 source ${CONFIG}
 
 # Map sourced variables to script variables
@@ -150,6 +171,102 @@ echo "     • RMC 1N External: ${rmc_n1_external_events:-N/A}"
 echo "     • IPA Michel: ${ipa_events:-N/A}"
 echo ""
 
+echo "🔍 [0.5/7] Discovering dataset versions from SAM..."
+DISCOVERY_FAILED=0
+
+if [[ -z "${DIOVERSION}" ]]; then
+  echo "   Discovering DIO${DIO_EMIN} version..."
+  DIOVERSION=$(discover_version "dts.mu2e.DIOtail${DIO_EMIN}.${RELEASE}%.art")
+  if [[ -z "${DIOVERSION}" ]]; then
+    echo "   ✗ Failed to discover DIO${DIO_EMIN} version"
+    DISCOVERY_FAILED=1
+  else
+    echo "   ✓ DIO${DIO_EMIN} version: ${DIOVERSION}"
+  fi
+fi
+
+# Only discover RMC versions if they're needed (check config)
+if [[ ! -z ${RMC_N0_emin} ]] && [[ -z "${RMCVERSIONINT}" ]]; then
+  echo "   Discovering RMC 0N Internal version..."
+  RMCVERSIONINT=$(discover_version "dts.mu2e.RMCPhaseSpace0NInternal.${RELEASE}%.art")
+  if [[ -z "${RMCVERSIONINT}" ]]; then
+    echo "   ✗ Failed to discover RMC 0N Internal version"
+    DISCOVERY_FAILED=1
+  else
+    echo "   ✓ RMC 0N Internal version: ${RMCVERSIONINT}"
+  fi
+fi
+
+if [[ ! -z ${RMC_N0_emin} ]] && [[ -z "${RMCVERSIONEXT}" ]]; then
+  echo "   Discovering RMC 0N External version..."
+  RMCVERSIONEXT=$(discover_version "dts.mu2e.RMCPhaseSpace0NExternal.${RELEASE}%.art")
+  if [[ -z "${RMCVERSIONEXT}" ]]; then
+    echo "   ✗ Failed to discover RMC 0N External version"
+    DISCOVERY_FAILED=1
+  else
+    echo "   ✓ RMC 0N External version: ${RMCVERSIONEXT}"
+  fi
+fi
+
+if [[ ! -z ${RMC_N1_emin} ]] && [[ -z "${RMCVERSIONINT}" ]]; then
+  echo "   Discovering RMC 1N Internal version..."
+  RMCVERSIONINT=$(discover_version "dts.mu2e.RMCPhaseSpace1NInternal.${RELEASE}%.art")
+  if [[ -z "${RMCVERSIONINT}" ]]; then
+    echo "   ✗ Failed to discover RMC 1N Internal version"
+    DISCOVERY_FAILED=1
+  else
+    echo "   ✓ RMC 1N Internal version: ${RMCVERSIONINT}"
+  fi
+fi
+
+if [[ ! -z ${RMC_N1_emin} ]] && [[ -z "${RMCVERSIONEXT}" ]]; then
+  echo "   Discovering RMC 1N External version..."
+  RMCVERSIONEXT=$(discover_version "dts.mu2e.RMCPhaseSpace1NExternal.${RELEASE}%.art")
+  if [[ -z "${RMCVERSIONEXT}" ]]; then
+    echo "   ✗ Failed to discover RMC 1N External version"
+    DISCOVERY_FAILED=1
+  else
+    echo "   ✓ RMC 1N External version: ${RMCVERSIONEXT}"
+  fi
+fi
+
+if [[ -z "${RPCVERSION}" ]]; then
+  echo "   Discovering RPC version..."
+  RPCVERSION=$(discover_version "dts.mu2e.RPCInternalPhysical.${RELEASE}%.art")
+  if [[ -z "${RPCVERSION}" ]]; then
+    echo "   ✗ Failed to discover RPC version"
+    DISCOVERY_FAILED=1
+  else
+    echo "   ✓ RPC version: ${RPCVERSION}"
+  fi
+fi
+
+if [[ -z "${IPAVERSION}" ]]; then
+  echo "   Discovering IPA version..."
+  IPAVERSION=$(discover_version "dts.mu2e.IPAMuminusMichel.${RELEASE}%.art")
+  if [[ -z "${IPAVERSION}" ]]; then
+    echo "   ✗ Failed to discover IPA version"
+    DISCOVERY_FAILED=1
+  else
+    echo "   ✓ IPA version: ${IPAVERSION}"
+  fi
+fi
+
+if [[ $DISCOVERY_FAILED -eq 1 ]]; then
+  echo ""
+  echo "⚠️  WARNING: One or more dataset versions could not be auto-discovered from SAM."
+  echo "   You can manually specify versions using command-line options:"
+  echo "     --dioversion <version>"
+  echo "     --rmcversionint <version>"
+  echo "     --rmcversionext <version>"
+  echo "     --rpcversion <version>"
+  echo "     --ipaversion <version>"
+  echo ""
+  echo "   Attempting to continue with discovered versions..."
+  echo ""
+fi
+echo ""
+
 # Use sourced variables directly
 NJOBS=${njobs}
 LIVETIME=${onspilltime}
@@ -165,7 +282,7 @@ rm -f filenames_RMCExternal
 rm -f filenames_IPAMichel
 rm -f *.tar
 
-echo "🔍 [2/6] Validating dataset availability (files and generated events)..."
+echo "🔍 [1/7] Validating dataset availability (files and generated events)..."
 echo "   Checking for ${NJOBS} files + sufficient generated events per dataset..."
 VALIDATION_FAILED=0
 
@@ -273,7 +390,7 @@ check_file_lists() {
   return $filelist_check_failed
 }
 
-echo "🔨 [3/6] Building file lists (${NJOBS} files per process)..."
+echo "🔨 [2/7] Building file lists (${NJOBS} files per process)..."
 mu2eDatasetFileList "dts.mu2e.CosmicSignal.${COSMICTAG}.art" | head -${NJOBS} > filenames_CRYCosmic
 mu2eDatasetFileList "dts.mu2e.DIOtail${DIO_EMIN}.${RELEASE}${DIOVERSION}.art"| head -${NJOBS} > filenames_DIO
 if [[ ! -z ${RMC_N0_emin} ]]; then
@@ -286,7 +403,7 @@ if [[ ! -z ${RMC_N1_emin} ]]; then
 fi
 mu2eDatasetFileList "dts.mu2e.RPCInternalPhysical.${RELEASE}${RPCVERSION}.art" --tape | head -${NJOBS} > filenames_RPCInternal
 mu2eDatasetFileList "dts.mu2e.RPCExternalPhysical.${RELEASE}${RPCVERSION}.art" | head -${NJOBS} > filenames_RPCExternal
-mu2eDatasetFileList "dts.mu2e.IPAMuminusMichel.${RELEASE}${IPAVERSION}.art" | head -${NJOBS} > filenames_IPAMichel
+mu2eDatasetFileList "dts.mu2e.IPAMuminusMichel.${RELEASE}${IPAVERSION}.art" --tape| head -${NJOBS} > filenames_IPAMichel
 echo "   ✓ File lists created"
 echo ""
 
@@ -305,7 +422,7 @@ else
 fi
 echo ""
 
-echo "📝 [4/6] Generating template FCL files..."
+echo "📝 [3/7] Generating template FCL files..."
 # Build process list dynamically
 PRC_LIST="DIO CRYCosmic RPCInternal RPCExternal IPAMichel"
 if [[ ! -z ${RMC_N0_emin} ]]; then
@@ -318,7 +435,7 @@ make_template_fcl.py --BB=${BB} --release=${RELEASE}${CURRENT}  --tag=${TAG} --v
 echo "   ✓ Template FCL files generated"
 echo ""
 
-echo "🏗️  [5/6] Building ensemble job configuration..."
+echo "🏗️  [4/7] Building ensemble job configuration..."
 echo "   Cleaning previous outputs..."
 rm -f cnf.${OWNER}.ensemble${TAG}.${RELEASE}${CURRENT}.0.tar
 rm -f filenames_CRYCosmic_${NJOBS}.txt
@@ -367,7 +484,7 @@ else
 fi
 echo ""
 
-echo "🚀 [6/6] Submitting ensemble jobs..."
+echo "🚀 [5/7] Submitting ensemble jobs..."
 DSCONF=${RELEASE}${CURRENT}
 # note change setup to code to use a custom tarball
 echo "   Running mu2ejobdef..."

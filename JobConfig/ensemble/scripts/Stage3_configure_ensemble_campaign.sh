@@ -16,7 +16,7 @@ exit_abnormal() {
 # Default values
 TAG=""
 RELEASE="MDC2025"
-VERSION="au"
+VERSION="aw"
 OWNER="mu2e"
 APPEND=0
 
@@ -134,6 +134,15 @@ CAMPAIGN_EOF
     exit 1
   fi
   echo "   ✓ Generated ${CAMPAIGN_JSON_FILE}"
+  echo ""
+  
+  echo "   Copying campaign JSON to production manager directory..."
+  cp ${CAMPAIGN_JSON_FILE} /exp/mu2e/app/users/mu2epro/production_manager/poms_map/
+  if [[ $? -ne 0 ]]; then
+    echo "   ✗ Error: Failed to copy campaign JSON file"
+    exit 1
+  fi
+  echo "   ✓ Copied to /exp/mu2e/app/users/mu2epro/production_manager/poms_map/"
   echo ""
   echo "   To add additional stages (e.g. digi, reco, ntuple) to the existing ensemble campaign:"
   echo "     json2jobdef --json ${CAMPAIGN_JSON_FILE} --dsconf ${RELEASE}${VERSION}_best_v1_1 --desc ensemble${TAG}OnSpill --jobdefs /exp/mu2e/app/users/mu2epro/production_manager/poms_map/${CAMPAIGN_JSON_FILE} --prod"
@@ -324,6 +333,15 @@ if [[ ! -f ${CAMPAIGN_JSON_FILE} ]]; then
   exit 1
 fi
 echo "   ✓ Generated ${CAMPAIGN_JSON_FILE}"
+echo ""
+
+echo "   Copying campaign JSON to production manager directory..."
+cp ${CAMPAIGN_JSON_FILE} /exp/mu2e/app/users/mu2epro/production_manager/poms_map/
+if [[ $? -ne 0 ]]; then
+  echo "   ✗ Error: Failed to copy campaign JSON file"
+  exit 1
+fi
+echo "   ✓ Copied to /exp/mu2e/app/users/mu2epro/production_manager/poms_map/"
 echo ""
 echo "   To run the ensembling campaign:"
 echo "     1) Setup a new POMS campaign using the GUI"
