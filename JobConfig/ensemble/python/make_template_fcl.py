@@ -8,14 +8,46 @@ import glob
 import ROOT
 from normalizations import *
 import subprocess
+import math
 
 """
 How to use:
 python ../Production/JobConfig/ensemble/python/make_template_fcl.py --BB=1BB --verbose=1 --rue=1e-13 --livetime=60 --run=1201 --dioemin=75 --tmin=450 --samplingseed=1  --prc "CE" "DIO"
 """
 
+def cosmic_subrun_livetime(t, lt_branch, gc_branch, n_gen_s1, lt_s1):
+  """
+  Sum the resampled cosmic livetime over the SubRuns tree t, correcting the
+  Mu2eProductMixer integer-division bug (Mu2e/Offline#1940), which stored
+  floor(N_res/N_gen)*L_S1 instead of (N_res/N_gen)*L_S1.
+  N_res is the S2 draw count (genCounter runs before the resampler);
+  n_gen_s1 and lt_s1 are the S1 pool's per-subrun generated count and livetime.
+  Files made after the fix are recognised and their stored value is kept.
+  S1 subruns differ slightly in livetime (~0.1%), so the match is loose; the
+  buggy case is tested first, since where both match true_lt is the safe answer.
+  """
+  tol = 0.01
+  total = 0.
+  for i in range(t.GetEntries()):
+      t.GetEntry(i)
+      stored = getattr(t, lt_branch).product().liveTime()
+      n_res = getattr(t, gc_branch).product().count()
+      r = n_res / n_gen_s1
+      true_lt = r * lt_s1
+      buggy_lt = math.floor(r) * lt_s1
+      if math.isclose(stored, buggy_lt, rel_tol=tol, abs_tol=1e-6):
+          total += true_lt
+      elif math.isclose(stored, true_lt, rel_tol=tol):
+          total += stored
+      else:
+          implied = stored / math.floor(r) if math.floor(r) > 0 else float("nan")
+          raise RuntimeError("CosmicLivetime %f matches neither corrected %f nor buggy %f "
+                             "(N_res %d, r %.4f, implied S1 livetime %f); check --cosmic-ngen and "
+                             "--cosmic-s1-livetime" % (stored, true_lt, buggy_lt, n_res, r, implied))
+  return total
+
 def main(args):
-  
+
   # live time in seconds
   livetime = float(args.livetime)
 
@@ -128,15 +160,26 @@ def main(args):
               # find the right branch
               bl = t.GetListOfBranches()
               bn = ""
-              
+              gc = ""
+
               for i in range(bl.GetEntries()):
-                  if bl[i].GetName().startswith("mu2e::CosmicLivetime"):
-                      bn = bl[i].GetName()
-              for i in range(t.GetEntries()):
-                  t.GetEntry(i)
-                  
-                  livetime+=getattr(t,bn).product().liveTime()
-                  gen_events += getattr(t,bn).product().liveTime()
+                  name = bl[i].GetName()
+                  # prefer the resampler's "mixed" instance, which carries the bug
+                  if name.startswith("mu2e::CosmicLivetime") and (bn == "" or "_mixed_" in name):
+                      bn = name
+                  if name.startswith("mu2e::GenEventCount_genCounter_"):
+                      gc = name
+              if "_mixed_" in bn and gc != "":
+                  lt = cosmic_subrun_livetime(t, bn, gc, float(args.cosmic_ngen), float(args.cosmic_s1_livetime))
+              else:
+                  # not resampled (or no draw count): the stored value is used as is
+                  print("WARNING: %s: no mixed CosmicLivetime or genCounter, livetime not corrected" % fn)
+                  lt = 0.
+                  for i in range(t.GetEntries()):
+                      t.GetEntry(i)
+                      lt += getattr(t,bn).product().liveTime()
+              livetime += lt
+              gen_events += lt
           else:
               # find the right branch
               bl = t.GetListOfBranches()
@@ -207,8 +250,8 @@ def main(args):
 
       d = {}
       d["datasets"] = datasets
-      d["outnameMC"] = os.path.join("dts.mu2e.ensemble"+args.tag+"."+args.release+".%06d_%08d.art" % (run,subrun))
-      d["outnameData"] = os.path.join("dts.mu2e.ensemble"+args.tag+"."+args.release+".%06d_%08d.art" % (run,subrun))
+      d["outnameMC"] = os.path.join("dts.mu2e.ensemble."+args.release+"_"+args.tag+".%06d_%08d.art" % (run,subrun))
+      d["outnameData"] = os.path.join("dts.mu2e.ensemble."+args.release+"_"+args.tag+".%06d_%08d.art" % (run,subrun))
       d["run"] = run
       d["subRun"] = subrun
       d["samplingSeed"] = samplingseed + subrun
@@ -248,6 +291,8 @@ if __name__ == "__main__":
     parser.add_argument("--samplingseed", help="samplingseed")
     parser.add_argument("--tag", help="ouput file tag")
     parser.add_argument("--prc", help="list of signals e.g CE DIO Cosmic", nargs='+')
+    parser.add_argument("--cosmic-ngen", default=128783, help="S1 cosmic pool generated events per subrun (CosmicDSStopsCRYAll.MDC2025ab)")
+    parser.add_argument("--cosmic-s1-livetime", default=29.586, help="S1 cosmic pool livetime per subrun [s] (CosmicDSStopsCRYAll.MDC2025ab)")
     args = parser.parse_args()
     (args) = parser.parse_args()
     main(args)
