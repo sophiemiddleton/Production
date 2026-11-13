@@ -1,59 +1,76 @@
-## 🐍 Python Script Documentation: Log File Data Extractor `logchecker.py`
+## 🔍 Validations: `mds.sh validate` (Stage 4)
 
 ### **1. Overview**
 
-This script automates the process of extracting tabular data blocks from multiple log files, combining the extracted information into a temporary text file, and then parsing that text file into a clean CSV format for easy import into spreadsheets or analytical tools. It is used to validate the out put of the ensembling process.
+After the ensemble campaign, `mds.sh validate` checks that the sampling did what the template FCL asked for, and records the livetime that was actually built. It replaces `Stage4_validate_dts.sh`, which only summed the counts in the logs.
 
 | Component | Description |
 | :--- | :--- |
-| **Purpose** | To efficiently gather structured event count or dataset summary tables embedded between specific markers in `.log` files and convert them into CSV format. |
-| **Input** | Multiple `.log` files located in the fixed subdirectory `"logs"`. |
-| **Output** | 1. `extracted_data.txt` (Temporary combined text file). <br> 2. `output_data.csv` (Final structured data file). |
-| **Dependencies** | `csv`, `os` (Standard Python library modules). |
+| **Purpose** | Compare the events each job sampled with the FCL weights and the expected dts yields; work out the livetime the ensemble actually contains. |
+| **Input** | The ensemble job logs, read in place from the log dataset on pnfs: `${MDS_LOG_ROOT:-/pnfs/mu2e/persistent/datasets/phy-etc/log}/<owner>/ensemble/<dsconf>/log` (or `--logs DIR`). |
+| **Output** | `validate.txt` (report), `validate.csv` (per job, per process), `validate.pdf` (plots), `livetime.txt`, and the true livetime in the manifest. |
+| **Tools** | `../scripts/plot_ensemble_validation.py` and `../scripts/ensemble_livetime.py`, which also work on their own. The plots need matplotlib: `$MDS_PYTHON`, by default the Mu2e ana environment's `python3`. |
 
-### **2. Configuration & Markers**
+### **2. Usage**
 
-The script relies on fixed variables to locate input files and define the boundaries of the data block to be extracted.
+```
+mds.sh validate --tag <TAG> [--logs DIR] [--nsigma 5] [--no-plots] [--accept]
+```
 
-| Variable | Default Value | Description |
+| Argument | Default | Description |
 | :--- | :--- | :--- |
-| `log_directory` | `"logs"` | The subdirectory scanned for input files. |
-| `start_marker` | `"Dataset         Counts"` | The line that signals the *beginning* of the data block. |
-| `end_marker` | `"Total"` | The line that signals the *end* of the data block. |
-| `output_file_name` | `"extracted_data.txt"` | Temporary file storing all raw extracted text. |
-| `output_csv_file_name` | `"output_data.csv"` | The final output file ready for analysis. |
+| `--logs` | the log dataset on pnfs | Read the logs from another directory. |
+| `--nsigma` | `5` | Threshold for the checks below. |
+| `--no-plots` | off | Tables only, no PDF. |
+| `--accept` | off | Record the step as done even when a check fails. |
 
-### **3. Execution Flow: Part 1 - Text Extraction**
+`validate` needs `publish` to have been done and can be rerun. A failed check stops the step unless `--accept`.
 
-This phase iterates through all log files and compiles the relevant blocks into a single text file.
+### **3. What is checked**
 
-1.  **File Iteration:** The script uses `os.listdir(log_directory)` to loop through all files in the designated directory and processes only those ending with `.log`.
-2.  **Extraction Flag:** A boolean flag, `extracting`, is toggled when the `start_marker` is found.
-3.  **Line Collection:** All lines read while `extracting` is `True` are appended to `all_extracted_lines`.
-4.  **Extraction Stop:** The `extracting` flag is toggled back to `False` when the `end_marker` (`"Total"`) is found, completing the block capture. 
-5.  **Output to Text File:** All collected lines are written sequentially to the temporary file, `extracted_data.txt`, with an `EOF` marker appended at the very end for later parsing reference.
+Each job log has a SamplingInput table: per process, the sampled count, the sampled and expected fractions, the weight, and the next event or `(no more available)` for the input that ran out and ended the job. `plot_ensemble_validation.py --check` reads every log and fails when:
 
-### **4. Execution Flow: Part 2 - CSV Conversion**
+- a process's sampled fraction over all jobs is more than `--nsigma` from its weight in `SamplingInput_sr0.fcl`
+- logs have no table, or there are fewer jobs than the tarball defines
+- a process is more than `--nsigma` Poisson sigmas from its expected dts yield (`dts_expected_<label>`, generated-level yield × dts filter efficiency, recorded by `build`), or the total is more than `--nsigma` from the sampled target (`sample_target`)
 
-This phase reads the temporary text file and converts the structured text into a comma-separated format.
+It warns when the per-job pull RMS is far from 1, or when an input other than the usual limiting one ends more than 1% of jobs. The pages of `validate.pdf`:
 
-1.  **Read Temporary File:** `extracted_data.txt` is read line by line.
-2.  **Data Isolation:** The script assumes the raw data starts at index `2` (skipping the header marker and a separator line) and ends just before the `EOF` marker.
-3.  **Header Definition:** A manual header is defined for the CSV:
-    ```python
-    header = ["Dataset", "Counts", "fraction_sampled", "fraction_expected", "weight"]
-    ```
-4.  **Line Parsing and Splitting:**
-    * Each data line is split using whitespace (`line.split()`) into `row_data`.
-    * A check ensures the line is a valid data row (i.e., `len(row_data) > 6` and the first element is not the header `Dataset`).
-    * **Column Selection:** The script selectively chooses indices from the split list, implicitly handling complex table formatting where column data might be misaligned:
-        * `row_data[0]`: `Dataset`
-        * `row_data[1]`: `Counts`
-        * `row_data[2]`: `fraction_sampled`
-        * `row_data[4]`: `fraction_expected` (Note: skips index `3`, which is typically a separator character like `|`).
-        * `row_data[5]`: `weight`
-5.  **CSV Writing:** The cleaned and reordered `cleaned_row` is written to `output_data.csv` using the `csv.writer`.
+1. per-process sampled fraction over all jobs vs the configured fraction (pull)
+2. per-job sampled fraction, with the FCL weight
+3. per-job pulls, which should be unit Gaussians
+4. events per job, and which input ran out to end each job
+5. events per job vs job index (spots bad or short input files)
+6. sampled vs expected dts yield per process, and the total vs the target
 
-## Plotting the outcomes
+### **4. The livetime actually built**
 
-The `plot_log_stats.py` script is used to produce plots of the selected sampling means. Edit the list of expected means to reflect what was in the original SamplingInput .fcl file. The distributions should be centered on the means.
+Jobs end when one input runs out, so the ensemble usually holds a little less than the requested livetime. `validate` runs `ensemble_livetime.py` on `validate.csv` and records in the manifest (and `livetime.txt`):
+
+$$
+\text{true\_onspilltime} = \text{requested on-spill time} \times \frac{\text{events built}}{\text{sampled target}}
+$$
+
+with `true_beam_livetime`, `true_beam_npot` and `true_fraction`. Events built is the dts dataset's count in SAM when `samweb` is set up, otherwise the sum over the logs. `ensemble_livetime.py` also prints a per-process estimate ($N_i / E_i$) as a cross-check. For MDS4b the fraction was 0.9735.
+
+`signal` uses `true_beam_livetime` for the livetime per ntuple file. Run `validate` in the same workroot before `signal`; otherwise `signal` falls back to the requested livetime and injects too much signal by the same fraction.
+
+### **5. Running the scripts on their own**
+
+Both scripts work without `mds.sh`, e.g. for tags made with the old Stage scripts:
+
+```bash
+plot_ensemble_validation.py --logs <log dir> --stage2-log <make_template_fcl.py output> --out MDS4a_validation --check
+plot_ensemble_validation.py --from-csv MDS4a_validation.csv --out MDS4a_validation
+ensemble_livetime.py --from-csv MDS4a_validation.csv --livetime 5.72e6 --stage2-log <make_template_fcl.py output> --sam
+ensemble_livetime.py --from-csv validate.csv --manifest manifest.env --env
+```
+
+Run either with `--help` for all options.
+
+### **6. Further checks**
+
+- After `digireco` and the POMS stages, `mds.sh status --tag <TAG>` shows the file counts of the dts, dig, mcs and nts datasets.
+- pyfitter's `validate_MDS.py` compares the MDS ntuples after the analysis cuts with the scaled MC (data vs MC total, momentum and t0).
+- For a signal-mixed sample, see [Checking the mixed sample](NewPhysics.md#3-checking-the-mixed-sample).
+- `logchecker.py` and `plot_log_stats.py` are the older tools for the SamplingInput tables; `plot_ensemble_validation.py` replaces them.

@@ -1,91 +1,91 @@
-## 🚀 Bash Script Documentation: Building Known Physics `Stage2_build_sampler.sh`
+## 🚀 Building Known Physics: `mds.sh build` (Stage 2)
 
 ### **1. Overview**
 
-This script orchestrates the creation and submission of a grid job (an "ensemble" production) designed to simulate the final experimental conditions by mixing various background events according to calculated physics rates. It leverages Mu2e's data handling (SAM) and job submission tools (`mu2ejobdef`, `mu2ejobsub`).
+`mds.sh build` prepares the ensemble (known physics) grid job. It replaces `Stage2_build_sampler.sh`. It does not submit anything: the job runs as a POMS campaign after `publish` ([Running with the Grid](UploadToTape.md)).
 
 | Component | Description |
 | :--- | :--- |
-| **Purpose** | Reads configuration from Stage 1, gathers input file lists for all physics processes, generates a job configuration (FCL), and submits the ensemble simulation job to the computing grid. |
-| **Prerequisites** | Must be run after `Stage1_initate_ensemble.sh` has successfully created the configuration file (`${TAG}.txt`). Requires Mu2e grid tools (`samweb`, `mu2eDatasetFileList`, `mu2ejobdef`, `mu2ejobsub`). |
-| **Outcome** | A multi-component simulation job is queued on the grid, ready to process events. A TAR configuration file (`cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.0.tar`) is created for use in Stage 3. |
+| **Purpose** | Find an input dataset for each process, make the per-process file lists, generate the SamplingInput template FCL, build the `mu2ejobdef` tarball and create its SAM index definition. |
+| **Prerequisites** | `mds.sh init` for this tag. `samweb`, `mu2eDatasetFileList`, `samDatasetsSummary.sh`, `mu2ejobdef` and `mu2ejobquery` in PATH. |
+| **Outcome** | `cnf.<owner>.ensemble.<release><version>_<TAG>.0.tar`, its index definition `idx_<owner>.ensemble.<release><version>_<TAG>`, and the expected dts yields in the manifest. |
 
 ### **2. Usage**
 
-The script takes a single required argument: the tag used in Stage 1.
-
 ```
-Stage2_build_sampler.sh [OPTIONS]
+mds.sh build --tag <TAG> [--pin LABEL=VERSION ...] [--dry-run] [--force]
+mds.sh build --tag MDS4a
+mds.sh build --tag MDS4a --pin DIO=au --pin RPCExternal=av
 ```
-### **3. Arguments & Default Parameters**
 
-The following arguments primarily control file naming, software versioning, and job behavior. Physics parameters are generally read from the Stage 1 configuration file.
+Every setting (release, version, cuts, number of jobs, SimJob setup, run, seed) comes from the manifest written by `init`. `build` skips itself if already done, and refuses after `publish`, because the tarball on tape would no longer match; `--force` overrides both. `--dry-run` prints the index definition instead of creating it, and does not mark the step done.
 
-| Argument | Variable | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `--tag` | `TAG` | `""` | **REQUIRED.** The project tag (e.g., `MDS3c`) used to locate the Stage 1 config file. |
-| `--owner` | `OWNER` | `mu2e` | The owner of the dataset definition (usually `mu2e` or a username). |
-| `--verbose` | `VERBOSE` | `1` | Controls verbosity in the FCL template generation. |
-| `--setup` | `SETUP` | `/cvmfs/.../setup.sh` | Path to the Mu2e software environment setup script. |
-| `--dioversion` | `DIOVERSION` | `af` | Software version tag for DIO events. |
-| `--rmcversion` | `RMCVERSION` | `af` | Software version tag for RMC events. |
-| `--rpcversion` | `RPCVERSION` | `af` | Software version tag for RPC events. |
-| `--ipaversion` | `IPAVERSION` | `af` | Software version tag for IPA events. |
+| Argument | Description |
+| :--- | :--- |
+| `--pin LABEL=VERSION` | Use version letters `VERSION` for one process instead of the latest in SAM. `LABEL` is one of `DIO`, `RPCInternal`, `RPCExternal`, `IPAMichel`, `RMCPhaseSpace0NInternal`, `RMCPhaseSpace0NExternal`, `RMCPhaseSpace1NInternal`, `RMCPhaseSpace1NExternal`. |
 
----
+### **3. Execution Flow**
 
-### **4. Execution Flow**
+#### **[1/6] Input dataset versions**
 
-The script executes in three main phases: Configuration Loading, File List Creation, and Job Submission.
+Each process is looked up in SAM on its own, as `<prefix>.<release>%.art`, and the latest version letters are used: letters are sorted by length and then alphabetically, so `aa` is later than `z`. A failed lookup stops the step; pin it with `--pin`. The choice is recorded as `input_ds_<label>`.
 
-#### **Phase A: Load Configuration (Stage 1 Output)**
-
-1.  **Locate Config File:**
-    ```bash
-    CONFIG=${TAG}.txt
-    source ${CONFIG}
-    ```
-    The script sources the configuration file created by `Stage1_initate_ensemble.sh` based on the provided `TAG`. The config file is in shell-sourceable format with key="value" pairs.
-
-2.  **Load Configuration:** All physics parameters (`njobs`, `onspilltime`, `BB`, `CosmicGen`, `CosmicJob`, `DEM_emin`, `RPC_emin`, `RMC_emin`, `IPA_emin`, `RMC_kmax`) are sourced directly from the config file and mapped to script variables.
-
-    > **Key Concept:** The shell-sourceable format ensures clean, reliable variable assignment without complex parsing logic. All physics parameters calculated and defined in Stage 1 are consistently propagated to Stage 2.
-
-#### **Phase B: Create Input File Lists (SAM Queries)**
-
-The script clears previous file lists and then uses two methods (`mu2eDatasetFileList` and `samweb list-files`) to query the data handling system (SAM) for the exact input files needed for the simulation.
-
-1.  **Query by Dataset Tag (using `mu2eDatasetFileList`):** This is used for generating lists of files to be copied locally for initial setup.
-2.  **Query by SAM Definition (using `samweb list-files`):** This generates definitive file lists (`filenames_*_<NJOBS>.txt`) which are explicitly embedded into the grid job definition for the final run.
-
-| Physics Process | SAM Dataset Tag Used | Purpose |
+| Label | Dataset | File location |
 | :--- | :--- | :--- |
-| **Cosmics** | `dts.mu2e.Cosmic${GEN}SignalAll.${COSMICTAG}.art` | Cosmic ray background events. |
-| **DIO** | `dts.mu2e.DIOtail${DIO_EMIN}.${RELEASE}${DIOVERSION}.art` | Decay in Orbit background events. |
-| **RPC Internal/External** | `dts.mu2e.RPC*Physical.${RELEASE}${RPCVERSION}.art` | Radiative Pion Capture background events. |
-| **RMC Internal/External**| `dts.mu2e.RMC*.${RELEASE}${RMCVERSION}.art` | Radiative Muon Capture background events. |
-| **IPA Michel** | `dts.mu2e.IPAMuminusMichel.${RELEASE}${IPAVERSION}.art` | Incoming Particle Decay After Stopping (IPA) background. |
+| `DIO` | `dts.mu2e.DIOtail<DEM_emin>.<release><v>.art` | default |
+| `CRYCosmic` | `dts.mu2e.CosmicSignal.<CosmicJob>.art` (files chosen in `init`) | |
+| `RPCInternal` | `dts.mu2e.RPCInternalPhysical.<release><v>.art` | `--tape` |
+| `RPCExternal` | `dts.mu2e.RPCExternalPhysical.<release><v>.art` | default |
+| `RMCPhaseSpace0NInternal/External` | `dts.mu2e.RMCPhaseSpace0N{Internal,External}.<release><v>.art` (if RMC 0N is on) | default |
+| `RMCPhaseSpace1NInternal/External` | `dts.mu2e.RMCPhaseSpace1N{Internal,External}.<release><v>.art` (if RMC 1N is on) | default |
+| `IPAMichel` | `dts.mu2e.IPAMuminusMichel.<release><v>.art` | `--tape` |
 
-#### **Phase C: Job Definition and Submission**
+#### **[2/6] Files and generated events**
 
-1.  **Make FCL Template:**
-    ```bash
-    make_template_fcl.py --BB=${BB} --release=${RELEASE}${CURRENT} ...
-    ```
-    This Python script generates the FCL configuration file, which defines exactly *how* the simulation will mix and process the events. It requires the live time, beam mode, and all energy/time cuts as input, as well as the list of physics processes to include.
+For each process, `mu2eDatasetFileList` lists the files at that location, sorted by name, and the first `njobs` are chosen. The step stops if a dataset has fewer files than jobs, if SAM gives no generated-event count, if the manifest has no expected yield, or if the dataset has fewer generated events than the expected yield. It warns when the chosen files alone probably hold fewer generated events than the expected yield.
 
-2.  **Generate Job Definition (`mu2ejobdef`):**
-    ```bash
-    mu2ejobdef --desc=ensemble${TAG} ... --sampling=1:PROC:filenames_PROC_${NJOBS}.txt ...
-    ```
-    This tool packages the FCL configuration, environment setup, and the complete set of input file lists into a single tarball (`cnf.<owner>.*.tar`), creating a formal job definition for the grid.
+#### **[3/6] File lists**
 
-    > **Key Concept:** The `--sampling` arguments are critical. They instruct the ensemble simulation to draw events from the listed file for each physics process, ensuring the final job samples from all backgrounds.
+`filenames_<label>` (paths, read by `make_template_fcl.py`) and `filenames_<label>_<njobs>.txt` (the same files as SAM names, for `mu2ejobdef`) come from the same sorted list, so both see the same files in the same order.
 
-3.  **Create SAM Definition Index:** An index definition is created using `samweb` to help track the output files of the massive job.
+#### **[4/6] Template FCL**
 
-4.  **Submit Job (`mu2ejobsub`):**
-    ```bash
-    mu2ejobsub --jobdef cnf.*.tar --firstjob=0 --njobs=${NJOBS} ...
-    ```
-    The final command submits the job definition tarball to the grid, instructing it to run the simulation across the specified number of jobs (`${NJOBS}`).
+```bash
+make_template_fcl.py --BB=<BB> --release=<release><version> --tag=<TAG> --livetime=<onspilltime> \
+  --run=<run> --dioemin=... --rpcemin=... --rmcn0emin=... --rmcn1emin=... --rmckmax=... --ipaemin=... \
+  --tmin=<RPC_TMIN> --samplingseed=<samplingseed> --prc <labels>
+```
+
+This writes `SamplingInput_sr0.fcl`, which sets the weight each process is sampled with. Its output is saved in `make_template.out`. From it, `build` records the expected dts yield of each process (`dts_expected_<label>`: generated-level yield × dts filter efficiency) and the total number of events to sample (`sample_target`), which `validate` checks against.
+
+#### **[5/6] Job tarball**
+
+```bash
+mu2ejobdef --desc=ensemble --dsconf=<release><version>_<TAG> --run=<run> --setup <simjob_setup> \
+  --sampling=1:<label>:filenames_<label>_<njobs>.txt ... --embed SamplingInput_sr0.fcl --verb
+```
+
+`mu2ejobdef` packages the FCL, the SimJob setup and the input file lists into `cnf.<owner>.ensemble.<dsconf>.0.tar`. The `--sampling` arguments tell SamplingInput which file list each process draws from. `mu2ejobquery --njobs` gives the number of jobs; it should equal `njobs`.
+
+#### **[6/6] Index definition**
+
+```bash
+samweb create-definition idx_<owner>.ensemble.<dsconf> "dh.dataset etc.mu2e.index.000.txt and dh.sequencer < <njobs>"
+```
+
+An existing definition is left alone.
+
+### **4. Output**
+
+```
+<TAG>/lists/                      all, sorted and chosen file lists per process
+<TAG>/filenames_<label>           paths read by make_template_fcl.py
+<TAG>/filenames_<label>_<N>.txt   the same files as SAM names, for mu2ejobdef
+<TAG>/SamplingInput_sr*.fcl       template FCL
+<TAG>/make_template.out           make_template_fcl.py output (expected dts yields)
+<TAG>/cnf.*.ensemble.*.0.tar      job tarball
+manifest.env                      + input_ds_<label>, dts_expected_<label>, sample_target,
+                                    tarball, jobdef_njobs, index_def, step_build_done
+```
+
+Next: `mds.sh publish --tag <TAG> --dry-run`, then without `--dry-run` ([Running with the Grid](UploadToTape.md)).

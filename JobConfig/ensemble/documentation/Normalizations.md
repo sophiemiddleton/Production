@@ -79,7 +79,7 @@ Where $R_{\mu e}$ is the **conversion rate relative to capture**.
 
 * **Result:** Samples the final event count from a **Poisson distribution** ($\text{np.random.poisson}(\lambda)$).
 
-Note: this function is used only in Stage 4.
+Note: this function is used only for signal injection (`mds.sh signal`, through `scripts/new/lib/yields.py signal`).
 
 #### **`dio_normalization(on_spill_time, e_min, run_mode='1BB')`**
 

@@ -1,252 +1,111 @@
-# 📤 Bash Script Documentation: Upload Configuration to Tape `Stage3_configure_ensemble_campaign.sh`
+# 📤 Running with the Grid: `mds.sh publish` and `mds.sh digireco` (Stage 3)
 
-**Note:** This is actually Stage 2b in the pipeline. It runs after Stage 2 (Stage2_build_sampler.sh) and before Stage 4 (Stage4_signal.sh).
+`publish` archives the ensemble job and installs its campaign JSON; `digireco` writes the digi / reco / ntuple stages that run on the ensemble's output. They replace `Stage3_configure_ensemble_campaign.sh` and its `--append` mode. The POMS campaigns run between them:
 
-## **1. Overview**
+```
+mds.sh publish  --tag <TAG> --dry-run      # check first
+mds.sh publish  --tag <TAG>
+    ── POMS: ensemble campaign (mkidxdef + launch, as mu2epro) ──
+mds.sh validate --tag <TAG>                # see Validations.md
+mds.sh digireco --tag <TAG>
+    ── POMS: json2jobdef for digi / reco / ntuple, relaunch ──
+```
 
-This script uploads the ensemble job configuration TAR file to tape storage and registers it with the SAM (Sequential Access with Metadata) system. It serves as the bridge between job submission (Stage 2) and downstream processing stages, ensuring the configuration and metadata are archived for future reference.
+## **1. `mds.sh publish`**
 
 | Component | Description |
 | :--- | :--- |
-| **Purpose** | Upload the ensemble configuration TAR file to tape, generate JSON metadata describing the job and all downstream processing stages, declare files to SAM, and register tape file locations. |
-| **Prerequisites** | Must be run after `Stage2_build_sampler.sh` has successfully created the configuration TAR file (`cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.0.tar`). Requires Mu2e storage tools (`printJson`, `mu2eFileDeclare`, `mu2eFileUpload`, `samweb`). |
-| **Outcome** | Configuration TAR file is archived on tape with complete metadata. JSON file with pipeline stages is generated and registered. Output dataset locations are tracked for downstream processing. |
-
-## **2. Usage**
+| **Purpose** | Declare the job tarball and the tag-info file to SAM, upload them, register their locations, and write the ensemble campaign JSON into `poms_map`. |
+| **Prerequisites** | `mds.sh build` for this tag. `samweb`, `printJson`, `mu2eFileDeclare` and `mu2eFileUpload` in PATH. Write access to `poms_map` (`/exp/mu2e/app/users/mu2epro/production_manager/poms_map`, or `$POMS_MAP`). |
+| **Outcome** | Tarball and tag-info file in SAM with a location; `<release>-<TAG>.json` in `poms_map`. |
 
 ```
-Stage3_configure_ensemble_campaign.sh [OPTIONS]
+mds.sh publish --tag <TAG> [--dry-run] [--force]
 ```
 
-### **Required Arguments:**
+These are the only actions (with `build`'s index definition and `digireco --install`) that change anything outside the tag directory, so run with `--dry-run` first: it prints every action without doing it. Each action first checks whether it was already done, so after a failure you simply run `publish` again. `publish` skips itself once done (`--force` to redo).
 
-| Argument | Variable | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `--tag` | `TAG` | `""` | **REQUIRED.** The project tag (e.g., `MDS3c`) used to identify the ensemble. |
+### **Execution Flow**
 
-### **Optional Arguments:**
+1.  **Job tarball** (`cnf.<owner>.ensemble.<dsconf>.0.tar`, from `build`):
+    ```bash
+    printJson --no-parents <file> > <file>.json        # unless SAM already has its metadata
+    mu2eFileDeclare < <file>.json
+    printf '%s\n' <file> | mu2eFileUpload --disk       # unless it already has a location
+    samweb add-file-location <file> enstore:<directory from the upload output>
+    ```
+    Only this file is declared and uploaded; nothing else in the directory is touched.
 
-| Argument | Variable | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `--release` | `RELEASE` | `MDC2025` | The Mu2e software release tag. |
-| `--version` | `VERSION` | `af` | The version sub-tag of the software release. |
-| `--owner` | `OWNER` | `sophie` | The owner of the dataset (username or `mu2e`). |
+2.  **Tag-info file** `cnf.<owner>.<TAG>-info.<release><version>.0.txt`: a copy of the manifest without the `step_*` lines, published the same way. It records the MDS configuration in SAM (pyfitter's `validate_MDS.py` reads it back).
 
----
-
-## **3. Execution Flow**
-
-The script executes in three main phases: Validation, JSON Metadata Generation, and Upload & Registration.
-
-### **Phase 1: Validation & Configuration Loading**
-
-1. **Check Prerequisites:**
-   - Verifies that the TAR file exists: `cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.0.tar`
-   - Verifies that the config file exists: `${TAG}.txt`
-   - Sources the config file to extract `njobs` parameter
-
-2. **Validate Files:**
-   ```bash
-   if [[ ! -f ${TAR_FILE} ]]; then
-     echo "✗ Error: TAR file not found"
-     exit 1
-   fi
-   ```
-
-   > **Key Concept:** Both files must exist and be accessible. The config file provides critical job metadata (`njobs`) for the JSON output.
-
-### **Phase 2: JSON Metadata Generation**
-
-1. **Create Pipeline Description JSON:**
-   
-   The script generates a JSON file (`${TAG}.json`) containing the complete ensemble processing pipeline. This includes:
-
-   - **Stage 0 (Ensemble Generation):** The initial TAR file configuration
-   - **Stage 1 (Digitization - OnSpill):** Digitizes ensemble events using OnSpill FCL
-   - **Stage 2 (Reconstruction - OnSpillTriggeredReco):** Reconstructs digitized events
-   - **Stage 3 (Analysis - Ntuple):** Produces analysis ntuples from reconstructed data
-
-   Each stage includes:
-   - `desc`: Descriptive name for the processing stage
-   - `fcl`: FCL file path for the stage
-   - `dsconf`: Dataset configuration tag
-   - `input_data`: Map of input file patterns and number of copies
-   - `fcl_overrides`: Service and output filename overrides
-   - `inloc`/`outloc`: Input and output storage locations (disk/tape)
-   - `simjob_setup`: Path to the simulation environment setup script
-
-2. **Example Output Structure:**
-
-   ```json
-   [
-     {
-       "desc": "ensembleMDS3c",
-       "tarball": "cnf.sophie.ensembleMDS3c.MDC2025af.0.tar",
-       "njobs": 496,
-       "inloc": "disk",
-       "outloc": {"dts.*.art": "tape"}
-     },
-     {
-       "desc": "ensembleMDS3cOnSpill",
-       "dsconf": "MDC2025af_best_v1_3",
-       "fcl": "Production/JobConfig/digitize/OnSpill.fcl",
-       "input_data": {
-         "dts.mu2e.ensembleMDS3c.MDC2025af.art": 496
-       },
-       ...
-     }
-   ]
-   ```
-
-   > **Key Concept:** The JSON file documents the complete data processing chain, allowing downstream jobs to reference consistent configurations and enabling reproducibility tracking.
-
-### **Phase 3: Upload, Declaration, and Registration**
-
-1. **Declare Files to SAM:**
-   ```bash
-   ls *.json | mu2eFileDeclare
-   ```
-   Registers the JSON metadata file with the SAM metadata system.
-
-2. **Upload TAR File to Tape:**
-   ```bash
-   UPLOAD_OUTPUT=$(ls *.tar | mu2eFileUpload --tape 2>&1)
-   TAPE_PNFS=$(echo "${UPLOAD_OUTPUT}" | grep "to /" | sed 's/.*to \(\/pnfs[^ ]*\) on.*/\1/' | head -1)
-   ```
-   - Uploads the configuration TAR to tape storage
-   - **Dynamically extracts** the tape path from the upload output
-   - Parses the "to /pnfs/..." path printed by `mu2eFileUpload`
-
-   > **Key Concept:** The tape path extraction is dynamic, allowing the script to work across different tape storage configurations without hardcoding paths.
-
-3. **Register Tape Location with SAM:**
-   ```bash
-   TAPE_DIR=$(dirname "${TAPE_PNFS}")
-   TAPE_PATH="enstore:${TAPE_DIR}"
-   samweb add-file-location ${TAR_FILE} ${TAPE_PATH}
-   ```
-   - Registers the tape location in SAM so downstream jobs can locate the file
-   - Uses the `enstore:` protocol prefix for tape storage
-
----
-
-## **4. Output Files**
-
-| File | Purpose |
-| :--- | :--- |
-| `${TAG}.json` | Metadata describing the complete ensemble processing pipeline, including all downstream stages (digitization, reconstruction, analysis). Generated locally and declared to SAM. |
-| `${TAR_FILE}` (on tape) | The ensemble job configuration, archived to tape for long-term storage and reproducibility tracking. |
-
----
-
-## **5. Error Handling**
-
-The script validates each step and provides clear error messages:
-
-| Error | Cause | Resolution |
-| :--- | :--- | :--- |
-| TAR file not found | `Stage2_build_sampler.sh` has not been run, or script is in wrong directory | Run Stage 2 first, or navigate to the correct working directory |
-| Config file not found | `Stage1_initate_ensemble.sh` output is missing | Run Stage 1 first to generate `${TAG}.txt` |
-| Failed to generate JSON | Disk space or permission issue | Check available disk space and write permissions |
-| Failed to upload TAR | Network/storage issue or tarball is corrupted | Check network connectivity and TAR file integrity |
-| Could not extract tape path | `mu2eFileUpload` output format changed or upload failed | Check SAM and storage service status |
-| Failed to add file location | SAM service issue or file already registered | Verify SAM service is running; may need to re-declare file |
-
----
-
-## **6. Usage Examples**
-
-### **Basic Usage (with defaults):**
-```bash
-Stage3_configure_ensemble_campaign.sh --tag MDS3c
-```
-Uses default release (MDC2025), version (af), owner (sophie).
-
-### **Custom Release and Version:**
-```bash
-Stage3_configure_ensemble_campaign.sh --tag MDS3c --release MDC2025 --version bg --owner mu2e
-```
-
-### **Expected Output:**
-```
-═══════════════════════════════════════════════════════════════
-📤 Stage 3: Upload TAR file to Storage
-   Tag: MDS3c | Release: MDC2025af | Owner: sophie
-═══════════════════════════════════════════════════════════════
-
-🔍 [1/3] Checking for TAR file and config...
-   ✓ Found cnf.sophie.ensembleMDS3c.MDC2025af.0.tar
-   ✓ Found MDS3c.txt
-
-📋 [2/3] Generating JSON metadata...
-   ✓ Generated MDS3c.json
-
-📤 [3/3] Uploading files to storage...
-   Declaring files to SAM...
-   ✓ Files declared
-
-   Uploading TAR file to tape...
-   ✓ TAR file uploaded
-   Tape location: /pnfs/mu2e/tape/usr-etc/cnf/sophie/ensembleMDS3c/MDC2025af/tar/f9/6f
-
-   Adding file location to SAM...
-   ✓ File location registered
-
-═══════════════════════════════════════════════════════════════
-✅ Stage 3 Complete!
-   TAR file uploaded: cnf.sophie.ensembleMDS3c.MDC2025af.0.tar
-   Tape location: enstore:/pnfs/mu2e/tape/usr-etc/cnf/sophie/ensembleMDS3c/MDC2025af/tar/f9/6f
-═══════════════════════════════════════════════════════════════
-```
-
----
-
-## **7. Integration with Other Stages**
-
-```
-Stage 1: Stage1_initate_ensemble.sh
-    ↓ Generates: ${TAG}.txt (config) + event calculations
-    ↓
-Stage 2: Stage2_build_sampler.sh
-    ↓ Generates: cnf.${OWNER}.ensemble${TAG}.${RELEASE}${VERSION}.0.tar
-    ↓
-Stage 3: Stage3_configure_ensemble_campaign.sh ← YOU ARE HERE
-    ↓ Generates: ${TAG}.json + uploads to tape
-    ↓
-Stage 4+: Downstream processing uses ${TAG}.json for pipeline definition
-```
-
-Downstream processing chains (digitization → reconstruction → analysis) reference the JSON metadata to understand input datasets, FCL configurations, and output locations.
-
-## 8. Using POMs for MDS campaigns
-
-The scripts first entry will be the generation of the actual mixed ensemble:
-
-```[
-{
-    "tarball": "${TAR_FILE}",
-    "njobs": ${njobs},
-    "inloc": "disk",
-    "outputs": [
-      {
-        "dataset": "*.art",
-        "location": "tape"
+3.  **Campaign JSON** `<release>-<TAG>.json`, copied to `poms_map` if it is not there or is identical; a different file there is only replaced with `--force`:
+    ```json
+    [
+    {
+        "tarball": "cnf.<owner>.ensemble.<dsconf>.0.tar",
+        "njobs": <njobs>,
+        "inloc": "disk",
+        "outputs": [
+          {
+            "dataset": "*.art",
+            "location": "tape"
+          }
+        ]
       }
     ]
-  }
-]```
+    ```
 
-To begin the campiagn:
+## **2. The ensemble campaign in POMS**
 
-1. go to: https://pomsgpvm02.fnal.gov/poms/index/mu2e/production
-2. select `Campaigns` and from the list of existing campaigns, select the most recent MDS version and the click the icon under `Clone Campaign`
-3. name the Campaign with an easy to understand name e.g. `MDC2025_MDS3c` and edit the parameters as needed using the GUI editor
-4. for the first stage of the campaign (the ensembling) we need to use `ifdh` instead of `xdroot` as the SamplingInput art module requires that. Therefore edit the `param_overrides` to include:
+`publish` prints these steps when it finishes. As mu2epro:
+
+1. go to https://pomsgpvm02.fnal.gov/poms/index/mu2e/production
+2. select `Campaigns`, choose the most recent MDS campaign and click the icon under `Clone Campaign`
+3. name it clearly, e.g. `MDC2025_MDS4a`, and edit the parameters in the GUI editor
+4. for the ensemble stage, SamplingInput needs `ifdh` rather than `xrootd`, so add to `param_overrides`:
+   ```
+   '-Oexecutable_1.arg_4=', '--copy-input'
+   ```
+   This is not needed for the later stages.
+5. make the index definition for the jobs and launch from the GUI:
+   ```bash
+   mkidxdef --jobdefs <poms_map>/<release>-<TAG>.json --prod
+   ```
+
+The output is `dts.mu2e.ensemble.<release><version>_<TAG>.art`, with the job logs in `/pnfs/mu2e/persistent/datasets/phy-etc/log/<owner>/ensemble/<dsconf>/log`. `mds.sh status --tag <TAG>` shows the SAM file counts. When the campaign is done, run `mds.sh validate` ([Validations](Validations.md)).
+
+## **3. `mds.sh digireco`**
+
+| Component | Description |
+| :--- | :--- |
+| **Purpose** | Write `<release>-<TAG>-stages.json` with the digi, reco and ntuple stages, and print the `json2jobdef` commands that add them to the campaign. |
+| **Prerequisites** | `mds.sh validate` for this tag. |
+| **Outcome** | The stages JSON in the tag directory (and in `poms_map` with `--install`). |
 
 ```
-'-Oexecutable_1.arg_4=', '--copy-input'
+mds.sh digireco --tag <TAG> [--digi-merge 100] [--install] [--jobdefs PATH] [--dry-run] [--force]
 ```
 
-this can be removed for the remaining splits (i.e. anything after the initial ensembling)
+| Argument | Default | Description |
+| :--- | :--- | :--- |
+| `--digi-merge` | `100` | dts files per digi job (the value in the digi stage's `input_data`). `signal` later uses it to work out the livetime per ntuple file. |
+| `--install` | off | Also copy the stages JSON into `poms_map` under its own name. It never overwrites `<release>-<TAG>.json`, which `Stage3 --append` did. |
+| `--jobdefs` | `<poms_map>/<release>-<TAG>.json` | Jobdefs file in the printed `json2jobdef` commands. |
 
-5. use `prodtools` to upload the campaign `.json` to the production system and assign it correctly to the new POMs campaign.
+The three stages, with dataset names, DB purpose/version and Musings versions from the manifest:
+
+| desc | FCL | Input | Output | Setup |
+| :--- | :--- | :--- | :--- | :--- |
+| `ensembleOnSpill` | `Production/JobConfig/digitize/OnSpill.fcl` | `dts.mu2e.ensemble.<dsconf>.art`, `--digi-merge` files per job | `dig.mu2e.ensembleOnSpill.<dsconf>_<db>.art` (tape) | `Musings/SimJob/<release><version>` |
+| `ensembleOnSpillReco` | `Production/JobConfig/recoMC/OnSpill.fcl` | the dig dataset, 1 file per job | `mcs.mu2e.ensembleOnSpillReco.<dsconf>_<db>.art` (tape) | `Musings/SimJob/<release><version>` |
+| `ensembleNtuple` | `EventNtuple/fcl/from_mcs-mockdata.fcl` | the mcs dataset, 1 file per job | `nts.mu2e.ensembleNtuple.<ntuple_dsconf>.root` (disk) | `Musings/Analysis<release>/<anaversion>` |
+
+`<db>` is the DB purpose without `Sim_` plus the version, e.g. `best_v1_1`. Then, as mu2epro, run the printed commands and relaunch the campaign from the GUI:
+
+```bash
+json2jobdef --json <stages json> --dsconf <dsconf>_<db> --desc ensembleOnSpill     --jobdefs <jobdefs> --prod
+json2jobdef --json <stages json> --dsconf <dsconf>_<db> --desc ensembleOnSpillReco --jobdefs <jobdefs> --prod
+json2jobdef --json <stages json> --dsconf <ntuple_dsconf> --desc ensembleNtuple    --jobdefs <jobdefs> --prod
+```
+
+When the ntuples are in SAM, inject signal with `mds.sh signal` ([Introducing Signal](NewPhysics.md)).
