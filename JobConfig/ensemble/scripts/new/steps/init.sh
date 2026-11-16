@@ -3,15 +3,19 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
 
 usage() { cat <<EOF
-Usage: mds.sh init --tag <TAG> --version <letters> --livetime <s> [options]
-  e.g. mds.sh init --tag MDS4a --version ax --livetime 5.72e6 --type physics --BB 1BB
+Usage: mds.sh init --tag <TAG> --version <letters> (--compute-livetime | --livetime <s> --cosmics <REL+ver>) [options]
+  e.g. mds.sh init --tag MDS4a --version ax --compute-livetime --type physics --BB 1BB
+       mds.sh init --tag MDS4a --version ax --livetime 5.72e6 --cosmics MDC2025ac
 
 Required:
   --tag         MDS tag, e.g. MDS4a
   --version     SimJob version letters, e.g. ax (-> ${RELEASE:-MDC2025}ax); set once here, used by every step
-  --livetime    cosmic livetime [s] (see https://mu2ewiki.fnal.gov/wiki/MDC2025#Cosmics)
-                or --compute-livetime to sum printCosmicLivetime over the chosen files
-                (note: resampled cosmics carry the CosmicLivetime integer-division bug)
+  --compute-livetime  sum the livetime of the chosen cosmic files, corrected for the
+                resampler bug (Mu2e/Offline#1940) as in make_template_fcl.py
+                (python/cosmic_livetime.py; reads every file, so it is slow)
+  or --livetime  cosmic livetime [s] of exactly the chosen files (e.g. from
+                https://mu2ewiki.fnal.gov/wiki/MDC2025#Cosmics); needs --cosmics, so the
+                number cannot silently refer to a different cosmic sample
 
 Options (defaults in brackets):
   --release MDC2025       --type physics|trigger [physics: DEM_emin 95; trigger: 75]
@@ -66,6 +70,8 @@ done
 [[ -n ${VERSION} ]] || { usage; die "--version is required"; }
 [[ -n ${LIVETIME} || ${COMPUTE_LT} -eq 1 ]] || { usage; die "--livetime (or --compute-livetime) is required"; }
 [[ -z ${LIVETIME} ]] || is_number "${LIVETIME}" || die "--livetime must be a number, got '${LIVETIME}'"
+[[ -z ${LIVETIME} || ${COMPUTE_LT} -eq 0 ]] || die "give --livetime or --compute-livetime, not both"
+[[ -z ${LIVETIME} || -n ${COSMICS} ]] || die "--livetime needs --cosmics <REL+ver>: the livetime belongs to one cosmic sample (or use --compute-livetime)"
 case "${TYPE}" in
   physics) DEM_EMIN=95 ;;
   trigger) DEM_EMIN=75 ;;
@@ -109,12 +115,13 @@ log ""
 # ---------------------------------------------------------------- livetime
 log "⏱️  [2/4] Livetime..."
 if (( COMPUTE_LT )); then
-  require_cmds mu2e
-  warn "computing livetime with printCosmicLivetime (may be slow)"
-  mu2e -c Offline/Print/fcl/printCosmicLivetime.fcl -S lists/CRYCosmic.chosen \
-    | { grep 'Livetime:' || true; } | awk -F: '{ print $NF }' > lists/CRYCosmic.livetime
-  LIVETIME=$(awk '{ s += $1 } END { print s + 0 }' lists/CRYCosmic.livetime)
-  [[ ${LIVETIME} != 0 ]] || die "printCosmicLivetime returned no livetime"
+  log "   summing the corrected livetime of ${NJOBS} files (cosmic_livetime.py; may be slow)"
+  "${ENSEMBLE_PY}/cosmic_livetime.py" lists/CRYCosmic.chosen > lists/CRYCosmic.livetime \
+    || die "cosmic_livetime.py failed; see above"
+  LIVETIME=$(sed -n 's/^livetime="\(.*\)"$/\1/p' lists/CRYCosmic.livetime)
+  is_number "${LIVETIME}" && [[ ${LIVETIME} != 0 ]] || die "cosmic_livetime.py returned no livetime"
+  COSMIC_LT_NOTE=$(sed -n 's/^cosmic_livetime_correction="\(.*\)"$/\1/p' lists/CRYCosmic.livetime)
+  ok "${COSMIC_LT_NOTE}"
 fi
 ok "livetime: ${LIVETIME} s"
 if (( ! COMPUTE_LT && NJOBS < n_avail )); then
@@ -165,6 +172,11 @@ manifest_set CosmicJob      "${COSMICS}"
 manifest_set CosmicGen      "Signal"
 manifest_set muon_stops     "${STOPS}"
 manifest_set onspilltime    "${LIVETIME}"
+if (( COMPUTE_LT )); then
+  manifest_set livetime_source "computed from the chosen files: ${COSMIC_LT_NOTE}"
+else
+  manifest_set livetime_source "given with --livetime"
+fi
 manifest_set BB             "${BB}"
 manifest_set DEM_emin       "${DEM_EMIN}"
 manifest_set RPC_TMIN       "${TMIN}"

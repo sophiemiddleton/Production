@@ -64,6 +64,12 @@ for i in ${PES}; do
     out="${merged}/${outname}_${group}.root"
     hadd -f -k "${out}" "${files[@]:start:PER_MERGE}" > "${merged}/hadd_${group}.log" 2>&1 \
       || die "hadd failed for group ${group}; see ${merged}/hadd_${group}.log"
+    # with -k, hadd skips unreadable inputs and still exits 0; they would then be
+    # missing from the file while livetime_combined still counts them
+    if grep -qiE "error|could not|skipping|cannot open|zombie" "${merged}/hadd_${group}.log"; then
+      grep -iE "error|could not|skipping|cannot open|zombie" "${merged}/hadd_${group}.log" | head -5
+      die "hadd reported problems for group ${group} (above); see ${merged}/hadd_${group}.log"
+    fi
     echo "${out}" >> "${pe}/merged_list.txt"
   done
   ok "pe_${i}: ${group} merged files listed in ${pe}/merged_list.txt"

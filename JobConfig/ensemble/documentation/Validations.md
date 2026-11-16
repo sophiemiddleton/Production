@@ -14,13 +14,14 @@ After the ensemble campaign, `mds.sh validate` checks that the sampling did what
 ### **2. Usage**
 
 ```
-mds.sh validate --tag <TAG> [--logs DIR] [--nsigma 5] [--no-plots] [--accept]
+mds.sh validate --tag <TAG> [--logs DIR] [--nsigma 5] [--min-fraction 0.95] [--no-plots] [--accept]
 ```
 
 | Argument | Default | Description |
 | :--- | :--- | :--- |
 | `--logs` | the log dataset on pnfs | Read the logs from another directory. |
 | `--nsigma` | `5` | Threshold for the checks below. |
+| `--min-fraction` | `0.95` | Minimum built fraction, events built / sampled target. |
 | `--no-plots` | off | Tables only, no PDF. |
 | `--accept` | off | Record the step as done even when a check fails. |
 
@@ -32,7 +33,9 @@ Each job log has a SamplingInput table: per process, the sampled count, the samp
 
 - a process's sampled fraction over all jobs is more than `--nsigma` from its weight in `SamplingInput_sr0.fcl`
 - logs have no table, or there are fewer jobs than the tarball defines
-- a process is more than `--nsigma` Poisson sigmas from its expected dts yield (`dts_expected_<label>`, generated-level yield × dts filter efficiency, recorded by `build`), or the total is more than `--nsigma` from the sampled target (`sample_target`)
+- a process is more than `--nsigma` Poisson sigmas from its expected dts yield (`dts_expected_<label>`, generated-level yield × dts filter efficiency, recorded by `build`) times the built fraction. Jobs end when one input runs out, so the ensemble is always somewhat short of the target (`sample_target`); every process should be short by the same fraction, and this tests that.
+- the built fraction, events built / `sample_target`, is below `--min-fraction` (MDS4b: 0.9735), or above 1 by more than `--nsigma`
+- the true livetime (section 4) cannot be computed
 
 It warns when the per-job pull RMS is far from 1, or when an input other than the usual limiting one ends more than 1% of jobs. The pages of `validate.pdf`:
 
@@ -41,7 +44,7 @@ It warns when the per-job pull RMS is far from 1, or when an input other than th
 3. per-job pulls, which should be unit Gaussians
 4. events per job, and which input ran out to end each job
 5. events per job vs job index (spots bad or short input files)
-6. sampled vs expected dts yield per process, and the total vs the target
+6. sampled vs expected dts yield × built fraction per process, and the built fraction
 
 ### **4. The livetime actually built**
 
@@ -53,7 +56,7 @@ $$
 
 with `true_beam_livetime`, `true_beam_npot` and `true_fraction`. Events built is the dts dataset's count in SAM when `samweb` is set up, otherwise the sum over the logs. `ensemble_livetime.py` also prints a per-process estimate ($N_i / E_i$) as a cross-check. For MDS4b the fraction was 0.9735.
 
-`signal` uses `true_beam_livetime` for the livetime per ntuple file. Run `validate` in the same workroot before `signal`; otherwise `signal` falls back to the requested livetime and injects too much signal by the same fraction.
+`signal` uses `true_beam_livetime` for the livetime per ntuple file. Run `validate` in the same workroot before `signal`. Without it `signal` stops, unless `--use-requested-livetime` is given, which injects too much signal by 1/built fraction.
 
 ### **5. Running the scripts on their own**
 

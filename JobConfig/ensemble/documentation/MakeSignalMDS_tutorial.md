@@ -12,20 +12,25 @@ source /cvmfs/mu2e.opensciencegrid.org/Musings/AnalysisMDC2025/v02_02_00/setup.s
 
 `samweb`, `mu2eDatasetFileList`, `samDatasetsSummary.sh`, `mu2e` and `hadd` must be in PATH; `signal` and `mix` check.
 
-1. **Find the MDS's workroot**, the directory that holds `<TAG>/manifest.env`, and either `cd` there or pass `--workroot` to every command. Check the tag is ready:
+1. **Make your own workroot.** `signal` and `mix` write under `<workroot>/<TAG>/`, so don't run them in the production work area. Copy the MDS's manifest into a directory of your own, and either `cd` there or pass `--workroot` to every command. Check the tag is ready:
 
 ```bash
-cd /exp/mu2e/data/users/mu2epro/ensembles/MDS4
+mkdir -p /exp/mu2e/data/users/$USER/ensembles/MDS4b
+cp /exp/mu2e/data/users/mu2epro/ensembles/MDS4/MDS4b/manifest.env /exp/mu2e/data/users/$USER/ensembles/MDS4b/
+cd /exp/mu2e/data/users/$USER/ensembles
 mds.sh status --tag MDS4b
 ```
 
-`validate` should be done in this workroot, so the manifest has `true_beam_livetime`; otherwise `signal` warns and uses the requested livetime.
+`validate` should have been run for the MDS, so the manifest has `true_beam_livetime`. Without it `signal` stops; `--use-requested-livetime` overrides that, at the cost of too much signal by 1/built fraction (2.7% for MDS4b).
 
 2. **Make the signal set:**
 
 ```bash
-mds.sh signal --tag MDS4b --signal CeMLeadingLog --rate 1e-13 --nexp 1 --seed 1 --livetime 2419200
+mds.sh signal --tag MDS4b --signal CeMLeadingLog --rate 1e-13 --nexp 1 --seed 1 --livetime 2419200 \
+  --signalmcs mcs.mu2e.CeMLeadingLogOnSpill.MDC2025ba_best_v1_5.art --use-requested-livetime
 ```
+
+MDS4b is `MDC2025ax`, and the signal used with it is the `MDC2025ba` sample, so it is named with `--signalmcs`: an automatic pick with a different version or trigger filter than the MDS makes `signal` stop.
 
 * `--signal`: the signal process; `signal` finds a compatible `mcs` dataset in SAM and prints which one it used (or pass `--signalmcs`)
 * `--rate`: $R_{\mu e}$

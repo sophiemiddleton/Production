@@ -201,7 +201,6 @@ def main():
         print("TRUE stopped muons                  %14.4g" % (nmot * frac))
 
     have = [l for l in labels if l in expected]
-    est = {}
     if have:
         print("\nper-process estimate  L_i = L_req * N_i / E_i   (logs; should agree with L_true)")
         print("%-26s %10s %12s %14s %10s %7s" % ("dataset", "sampled", "expected", "L_i [s]", "L_i/L_true", "pull"))
@@ -209,7 +208,6 @@ def main():
             c, e = counts[l], expected[l]
             li = lreq * c / e
             sig = li / math.sqrt(c) if c else float("nan")
-            est[l] = li
             print("%-26s %10d %12.0f %14.6g %10.4f %7.1f" % (l, c, e, li, li / ltrue, (li - ltrue) / sig if c else float("nan")))
         sum_e, sum_c = sum(expected[l] for l in have), sum(counts[l] for l in have)
         lyield = lreq * sum_c / sum_e

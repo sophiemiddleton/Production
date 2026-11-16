@@ -32,9 +32,15 @@ declare_json() { printf '%s\n' "$1" | mu2eFileDeclare; }
 # Declare FILE (via FILE.json), upload it and register its location.
 # Skips whatever SAM says is already done.
 publish_file() {
-  local file=$1 json="$1.json" out tape_file
-  if samweb get-metadata "${file}" &>/dev/null; then
-    ok "${file} already declared"
+  local file=$1 json="$1.json" out tape_file meta sam_size local_size
+  if meta=$(samweb get-metadata "${file}" 2>/dev/null); then
+    # a rebuilt file with the same name (e.g. after init --force) must not be
+    # skipped: the grid would run the old one
+    sam_size=$(awk -F: '/^ *File Size:/ { gsub(/ /, "", $2); print $2 }' <<<"${meta}")
+    local_size=$(stat -c %s "${file}")
+    [[ ${sam_size} == "${local_size}" ]] \
+      || die "${file} is declared in SAM with size ${sam_size:-?}, but the local file has ${local_size} bytes. It was rebuilt after publishing; use a new tag (or retire the SAM file by hand)"
+    ok "${file} already declared (same size, ${local_size} bytes)"
   else
     printJson --no-parents "${file}" > "${json}"
     [[ -s ${json} ]] || die "printJson produced nothing for ${file}"
@@ -114,7 +120,9 @@ step_done publish
 log ""
 log "═══════════════════════════════════════════════════════════════"
 log "✅ publish complete"
-log "   Run the ensemble campaign (as mu2epro):"
+log "   Run the ensemble campaign (as mu2epro), with prodtools v2.3.0: mkidxdef is not in"
+log "   v3.0 and later (current/ is v03_04_01):"
+log "     source ${PRODTOOLS_POMS}/bin/setup.sh"
 log "     1) set up a POMS campaign in the GUI"
 log "     2) mkidxdef --jobdefs ${dest} --prod"
 log "     3) launch it from the GUI"

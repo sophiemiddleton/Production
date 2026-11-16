@@ -15,36 +15,82 @@ How to use:
 python ../Production/JobConfig/ensemble/python/make_template_fcl.py --BB=1BB --verbose=1 --rue=1e-13 --livetime=60 --run=1201 --dioemin=75 --tmin=450 --samplingseed=1  --prc "CE" "DIO"
 """
 
+# S1 cosmic pool (sim.mu2e.CosmicDSStopsCRYAll.MDC2025ab): mean generated events
+# per subrun (20,000 subruns, 127,947 to 130,606) and livetime per subrun [s]
+COSMIC_NGEN_S1 = 129291
+COSMIC_LIVETIME_S1 = 29.586
+
 def cosmic_subrun_livetime(t, lt_branch, gc_branch, n_gen_s1, lt_s1):
   """
   Sum the resampled cosmic livetime over the SubRuns tree t, correcting the
-  Mu2eProductMixer integer-division bug (Mu2e/Offline#1940), which stored
-  floor(N_res/N_gen)*L_S1 instead of (N_res/N_gen)*L_S1.
+  Mu2eProductMixer integer-division bug (Mu2e/Offline#1940, fixed in Offline
+  v13_36_00), which stored floor(N_res/N_S1)*L_S1 instead of (N_res/N_S1)*L_S1.
   N_res is the S2 draw count (genCounter runs before the resampler);
-  n_gen_s1 and lt_s1 are the S1 pool's per-subrun generated count and livetime.
-  Files made after the fix are recognised and their stored value is kept.
-  S1 subruns differ slightly in livetime (~0.1%), so the match is loose; the
-  buggy case is tested first, since where both match true_lt is the safe answer.
+  n_gen_s1 and lt_s1 are the S1 pool's mean generated count and livetime per
+  subrun (the drawn S1 subrun's own count varies by about +-1%).
+
+  Each subrun is classified from its stored value, with r = N_res / n_gen_s1:
+    buggy: stored is an integer multiple k*lt_s1 (to 0.5%, the S1 livetime
+           spread), with k = floor(r') for some r' within 1.5% of r (the S1
+           count spread) -> replaced by r*lt_s1
+    fixed: stored is within 3% of r*lt_s1 -> kept
+  Where both match, r is close to the integer k and the two answers agree to
+  within the tolerance, so the order does not matter. Anything else raises,
+  which also catches constants that do not belong to this cosmic sample.
+  Returns (total livetime, number of subruns corrected, number kept).
   """
-  tol = 0.01
-  total = 0.
+  tol_buggy, tol_fixed = 0.005, 0.03
+  total, n_buggy, n_fixed = 0., 0, 0
   for i in range(t.GetEntries()):
       t.GetEntry(i)
       stored = getattr(t, lt_branch).product().liveTime()
       n_res = getattr(t, gc_branch).product().count()
       r = n_res / n_gen_s1
       true_lt = r * lt_s1
-      buggy_lt = math.floor(r) * lt_s1
-      if math.isclose(stored, buggy_lt, rel_tol=tol, abs_tol=1e-6):
+      k = round(stored / lt_s1)
+      if math.floor(r / 1.015) <= k <= math.floor(r * 1.015) and math.isclose(stored, k * lt_s1, rel_tol=tol_buggy, abs_tol=1e-6):
           total += true_lt
-      elif math.isclose(stored, true_lt, rel_tol=tol):
+          n_buggy += 1
+      elif math.isclose(stored, true_lt, rel_tol=tol_fixed):
           total += stored
+          n_fixed += 1
       else:
-          implied = stored / math.floor(r) if math.floor(r) > 0 else float("nan")
-          raise RuntimeError("CosmicLivetime %f matches neither corrected %f nor buggy %f "
-                             "(N_res %d, r %.4f, implied S1 livetime %f); check --cosmic-ngen and "
-                             "--cosmic-s1-livetime" % (stored, true_lt, buggy_lt, n_res, r, implied))
-  return total
+          raise RuntimeError("CosmicLivetime %f is neither an integer multiple of %f (buggy) nor within %.0f%% "
+                             "of the corrected %f (N_res %d, r %.4f). The S1 constants (--cosmic-ngen %g, "
+                             "--cosmic-s1-livetime %g) may not belong to this cosmic sample"
+                             % (stored, lt_s1, 100 * tol_fixed, true_lt, n_res, r, n_gen_s1, lt_s1))
+  return total, n_buggy, n_fixed
+
+def cosmic_file_livetime(fn, t, n_gen_s1, lt_s1):
+  """
+  Cosmic livetime of one file from its SubRuns tree t, corrected for the
+  resampler bug where it applies. Returns (livetime, subruns corrected, subruns kept).
+  Used by make_template_fcl.py and by cosmic_livetime.py (mds.sh init --compute-livetime).
+  """
+  bl = t.GetListOfBranches()
+  bn = ""
+  gc = ""
+  for i in range(bl.GetEntries()):
+      name = bl[i].GetName()
+      # prefer the resampler's "mixed" instance, which carries the bug
+      if name.startswith("mu2e::CosmicLivetime") and (bn == "" or "_mixed_" in name):
+          bn = name
+      if name.startswith("mu2e::GenEventCount_genCounter_"):
+          gc = name
+  if bn == "":
+      raise RuntimeError("%s: no CosmicLivetime product in the SubRuns tree" % fn)
+  if "_mixed_" in bn:
+      # resampled: the stored value may carry the bug, and correcting it needs the draw count
+      if gc == "":
+          raise RuntimeError("%s: resampled CosmicLivetime but no genCounter GenEventCount; "
+                             "cannot correct the livetime" % fn)
+      return cosmic_subrun_livetime(t, bn, gc, n_gen_s1, lt_s1)
+  # not resampled: no mixer, no bug; the stored value is used as is
+  lt = 0.
+  for i in range(t.GetEntries()):
+      t.GetEntry(i)
+      lt += getattr(t, bn).product().liveTime()
+  return lt, 0, 0
 
 def main(args):
 
@@ -134,6 +180,7 @@ def main(args):
       reco_events = 0
       gen_events = 0
       livetime=0
+      cosmic_subruns = [0, 0]   # resampled subruns corrected for the bug, kept as fixed
       # loop over files in list
       for line in ffns:
           
@@ -157,27 +204,9 @@ def main(args):
           
           # things are slightly different for the Cosmics:
           if signal == "CRYCosmic" or signal == "CORSIKACosmic":
-              # find the right branch
-              bl = t.GetListOfBranches()
-              bn = ""
-              gc = ""
-
-              for i in range(bl.GetEntries()):
-                  name = bl[i].GetName()
-                  # prefer the resampler's "mixed" instance, which carries the bug
-                  if name.startswith("mu2e::CosmicLivetime") and (bn == "" or "_mixed_" in name):
-                      bn = name
-                  if name.startswith("mu2e::GenEventCount_genCounter_"):
-                      gc = name
-              if "_mixed_" in bn and gc != "":
-                  lt = cosmic_subrun_livetime(t, bn, gc, float(args.cosmic_ngen), float(args.cosmic_s1_livetime))
-              else:
-                  # not resampled (or no draw count): the stored value is used as is
-                  print("WARNING: %s: no mixed CosmicLivetime or genCounter, livetime not corrected" % fn)
-                  lt = 0.
-                  for i in range(t.GetEntries()):
-                      t.GetEntry(i)
-                      lt += getattr(t,bn).product().liveTime()
+              lt, nb, nf = cosmic_file_livetime(fn, t, float(args.cosmic_ngen), float(args.cosmic_s1_livetime))
+              cosmic_subruns[0] += nb
+              cosmic_subruns[1] += nf
               livetime += lt
               gen_events += lt
           else:
@@ -197,6 +226,11 @@ def main(args):
           
           if int(args.verbose) == 2:
             print("total gen events ",gen_events)
+
+      if signal == "CRYCosmic" or signal == "CORSIKACosmic":
+          # recorded by build in the manifest
+          print("COSMIC LIVETIME: %f s, subruns corrected %d kept %d, S1 constants ngen %s livetime %s"
+                % (livetime, cosmic_subruns[0], cosmic_subruns[1], args.cosmic_ngen, args.cosmic_s1_livetime))
 
       # mean is the normalized number of that event type as expected
       mean_gen_events = norms[signal]
@@ -291,8 +325,9 @@ if __name__ == "__main__":
     parser.add_argument("--samplingseed", help="samplingseed")
     parser.add_argument("--tag", help="ouput file tag")
     parser.add_argument("--prc", help="list of signals e.g CE DIO Cosmic", nargs='+')
-    parser.add_argument("--cosmic-ngen", default=128783, help="S1 cosmic pool generated events per subrun (CosmicDSStopsCRYAll.MDC2025ab)")
-    parser.add_argument("--cosmic-s1-livetime", default=29.586, help="S1 cosmic pool livetime per subrun [s] (CosmicDSStopsCRYAll.MDC2025ab)")
+    parser.add_argument("--cosmic-ngen", default=COSMIC_NGEN_S1, help="S1 cosmic pool mean generated events per subrun "
+                        "(CosmicDSStopsCRYAll.MDC2025ab: 20,000 subruns, 127,947 to 130,606)")
+    parser.add_argument("--cosmic-s1-livetime", default=COSMIC_LIVETIME_S1, help="S1 cosmic pool livetime per subrun [s] (CosmicDSStopsCRYAll.MDC2025ab)")
     args = parser.parse_args()
     (args) = parser.parse_args()
     main(args)

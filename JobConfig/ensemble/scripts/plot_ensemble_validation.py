@@ -31,7 +31,11 @@ e.g.
   - a process's fraction over all jobs is more than --nsigma from its weight
   - logs have no SamplingInput table, or there are fewer jobs than --njobs
   - (with expected yields) a process is more than --nsigma Poisson sigmas from
-    its expected dts yield, or the total is more than --nsigma from the target
+    its expected dts yield scaled by the built fraction (events / target);
+    jobs stop when one input runs out, so a built ensemble is always short
+    of the target and only the shares between processes are tested
+  - the built fraction (events / target) is below --min-fraction, or above 1
+    by more than --nsigma
 and warns when the per-job pull RMS is far from 1 or an input other than the
 usual limiting one ends more than 1% of jobs.
 
@@ -184,6 +188,8 @@ def main():
     ap.add_argument("--target", type=float, help="sampled-event target N (make_template's GENERATING); "
                     "default: the sum of the expected yields, if every process has one")
     ap.add_argument("--nsigma", type=float, default=5, help="flag pulls beyond this")
+    ap.add_argument("--min-fraction", type=float, default=0.95,
+                    help="fail when events built / target is below this (MDS4b built 0.9735)")
     ap.add_argument("--njobs", type=int, help="number of jobs the campaign ran; fewer logs fail --check")
     ap.add_argument("--check", action="store_true", help="print PASS/FAIL and exit 1 on FAIL")
     ap.add_argument("--no-plots", action="store_true", help="tables only, no PDF (no matplotlib needed)")
@@ -267,29 +273,40 @@ def main():
             warns.append("%s ended %d jobs (the limiting input is %s)" % (l, n, ex.most_common(1)[0][0]))
 
     # ---------------- against the expected dts yields
+    # Jobs end when one input runs out, so the ensemble holds a fraction
+    # frac = N / target of the requested livetime. Each process should hold
+    # the same fraction of its expected yield: compare it with expected x frac.
+    # The fraction itself is tested against --min-fraction, not as a pull.
     have, ratios, epulls = [], [], []
+    frac = N / target if target else None
     if expected:
         have = [l for l in labels if l in expected]
+        if not target and have:
+            frac = sum(counts[l].sum() for l in have) / sum(expected[l] for l in have)
+            warns.append("no target: built fraction taken from the processes with an expected yield")
+    if expected:
         missing = [l for l in labels if l not in expected]
         if missing:
             warns.append("no expected yield for %s" % " ".join(missing))
-        print("\n%-26s %12s %12s %8s %7s" % ("dataset", "sampled", "expected", "ratio", "pull"))
+        print("\n%-26s %12s %12s %12s %8s %7s" % ("dataset", "sampled", "expected", "exp x frac", "ratio", "pull"))
         for l in have:
-            c, e = counts[l].sum(), expected[l]
+            c, e = counts[l].sum(), expected[l] * frac
             ratios.append(c / e)
             epulls.append((c - e) / math.sqrt(e))
-            print("%-26s %12d %12.0f %8.4f %7.1f" % (l, c, e, ratios[-1], epulls[-1]))
+            print("%-26s %12d %12.0f %12.0f %8.4f %7.1f" % (l, c, expected[l], e, ratios[-1], epulls[-1]))
             if abs(epulls[-1]) > args.nsigma:
-                fails.append("%s: %d sampled vs %.0f expected, pull %.1f" % (l, c, e, epulls[-1]))
+                fails.append("%s: %d sampled vs %.0f expected x built fraction %.4f, pull %.1f"
+                             % (l, c, e, frac, epulls[-1]))
     else:
         print("\n(no expected yields given: pass --stage2-log or --expected to compare totals)")
-    frac = None
     if target:
-        frac = N / target
-        tpull = (N - target) / math.sqrt(target)
-        print("\ntotal sampled %d / target %.0f = %.4f of the requested livetime (pull %.1f)" % (N, target, frac, tpull))
-        if abs(tpull) > args.nsigma:
-            fails.append("total %d vs target %.0f (%.4f of the requested livetime)" % (N, target, frac))
+        print("\ntotal sampled %d / target %.0f = built fraction %.4f of the requested livetime (minimum %.4f)"
+              % (N, target, frac, args.min_fraction))
+        if frac < args.min_fraction:
+            fails.append("built fraction %.4f (%d of %.0f) is below --min-fraction %.4f"
+                         % (frac, N, target, args.min_fraction))
+        elif (N - target) / math.sqrt(target) > args.nsigma:
+            fails.append("total %d is above the target %.0f by more than %g sigma" % (N, target, args.nsigma))
 
     if args.check:
         print()
@@ -409,20 +426,21 @@ def make_plots(args, labels, counts, ntot, summary, ex, exhausted, jobs, fcl_w, 
         if have:
             fig, (a1, a2) = plt.subplots(1, 2, figsize=(11, 4.5), sharey=True)
             y = np.arange(len(have))
-            a1.errorbar(ratios, y, xerr=[1 / math.sqrt(expected[l]) for l in have], fmt="o", ms=5,
+            a1.errorbar(ratios, y, xerr=[1 / math.sqrt(expected[l] * frac) for l in have], fmt="o", ms=5,
                         color=DATA, ecolor=DATA, elinewidth=1.5, capsize=3)
             a1.axvline(1, color=REF, lw=1)
             a1.set_yticks(y, have)
             a1.invert_yaxis()
-            a1.set_xlabel("sampled / expected dts yield")
-            a1.set_title("Sampled vs expected (dts eff. included)")
+            a1.set_xlabel("sampled / (expected dts yield x built fraction)")
+            a1.set_title("Sampled vs expected x %.4f (dts eff. included)" % frac)
             a2.barh(y, epulls, height=0.55, color=[FLAG if abs(p) > args.nsigma else DATA for p in epulls])
             a2.axvline(0, color=REF, lw=1)
-            a2.set_xlabel("(sampled - expected) / √expected")
+            a2.set_xlabel("(sampled - expected·frac) / √(expected·frac)")
             a2.set_title("Poisson pull")
             if target:
-                fig.suptitle("Total sampled %d / target %.0f = %.4f of the requested livetime" % (N, target, frac),
-                             fontsize=11, color=FLAG if abs(frac - 1) > args.nsigma / math.sqrt(target) else "#0b0b0b")
+                fig.suptitle("Total sampled %d / target %.0f = built fraction %.4f (minimum %.4f)"
+                             % (N, target, frac, args.min_fraction),
+                             fontsize=11, color=FLAG if frac < args.min_fraction else "#0b0b0b")
             fig.tight_layout()
             pdf.savefig(fig); plt.close(fig)
     print("\nwrote %s" % pdf_path)

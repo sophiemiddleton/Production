@@ -5,7 +5,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
 
 usage() { cat <<EOF
-Usage: mds.sh validate --tag <TAG> [--logs DIR] [--nsigma 5] [--no-plots] [--accept]
+Usage: mds.sh validate --tag <TAG> [--logs DIR] [--nsigma 5] [--min-fraction 0.95] [--no-plots] [--accept]
 
 Reads the ensemble job logs in place from the log dataset on pnfs,
   \${MDS_LOG_ROOT:-/pnfs/mu2e/persistent/datasets/phy-etc/log}/<owner>/ensemble/<dsconf>/log
@@ -16,8 +16,11 @@ input that ran out and ended the job. Validation fails when
   - a process's fraction over all jobs is more than --nsigma from its weight
   - logs have no table, or there are fewer jobs than the tarball defines
   - a process is more than --nsigma Poisson sigmas from its expected dts yield
-    (generated-level yield x dts efficiency, recorded by build), or the total
-    is more than --nsigma from the sampled target
+    (generated-level yield x dts efficiency, recorded by build) scaled by the
+    built fraction (events built / sampled target). Jobs stop when one input
+    runs out, so an ensemble is always somewhat short of the target.
+  - the built fraction is below --min-fraction (default 0.95; MDS4b built 0.9735)
+  - the true livetime (below) cannot be computed
 --accept records the step as done anyway.
 
 Writes <workdir>/validate.txt (the report), validate.csv (per job, per process)
@@ -30,11 +33,12 @@ built is the dts dataset's count in SAM; otherwise the sum of the logs). The plo
 EOF
 }
 
-LOGDIR=""; NSIGMA=5; ACCEPT=0; PLOTS=1
+LOGDIR=""; NSIGMA=5; MINFRAC=0.95; ACCEPT=0; PLOTS=1
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --logs)     LOGDIR=$(optval "$@"); shift 2 ;;
     --nsigma)   NSIGMA=$(optval "$@"); shift 2 ;;
+    --min-fraction) MINFRAC=$(optval "$@"); shift 2 ;;
     --no-plots) PLOTS=0; shift ;;
     --accept)   ACCEPT=1; shift ;;
     *) parse_common_opt "$@" || { usage; die "unknown option '$1'"; }; shift ${SHIFT} ;;
@@ -50,7 +54,7 @@ LOGDIR=${LOGDIR:-${MDS_LOG_ROOT:-/pnfs/mu2e/persistent/datasets/phy-etc/log}/${o
 [[ -d ${LOGDIR} ]] || die "no log directory ${LOGDIR}; has the ensemble campaign finished? (or pass --logs)"
 [[ -f ${VALIDATION_PY} ]] || die "missing ${VALIDATION_PY}"
 
-ARGS=(--logs "${LOGDIR}" --out validate --check --nsigma "${NSIGMA}")
+ARGS=(--logs "${LOGDIR}" --out validate --check --nsigma "${NSIGMA}" --min-fraction "${MINFRAC}")
 [[ -n ${jobdef_njobs:-} ]] && ARGS+=(--njobs "${jobdef_njobs}")
 [[ -f SamplingInput_sr0.fcl ]] && ARGS+=(--fcl SamplingInput_sr0.fcl)
 (( PLOTS )) || ARGS+=(--no-plots)
@@ -101,8 +105,12 @@ if "${MDS_PYTHON}" "${LIVETIME_PY}" "${LT_ARGS[@]}" > livetime.txt; then
   sed '/^true_[a-z_]*="/d' livetime.txt
   manifest_merge < <(grep '^true_[a-z_]*="' livetime.txt)
   ok "true on-spill livetime ${true_onspilltime} s of ${onspilltime} s requested (livetime.txt)"
-else
+elif (( ACCEPT )); then
+  # signal would fall back to the requested livetime and inject too much signal
   warn "could not compute the true livetime; see ${WORKDIR}/livetime.txt"
+  manifest_set true_livetime_missing 1
+else
+  die "could not compute the true livetime (see ${WORKDIR}/livetime.txt); signal needs it. Fix it, or rerun with --accept"
 fi
 log ""
 step_done validate

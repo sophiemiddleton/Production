@@ -5,10 +5,16 @@
 ```
 mds.sh publish  --tag <TAG> --dry-run      # check first
 mds.sh publish  --tag <TAG>
-    ── POMS: ensemble campaign (mkidxdef + launch, as mu2epro) ──
+    ── POMS: ensemble campaign (mkidxdef + launch, as mu2epro, prodtools v2.3.0) ──
 mds.sh validate --tag <TAG>                # see Validations.md
 mds.sh digireco --tag <TAG>
-    ── POMS: json2jobdef for digi / reco / ntuple, relaunch ──
+    ── POMS: json2jobdef --jobdefs for digi / reco / ntuple, relaunch (prodtools v2.3.0) ──
+```
+
+The POMS steps need prodtools **v2.3.0**: `mkidxdef` and `json2jobdef --jobdefs` were removed in v3.0 with the POMS backend, and `prodtools/current` (v03_04_01) registers campaigns with `json2jobdef --prod --enqueue` instead. Set it up first:
+
+```bash
+source /cvmfs/mu2e.opensciencegrid.org/bin/prodtools/v2.3.0/bin/setup.sh
 ```
 
 ## **1. `mds.sh publish`**
@@ -23,14 +29,14 @@ mds.sh digireco --tag <TAG>
 mds.sh publish --tag <TAG> [--dry-run] [--force]
 ```
 
-These are the only actions (with `build`'s index definition and `digireco --install`) that change anything outside the tag directory, so run with `--dry-run` first: it prints every action without doing it. Each action first checks whether it was already done, so after a failure you simply run `publish` again. `publish` skips itself once done (`--force` to redo).
+These are the only actions (with `build`'s index definition and `digireco --install`) that change anything outside the tag directory, so run with `--dry-run` first: it prints every action without doing it. Each action first checks whether it was already done, so after a failure you simply run `publish` again. A file already declared in SAM must have the same size as the local one; otherwise (a tarball rebuilt after publishing, e.g. after `init --force`) `publish` stops rather than leave the grid running the old one. `publish` skips itself once done (`--force` to redo).
 
 ### **Execution Flow**
 
 1.  **Job tarball** (`cnf.<owner>.ensemble.<dsconf>.0.tar`, from `build`):
     ```bash
     printJson --no-parents <file> > <file>.json        # unless SAM already has its metadata
-    mu2eFileDeclare < <file>.json
+    printf '%s\n' <file>.json | mu2eFileDeclare          # it reads the JSON file names on stdin
     printf '%s\n' <file> | mu2eFileUpload --disk       # unless it already has a location
     samweb add-file-location <file> enstore:<directory from the upload output>
     ```
@@ -67,8 +73,9 @@ These are the only actions (with `build`'s index definition and `digireco --inst
    '-Oexecutable_1.arg_4=', '--copy-input'
    ```
    This is not needed for the later stages.
-5. make the index definition for the jobs and launch from the GUI:
+5. make the index definition for the jobs (prodtools v2.3.0, see above) and launch from the GUI:
    ```bash
+   source /cvmfs/mu2e.opensciencegrid.org/bin/prodtools/v2.3.0/bin/setup.sh
    mkidxdef --jobdefs <poms_map>/<release>-<TAG>.json --prod
    ```
 
@@ -100,7 +107,7 @@ The three stages, with dataset names, DB purpose/version and Musings versions fr
 | `ensembleOnSpillReco` | `Production/JobConfig/recoMC/OnSpill.fcl` | the dig dataset, 1 file per job | `mcs.mu2e.ensembleOnSpillReco.<dsconf>_<db>.art` (tape) | `Musings/SimJob/<release><version>` |
 | `ensembleNtuple` | `EventNtuple/fcl/from_mcs-mockdata.fcl` | the mcs dataset, 1 file per job | `nts.mu2e.ensembleNtuple.<ntuple_dsconf>.root` (disk) | `Musings/Analysis<release>/<anaversion>` |
 
-`<db>` is the DB purpose without `Sim_` plus the version, e.g. `best_v1_1`. Then, as mu2epro, run the printed commands and relaunch the campaign from the GUI:
+`<db>` is the DB purpose without `Sim_` plus the version, e.g. `best_v1_1`. Then, as mu2epro and with prodtools v2.3.0, run the printed commands and relaunch the campaign from the GUI:
 
 ```bash
 json2jobdef --json <stages json> --dsconf <dsconf>_<db> --desc ensembleOnSpill     --jobdefs <jobdefs> --prod

@@ -154,6 +154,9 @@ done < <(awk '/^[A-Za-z0-9]+$/ { label = $0 }
 target=$(awk '/^TOTAL EXPECTED EVENTS:/ && /GENERATING:/ { print $NF }' make_template.out)
 [[ -n ${target} ]] || die "no TOTAL EXPECTED EVENTS line in make_template.out"
 manifest_set sample_target "${target}"
+# the cosmic livetime correction (Mu2e/Offline#1940) and the S1 constants it used
+cosmic_line=$(grep -m1 '^COSMIC LIVETIME:' make_template.out || true)
+[[ -n ${cosmic_line} ]] && manifest_set cosmic_livetime_correction "${cosmic_line#COSMIC LIVETIME: }"
 ok "expected dts yields and the sampled target (${target}) recorded"
 log ""
 
@@ -172,17 +175,21 @@ shopt -u nullglob
 TARBALL=${tars[0]}
 JOBS=$(mu2ejobquery --njobs "${TARBALL}")
 ok "${TARBALL}: ${JOBS} jobs"
-(( JOBS == njobs )) || warn "the tarball defines ${JOBS} jobs but njobs is ${njobs}"
+(( JOBS == njobs )) || die "the tarball defines ${JOBS} jobs but njobs is ${njobs}"
 log ""
 
 # ---------------------------------------------------------------- index definition
 log "🗂️  [6/6] Index definition..."
 index_dataset=${TARBALL#cnf.}; index_dataset=${index_dataset%.0.tar}
 IDX_DEF="idx_${index_dataset}"
-if samweb describe-definition "${IDX_DEF}" &>/dev/null; then
-  ok "${IDX_DEF} already exists; leaving it alone"
+IDX_DIMS="dh.dataset etc.mu2e.index.000.txt and dh.sequencer < $(printf '%07d' "${JOBS}")"
+if old_def=$(samweb describe-definition "${IDX_DEF}" 2>/dev/null); then
+  # an old definition for a different job count would run the wrong jobs
+  grep -qF "$(printf '%07d' "${JOBS}")" <<<"${old_def}" \
+    || die "${IDX_DEF} exists but is not for ${JOBS} jobs:"$'\n'"${old_def}"$'\n'"delete it (samweb delete-definition ${IDX_DEF}) and rerun"
+  ok "${IDX_DEF} already exists for ${JOBS} jobs; leaving it alone"
 else
-  run samweb create-definition "${IDX_DEF}" "dh.dataset etc.mu2e.index.000.txt and dh.sequencer < $(printf '%07d' "${JOBS}")"
+  run samweb create-definition "${IDX_DEF}" "${IDX_DIMS}"
 fi
 
 if (( DRY_RUN )); then

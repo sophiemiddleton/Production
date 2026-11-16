@@ -17,4 +17,4 @@ mds.sh init → build → publish → [POMS ensemble] → validate → digireco 
 * [Normalizations](documentation/Normalizations.md) - the yield calculations in `python/normalizations.py`
 * [Tutorial for End Ntuples](documentation/MakeSignalMDS_tutorial.md) - making signal-mixed ntuples from an existing MDS
 
-The old `Stage0`–`Stage6` scripts were removed in commit `ef6db55d`; see the history before it.
+The old `Stage0`–`Stage6` scripts are removed; they are in `main` up to commit `7d83b5f5`, e.g. `git show 7d83b5f5:JobConfig/ensemble/scripts/Stage1_initiate_ensemble.sh`. Two of their options have no `mds.sh` equivalent: a custom SimJob `--setup` (`init` always uses `Musings/SimJob/<release><version>`) and `--gen CORSIKA` (`init` takes `CosmicSignal` only).

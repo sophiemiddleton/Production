@@ -32,13 +32,15 @@ mds.sh signal --tag MDS4b --signal CeMLeadingLog --rate 1e-13 --nexp 1 --seed 1 
 | `--dts-nfiles` | from SAM | Files in the MDS dts dataset, which sets the livetime per ntuple file. |
 | `--signal-ngen` | from SAM | Generated events in the signal dataset. |
 | `--owner` | manifest `owner` | Owner field of the local output names. |
+| `--use-requested-livetime` | off | Use the requested `beam_livetime` when the manifest has no `true_beam_livetime` (overstates the signal by 1/built fraction). Without it, `signal` stops in that case. |
+| `--allow-mismatch` | off | Accept an automatically found signal sample whose SimJob version or trigger filter differs from the MDS's. |
 | `--force` | off | Redo an existing label. |
 
 ### **Execution Flow**
 
 #### **Signal dataset**
 
-Without `--signalmcs`, `signal` lists `mcs.mu2e.<signal>%.<release>%.art` in SAM and keeps the candidates with the MDS's release and digi mode. They are ranked by: same DB purpose/version as the MDS, the `Triggered` preference, same SimJob version, then the latest version. The first one with files is used. It warns when the release, DB version or digi mode differs from the MDS's (the pileup or calibrations would not match), and when the sample is not trigger-filtered. The outputs are named after the sample actually used, e.g. `CeMLeadingLogOnSpill`.
+Without `--signalmcs`, `signal` lists `mcs.mu2e.<signal>%.<release>%.art` in SAM and keeps the candidates with the MDS's release and digi mode. They are ranked by: same DB purpose/version as the MDS, the `Triggered` preference, same SimJob version, then the latest version (one sort key each), and the ranked list is printed. The first one with files is used. If its SimJob version or trigger filter differs from what the MDS asks for, `signal` stops: name the sample with `--signalmcs`, or pass `--allow-mismatch`. It warns when the DB version or digi mode differs from the MDS's (the pileup or calibrations would not match), and when the sample is not trigger-filtered. The outputs are named after the sample actually used, e.g. `CeMLeadingLogOnSpill`.
 
 #### **[1/4] Livetime and known-physics files**
 
@@ -48,7 +50,7 @@ $$
 \text{livetime per ntuple file} = \text{dts livetime} \times \frac{\text{digi\_merge} \times \text{merge}}{N_{\text{dts files}}}
 $$
 
-The dts livetime is `true_beam_livetime` from `validate` when the manifest has it, otherwise the requested `beam_livetime` (with a warning). Only the ntuple files that exist in SAM count, so files lost in digi/reco/ntuple reduce the available livetime. `--livetime` is rounded to a whole number of ntuple files, $N_{\text{known}}$; the on-spill livetime is that times the duty factor.
+The dts livetime is `true_beam_livetime` from `validate`. If the manifest has none, `signal` stops, unless `--use-requested-livetime` is given; then it uses the requested `beam_livetime`. Only the ntuple files that exist in SAM count, so files lost in digi/reco/ntuple reduce the available livetime. `--livetime` is rounded to a whole number of ntuple files, $N_{\text{known}}$; the on-spill livetime is that times the duty factor.
 
 #### **[2/4] Signal sample**
 
@@ -136,4 +138,4 @@ Run the selection on the files in `pe_<i>/mixed_files.txt` rather than the merge
 
 - **EventNtuple version of the signal ntuple.** `signal` makes the signal ntuple with whatever EventNtuple is set up, not the manifest's `anaversion`. If it differs from the MDS ntuples', `hadd` takes the first file's tree layout: branches only the signal has are dropped, and classes that changed without a version bump (e.g. `SimInfo`, `MCStepInfo` between EventNtuple v6.15 and v6.16) leave `trkmcsim` and `trkmcvd` unreadable by uproot in every merged file. The reconstructed quantities (`trk`, `trksegs`, `trkqual`, `trkpid`, `crvcoincs`) are unaffected.
 - **Signal events are not blinded.** The signal ntuple keeps its own run, subrun and event numbers (for MDS4b, all in subrun 416, which no known-physics event uses) and its own DB version.
-- **Livetime without `validate`.** If the manifest has no `true_beam_livetime`, the livetime is overstated by the built/target fraction (2.6% for MDS4b) and the signal yield is too high by the same amount.
+- **Livetime without `validate`.** With `--use-requested-livetime` and no `true_beam_livetime`, the livetime is overstated by 1/built fraction (2.7% for MDS4b) and the signal yield is too high by the same amount.

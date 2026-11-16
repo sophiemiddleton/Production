@@ -4,8 +4,8 @@
 
 `mds.sh init` starts a new Mock Data Sample (MDS) tag. It replaces `Stage1_initiate_ensemble.sh`. It:
 
-1.  **Chooses the cosmics:** finds the latest `dts.mu2e.CosmicSignal.<release><letters>.art` (or uses `--cosmics`), lists its files sorted by name and keeps the first `--njobs` (default: all of them). The number of cosmic files sets the number of ensemble jobs.
-2.  **Sets the livetime:** the on-spill livetime is `--livetime` [s], or `--compute-livetime` sums `printCosmicLivetime` over the chosen files.
+1.  **Chooses the cosmics:** finds the latest `dts.mu2e.CosmicSignal.<release><letters>.art` (or uses `--cosmics`, which `--livetime` requires), lists its files sorted by name and keeps the first `--njobs` (default: all of them). The number of cosmic files sets the number of ensemble jobs.
+2.  **Sets the livetime:** `--compute-livetime` sums the livetime of the chosen files, corrected for the resampler bug (Mu2e/Offline#1940) exactly as `make_template_fcl.py` does (`python/cosmic_livetime.py`). Or give it as `--livetime` [s], together with `--cosmics`, so the number belongs to a named sample.
 3.  **Computes POT and the expected yields** with `lib/yields.py`, which calls the same `normalizations.py` functions as `calculateEvents.py` (see [Normalizations](Normalizations.md)).
 4.  **Writes the manifest** `<workroot>/<TAG>/manifest.env`, a shell-sourceable `key="value"` file that every later step reads and adds to. It holds the configuration (same keys as Stage 1's old `<TAG>.txt`), the release and version, DB purpose and version, the SimJob setup and Analysis version, the names of every dataset the campaign will produce, POT, the duty factor and the expected yields.
 
@@ -14,11 +14,12 @@ See [scripts/new/README.md](../scripts/new/README.md) for how the steps fit toge
 ### **2. Usage**
 
 ```
-mds.sh init --tag <TAG> --version <letters> --livetime <s> [options]
-mds.sh init --tag MDS4a --version ax --livetime 5.72e6 --type physics --BB 1BB
+mds.sh init --tag <TAG> --version <letters> (--compute-livetime | --livetime <s> --cosmics <REL+ver>) [options]
+mds.sh init --tag MDS4a --version ax --compute-livetime --type physics --BB 1BB
+mds.sh init --tag MDS4a --version ax --livetime 5.72e6 --cosmics MDC2025ac
 ```
 
-Set up muse and mu2einit first, so that `samweb`, `mu2eDatasetFileList` and `python3` are in PATH (and `mu2e` for `--compute-livetime`). The tag directory is created under `--workroot DIR`, else `$MDS_WORKROOT`, else the current directory. `init` refuses to overwrite an existing manifest unless `--force`.
+Set up muse and mu2einit first, so that `samweb`, `mu2eDatasetFileList` and `python3` are in PATH (and PyROOT for `--compute-livetime`). The tag directory is created under `--workroot DIR`, else `$MDS_WORKROOT`, else the current directory. `init` refuses to overwrite an existing manifest unless `--force`.
 
 ### **3. Arguments**
 
@@ -26,8 +27,8 @@ Set up muse and mu2einit first, so that `samweb`, `mu2eDatasetFileList` and `pyt
 | :--- | :--- | :--- |
 | `--tag` | (required) | MDS tag, letters and digits only, e.g. `MDS4a`. |
 | `--version` | (required) | SimJob version letters, e.g. `ax`, giving `MDC2025ax`. Set once here; every later step takes it from the manifest. |
-| `--livetime` | (required, or `--compute-livetime`) | On-spill cosmic livetime [s] of the chosen cosmic files (see the [MDC2025 wiki](https://mu2ewiki.fnal.gov/wiki/MDC2025#Cosmics)). |
-| `--compute-livetime` | off | Sum `printCosmicLivetime` over the chosen files instead. Resampled cosmics carry the `CosmicLivetime` integer-division bug. |
+| `--compute-livetime` | (this or `--livetime`) | Sum the livetime of the chosen files, corrected for the resampler bug as in `make_template_fcl.py`. Reads every file, so it is slow. Records how in `livetime_source`. |
+| `--livetime` | (this or `--compute-livetime`) | On-spill cosmic livetime [s] of the chosen cosmic files (see the [MDC2025 wiki](https://mu2ewiki.fnal.gov/wiki/MDC2025#Cosmics)). Needs `--cosmics`. |
 | `--release` | `MDC2025` | Release prefix of every dataset name. |
 | `--type` | `physics` | `physics` (DIO $E_{\text{min}}$ 95 MeV) or `trigger` (75 MeV). |
 | `--BB` | `1BB` | Beam mode, `1BB` or `2BB`; sets the duty factor (0.323 or 0.246) and POT. |

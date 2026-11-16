@@ -2,24 +2,27 @@
 
 A single entry point for building a Mock Data Sample. It replaces the
 `Stage0`–`Stage6` scripts, which have been removed from the repository; they
-are in the history before commit `ef6db55d`, e.g.
-`git show ef6db55d^:JobConfig/ensemble/scripts/Stage5_signal.sh`.
+are in `main` up to commit `7d83b5f5` (the base of PR #603), e.g.
+`git show 7d83b5f5:JobConfig/ensemble/scripts/Stage5_signal.sh`. Tags made with
+those scripts have no `manifest.env`, so `signal`, `mix` and `status` cannot
+use them; for validation see [Validations](../../documentation/Validations.md).
 
 Outside this directory the workflow uses:
-- `../../python/make_template_fcl.py` (`build`) and `../../python/normalizations.py`
-  (imported by `lib/yields.py`)
+- `../../python/make_template_fcl.py` (`build`), `../../python/cosmic_livetime.py`
+  (`init --compute-livetime`) and `../../python/normalizations.py` (imported by
+  `lib/yields.py`)
 - `../plot_ensemble_validation.py` and `../ensemble_livetime.py` (`validate`)
 - `../../fcl/split.fcl` and `EventNtuple/fcl/from_mcs-mockdata.fcl` (`signal`)
 
 ```
-mds.sh init      --tag MDS4a --version ax --livetime 5.72e6     # Stage 1
+mds.sh init      --tag MDS4a --version ax --compute-livetime    # Stage 1 (or --livetime S --cosmics REL+ver)
 mds.sh build     --tag MDS4a                                    # Stage 2
 mds.sh publish   --tag MDS4a --dry-run                          # Stage 3: check first
 mds.sh publish   --tag MDS4a
-    ── POMS: ensemble campaign (mkidxdef + launch, as mu2epro) ──
+    ── POMS: ensemble campaign (mkidxdef + launch, as mu2epro, prodtools v2.3.0) ──
 mds.sh validate  --tag MDS4a                                    # Stage 4 (reads the log dataset on pnfs)
 mds.sh digireco  --tag MDS4a                                    # Stage 3 --append
-    ── POMS: json2jobdef for digi / reco / ntuple, relaunch ──
+    ── POMS: json2jobdef --jobdefs for digi / reco / ntuple, relaunch (prodtools v2.3.0) ──
 mds.sh signal    --tag MDS4a --signal <name> --rate 1e-13 --nexp 3 --seed 1   # finds a compatible signal mcs
 mds.sh mix       --tag MDS4a                                    # Stage 6
 mds.sh status    --tag MDS4a                                    # at any point
@@ -36,7 +39,15 @@ from the manifest:
   the same EventNtuple as the MDS ntuples (the manifest's `anaversion`, i.e.
   `Musings/Analysis<release>/<anaversion>`); see [Known limitations](#known-limitations).
 - `mix` runs your `hadd`.
-- `init --compute-livetime` runs your `mu2e` with `printCosmicLivetime.fcl`.
+- `init --compute-livetime` reads every chosen cosmic file with your PyROOT
+  (`python/cosmic_livetime.py`).
+
+The POMS hand-offs need prodtools **v2.3.0**
+(`source /cvmfs/mu2e.opensciencegrid.org/bin/prodtools/v2.3.0/bin/setup.sh`):
+`mkidxdef` and `json2jobdef --jobdefs` were removed in v3.0, with the POMS
+backend, and `prodtools/current` (v03_04_01) registers campaigns with
+`json2jobdef --prod --enqueue` instead. The printed commands say so;
+`$PRODTOOLS_POMS` overrides the path.
 
 `validate` needs matplotlib for its plots. It uses `$MDS_PYTHON`, by default the
 Mu2e ana environment's `python3` when it is on cvmfs, otherwise `python3`.
@@ -125,9 +136,11 @@ Without `--signalmcs`, `signal` searches SAM for
 release and digi mode (`OnSpill` or `Mix<N>BB`) as the MDS. `--signal` may name
 the mode itself, and a name ending in `Triggered` prefers triggered samples.
 Candidates are ranked by: same DB purpose/version as the MDS, the Triggered
-preference, same SimJob version, then the latest version; the first with files
-is used. It warns when the release, DB version or digi mode differs from the
-MDS's, and when the sample is not trigger-filtered.
+preference, same SimJob version, then the latest version; the ranked list is
+printed and the first with files is used. If that sample's version or trigger
+filter differs from the MDS's, `signal` stops: name the sample with
+`--signalmcs`, or pass `--allow-mismatch`. It warns when the DB version or digi
+mode differs, and when the sample is not trigger-filtered.
 
 The number of signal events per pseudo-experiment is a Poisson draw for the
 on-spill livetime used (`lib/yields.py signal`), times `--recoeff`.
@@ -159,9 +172,16 @@ its own; the script's docstring explains why and shows an example.
   which no known-physics event uses), and its own DB version.
 - **Livetime when `validate` has not run in this workroot.** `signal` takes the
   dts livetime from `true_beam_livetime`, which only `validate` writes. Without
-  it, it warns and uses the requested `beam_livetime`, which overstates the
-  livetime by the built/target fraction (2.6% for MDS4b), so the signal yield
-  is too high by the same amount.
+  it, `signal` stops, unless `--use-requested-livetime` is given; the requested
+  `beam_livetime` overstates the livetime by 1/built fraction (2.7% for MDS4b),
+  so the signal yield is too high by the same amount.
+- **Cosmic livetime constants.** The correction for Mu2e/Offline#1940 uses the
+  S1 pool `sim.mu2e.CosmicDSStopsCRYAll.MDC2025ab` (mean 129,291 events and
+  29.586 s per subrun), for CRY and CORSIKA alike. A cosmic sample resampled
+  from another S1 pool (e.g. `...MDC2030af`) needs `--cosmic-ngen` and
+  `--cosmic-s1-livetime` on `make_template_fcl.py`; values that don't fit the
+  files make it stop. `build` records what was used as
+  `cosmic_livetime_correction` in the manifest.
 
 ## Differences from the Stage scripts
 
@@ -187,7 +207,8 @@ Fixes:
   they are on pnfs. It compares each process's sampled fraction with its FCL
   weight, and each total with the expected **dts** yield (generated-level
   yield × dts efficiency, which `build` records as `dts_expected_<label>` and
-  `sample_target`). Stage 4 only summed the counts. It also reports which input
+  `sample_target`), scaled by the built fraction (events / target), which must
+  be at least `--min-fraction` (0.95). Stage 4 only summed the counts. It also reports which input
   ran out and ended each job, and writes plots to `validate.pdf`. It never
   deletes files. A failed check stops the step unless `--accept`. The same
   script works on its own for tags made with the Stage scripts.
@@ -215,8 +236,10 @@ Fixes:
   dataset name as given.
 - `--seed` makes the signal yield and every file shuffle reproducible
   (pseudo-experiment i uses seed + i).
-- `init` always uses `--livetime` when you give it, or `--compute-livetime` to
-  run printCosmicLivetime. `beam_pot` is now filled in.
+- `init` takes `--livetime` only with `--cosmics`, so the number belongs to
+  the files used; `--compute-livetime` sums the chosen files' livetime with the
+  same resampler-bug correction as `make_template_fcl.py`. `beam_pot` is now
+  filled in.
 
 Things that behave differently on purpose:
 - `digireco` writes `<release>-<TAG>-stages.json` and does **not** overwrite the

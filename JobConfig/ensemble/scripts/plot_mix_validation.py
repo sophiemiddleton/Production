@@ -57,6 +57,9 @@ def poisson_p(n, mu):
     return min(1.0, 2 * min(lo, hi))
 
 
+REF_NAME = "reference"  # set from --ref in main()
+
+
 def chi2_hist(obs, exp, var_exp):
     m = (exp > 0) | (obs > 0)
     var = np.where(exp > 0, exp, 1) + var_exp
@@ -74,7 +77,7 @@ def spectrum_page(pdf, png, var, bins, xlabel, mix, ref, sig, scale, title):
     chi2, ndf, p = chi2_hist(o, exp, r * scale ** 2)
 
     fig, (ax, axr) = plt.subplots(2, 1, figsize=(7, 5.6), sharex=True, gridspec_kw={"height_ratios": [3, 1], "hspace": 0.06})
-    ax.stairs(known, bins, fill=True, color=REF, alpha=0.35, label=f"known physics, MDS4b x {scale:.4f}  ({known.sum():.1f})")
+    ax.stairs(known, bins, fill=True, color=REF, alpha=0.35, label=f"known physics, {REF_NAME} x {scale:.4f}  ({known.sum():.1f})")
     ax.stairs(exp, bins, baseline=known, fill=True, color=SIG, alpha=0.75, label=f"injected signal, processed alone  ({s.sum()})")
     ax.stairs(exp, bins, color="#0b0b0b", linewidth=1)
     c = 0.5 * (bins[1:] + bins[:-1])
@@ -112,7 +115,7 @@ def cutflow_page(pdf, png, mixf, reff, sigf, scale):
 
     fig, (ax, axr) = plt.subplots(2, 1, figsize=(8, 6.5), sharex=True, gridspec_kw={"height_ratios": [2, 1], "hspace": 0.06})
     x = np.arange(len(names))
-    ax.plot(x, exp, color=REF, lw=2, label="expected: MDS4b x scale + signal alone")
+    ax.plot(x, exp, color=REF, lw=2, label=f"expected: {REF_NAME} x scale + signal alone")
     ax.plot(x, s, color=SIG, lw=2, label="signal alone")
     ax.plot(x, o, "o", ms=5, color=DATA, label="mixed sample")
     ax.set_yscale("log")
@@ -164,6 +167,8 @@ def main():
     ap.add_argument("--ref", required=True)
     ap.add_argument("--out", default="validation")
     a = ap.parse_args()
+    global REF_NAME
+    REF_NAME = a.ref
 
     mix, mixf = load(a.mix_dir, a.mix)
     sig, sigf = load(a.mix_dir, a.sig)

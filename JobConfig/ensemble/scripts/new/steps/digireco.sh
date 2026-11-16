@@ -117,7 +117,9 @@ step_done digireco
 
 log ""
 log "═══════════════════════════════════════════════════════════════"
-log "✅ digireco complete. As mu2epro, add the stages to the campaign:"
+log "✅ digireco complete. As mu2epro, with prodtools v2.3.0 (--jobdefs is not in v3.0"
+log "   and later), add the stages to the campaign:"
+log "     source ${PRODTOOLS_POMS}/bin/setup.sh"
 log "     json2jobdef --json ${JSON_FOR_CMDS} --dsconf ${dsconf_digi} --desc ensembleOnSpill --jobdefs ${JOBDEFS} --prod"
 log "     json2jobdef --json ${JSON_FOR_CMDS} --dsconf ${dsconf_digi} --desc ensembleOnSpillReco --jobdefs ${JOBDEFS} --prod"
 log "     json2jobdef --json ${JSON_FOR_CMDS} --dsconf ${ntuple_dsconf} --desc ensembleNtuple --jobdefs ${JOBDEFS} --prod"

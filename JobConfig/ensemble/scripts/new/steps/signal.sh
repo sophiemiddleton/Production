@@ -27,12 +27,17 @@ Options:
                        ntuple file [from SAM; manifest ds_dts]
   --signal-ngen N      generated events in --signalmcs [from SAM]
   --owner NAME         owner field of the local output names [manifest owner]
+  --use-requested-livetime
+                       use the requested beam livetime when validate recorded no true
+                       livetime (this overstates the signal by 1/built fraction, ~2.7% for MDS4b)
+  --allow-mismatch     accept an automatically found signal sample whose version or
+                       trigger filter differs from the MDS (only a warning)
   --force              redo an existing label
 EOF
 }
 
 SIGNAL=""; SIGNALMCS=""; RATE=1e-13; NEXP=1; CHOOSE=""; RECOEFF=0.4009075; MERGE=1
-SEED=""; LABEL=""; MDSFILES=""; DTS_NFILES=""; SIGNAL_NGEN=""; OWNER_OPT=""
+SEED=""; LABEL=""; MDSFILES=""; DTS_NFILES=""; SIGNAL_NGEN=""; OWNER_OPT=""; USE_REQ_LT=0; ALLOW_MISMATCH=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --signal)       SIGNAL=$(optval "$@"); shift 2 ;;
@@ -48,6 +53,8 @@ while [[ $# -gt 0 ]]; do
     --dts-nfiles)   DTS_NFILES=$(optval "$@"); shift 2 ;;
     --signal-ngen)  SIGNAL_NGEN=$(optval "$@"); shift 2 ;;
     --owner)        OWNER_OPT=$(optval "$@"); shift 2 ;;
+    --use-requested-livetime) USE_REQ_LT=1; shift ;;
+    --allow-mismatch) ALLOW_MISMATCH=1; shift ;;
     *) parse_common_opt "$@" || { usage; die "unknown option '$1'"; }; shift ${SHIFT} ;;
   esac
 done
@@ -103,7 +110,9 @@ if [[ -z ${SIGNALMCS} ]]; then
       [[ ${b} == "${SIG_BASE}" ]] || continue
       [[ -z ${WANT_MODE} || ${m} == "${WANT_MODE}" ]] || continue
       echo "$([[ ${db} == "${DB_TAG}" ]] && echo 1 || echo 0) $(( t == WANT_TRIG )) $([[ ${v} == "${version}" ]] && echo 1 || echo 0) ${#v} ${v} ${def}"
-    done <<<"${candidates}" | sort -k1,4nr -k5,5r)
+    done <<<"${candidates}" | sort -k1,1nr -k2,2nr -k3,3nr -k4,4nr -k5,5r)
+  log "   Candidates, best first (DB match, trigger match, version match, version):"
+  awk '{ printf "      %s %s %s  %-4s %s\n", $1, $2, $3, $5, $6 }' <<<"${ranked}"
   SIGNALMCS=""
   while read -r _ _ _ _ _ def; do
     [[ -n ${def} ]] || continue
@@ -115,6 +124,7 @@ if [[ -z ${SIGNALMCS} ]]; then
     die "no ${release} ${WANT_MODE} signal for ${SIG_BASE} with files; pass --signal with another mode, or --signalmcs"
   fi
   ok "using ${SIGNALMCS}"
+  AUTO_PICKED=1
 fi
 # Name the outputs after the sample actually used
 SIGNAL=${SIGNALMCS##*/}; SIGNAL=${SIGNAL#mcs.*.}; SIGNAL=${SIGNAL%%.*}
@@ -130,6 +140,14 @@ if [[ -n ${MDS_MODE} && ${sig_mode} != "${MDS_MODE}" ]]; then
   warn "signal digi mode '${sig_mode:-unknown}' differs from the MDS's ${MDS_MODE} (pileup won't match)"
 fi
 (( sig_trig )) || warn "signal sample is not trigger-filtered"
+# An automatic pick that differs from the MDS in version or trigger filter is
+# not silently accepted: name it with --signalmcs, or pass --allow-mismatch.
+if (( ${AUTO_PICKED:-0} )) && (( ! ALLOW_MISMATCH )); then
+  mismatch=()
+  [[ ${SIG_DSCONF%%_*} == "${release}${version}" ]] || mismatch+=("version ${SIG_DSCONF%%_*} vs the MDS's ${release}${version}")
+  (( sig_trig == WANT_TRIG )) || mismatch+=("trigger-filtered=${sig_trig}, wanted ${WANT_TRIG}")
+  (( ${#mismatch[@]} == 0 )) || die "the best signal sample found, ${SIGNALMCS}, differs from the MDS: ${mismatch[*]}. Pass it with --signalmcs, or --allow-mismatch"
+fi
 log ""
 
 # ---------------------------------------------------------------- livetime
@@ -140,9 +158,11 @@ log "⏱️  [1/4] Livetime and known-physics files..."
 if [[ -n ${true_beam_livetime:-} ]]; then
   GEN_LIVETIME=${true_beam_livetime}
   ok "dts livetime ${GEN_LIVETIME} s (true_beam_livetime from validate)"
-else
+elif (( USE_REQ_LT )); then
   GEN_LIVETIME=${beam_livetime}
-  warn "no true_beam_livetime in the manifest (validate not run here); using the requested ${GEN_LIVETIME} s"
+  warn "no true_beam_livetime in the manifest; using the requested ${GEN_LIVETIME} s (--use-requested-livetime)"
+else
+  die "no true_beam_livetime in the manifest (validate did not record one). The requested livetime overstates the signal by 1/built fraction; run validate, or pass --use-requested-livetime"
 fi
 DIGI_MERGE=${digi_merge:-100}
 N_DTS=${DTS_NFILES:-$(dataset_count "${ds_dts}")}

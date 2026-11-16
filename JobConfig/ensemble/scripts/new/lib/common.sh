@@ -12,6 +12,9 @@ set -euo pipefail
 NEW_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 ENSEMBLE_DIR=$(cd "${NEW_DIR}/../.." && pwd)
 ENSEMBLE_PY="${ENSEMBLE_PY:-${ENSEMBLE_DIR}/python}"
+# POMS hand-off: mkidxdef and json2jobdef --jobdefs exist only up to prodtools
+# v2.3.0 (v3.0+ dropped them with the POMS backend), so the printed commands use it
+PRODTOOLS_POMS="${PRODTOOLS_POMS:-/cvmfs/mu2e.opensciencegrid.org/bin/prodtools/v2.3.0}"
 POMS_MAP="${POMS_MAP:-/exp/mu2e/app/users/mu2epro/production_manager/poms_map}"
 # validate's plots need matplotlib, which the system python3 lacks
 ANA_PYTHON=/cvmfs/mu2e.opensciencegrid.org/env/ana/current/bin/python3
@@ -71,8 +74,11 @@ enter_workdir() {
   fi
   cd "${WORKDIR}"
   mkdir -p run_logs
-  exec 9>"${WORKDIR}/.lock"
-  flock -n 9 || die "Another mds.sh step is running on ${TAG}"
+  # status only reads, so it runs (without the lock) while another step works
+  if [[ ${step} != status ]]; then
+    exec 9>"${WORKDIR}/.lock"
+    flock -n 9 || die "Another mds.sh step is running on ${TAG}"
+  fi
   local logfile="run_logs/${step}-$(date +%Y%m%d-%H%M%S).log"
   exec > >(tee -a "${logfile}") 2>&1
   # init starts a fresh manifest, so it must not pick up old values
