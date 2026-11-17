@@ -52,6 +52,18 @@ Mixing : {
       cutMax:@nil
       PrimaryParticle : "FindMCPrimary"
     }
+    # MC-truth muon capture normalisation per subrun (MuonCaptureNormalization SubRun product):
+    # sum over microbunches of PBI x stops/POT x captureFraction. Reads stops/POT exactly as
+    # MuStopPileupMixer does (same SimEfficiencies2 tags and target-stop prescale), minus the
+    # pileup pool's own filter efficiency (MuStopPileupCat). Must run before DTSFilter so every
+    # generated microbunch is counted.
+    MuonCaptureNormMC : {
+      module_type : MuonCaptureNormMC
+      protonBunchIntensityTag : "PBISim"
+      simStageEfficiencyTags : [ "MuBeamCat", "MuminusStopsCat" ]
+      meanEventsPerPOTFactors : [ @local::Pileup.MuminusTargetStopPrescale ]
+      stoppingTargetMaterial : "Al"
+    }
     # inline filters to remove any double-counting of primaries
     MuStopPileupFilter: {
       @table::Mixing.DetStepFilter
@@ -100,7 +112,7 @@ Mixing : {
   # when mixing early events the intensity must be scaled down
   EarlyReductionFactor : 1.0e-2
 }
-Mixing.PileupMixSequence : [ PBISim, DTSFilter, @sequence::Mixing.StepMixSequence, @sequence::Mixing.StepFilterSequence, CaloDtsClusterFilter ]
+Mixing.PileupMixSequence : [ PBISim, MuonCaptureNormMC, DTSFilter,@sequence::Mixing.StepMixSequence, @sequence::Mixing.StepFilterSequence, CaloDtsClusterFilter ]
 Mixing.MixSequence : [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence ]
 # override the Trigger 'PrepareDigis' sequence; the mixers must preceed the digi making
 TrigRecoSequences.cfoDataGen: [ @sequence::Mixing.PileupMixSequence, @sequence::Digitize.DigitizeSequence, ProcessCFOData ]

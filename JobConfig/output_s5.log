@@ -1,0 +1,109 @@
+[mu2epro@mu2egpvm05 MDS3c]$ Stage5_signal.sh --known MDS3c --rate 1e-13 --nexp 3 --mdsfiles nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.root --mdsmcs mcs.mu2e.ensembleMDS3cMix1BB.MDC2025am_best_v1_1.art --signalmcs mcs.mu2e.CeMLeadingLogMix1BBTriggered.MDC2025an_best_v1_3.art --nexp 1 --chooselivetime 2419200 --signal CeMLeadingLogMix1BB
+==========================================
+Stage 5: Signal Processing
+==========================================
+
+Input Parameters:
+  Owner: mu2e
+  Known Physics: MDS3c
+  Signal: CeMLeadingLogMix1BB
+  Rate: 1e-13
+  Release: best
+  DB Purpose: v1
+  DB Version: 3
+  Number of Pseudo-experiments: 1
+  User-specified Livetime: 2419200 s
+  Known Physics Ntuple Dataset: nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.root
+  Known Physics MCS Dataset: mcs.mu2e.ensembleMDS3cMix1BB.MDC2025am_best_v1_1.art
+  Signal MCS Dataset: mcs.mu2e.CeMLeadingLogMix1BBTriggered.MDC2025an_best_v1_3.art
+
+=========================================
+Step 1: Checking Livetime and Configuration
+=========================================
+
+Loading configuration from MDS3c.txt...
+Configuration loaded:
+  Generated Livetime: 13629133.126934985 s
+  Background (BB): 1BB
+  Number of Jobs: 4960
+
+User-specified livetime: 2419200 s
+Livetime: 2419200 s (watch for potential changes)
+
+Calculating file requirements...
+  Total known physics files available: 496
+  Livetime per file: 27478 s
+  Known physics files to use: 88 (livetime: 2419200 s)
+
+IMPORTANT: Final livetime 2418064 s (adjusted for integer file requirement from user-specified 2419200 s)
+
+=========================================
+Step 2: Signal Dataset Analysis
+=========================================
+
+Accessing signal dataset: mcs.mu2e.CeMLeadingLogMix1BB.best_v1_3.art
+Signal sample contains 10000000 generated events
+
+Saving combined configuration...
+
+=========================================
+Step 3: Building File Lists
+=========================================
+
+Cleaning up old file lists...
+Retrieving signal file list...
+  Dataset: mcs.mu2e.CeMLeadingLogMix1BBTriggered.MDC2025an_best_v1_3.art
+Retrieving known physics file list...
+  Dataset: nts.mu2e.ensembleMix1BBTriggered.MDC2025-001.root
+
+After merge factor (1) applied: 88 effective files
+
+=========================================
+Step 4: Processing Pseudo-experiments
+=========================================
+Total pseudo-experiments to create: 1
+
+[Pseudo-experiment 1/1]
+  Calculating signal yield...
+    Rate: 1e-13 | Background: 1BB | Livetime: 2418064 s
+    Events to sample: Ce 373
+    After reconstruction efficiency correction (0.4009075): 150 events
+  Calculating file requirements...
+Debug: Sampled 10 files for dh.gencount, sum=50000, avg=5000, extrapolated=10000000
+    Total signal files: 2000
+    Generated events per file: 5000
+    Files needed: 1 (minimum)
+  Selecting random signal files...
+  Building splitter configuration (splitter_1.fcl)
+  Running signal splitter job...
+    ✓ Splitter job completed
+/exp/mu2e/app/users/sophie/newOffline/Production/JobConfig/ensemble/scripts/Stage5_signal.sh: line 369: filenames_All_CeMLeadingLogMix1BB: command not found
+  Building ntuple configuration (ntuple_1.fcl)
+Warning in <UnknownClass::SetDisplay>: DISPLAY not set, setting it to 131.225.67.39:0.0
+  Running ntuple creation job...
+    ✓ Ntuple creation completed
+/exp/mu2e/app/users/sophie/newOffline/Production/JobConfig/ensemble/scripts/Stage5_signal.sh: line 383: filenames_All_CeMLeadingLogMix1BB: command not found
+  Creating mixed file list (signal + known physics)...
+  ✓ Pseudo-experiment 1 complete
+
+=========================================
+Cleanup and Finalization
+=========================================
+
+Moving .fcl files to fcl/ directory...
+Removing temporary files...
+
+=========================================
+Stage 4 Complete!
+=========================================
+
+Summary:
+  Pseudo-experiments created: 1
+  Signal dataset: CeMLeadingLogMix1BB
+  Rate: 1e-13
+  Final livetime: 2418064 s
+
+Output files:
+  Configuration: MDS3c.txt
+  FCL configs: fcl/
+  File lists: filenames_ChosenMixed_*

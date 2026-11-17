@@ -1,5 +1,4 @@
 #! /usr/bin/env
-import DbService
 import argparse
 import ROOT
 import math
@@ -75,35 +74,18 @@ total_pot = 0.
 
 # Establish a connection and retrieve simulation efficiencies from the database.
 
-# Initialize the database tool
-db_tool = DbService.DbTool()
-db_tool.init()
+# SimEfficiencies2 for the default selection (Sim_best / v1_1 / run 1430).
+# The query and the stops/POT calculation are shared with the muon-capture
+# normalization in JobConfig/normalization/python/stop_normalization.py
+# (made importable by the constants import above).
+import stop_normalization
 
-# Define arguments for the database query
-query_arguments = [
-    "print-run",
-    "--purpose", "Sim_best",
-    "--version", "v1_1",
-    "--run", "1430",
-    "--table", "SimEfficiencies2",
-    "--content"
-]
+rr = stop_normalization.fetch_sim_efficiencies()
 
-# Execute the database query
-db_tool.setArgs(query_arguments)
-db_tool.run()
-
-# Store the raw result for further processing
-rr = db_tool.getResult()
-
-# Fill varaibles associated with muon stops in target
-lines= rr.split("\n")
-for line in lines:
-    words = line.split(",")
-    if words[0] == "MuminusStopsCat" or words[0] == "MuBeamCat" :
-        #print(f"Including {words[0]} with rate {words[3]}")
-        rate = rate * float(words[3])
-        target_stopped_muons_per_pot = rate * 1000 
+# Muon stops in target: MuBeamCat * MuminusStopsCat * MuminusTargetStopPrescale,
+# with the prescale read from JobConfig/pileup/prolog.fcl
+target_stopped_muons_per_pot = stop_normalization.stops_per_pot(
+    stop_normalization.parse_sim_efficiencies(rr))
 
 
 # Fill variables associated with pion stops in target

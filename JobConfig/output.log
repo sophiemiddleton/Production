@@ -1,0 +1,404 @@
+[mu2epro@mu2egpvm05 MDS3c]$ Stage6_blind_and_mix.sh 1 MDS3c
+==========================================
+Stage 6: Blind and Mix
+==========================================
+
+Input Parameters:
+  Iteration: 1
+  Known Tag: MDS3c
+  Config File: MDS3c.txt
+
+Reading configuration from MDS3c.txt...
+Configuration loaded:
+  Livetime: 2418064
+  Rmue: 1e-13
+  Signal: CeMLeadingLogMix1BB
+  Background (BB): 1BB
+
+Output Configuration:
+  Input List: filenames_ChosenMixed_1
+  Output Directory: merged_files_1
+  Output List: merged_list_1.txt
+  Files per merge group: 2
+
+Created output directory: merged_files_1
+Initialized output list: merged_list_1.txt
+
+Starting merge process...
+==========================================
+
+[Group 1] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_1.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/22/12/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003883.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/2f/61/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002500.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_1.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_1.root:/EventNtuple
+[Group 1] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_1.root
+[Group 2] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_2.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/8c/e4/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000274.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/b2/0b/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000016.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_2.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_2.root:/EventNtuple
+[Group 2] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_2.root
+[Group 3] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_3.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/e1/94/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001523.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/8f/66/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000911.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_3.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_3.root:/EventNtuple
+[Group 3] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_3.root
+[Group 4] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_4.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/7b/8e/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000066.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/a8/e7/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003971.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_4.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_4.root:/EventNtuple
+[Group 4] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_4.root
+[Group 5] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_5.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/47/c9/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002883.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/73/aa/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003119.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_5.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_5.root:/EventNtuple
+[Group 5] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_5.root
+[Group 6] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_6.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/2a/4f/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001610.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/38/c6/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000100.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_6.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_6.root:/EventNtuple
+[Group 6] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_6.root
+[Group 7] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_7.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/7c/fe/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000295.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/d1/af/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000047.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_7.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_7.root:/EventNtuple
+[Group 7] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_7.root
+[Group 8] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_8.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/16/82/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00004340.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/0d/9a/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001473.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_8.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_8.root:/EventNtuple
+[Group 8] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_8.root
+[Group 9] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_9.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/3a/ac/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000001.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/9f/64/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003863.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_9.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_9.root:/EventNtuple
+[Group 9] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_9.root
+[Group 10] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_10.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/a9/42/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001351.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/4d/8a/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000741.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_10.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_10.root:/EventNtuple
+[Group 10] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_10.root
+[Group 11] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_11.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/c1/6d/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000071.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/95/13/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001277.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_11.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_11.root:/EventNtuple
+[Group 11] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_11.root
+[Group 12] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_12.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/eb/48/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003257.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/30/0d/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001696.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_12.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_12.root:/EventNtuple
+[Group 12] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_12.root
+[Group 13] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_13.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/18/0c/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003935.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/bb/9f/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002191.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_13.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_13.root:/EventNtuple
+[Group 13] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_13.root
+[Group 14] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_14.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/55/ba/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002112.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/5c/65/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002809.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_14.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_14.root:/EventNtuple
+[Group 14] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_14.root
+[Group 15] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_15.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/bb/56/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001699.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/67/3a/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002011.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_15.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_15.root:/EventNtuple
+[Group 15] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_15.root
+[Group 16] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_16.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/27/49/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002455.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/f1/5c/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000610.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_16.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_16.root:/EventNtuple
+[Group 16] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_16.root
+[Group 17] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_17.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/7e/b6/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000251.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/c9/05/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00004111.root
++hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_17.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_17.root:/EventNtuple
+
+
+[Group 17] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_17.root
+[Group 18] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_18.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/9d/a7/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003902.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/82/88/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000291.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_18.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_18.root:/EventNtuple
+[Group 18] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_18.root
+[Group 19] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_19.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/44/f0/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001405.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/b5/d8/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000455.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_19.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_19.root:/EventNtuple
+[Group 19] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_19.root
+[Group 20] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_20.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/bc/d9/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001715.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/10/bb/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003621.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_20.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_20.root:/EventNtuple
+[Group 20] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_20.root
+[Group 21] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_21.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/9d/db/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000082.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/88/9e/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003258.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_21.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_21.root:/EventNtuple
+[Group 21] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_21.root
+[Group 22] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_22.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/63/b5/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000051.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/55/10/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001226.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_22.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_22.root:/EventNtuple
+[Group 22] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_22.root
+[Group 23] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_23.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/ed/82/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000305.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/c9/98/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001000.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_23.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_23.root:/EventNtuple
+[Group 23] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_23.root
+[Group 24] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_24.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/f3/98/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000236.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/6d/0d/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003440.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_24.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_24.root:/EventNtuple
+[Group 24] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_24.root
+[Group 25] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_25.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/95/9a/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003121.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/4c/97/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001553.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_25.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_25.root:/EventNtuple
+[Group 25] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_25.root
+[Group 26] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_26.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/3f/21/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002511.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/37/2d/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002139.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_26.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_26.root:/EventNtuple
+[Group 26] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_26.root
+[Group 27] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_27.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/c2/83/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001509.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/b3/18/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003589.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_27.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_27.root:/EventNtuple
+[Group 27] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_27.root
+[Group 28] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_28.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/31/18/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002679.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/83/79/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001569.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_28.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_28.root:/EventNtuple
+[Group 28] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_28.root
+[Group 29] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_29.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/8e/e2/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000173.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/e8/85/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000485.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_29.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_29.root:/EventNtuple
+[Group 29] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_29.root
+[Group 30] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_30.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/8b/ea/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000284.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/14/b7/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002060.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_30.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_30.root:/EventNtuple
+[Group 30] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_30.root
+[Group 31] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_31.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/6e/80/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002117.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/9f/fb/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000129.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_31.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_31.root:/EventNtuple
+[Group 31] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_31.root
+[Group 32] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_32.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/1a/12/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000370.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/33/90/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000420.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_32.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_32.root:/EventNtuple
+[Group 32] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_32.root
+[Group 33] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_33.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/2c/6e/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000337.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/0f/38/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002465.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_33.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_33.root:/EventNtuple
+[Group 33] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_33.root
+[Group 34] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_34.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/86/c9/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000055.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/a1/98/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001906.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_34.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_34.root:/EventNtuple
+[Group 34] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_34.root
+[Group 35] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_35.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/3a/77/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002442.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/fd/5d/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003320.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_35.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_35.root:/EventNtuple
+[Group 35] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_35.root
+[Group 36] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_36.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/21/11/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002914.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/ab/91/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000717.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_36.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_36.root:/EventNtuple
+[Group 36] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_36.root
+[Group 37] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_37.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/19/24/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003317.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/3f/db/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000094.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_37.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_37.root:/EventNtuple
+[Group 37] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_37.root
+[Group 38] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_38.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/6b/6a/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000003.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/67/61/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000027.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_38.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_38.root:/EventNtuple
+[Group 38] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_38.root
+[Group 39] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_39.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/56/d9/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000897.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/e7/c3/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001645.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_39.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_39.root:/EventNtuple
+[Group 39] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_39.root
+[Group 40] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_40.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/d0/40/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000065.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/d5/83/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003536.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_40.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_40.root:/EventNtuple
+[Group 40] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_40.root
+[Group 41] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_41.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/09/d1/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003184.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/2c/a0/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00002899.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_41.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_41.root:/EventNtuple
+[Group 41] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_41.root
+[Group 42] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_42.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/4d/82/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000271.root
+hadd Source file 2: nts.mu2e.CeMLeadingLogMix1BBSplit.best_v1_3.1.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_42.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_42.root:/EventNtuple
+Warning in <TTree::CopyEntries>: One of the export top level branches (trig_apr_TC_calo) is not present in the import TTree.
+[Group 42] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_42.root
+[Group 43] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_43.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/13/09/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003311.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/39/f9/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001248.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_43.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_43.root:/EventNtuple
+[Group 43] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_43.root
+[Group 44] Merging 2 files...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_44.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/a3/0f/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00000735.root
+hadd Source file 2: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/7d/ca/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00003073.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_44.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_44.root:/EventNtuple
+[Group 44] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_44.root
+[Group 45] Merging final 1 file(s)...
+hadd Target file: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_45.root
+hadd compression setting for all output: 101
+hadd Source file 1: /pnfs/mu2e/persistent/datasets/phy-nts/nts/mu2e/ensembleMDS3cMix1BB/MDC2025-001/root/fb/96/nts.mu2e.ensembleMDS3cMix1BB.MDC2025-001.001430_00001886.root
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_45.root:/
+hadd Target path: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_45.root:/EventNtuple
+[Group 45] ✓ Successfully created: merged_files_1/nts.mu2e.ensembleMDS3cMix1BB_CeMLeadingLogMix1BB_1e-13_2418064.1_45.root
+
+==========================================
+Merge process complete!
+==========================================
+
+Summary:
+  Total groups created: 45
+  Output directory: merged_files_1
+  Merged files list: merged_list_1.txt
+
+Next steps:
+  1. Verify merged files in: merged_files_1
+  2. Check file list: merged_list_1.txt

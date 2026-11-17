@@ -4,13 +4,21 @@ Physical constants and interaction rates used in Mu2e simulations.
 References for these values can be found in the referenced documentation.
 """
 
+import os
+import sys
+
 # --- Muon Interactions ---
-# Fraction of stopped muons that undergo nuclear capture
-CAPTURES_PER_STOPPED_MUON = 0.609
+# The muon fate fractions live in JobConfig/normalization/python/stop_normalization.py,
+# which is shared with the muon-capture normalization studies. Re-exported here
+# so existing imports from constants keep working.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                "..", "..", "normalization", "python"))
+from stop_normalization import (  # noqa: E402
+    CAPTURES_PER_STOPPED_MUON,  # fraction of stopped muons that undergo nuclear capture
+    DIO_PER_STOPPED_MUON,       # fraction that decay in orbit: 1 - CAPTURES_PER_STOPPED_MUON
+)
 # Rate of radiative muon capture (RMC) events resulting in a gamma ray > 57 MeV, per capture event
 RMC_GT_57_PER_CAPTURE  = 1.43e-5 # Source: Phys. Rev. C 59, 2853 (1999)
-# Fraction of stopped muons that undergo standard DIO (Decay In Orbit)
-DIO_PER_STOPPED_MUON = 0.391 # Calculated as: 1 - CAPTURES_PER_STOPPED_MUON
 # Rate of Incoming Particle Decay After Stopping (IPA)
 IPA_DECAYS_PER_STOPPED_MUON  = 0.92990
 

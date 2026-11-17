@@ -16,6 +16,7 @@ physics.producers.generate : {
     spectrum : {
       spectrumShape : ejectedProtons
       elow : 60. # Only simulate the high energy tail
+      ehi : 83.67 # Kinematic endpoint for protons from mu- capture on Al (default is the muon mass)
       nbins: 1000
     }
   }

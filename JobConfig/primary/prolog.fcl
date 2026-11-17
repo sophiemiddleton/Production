@@ -265,6 +265,8 @@ Primary: {
     # this stream's events represent at the origin. Dropping it here loses the
     # only in-file record, and everything downstream inherits the loss.
     "keep mu2e::StageNormalization_*_*_*",
+    # Muon captures (and, in MC, stops and POT) each subrun represents: the CE normalisation.
+    "keep mu2e::MuonCaptureNormalization_*_*_*",
     "keep mu2e::EventWeight_*_*_*",
     "keep art::TriggerResults_*_*_*",
     "keep mu2e::StepPointMCs_CosmicResampler_crvStage1_*", # this is needed to keep track of low/all CRV split
